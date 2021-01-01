@@ -1,0 +1,17 @@
+digraph G {
+    "Wind Turbine"
+    "Wind Turbine" -> "Alternator"
+    "Wind Turbine" -> "Nacelle"
+    "Wind Turbine" -> "Tail"
+    
+    "Alternator" -> "Rotor"
+    "Alternator" -> "Stator"
+    
+    "Nacelle" -> "Metal Parts"
+    "Nacelle" -> "Hub"
+
+    "Hub" -> "Flange"
+    "Hub" -> "Stub Axle Shaft"
+    
+    "Tail" -> "Vane"
+}

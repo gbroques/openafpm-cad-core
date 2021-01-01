@@ -1,0 +1,5 @@
+digraph G {
+    "Wind Turbine" -> "Rotor Mold"
+    "Wind Turbine" -> "Stator Mold"
+    "Wind Turbine" -> "Coil Winder"
+}
