@@ -1,23 +1,27 @@
 import FreeCAD as App
 import FreeCADGui as Gui
+import Draft
 from .master_of_puppets import create_master_of_puppets
 import os
 import importWebGL
 from abc import ABC
 
 # T Shape
+# =======
 # rotor_radius = 130
 # rotor_inner_circle = 25
 # hub_holes_placement = 44
 # magnet_length = 46
 
 # H Shape
+# =======
 # rotor_radius = 230
 # rotor_inner_circle = 47.5
 # hub_holes_placement = 78
 # magnet_length = 46
 
 # Star Shape
+# ==========
 rotor_radius = 349
 rotor_inner_circle = 81.5
 hub_holes_placement = 102.5
@@ -97,11 +101,15 @@ class WindTurbine(ABC):
             self._open_rotor_master(rotor_path)
         rotor_name = 'Rotor'
         rotor = self._assemble_rotor(rotor_path, rotor_name)
-        self._move_rotor(rotor)
         self.doc.recompute()
+        App.setActiveDocument(self.doc.Name)
+        top_rotor = Draft.clone(rotor)
+        self._position_top_rotor(top_rotor)
+        self._move_rotor(rotor)
         if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
             Gui.setActiveDocument(self.doc.Name)
             Gui.SendMsgToActiveView('ViewFit')
+
         self._export_to_webgl(rotor_name)
 
     def _open_master(self):
@@ -124,7 +132,7 @@ class WindTurbine(ABC):
         self._merge_rotor_disc1(rotor_path)
         rotor = self.doc.addObject('Part::Compound', rotor_name)
         rotor.Links = [
-            self.doc.getObject('PocketBody'), # rotor_resin_cast_name
+            self.doc.getObject('PocketBody'),  # rotor_resin_cast_name
             self.doc.getObject(self.rotor_disc1_name)
         ]
         return rotor
@@ -132,26 +140,47 @@ class WindTurbine(ABC):
     def _merge_rotor_resin_cast(self, rotor_path):
         self.doc.mergeProject(
             os.path.join(rotor_path, 'RotorResinCast.FCStd'))
-        self.doc.Spreadsheet001.enforceRecompute()
+        self._enforce_recompute_last_spreadsheet()
 
     def _merge_rotor_disc1(self, rotor_path):
         self.doc.mergeProject(
             os.path.join(rotor_path, 'Disc1.FCStd'))
-        self.doc.Spreadsheet002.enforceRecompute()
+        self._enforce_recompute_last_spreadsheet()
+
+    def _enforce_recompute_last_spreadsheet(self):
+        sheets = self.doc.findObjects('Spreadsheet::Sheet')
+        last_sheet = sheets[len(sheets) - 1]
+        last_sheet.enforceRecompute()
 
     def _move_rotor(self, rotor):
         placement = App.Placement()
-        stator_thickness = magn_afpm_parameters['CoilInnerWidth1']
-        thickness = magn_afpm_parameters['DiskThickness'] + magn_afpm_parameters['MagnetThickness']
-        distance_from_stator = 30
-        z = distance_from_stator + (stator_thickness / 2) + thickness
+        z = self._calculate_rotor_z_offset()
         placement.move(App.Vector(0, 0, -z))
         rotor.Placement = placement
+
+    def _position_top_rotor(self, top_rotor):
+        App.DraftWorkingPlane.alignToPointAndAxis(
+            App.Vector(0, 0, 0), App.Vector(1, 0, 0), 0)
+        Draft.rotate([top_rotor], 180.0, App.Vector(0.0, 0.0, 0.0),
+                     axis=App.Vector(1.0, 0.0, 0.0), copy=False)
+        z = self._calculate_rotor_z_offset()
+        Draft.move(top_rotor, App.Vector(0, 0, z))
+
+    def _calculate_rotor_z_offset(self):
+        stator_thickness = magn_afpm_parameters['CoilInnerWidth1']
+        distance_from_stator = 30
+        rotor_thickness = self._calculate_rotor_thickness()
+        return distance_from_stator + (stator_thickness / 2) + rotor_thickness
+
+    def _calculate_rotor_thickness(self):
+        return magn_afpm_parameters['DiskThickness'] + \
+            magn_afpm_parameters['MagnetThickness']
 
     def _export_to_webgl(self, rotor_name):
         objects = [
             self.doc.getObject(self.stator_resin_cast_name),
-            self.doc.getObject(rotor_name)
+            self.doc.getObject(rotor_name),
+            self.doc.getObject('Clone') # Name of top rotor
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
