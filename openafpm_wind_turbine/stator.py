@@ -1,7 +1,6 @@
 import os
 
-from .enforce_recompute_last_spreadsheet import \
-    enforce_recompute_last_spreadsheet
+from .common import enforce_recompute_last_spreadsheet
 
 __all__ = ['load_stator']
 
