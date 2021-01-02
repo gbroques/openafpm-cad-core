@@ -99,9 +99,9 @@ class WindTurbine(ABC):
                         alternator_name,
                         self.stator_resin_cast_name,
                         self.rotor_disc1_name,
-                        magn_afpm_parameters['CoilInnerWidth1'],
-                        magn_afpm_parameters['DiskThickness'],
-                        magn_afpm_parameters['MagnetThickness'])
+                        self.magn_afpm_parameters['CoilInnerWidth1'],
+                        self.magn_afpm_parameters['DiskThickness'],
+                        self.magn_afpm_parameters['MagnetThickness'])
         self.doc.recompute()
         self._export_to_webgl(alternator_name)
 
