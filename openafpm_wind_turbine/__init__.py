@@ -5,14 +5,28 @@ import os
 import importWebGL
 from abc import ABC
 
-t_shape_rotor_radius = 150
-h_shape_rotor_radius = 250
-star_shape_rotor_radius = 300
+# T Shape
+# rotor_radius = 130
+# rotor_inner_circle = 25
+# hub_holes_placement = 44
+# magnet_length = 46
+
+# H Shape
+# rotor_radius = 230
+# rotor_inner_circle = 47.5
+# hub_holes_placement = 78
+# magnet_length = 46
+
+# Star Shape
+rotor_radius = 349
+rotor_inner_circle = 81.5
+hub_holes_placement = 102.5
+magnet_length = 58
 
 magn_afpm_parameters = {
-    'RotorDiskRadius': star_shape_rotor_radius,
+    'RotorDiskRadius': rotor_radius,
     'DiskThickness': 10,
-    'MagnetLength': 58,
+    'MagnetLength': magnet_length,
     'MagnetWidth': 30,
     'MagnetThickness': 10,
     'NumberMagnet': 12,
@@ -20,6 +34,20 @@ magn_afpm_parameters = {
     'CoilLegWidth': 23.26,
     'CoilInnerWidth1': 30,
     'CoilInnerWidth2': 30
+}
+
+user_parameters = {
+    # Distance of holes from center
+    'HubHolesPlacement': hub_holes_placement,
+    'RotorInnerCircle': rotor_inner_circle,
+    'Holes': 7,
+    'MetalLengthL': 80,
+    'MetalThicknessL': 8,
+    'FlatMetalThickness': 10,
+    'YawPipeRadius': 58.15,
+    'PipeThickness': 6,
+    'ResineRotorMargin': 5,
+    'HubHoles': 10
 }
 
 
@@ -31,12 +59,12 @@ def main():
         master_of_puppets_doc_name,
         imported_spreadsheet_name,
         master_spreadsheet_name,
-        magn_afpm_parameters)
+        magn_afpm_parameters,
+        user_parameters)
     master_of_puppets_doc.recompute()
 
     wind_turbine = create_wind_turbine(magn_afpm_parameters)
     wind_turbine.render()
-    wind_turbine.export_to_webgl()
 
 
 class WindTurbine(ABC):
@@ -44,11 +72,13 @@ class WindTurbine(ABC):
                  magn_afpm_parameters,
                  base_dir,
                  has_separate_master_files,
-                 stator_resin_cast_name):
+                 stator_resin_cast_name,
+                 rotor_disc1_name):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.has_separate_master_files = has_separate_master_files
         self.stator_resin_cast_name = stator_resin_cast_name
         self.rotor_resin_cast_name = 'PocketBody'
+        self.rotor_disc1_name = rotor_disc1_name
 
         self.base_path = os.path.join(
             os.path.dirname(__file__), 'documents', base_dir)
@@ -65,9 +95,14 @@ class WindTurbine(ABC):
         rotor_path = os.path.join(self.base_path, 'Rotor')
         if self.has_separate_master_files:
             self._open_rotor_master(rotor_path)
-        self._merge_rotor_resin_cast(rotor_path)
-        self._move_rotor_resin_cast()
+        rotor_name = 'Rotor'
+        rotor = self._assemble_rotor(rotor_path, rotor_name)
+        self._move_rotor(rotor)
         self.doc.recompute()
+        if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
+            Gui.setActiveDocument(self.doc.Name)
+            Gui.SendMsgToActiveView('ViewFit')
+        self._export_to_webgl(rotor_name)
 
     def _open_master(self):
         App.openDocument(os.path.join(
@@ -81,51 +116,59 @@ class WindTurbine(ABC):
             os.path.join(stator_path, 'StatorResinCast.FCStd'))
         self.doc.Spreadsheet.enforceRecompute()
 
-        if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
-            Gui.setActiveDocument(self.doc.Name)
-            Gui.SendMsgToActiveView('ViewFit')
-
     def _open_rotor_master(self, rotor_path):
         App.openDocument(os.path.join(rotor_path, 'Master.FCStd'))
+
+    def _assemble_rotor(self, rotor_path, rotor_name):
+        self._merge_rotor_resin_cast(rotor_path)
+        self._merge_rotor_disc1(rotor_path)
+        rotor = self.doc.addObject('Part::Compound', rotor_name)
+        rotor.Links = [
+            self.doc.getObject('PocketBody'), # rotor_resin_cast_name
+            self.doc.getObject(self.rotor_disc1_name)
+        ]
+        return rotor
 
     def _merge_rotor_resin_cast(self, rotor_path):
         self.doc.mergeProject(
             os.path.join(rotor_path, 'RotorResinCast.FCStd'))
         self.doc.Spreadsheet001.enforceRecompute()
 
-        if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
-            Gui.setActiveDocument(self.doc.Name)
-            Gui.SendMsgToActiveView('ViewFit')
+    def _merge_rotor_disc1(self, rotor_path):
+        self.doc.mergeProject(
+            os.path.join(rotor_path, 'Disc1.FCStd'))
+        self.doc.Spreadsheet002.enforceRecompute()
 
-    def _move_rotor_resin_cast(self):
+    def _move_rotor(self, rotor):
         placement = App.Placement()
         stator_thickness = magn_afpm_parameters['CoilInnerWidth1']
+        thickness = magn_afpm_parameters['DiskThickness'] + magn_afpm_parameters['MagnetThickness']
         distance_from_stator = 30
-        z = distance_from_stator + (stator_thickness / 2)
-        placement.move(App.Vector(0, 0, z))
-        self.doc.getObject(self.rotor_resin_cast_name).Placement = placement
+        z = distance_from_stator + (stator_thickness / 2) + thickness
+        placement.move(App.Vector(0, 0, -z))
+        rotor.Placement = placement
 
-    def export_to_webgl(self):
+    def _export_to_webgl(self, rotor_name):
         objects = [
             self.doc.getObject(self.stator_resin_cast_name),
-            self.doc.getObject(self.rotor_resin_cast_name)
+            self.doc.getObject(rotor_name)
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
 
 class TShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 't_shape', True, 'Pad')
+        super().__init__(magn_afpm_parameters, 't_shape', True, 'Pad', 'Pocket001Body')
 
 
 class HShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 'h_shape', True, 'Pad')
+        super().__init__(magn_afpm_parameters, 'h_shape', True, 'Pad', 'Pocket001Body')
 
 
 class StarShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 'star_shape', False, 'Body')
+        super().__init__(magn_afpm_parameters, 'star_shape', False, 'Body', 'Body001')
 
 
 def create_wind_turbine(magn_afpm_parameters):

@@ -247,6 +247,7 @@ sudo dpkg -i *.deb
 WebGL
 -----
 * https://wiki.opensourceecology.org/wiki/WebGL
+* https://threejsfundamentals.org/threejs/lessons/threejs-transparency.html
 
 Links
 -----

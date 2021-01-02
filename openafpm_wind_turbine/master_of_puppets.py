@@ -10,19 +10,23 @@ __all__ = ['create_master_of_puppets']
 def create_master_of_puppets(document_name,
                              imported_spreadsheet_name,
                              master_spreadsheet_name,
-                             magn_afpm_parameters):
+                             magn_afpm_parameters,
+                             user_parameters):
     document = App.newDocument(document_name)
-    _create_imported_sheet(
-        document, imported_spreadsheet_name, magn_afpm_parameters)
+    _create_imported_sheet(document,
+                           imported_spreadsheet_name,
+                           magn_afpm_parameters,
+                           user_parameters)
     document.recompute()
     _create_master_sheet(document, master_spreadsheet_name,
                          imported_spreadsheet_name)
     return document
 
 
-def _create_imported_sheet(document, name, magn_afpm_parameters):
+def _create_imported_sheet(document, name, magn_afpm_parameters, user_parameters):
     sheet = document.addObject('Spreadsheet::Sheet', name)
     magn_afpm_cells = _dict_to_cells(magn_afpm_parameters)
+    user_cells = _dict_to_cells(user_parameters)
     cells = [
         ['Inputs', 'Value'],
 
@@ -49,16 +53,7 @@ def _create_imported_sheet(document, name, magn_afpm_parameters):
         # User
         # ----
         ['User', ''],
-        ['HubHolesPlacement', 81.5],
-        ['RotorInnerCircle', 102.5],
-        ['Holes', 7],
-        ['MetalLengthL', 80],
-        ['MetalThicknessL', 8],
-        ['FlatMetalThickness', 10],
-        ['YawPipeRadius', 58.15],
-        ['PipeThickness', 6],
-        ['ResineRotorMargin', 5],
-        ['HubHoles', 10]
+        *user_cells
     ]
 
     _populate_sheet(sheet, cells)
