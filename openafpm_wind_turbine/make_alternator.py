@@ -9,6 +9,8 @@ __all__ = ['make_alternator']
 def make_alternator(base_path,
                     has_separate_master_files,
                     document,
+                    name,
+                    stator_resin_cast_name,
                     rotor_disc1_name,
                     coil_inner_width_1,
                     disk_thickness,
@@ -38,6 +40,11 @@ def make_alternator(base_path,
     _position_top_rotor(top_rotor, coil_inner_width_1,
                         disk_thickness, magnet_thickness)
     _move_rotor(rotor, coil_inner_width_1, disk_thickness, magnet_thickness)
+    return _make_compound(document, name, [
+        document.getObject(stator_resin_cast_name),
+        rotor,
+        top_rotor
+    ])
 
 
 def _open_master(base_path):
@@ -62,11 +69,10 @@ def _open_rotor_master(rotor_path):
 def _assemble_rotor(document, rotor_path, rotor_name, rotor_disc1_name):
     _merge_rotor_resin_cast(document, rotor_path)
     _merge_rotor_disc1(document, rotor_path)
-    rotor = document.addObject('Part::Compound', rotor_name)
-    rotor.Links = [
+    rotor = _make_compound(document, rotor_name, [
         document.getObject('PocketBody'),  # rotor_resin_cast_name
         document.getObject(rotor_disc1_name)
-    ]
+    ])
     return rotor
 
 
@@ -120,3 +126,9 @@ def _calculate_rotor_z_offset(coil_inner_width_1, disk_thickness, magnet_thickne
 
 def _calculate_rotor_thickness(disk_thickness, magnet_thickness):
     return disk_thickness + magnet_thickness
+
+
+def _make_compound(document, name, objects):
+    compound = document.addObject('Part::Compound', name)
+    compound.Links = objects
+    return compound

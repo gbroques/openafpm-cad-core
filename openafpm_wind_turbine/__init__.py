@@ -1,19 +1,18 @@
-import FreeCAD as App
-import FreeCADGui as Gui
-import Draft
-from .master_of_puppets import create_master_of_puppets
 import os
-import importWebGL
 from abc import ABC
-from .make_alternator import make_alternator
 
+import FreeCAD as App
+import importWebGL
+
+from .make_alternator import make_alternator
+from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 25
-# hub_holes_placement = 44
-# magnet_length = 46
+rotor_radius = 130
+rotor_inner_circle = 25
+hub_holes_placement = 44
+magnet_length = 46
 
 # H Shape
 # =======
@@ -24,10 +23,10 @@ from .make_alternator import make_alternator
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -83,7 +82,6 @@ class WindTurbine(ABC):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.has_separate_master_files = has_separate_master_files
         self.stator_resin_cast_name = stator_resin_cast_name
-        self.rotor_resin_cast_name = 'PocketBody'
         self.rotor_disc1_name = rotor_disc1_name
 
         self.base_path = os.path.join(
@@ -91,38 +89,51 @@ class WindTurbine(ABC):
         self.doc = App.newDocument('WindTurbine')
 
     def render(self):
+        alternator_name = 'Alternator'
         make_alternator(self.base_path,
                         self.has_separate_master_files,
                         self.doc,
+                        alternator_name,
+                        self.stator_resin_cast_name,
                         self.rotor_disc1_name,
                         magn_afpm_parameters['CoilInnerWidth1'],
                         magn_afpm_parameters['DiskThickness'],
                         magn_afpm_parameters['MagnetThickness'])
-        self._export_to_webgl('Rotor')
+        self.doc.recompute()
+        self._export_to_webgl(alternator_name)
 
-
-    def _export_to_webgl(self, rotor_name):
+    def _export_to_webgl(self, alternator_name):
         objects = [
-            self.doc.getObject(self.stator_resin_cast_name),
-            self.doc.getObject(rotor_name),
-            self.doc.getObject('Clone')  # Name of top rotor
+            self.doc.getObject(alternator_name),
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
 
 class TShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 't_shape', True, 'Pad', 'Pocket001Body')
+        super().__init__(magn_afpm_parameters,
+                         't_shape',
+                         True,
+                         'Pad',
+                         'Pocket001Body')
 
 
 class HShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 'h_shape', True, 'Pad', 'Pocket001Body')
+        super().__init__(magn_afpm_parameters,
+                         'h_shape',
+                         True,
+                         'Pad',
+                         'Pocket001Body')
 
 
 class StarShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
-        super().__init__(magn_afpm_parameters, 'star_shape', False, 'Body', 'Body001')
+        super().__init__(magn_afpm_parameters,
+                         'star_shape',
+                         False,
+                         'Body',
+                         'Body001')
 
 
 def create_wind_turbine(magn_afpm_parameters):
