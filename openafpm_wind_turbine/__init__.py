@@ -4,7 +4,7 @@ from abc import ABC
 import FreeCAD as App
 import importWebGL
 
-from .make_alternator import make_alternator
+from .alternator import make_alternator
 from .master_of_puppets import create_master_of_puppets
 
 # T Shape
@@ -16,17 +16,17 @@ from .master_of_puppets import create_master_of_puppets
 
 # H Shape
 # =======
-rotor_radius = 230
-rotor_inner_circle = 47.5
-hub_holes_placement = 78
-magnet_length = 46
+# rotor_radius = 230
+# rotor_inner_circle = 47.5
+# hub_holes_placement = 78
+# magnet_length = 46
 
 # Star Shape
 # ==========
-# rotor_radius = 349
-# rotor_inner_circle = 81.5
-# hub_holes_placement = 102.5
-# magnet_length = 58
+rotor_radius = 349
+rotor_inner_circle = 81.5
+hub_holes_placement = 102.5
+magnet_length = 58
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -89,6 +89,9 @@ class WindTurbine(ABC):
         self.doc = App.newDocument('WindTurbine')
 
     def render(self):
+        if not self.has_separate_master_files:
+            _open_master(self.base_path)
+
         alternator_name = 'Alternator'
         make_alternator(self.base_path,
                         self.has_separate_master_files,
@@ -107,6 +110,11 @@ class WindTurbine(ABC):
             self.doc.getObject(alternator_name),
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
+
+
+def _open_master(base_path):
+    App.openDocument(os.path.join(
+        base_path, 'MasterBigWindturbine.FCStd'))
 
 
 class TShapeWindTurbine(WindTurbine):

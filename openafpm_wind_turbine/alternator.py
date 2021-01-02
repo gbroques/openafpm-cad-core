@@ -1,7 +1,12 @@
+import os
+
+import Draft
 import FreeCAD as App
 import FreeCADGui as Gui
-import Draft
-import os
+
+from .enforce_recompute_last_spreadsheet import \
+    enforce_recompute_last_spreadsheet
+from .stator import load_stator
 
 __all__ = ['make_alternator']
 
@@ -19,12 +24,7 @@ def make_alternator(base_path,
     The alternator consists of the stator,
     sandwiched by two rotors.
     """
-    stator_path = os.path.join(base_path, 'Stator')
-    if not has_separate_master_files:
-        _open_master(base_path)
-    if has_separate_master_files:
-        _open_stator_master(stator_path)
-    _merge_stator_resin_cast(document, stator_path)
+    load_stator(base_path, has_separate_master_files, document)
 
     rotor_path = os.path.join(base_path, 'Rotor')
     if has_separate_master_files:
@@ -32,23 +32,20 @@ def make_alternator(base_path,
     if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
         Gui.setActiveDocument(document.Name)
         Gui.SendMsgToActiveView('ViewFit')
-    bottom_rotor = _assemble_bottom_rotor(document, rotor_path, rotor_disc1_name)
+    bottom_rotor = _assemble_bottom_rotor(
+        document, rotor_path, rotor_disc1_name)
     document.recompute()
     App.setActiveDocument(document.Name)
     top_rotor = Draft.clone(bottom_rotor)
     _position_top_rotor(top_rotor, coil_inner_width_1,
                         disk_thickness, magnet_thickness)
-    _move_rotor(bottom_rotor, coil_inner_width_1, disk_thickness, magnet_thickness)
+    _move_rotor(bottom_rotor, coil_inner_width_1,
+                disk_thickness, magnet_thickness)
     return _make_compound(document, name, [
         document.getObject(stator_resin_cast_name),
         bottom_rotor,
         top_rotor
     ])
-
-
-def _open_master(base_path):
-    App.openDocument(os.path.join(
-        base_path, 'MasterBigWindturbine.FCStd'))
 
 
 def _open_stator_master(stator_path):
@@ -58,7 +55,7 @@ def _open_stator_master(stator_path):
 def _merge_stator_resin_cast(document, stator_path):
     document.mergeProject(
         os.path.join(stator_path, 'StatorResinCast.FCStd'))
-    _enforce_recompute_last_spreadsheet(document)
+    enforce_recompute_last_spreadsheet(document)
 
 
 def _open_rotor_master(rotor_path):
@@ -78,19 +75,13 @@ def _assemble_bottom_rotor(document, rotor_path, rotor_disc1_name):
 def _merge_rotor_resin_cast(document, rotor_path):
     document.mergeProject(
         os.path.join(rotor_path, 'RotorResinCast.FCStd'))
-    _enforce_recompute_last_spreadsheet(document)
+    enforce_recompute_last_spreadsheet(document)
 
 
 def _merge_rotor_disc1(document, rotor_path):
     document.mergeProject(
         os.path.join(rotor_path, 'Disc1.FCStd'))
-    _enforce_recompute_last_spreadsheet(document)
-
-
-def _enforce_recompute_last_spreadsheet(document):
-    sheets = document.findObjects('Spreadsheet::Sheet')
-    last_sheet = sheets[len(sheets) - 1]
-    last_sheet.enforceRecompute()
+    enforce_recompute_last_spreadsheet(document)
 
 
 def _move_rotor(rotor, coil_inner_width_1, disk_thickness, magnet_thickness):
