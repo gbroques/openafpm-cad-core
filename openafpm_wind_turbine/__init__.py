@@ -9,17 +9,17 @@ from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-rotor_radius = 130
-rotor_inner_circle = 25
-hub_holes_placement = 44
-magnet_length = 46
+# rotor_radius = 130
+# rotor_inner_circle = 25
+# hub_holes_placement = 44
+# magnet_length = 46
 
 # H Shape
 # =======
-# rotor_radius = 230
-# rotor_inner_circle = 47.5
-# hub_holes_placement = 78
-# magnet_length = 46
+rotor_radius = 230
+rotor_inner_circle = 47.5
+hub_holes_placement = 78
+magnet_length = 46
 
 # Star Shape
 # ==========

@@ -32,17 +32,16 @@ def make_alternator(base_path,
     if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
         Gui.setActiveDocument(document.Name)
         Gui.SendMsgToActiveView('ViewFit')
-    rotor_name = 'Rotor'
-    rotor = _assemble_rotor(document, rotor_path, rotor_name, rotor_disc1_name)
+    bottom_rotor = _assemble_bottom_rotor(document, rotor_path, rotor_disc1_name)
     document.recompute()
     App.setActiveDocument(document.Name)
-    top_rotor = Draft.clone(rotor)
+    top_rotor = Draft.clone(bottom_rotor)
     _position_top_rotor(top_rotor, coil_inner_width_1,
                         disk_thickness, magnet_thickness)
-    _move_rotor(rotor, coil_inner_width_1, disk_thickness, magnet_thickness)
+    _move_rotor(bottom_rotor, coil_inner_width_1, disk_thickness, magnet_thickness)
     return _make_compound(document, name, [
         document.getObject(stator_resin_cast_name),
-        rotor,
+        bottom_rotor,
         top_rotor
     ])
 
@@ -66,10 +65,10 @@ def _open_rotor_master(rotor_path):
     App.openDocument(os.path.join(rotor_path, 'Master.FCStd'))
 
 
-def _assemble_rotor(document, rotor_path, rotor_name, rotor_disc1_name):
+def _assemble_bottom_rotor(document, rotor_path, rotor_disc1_name):
     _merge_rotor_resin_cast(document, rotor_path)
     _merge_rotor_disc1(document, rotor_path)
-    rotor = _make_compound(document, rotor_name, [
+    rotor = _make_compound(document, 'BottomRotor', [
         document.getObject('PocketBody'),  # rotor_resin_cast_name
         document.getObject(rotor_disc1_name)
     ])
@@ -94,12 +93,10 @@ def _enforce_recompute_last_spreadsheet(document):
     last_sheet.enforceRecompute()
 
 
-def _move_rotor(rotor, coil_inner_width_1,  disk_thickness, magnet_thickness):
-    placement = App.Placement()
+def _move_rotor(rotor, coil_inner_width_1, disk_thickness, magnet_thickness):
     z = _calculate_rotor_z_offset(
         coil_inner_width_1,  disk_thickness, magnet_thickness)
-    placement.move(App.Vector(0, 0, -z))
-    rotor.Placement = placement
+    Draft.move(rotor, App.Vector(0, 0, -z))
 
 
 def _position_top_rotor(top_rotor, coil_inner_width_1, disk_thickness, magnet_thickness):
