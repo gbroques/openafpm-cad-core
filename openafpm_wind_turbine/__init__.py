@@ -99,6 +99,9 @@ class WindTurbine(ABC):
         rotor_path = os.path.join(self.base_path, 'Rotor')
         if self.has_separate_master_files:
             self._open_rotor_master(rotor_path)
+        if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
+            Gui.setActiveDocument(self.doc.Name)
+            Gui.SendMsgToActiveView('ViewFit')
         rotor_name = 'Rotor'
         rotor = self._assemble_rotor(rotor_path, rotor_name)
         self.doc.recompute()
@@ -106,10 +109,6 @@ class WindTurbine(ABC):
         top_rotor = Draft.clone(rotor)
         self._position_top_rotor(top_rotor)
         self._move_rotor(rotor)
-        if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
-            Gui.setActiveDocument(self.doc.Name)
-            Gui.SendMsgToActiveView('ViewFit')
-
         self._export_to_webgl(rotor_name)
 
     def _open_master(self):
