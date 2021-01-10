@@ -11,22 +11,29 @@ def create_master_of_puppets(document_name,
                              imported_spreadsheet_name,
                              master_spreadsheet_name,
                              magn_afpm_parameters,
-                             user_parameters):
+                             user_parameters,
+                             furling_tool_parameters):
     document = App.newDocument(document_name)
     _create_imported_sheet(document,
                            imported_spreadsheet_name,
                            magn_afpm_parameters,
-                           user_parameters)
+                           user_parameters,
+                           furling_tool_parameters)
     document.recompute()
     _create_master_sheet(document, master_spreadsheet_name,
                          imported_spreadsheet_name)
     return document
 
 
-def _create_imported_sheet(document, name, magn_afpm_parameters, user_parameters):
+def _create_imported_sheet(document,
+                           name,
+                           magn_afpm_parameters,
+                           user_parameters,
+                           furling_tool_parameters):
     sheet = document.addObject('Spreadsheet::Sheet', name)
     magn_afpm_cells = _dict_to_cells(magn_afpm_parameters)
     user_cells = _dict_to_cells(user_parameters)
+    furling_tool_cells = _dict_to_cells(furling_tool_parameters)
     cells = [
         ['Inputs', 'Value'],
 
@@ -38,17 +45,7 @@ def _create_imported_sheet(document, name, magn_afpm_parameters, user_parameters
         # FurlingTool
         # -----------
         ['FurlingTool', ''],
-        ['Angle', 20],
-        ['BracketLength', 300],
-        ['BracketWidth', 30],
-        ['BracketThickness', 5],
-        ['BoomLength', 1000],
-        ['BoomPipeRadius', 24.15],
-        ['BoomPipeThickness', 5],
-        ['VaneThickness', 6],
-        ['VaneLength', 1200],
-        ['VaneWidth', 500],
-        ['Offset', 400],
+        *furling_tool_cells,
 
         # User
         # ----

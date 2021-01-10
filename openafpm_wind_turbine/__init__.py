@@ -55,6 +55,20 @@ user_parameters = {
     'HubHoles': 10
 }
 
+furling_tool_parameters = {
+    'Angle': 20,
+    'BracketLength': 300,
+    'BracketWidth': 30,
+    'BracketThickness': 5,
+    'BoomLength': 1000,
+    'BoomPipeRadius': 24.15,
+    'BoomPipeThickness': 5,
+    'VaneThickness': 6,
+    'VaneLength': 1200,
+    'VaneWidth': 500,
+    'Offset': 400,
+}
+
 
 def main():
     master_of_puppets_doc_name = 'Master of Puppets'
@@ -65,7 +79,8 @@ def main():
         imported_spreadsheet_name,
         master_spreadsheet_name,
         magn_afpm_parameters,
-        user_parameters)
+        user_parameters,
+        furling_tool_parameters)
     master_of_puppets_doc.recompute()
 
     wind_turbine = create_wind_turbine(magn_afpm_parameters)
@@ -114,22 +129,22 @@ def _open_master(base_path):
 class TShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
-                         't_shape',
-                         True)
+                         base_dir='t_shape',
+                         has_separate_master_files=True)
 
 
 class HShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
-                         'h_shape',
-                         True)
+                         base_dir='h_shape',
+                         has_separate_master_files=True)
 
 
 class StarShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
-                         'star_shape',
-                         False)
+                         base_dir='star_shape',
+                         has_separate_master_files=False)
 
 
 def create_wind_turbine(magn_afpm_parameters):
