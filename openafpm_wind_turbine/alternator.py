@@ -1,4 +1,5 @@
-from .common import enforce_recompute_last_spreadsheet, make_compound
+from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
+                     make_compound)
 from .rotor import make_rotors
 from .stator import load_stator
 
@@ -9,7 +10,6 @@ def make_alternator(base_path,
                     has_separate_master_files,
                     document,
                     name,
-                    stator_resin_cast_name,
                     coil_inner_width_1,
                     disk_thickness,
                     magnet_thickness):
@@ -17,7 +17,9 @@ def make_alternator(base_path,
     The alternator consists of the stator,
     sandwiched by two rotors.
     """
-    load_stator(base_path, has_separate_master_files, document)
+    stator_resin_cast_label = 'StatorResinCast'
+    load_stator(base_path, has_separate_master_files,
+                document, stator_resin_cast_label)
 
     bottom_rotor, top_rotor = make_rotors(
         base_path,
@@ -27,7 +29,7 @@ def make_alternator(base_path,
         disk_thickness,
         magnet_thickness)
     return make_compound(document, name, [
-        document.getObject(stator_resin_cast_name),
+        find_object_by_label(document, stator_resin_cast_label),
         bottom_rotor,
         top_rotor
     ])

@@ -76,11 +76,9 @@ class WindTurbine(ABC):
     def __init__(self,
                  magn_afpm_parameters,
                  base_dir,
-                 has_separate_master_files,
-                 stator_resin_cast_name):
+                 has_separate_master_files):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.has_separate_master_files = has_separate_master_files
-        self.stator_resin_cast_name = stator_resin_cast_name
 
         self.base_path = os.path.join(
             os.path.dirname(__file__), 'documents', base_dir)
@@ -95,7 +93,6 @@ class WindTurbine(ABC):
                         self.has_separate_master_files,
                         self.doc,
                         alternator_name,
-                        self.stator_resin_cast_name,
                         self.magn_afpm_parameters['CoilInnerWidth1'],
                         self.magn_afpm_parameters['DiskThickness'],
                         self.magn_afpm_parameters['MagnetThickness'])
@@ -118,24 +115,21 @@ class TShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
                          't_shape',
-                         True,
-                         'Pad')
+                         True)
 
 
 class HShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
                          'h_shape',
-                         True,
-                         'Pad')
+                         True)
 
 
 class StarShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters):
         super().__init__(magn_afpm_parameters,
                          'star_shape',
-                         False,
-                         'Body')
+                         False)
 
 
 def create_wind_turbine(magn_afpm_parameters):

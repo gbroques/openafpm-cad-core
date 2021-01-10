@@ -1,12 +1,11 @@
 import os
-import sys
 
 import Draft
 import FreeCAD as App
 import FreeCADGui as Gui
-from FreeCAD import Console
 
-from .common import enforce_recompute_last_spreadsheet, make_compound
+from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
+                     make_compound)
 
 __all__ = ['make_rotors']
 
@@ -46,29 +45,10 @@ def _assemble_bottom_rotor(document, rotor_path):
     _merge_document(document, rotor_path, rotor_resin_cast_label)
     _merge_document(document, rotor_path, rotor_disc1_label)
     rotor = make_compound(document, 'BottomRotor', [
-        _find_object_by_label(document, rotor_resin_cast_label),
-        _find_object_by_label(document, rotor_disc1_label)
+        find_object_by_label(document, rotor_resin_cast_label),
+        find_object_by_label(document, rotor_disc1_label)
     ])
     return rotor
-
-
-def _with_error_exit(find_object_by_label):
-    def wrapped(document, label):
-        result = find_object_by_label(document, label)
-        if result is None:
-            Console.PrintError(
-                'No object with Label "{}" found in document. Check {}.FCStd.'.format(label, label))
-            sys.exit(1)
-        return result
-    return wrapped
-
-
-@_with_error_exit
-def _find_object_by_label(document, label):
-    objects = document.getObjectsByLabel(label)
-    if len(objects) == 0:
-        return None
-    return objects[0]
 
 
 def _merge_document(document, rotor_path, name):
