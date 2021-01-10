@@ -77,12 +77,10 @@ class WindTurbine(ABC):
                  magn_afpm_parameters,
                  base_dir,
                  has_separate_master_files,
-                 stator_resin_cast_name,
-                 rotor_disc1_name):
+                 stator_resin_cast_name):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.has_separate_master_files = has_separate_master_files
         self.stator_resin_cast_name = stator_resin_cast_name
-        self.rotor_disc1_name = rotor_disc1_name
 
         self.base_path = os.path.join(
             os.path.dirname(__file__), 'documents', base_dir)
@@ -98,7 +96,6 @@ class WindTurbine(ABC):
                         self.doc,
                         alternator_name,
                         self.stator_resin_cast_name,
-                        self.rotor_disc1_name,
                         self.magn_afpm_parameters['CoilInnerWidth1'],
                         self.magn_afpm_parameters['DiskThickness'],
                         self.magn_afpm_parameters['MagnetThickness'])
@@ -122,8 +119,7 @@ class TShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          't_shape',
                          True,
-                         'Pad',
-                         'Pocket001Body')
+                         'Pad')
 
 
 class HShapeWindTurbine(WindTurbine):
@@ -131,8 +127,7 @@ class HShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          'h_shape',
                          True,
-                         'Pad',
-                         'Pocket001Body')
+                         'Pad')
 
 
 class StarShapeWindTurbine(WindTurbine):
@@ -140,8 +135,7 @@ class StarShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          'star_shape',
                          False,
-                         'Body',
-                         'Body001')
+                         'Body')
 
 
 def create_wind_turbine(magn_afpm_parameters):
