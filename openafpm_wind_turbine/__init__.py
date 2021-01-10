@@ -9,10 +9,10 @@ from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 25
-# hub_holes_placement = 44
-# magnet_length = 46
+rotor_radius = 130
+rotor_inner_circle = 25
+hub_holes_placement = 44
+magnet_length = 46
 
 # H Shape
 # =======
@@ -23,10 +23,10 @@ from .master_of_puppets import create_master_of_puppets
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,

@@ -1,5 +1,7 @@
 import os
 
+import FreeCAD as App
+
 from .common import enforce_recompute_last_spreadsheet
 
 __all__ = ['load_stator']

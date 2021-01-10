@@ -27,6 +27,7 @@ def make_rotors(base_path,
     document.recompute()
     App.setActiveDocument(document.Name)
     top_rotor = Draft.clone(bottom_rotor)
+    top_rotor.Label = 'TopRotor'
     _position_top_rotor(top_rotor, coil_inner_width_1,
                         disk_thickness, magnet_thickness)
     _move_bottom_rotor(bottom_rotor, coil_inner_width_1,
