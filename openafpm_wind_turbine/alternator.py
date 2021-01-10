@@ -12,7 +12,8 @@ def make_alternator(base_path,
                     name,
                     coil_inner_width_1,
                     disk_thickness,
-                    magnet_thickness):
+                    magnet_thickness,
+                    distance_between_stator_and_rotor):
     """
     The alternator consists of the stator,
     sandwiched by two rotors.
@@ -27,7 +28,8 @@ def make_alternator(base_path,
         document,
         coil_inner_width_1,
         disk_thickness,
-        magnet_thickness)
+        magnet_thickness,
+        distance_between_stator_and_rotor)
     return make_compound(document, name, [
         find_object_by_label(document, stator_resin_cast_label),
         bottom_rotor,
