@@ -2,17 +2,19 @@ import os
 from abc import ABC
 
 import FreeCAD as App
+from FreeCAD import Vector, Placement
 import importWebGL
 
 from .alternator import make_alternator
+from .hub import make_hub
 from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 25
-# hub_holes_placement = 44
-# magnet_length = 46
+rotor_radius = 130
+rotor_inner_circle = 25
+hub_holes_placement = 44
+magnet_length = 46
 
 # H Shape
 # =======
@@ -23,10 +25,10 @@ from .master_of_puppets import create_master_of_puppets
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -106,20 +108,38 @@ class WindTurbine(ABC):
             _open_master(self.base_path)
 
         alternator_name = 'Alternator'
-        make_alternator(self.base_path,
-                        self.has_separate_master_files,
-                        self.doc,
-                        alternator_name,
-                        self.magn_afpm_parameters['CoilInnerWidth1'],
-                        self.magn_afpm_parameters['DiskThickness'],
-                        self.magn_afpm_parameters['MagnetThickness'],
-                        self.distance_between_stator_and_rotor)
-        self.doc.recompute()
-        self._export_to_webgl(alternator_name)
+        alternator = make_alternator(
+            self.base_path,
+            self.has_separate_master_files,
+            self.doc,
+            alternator_name,
+            self.magn_afpm_parameters['CoilInnerWidth1'],
+            self.magn_afpm_parameters['DiskThickness'],
+            self.magn_afpm_parameters['MagnetThickness'],
+            self.distance_between_stator_and_rotor)
 
-    def _export_to_webgl(self, alternator_name):
+        hub_name = 'Hub'
+        hub = make_hub(self.base_path, self.doc, hub_name)
+        stator_thickness = self.magn_afpm_parameters['CoilInnerWidth1']
+        flange_bottom_pad_length = 30
+        stator_resin_cast_thickness = (
+            self.magn_afpm_parameters['DiskThickness'] +
+            self.magn_afpm_parameters['MagnetThickness']
+        )
+        hub_z_offset = (
+            (stator_thickness / 2) +
+            flange_bottom_pad_length +
+            stator_resin_cast_thickness +
+            self.distance_between_stator_and_rotor
+        )
+        placement = Placement()
+        placement.move(Vector(0, 0, hub_z_offset))
+        hub.Placement = placement
+
+        self.doc.recompute()
         objects = [
-            self.doc.getObject(alternator_name),
+            alternator,
+            hub
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
