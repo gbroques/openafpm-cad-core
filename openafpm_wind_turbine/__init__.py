@@ -11,17 +11,17 @@ from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-rotor_radius = 130
-rotor_inner_circle = 25
-hub_holes_placement = 44
-magnet_length = 46
+# rotor_radius = 130
+# rotor_inner_circle = 25
+# hub_holes_placement = 44
+# magnet_length = 46
 
 # H Shape
 # =======
-# rotor_radius = 230
-# rotor_inner_circle = 47.5
-# hub_holes_placement = 78
-# magnet_length = 46
+rotor_radius = 230
+rotor_inner_circle = 47.5
+hub_holes_placement = 78
+magnet_length = 46
 
 # Star Shape
 # ==========
@@ -94,10 +94,12 @@ class WindTurbine(ABC):
                  magn_afpm_parameters,
                  base_dir,
                  has_separate_master_files,
-                 distance_between_stator_and_rotor):
+                 distance_between_stator_and_rotor,
+                 flange_bottom_pad_length):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.has_separate_master_files = has_separate_master_files
         self.distance_between_stator_and_rotor = distance_between_stator_and_rotor
+        self.flange_bottom_pad_length = flange_bottom_pad_length
 
         self.base_path = os.path.join(
             os.path.dirname(__file__), 'documents', base_dir)
@@ -121,14 +123,13 @@ class WindTurbine(ABC):
         hub_name = 'Hub'
         hub = make_hub(self.base_path, self.doc, hub_name)
         stator_thickness = self.magn_afpm_parameters['CoilInnerWidth1']
-        flange_bottom_pad_length = 30
         stator_resin_cast_thickness = (
             self.magn_afpm_parameters['DiskThickness'] +
             self.magn_afpm_parameters['MagnetThickness']
         )
         hub_z_offset = (
             (stator_thickness / 2) +
-            flange_bottom_pad_length +
+            self.flange_bottom_pad_length +
             stator_resin_cast_thickness +
             self.distance_between_stator_and_rotor
         )
@@ -154,7 +155,8 @@ class TShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          base_dir='t_shape',
                          has_separate_master_files=True,
-                         distance_between_stator_and_rotor=30)
+                         distance_between_stator_and_rotor=30,
+                         flange_bottom_pad_length=30)
 
 
 class HShapeWindTurbine(WindTurbine):
@@ -162,7 +164,8 @@ class HShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          base_dir='h_shape',
                          has_separate_master_files=True,
-                         distance_between_stator_and_rotor=36)
+                         distance_between_stator_and_rotor=36,
+                         flange_bottom_pad_length=15)
 
 
 class StarShapeWindTurbine(WindTurbine):
@@ -170,7 +173,8 @@ class StarShapeWindTurbine(WindTurbine):
         super().__init__(magn_afpm_parameters,
                          base_dir='star_shape',
                          has_separate_master_files=False,
-                         distance_between_stator_and_rotor=45)
+                         distance_between_stator_and_rotor=45,
+                         flange_bottom_pad_length=30)
 
 
 def create_wind_turbine(magn_afpm_parameters):
