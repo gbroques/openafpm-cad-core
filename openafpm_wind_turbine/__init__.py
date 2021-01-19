@@ -13,8 +13,9 @@ from .master_of_puppets import create_master_of_puppets
 # =======
 rotor_radius = 130
 rotor_inner_circle = 25
-hub_holes_placement = 44
+hub_holes_placement = 44 # 51
 magnet_length = 46
+holes = 7
 
 # H Shape
 # =======
@@ -22,6 +23,7 @@ magnet_length = 46
 # rotor_inner_circle = 47.5
 # hub_holes_placement = 78
 # magnet_length = 46
+# holes = 7
 
 # Star Shape
 # ==========
@@ -29,6 +31,7 @@ magnet_length = 46
 # rotor_inner_circle = 81.5
 # hub_holes_placement = 102.5
 # magnet_length = 58
+# holes = 10
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -44,17 +47,17 @@ magn_afpm_parameters = {
 }
 
 user_parameters = {
-    # Distance of holes from center
-    'HubHolesPlacement': hub_holes_placement,
+    'HubHolesPlacement': hub_holes_placement, # Distance between center of hub hole and center of alternator
     'RotorInnerCircle': rotor_inner_circle,
-    'Holes': 7,
+    'Holes': holes, # Radius of hub holes (T Shape & H Shape)
     'MetalLengthL': 80,
     'MetalThicknessL': 8,
     'FlatMetalThickness': 10,
     'YawPipeRadius': 58.15,
     'PipeThickness': 6,
     'ResineRotorMargin': 5,
-    'HubHoles': 10
+    # TODO: Get rid of HubHoles?
+    'HubHoles': holes # Radius of hub holes (Star Shape)
 }
 
 furling_tool_parameters = {
@@ -128,17 +131,19 @@ class WindTurbine(ABC):
             self.doc,
             hub_name,
             self.flange_top_pad_length)
-        hub_z_offset = self.calculate_hub_z_offset()
-        placement = Placement()
-        placement.move(Vector(0, 0, hub_z_offset))
-        hub.Placement = placement
-
+        self._move_hub(hub)
         self.doc.recompute()
         objects = [
             alternator,
             hub
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
+
+    def _move_hub(self, hub):
+        hub_z_offset = self.calculate_hub_z_offset()
+        placement = Placement()
+        placement.move(Vector(0, 0, hub_z_offset))
+        hub.Placement = placement
 
     @abstractmethod
     def calculate_hub_z_offset(self):

@@ -24,6 +24,10 @@ def make_hub(base_path,
     flange_label = 'Flange'
     _merge_document(document, hub_path, flange_label)
     flange = find_object_by_label(document, flange_label)
+    # Flange contains formula references to external cross-document spreadsheet
+    if hasattr(flange, 'Group'):
+        for item in flange.Group:
+            item.enforceRecompute()
 
     hub = document.addObject('App::Part','Hub')
     hub.addObject(stub_axle_shaft)
