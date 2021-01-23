@@ -11,12 +11,12 @@ from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-rotor_radius = 130
-rotor_inner_circle = 32.5
-hub_holes_placement = 50
-magnet_length = 46
-hub_holes = 6
-holes = 6
+# rotor_radius = 130
+# rotor_inner_circle = 32.5
+# hub_holes_placement = 50
+# magnet_length = 46
+# hub_holes = 6
+# holes = 6
 
 # H Shape
 # =======
@@ -29,12 +29,17 @@ holes = 6
 
 # Star Shape
 # ==========
-# rotor_radius = 349
-# rotor_inner_circle = 81.5
-# hub_holes_placement = 102.5
-# magnet_length = 58
-# hub_holes = 7
-# holes = 10
+rotor_radius = 349
+rotor_inner_circle = 81.5
+hub_holes_placement = 102.5
+magnet_length = 58
+hub_holes = 8
+holes = 7
+
+# For threads, move in positive X plane direction by hub holes placement
+# T Shape - 330
+# H Shape - 250
+# Star Shape - 270
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
