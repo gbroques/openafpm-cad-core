@@ -39,8 +39,6 @@ def make_rotors(base_path,
                        disk_thickness,
                        magnet_thickness,
                        distance_between_stator_and_rotor)
-    # H Shape
-    # Draft.rotate(bottom_rotor, 35)
     return bottom_rotor, top_rotor
 
 
