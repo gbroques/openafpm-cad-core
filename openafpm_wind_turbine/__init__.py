@@ -11,27 +11,30 @@ from .master_of_puppets import create_master_of_puppets
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 25
-# hub_holes_placement = 44 # 51
-# magnet_length = 46
-# holes = 7
+rotor_radius = 130
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
+magnet_length = 46
+hub_holes = 6
+holes = 6
 
 # H Shape
 # =======
 # rotor_radius = 230
 # rotor_inner_circle = 47.5
-# hub_holes_placement = 78
+# hub_holes_placement = 65
 # magnet_length = 46
-# holes = 7
+# hub_holes = 7
+# holes = 6
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
-holes = 10
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
+# hub_holes = 7
+# holes = 10
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -49,15 +52,14 @@ magn_afpm_parameters = {
 user_parameters = {
     'HubHolesPlacement': hub_holes_placement, # Distance between center of hub hole and center of alternator
     'RotorInnerCircle': rotor_inner_circle,
-    'Holes': holes, # Radius of hub holes (T Shape & H Shape)
+    'Holes': holes, # Radius of outer holes on stator
     'MetalLengthL': 80,
     'MetalThicknessL': 8,
     'FlatMetalThickness': 10,
     'YawPipeRadius': 58.15,
     'PipeThickness': 6,
     'ResineRotorMargin': 5,
-    # TODO: Get rid of HubHoles?
-    'HubHoles': holes # Radius of hub holes (Star Shape)
+    'HubHoles': hub_holes # Radius of hub holes
 }
 
 furling_tool_parameters = {
