@@ -29,11 +29,10 @@ def make_hub(base_path,
         for item in flange.Group:
             item.enforceRecompute()
 
-    hub = document.addObject('App::Part','Hub')
-    hub.addObject(stub_axle_shaft)
-    hub.addObject(flange)
-
-    return hub
+    return make_compound(document, name, [
+        stub_axle_shaft,
+        flange
+    ])
 
 
 def _merge_document(document, path, name):
