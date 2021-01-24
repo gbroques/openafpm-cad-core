@@ -12,6 +12,8 @@ from .hub import make_hub
 from .hub_threads import make_hub_threads
 from .master_of_puppets import create_master_of_puppets
 from .common import make_compound
+from .frame import make_frame
+from .t_shape_frame import assemble_t_shape_frame
 
 # T Shape
 # =======
@@ -22,6 +24,9 @@ magnet_length = 46
 hub_holes = 6
 holes = 6
 hub_rod_length = 330
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 30.15
 
 # H Shape
 # =======
@@ -32,6 +37,9 @@ hub_rod_length = 330
 # hub_holes = 7
 # holes = 6
 # hub_rod_length = 250
+# metal_length_l = 50
+# metal_thickness_l = 6
+# yaw_pipe_radius = 44.5
 
 # Star Shape
 # ==========
@@ -42,7 +50,9 @@ hub_rod_length = 330
 # hub_holes = 8
 # holes = 7
 # hub_rod_length = 270
-
+# metal_length_l = 65
+# metal_thickness_l = 8
+# yaw_pipe_radius = 57.15
 
 """
 T Shape Frame
@@ -70,10 +80,10 @@ user_parameters = {
     'HubHolesPlacement': hub_holes_placement,
     'RotorInnerCircle': rotor_inner_circle,
     'Holes': holes,  # Radius of outer holes on stator
-    'MetalLengthL': 80,
-    'MetalThicknessL': 8,
+    'MetalLengthL': metal_length_l,
+    'MetalThicknessL': metal_thickness_l,
     'FlatMetalThickness': 10,
-    'YawPipeRadius': 58.15,
+    'YawPipeRadius': yaw_pipe_radius,
     'PipeThickness': 6,
     'ResineRotorMargin': 5,
     'HubHoles': hub_holes  # Radius of hub holes
@@ -120,7 +130,8 @@ class WindTurbine(ABC):
                  distance_between_stator_and_rotor,
                  flange_bottom_pad_length,
                  flange_top_pad_length,
-                 number_of_hub_holes):
+                 number_of_hub_holes,
+                 assemble_frame):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.user_parameters = user_parameters
         self.has_separate_master_files = has_separate_master_files
@@ -128,6 +139,7 @@ class WindTurbine(ABC):
         self.flange_bottom_pad_length = flange_bottom_pad_length
         self.flange_top_pad_length = flange_top_pad_length
         self.number_of_hub_holes = number_of_hub_holes
+        self.assemble_frame = assemble_frame
 
         self.base_path = os.path.join(
             os.path.dirname(__file__), 'documents', base_dir)
@@ -137,41 +149,48 @@ class WindTurbine(ABC):
         if not self.has_separate_master_files:
             _open_master(self.base_path)
 
-        alternator_name = 'Alternator'
-        alternator = make_alternator(
+        # alternator_name = 'Alternator'
+        # alternator = make_alternator(
+        #     self.base_path,
+        #     self.has_separate_master_files,
+        #     self.doc,
+        #     alternator_name,
+        #     self.magn_afpm_parameters['CoilInnerWidth1'],
+        #     self.magn_afpm_parameters['DiskThickness'],
+        #     self.magn_afpm_parameters['MagnetThickness'],
+        #     self.distance_between_stator_and_rotor)
+
+        # hub_name = 'Hub'
+        # hub = make_hub(
+        #     self.base_path,
+        #     self.doc,
+        #     hub_name,
+        #     self.flange_top_pad_length)
+        # self._move_hub(hub)
+        # hub_z_offset = self.calculate_hub_z_offset()
+        # middle_flange_pad_thickness = 15
+        # thread_z_offset = hub_z_offset + middle_flange_pad_thickness
+        # threads_name = 'Threads'
+        # threads = make_hub_threads(self.doc,
+        #                            threads_name,
+        #                            self.user_parameters['HubHoles'],
+        #                            hub_rod_length,
+        #                            self.number_of_hub_holes,
+        #                            self.user_parameters['HubHolesPlacement'],
+        #                            thread_z_offset)
+        frame = make_frame(
             self.base_path,
             self.has_separate_master_files,
             self.doc,
-            alternator_name,
-            self.magn_afpm_parameters['CoilInnerWidth1'],
-            self.magn_afpm_parameters['DiskThickness'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.distance_between_stator_and_rotor)
-
-        hub_name = 'Hub'
-        hub = make_hub(
-            self.base_path,
-            self.doc,
-            hub_name,
-            self.flange_top_pad_length)
-        self._move_hub(hub)
-        hub_z_offset = self.calculate_hub_z_offset()
-        middle_flange_pad_thickness = 15
-        thread_z_offset = hub_z_offset + middle_flange_pad_thickness
-        threads = make_hub_threads(self.doc,
-                                   'Threads',
-                                   self.user_parameters['HubHoles'],
-                                   hub_rod_length,
-                                   self.number_of_hub_holes,
-                                   self.user_parameters['HubHolesPlacement'],
-                                   thread_z_offset)
+            self.assemble_frame,
+            self.user_parameters['MetalLengthL'])
         self.doc.recompute()
-        objects = [
-            alternator,
-            hub,
-            threads
-        ]
-        importWebGL.export(objects, 'wind-turbine-webgl.html')
+        # objects = [
+        #     alternator,
+        #     hub,
+        #     threads
+        # ]
+        # importWebGL.export(objects, 'wind-turbine-webgl.html')
 
     def _move_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
@@ -199,7 +218,8 @@ class TShapeWindTurbine(WindTurbine):
                          distance_between_stator_and_rotor=30,
                          flange_bottom_pad_length=30,
                          flange_top_pad_length=30,
-                         number_of_hub_holes=4)
+                         number_of_hub_holes=4,
+                         assemble_frame=assemble_t_shape_frame)
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
@@ -220,7 +240,8 @@ class HShapeWindTurbine(WindTurbine):
                          distance_between_stator_and_rotor=36,
                          flange_bottom_pad_length=15,
                          flange_top_pad_length=30,
-                         number_of_hub_holes=5)
+                         number_of_hub_holes=5,
+                         assemble_frame=assemble_t_shape_frame)
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
@@ -241,7 +262,8 @@ class StarShapeWindTurbine(WindTurbine):
                          distance_between_stator_and_rotor=45,
                          flange_bottom_pad_length=45,
                          flange_top_pad_length=40,
-                         number_of_hub_holes=6)
+                         number_of_hub_holes=6,
+                         assemble_frame=assemble_t_shape_frame)
 
     def calculate_hub_z_offset(self):
         stator_thickness = self.magn_afpm_parameters['CoilInnerWidth1']
