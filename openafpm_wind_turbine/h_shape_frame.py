@@ -7,10 +7,10 @@ from FreeCAD import Placement, Rotation, Vector
 from .common import enforce_recompute_last_spreadsheet, find_object_by_label
 from .channel_section import make_channel_section
 
-__all__ = ['assemble_t_shape_frame', 'calculate_t_channel_section_height']
+__all__ = ['assemble_h_shape_frame', 'calculate_h_channel_section_height']
 
 
-def assemble_t_shape_frame(document, frame_path, metal_length_l, channel_section_height):
+def assemble_h_shape_frame(document, frame_path, metal_length_l, channel_section_height):
     make_channel_section(document,
                          frame_path,
                          metal_length_l,
@@ -23,12 +23,12 @@ def _merge_piece(document, path, label):
     enforce_recompute_last_spreadsheet(document)
 
 
-def calculate_t_channel_section_height(rotor_radius,
+def calculate_h_channel_section_height(rotor_radius,
                                        coil_leg_width,
-                                       metal_thickness_l,
-                                       yaw_pipe_radius,
-                                       offset):
+                                       metal_length_l):
     resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
-    i = -0.0056 * rotor_radius ** 2 + 2.14 * rotor_radius - 171
-    distance_x = offset - (i + metal_thickness_l + yaw_pipe_radius)
-    return resine_stator_outer_radius - 25 + distance_x
+    delta = 100 - 8 * (25 - resine_stator_outer_radius *
+                       resine_stator_outer_radius)
+    alpha = (10 + delta ** 0.5) / 4
+    depth_piece_g = 2 * alpha + 40
+    return depth_piece_g - 2 * metal_length_l

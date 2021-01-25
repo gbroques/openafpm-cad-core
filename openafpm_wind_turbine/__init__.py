@@ -5,15 +5,18 @@ import Draft
 import FreeCAD as App
 import importWebGL
 import Part
-from FreeCAD import Placement, Vector, Rotation
+from FreeCAD import Placement, Rotation, Vector
 
 from .alternator import make_alternator
+from .common import make_compound
+from .frame import make_frame
+from .h_shape_frame import (assemble_h_shape_frame,
+                            calculate_h_channel_section_height)
 from .hub import make_hub
 from .hub_threads import make_hub_threads
 from .master_of_puppets import create_master_of_puppets
-from .common import make_compound
-from .frame import make_frame
-from .t_shape_frame import assemble_t_shape_frame
+from .t_shape_frame import (assemble_t_shape_frame,
+                            calculate_t_channel_section_height)
 
 # T Shape
 # =======
@@ -117,7 +120,8 @@ def main():
         furling_tool_parameters)
     master_of_puppets_doc.recompute()
 
-    wind_turbine = create_wind_turbine(magn_afpm_parameters, user_parameters)
+    wind_turbine = create_wind_turbine(
+        magn_afpm_parameters, user_parameters, furling_tool_parameters)
     wind_turbine.render()
 
 
@@ -125,6 +129,7 @@ class WindTurbine(ABC):
     def __init__(self,
                  magn_afpm_parameters,
                  user_parameters,
+                 furling_tool_parameters,
                  base_dir,
                  has_separate_master_files,
                  distance_between_stator_and_rotor,
@@ -134,6 +139,7 @@ class WindTurbine(ABC):
                  assemble_frame):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.user_parameters = user_parameters
+        self.furling_tool_parameters = furling_tool_parameters
         self.has_separate_master_files = has_separate_master_files
         self.distance_between_stator_and_rotor = distance_between_stator_and_rotor
         self.flange_bottom_pad_length = flange_bottom_pad_length
@@ -183,7 +189,8 @@ class WindTurbine(ABC):
             self.has_separate_master_files,
             self.doc,
             self.assemble_frame,
-            self.user_parameters['MetalLengthL'])
+            self.user_parameters['MetalLengthL'],
+            self.calculate_channel_section_height())
         self.doc.recompute()
         # objects = [
         #     alternator,
@@ -203,6 +210,11 @@ class WindTurbine(ABC):
         raise NotImplementedError(
             'Sub class must implement calculate_hub_z_offset.')
 
+    @abstractmethod
+    def calculate_channel_section_height(self):
+        raise NotImplementedError(
+            'Sub class must implement calculate_channel_section_height.')
+
 
 def _open_master(base_path):
     App.openDocument(os.path.join(
@@ -210,9 +222,10 @@ def _open_master(base_path):
 
 
 class TShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
+                         furling_tool_parameters,
                          base_dir='t_shape',
                          has_separate_master_files=True,
                          distance_between_stator_and_rotor=30,
@@ -230,18 +243,28 @@ class TShapeWindTurbine(WindTurbine):
             self.distance_between_stator_and_rotor
         )
 
+    def calculate_channel_section_height(self):
+        return calculate_t_channel_section_height(
+            self.magn_afpm_parameters['RotorDiskRadius'],
+            self.magn_afpm_parameters['CoilLegWidth'],
+            self.user_parameters['MetalThicknessL'],
+            self.user_parameters['YawPipeRadius'],
+            self.furling_tool_parameters['Offset']
+        )
+
 
 class HShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
+                         furling_tool_parameters,
                          base_dir='h_shape',
                          has_separate_master_files=True,
                          distance_between_stator_and_rotor=36,
                          flange_bottom_pad_length=15,
                          flange_top_pad_length=30,
                          number_of_hub_holes=5,
-                         assemble_frame=assemble_t_shape_frame)
+                         assemble_frame=assemble_h_shape_frame)
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
@@ -252,11 +275,19 @@ class HShapeWindTurbine(WindTurbine):
             self.distance_between_stator_and_rotor
         )
 
+    def calculate_channel_section_height(self):
+        return calculate_h_channel_section_height(
+            self.magn_afpm_parameters['RotorDiskRadius'],
+            self.magn_afpm_parameters['CoilLegWidth'],
+            self.user_parameters['MetalLengthL'],
+        )
+
 
 class StarShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
+                         furling_tool_parameters,
                          base_dir='star_shape',
                          has_separate_master_files=False,
                          distance_between_stator_and_rotor=45,
@@ -273,15 +304,25 @@ class StarShapeWindTurbine(WindTurbine):
             self.distance_between_stator_and_rotor
         )
 
+    def calculate_channel_section_height(self):
+        return calculate_h_channel_section_height(
+            self.magn_afpm_parameters['RotorDiskRadius'],
+            self.magn_afpm_parameters['CoilLegWidth'],
+            self.user_parameters['MetalLengthL'],
+        )
 
-def create_wind_turbine(magn_afpm_parameters, user_parameters):
+
+def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_tool_parameters):
     rotor_radius = magn_afpm_parameters['RotorDiskRadius']
     if 0 <= rotor_radius < 187.5:
-        return TShapeWindTurbine(magn_afpm_parameters, user_parameters)
+        return TShapeWindTurbine(
+            magn_afpm_parameters, user_parameters, furling_tool_parameters)
     elif 187.5 <= rotor_radius <= 275:
-        return HShapeWindTurbine(magn_afpm_parameters, user_parameters)
+        return HShapeWindTurbine(
+            magn_afpm_parameters, user_parameters, furling_tool_parameters)
     else:
-        return StarShapeWindTurbine(magn_afpm_parameters, user_parameters)
+        return StarShapeWindTurbine(
+            magn_afpm_parameters, user_parameters, furling_tool_parameters)
 
 
 def calculate_hub_z_offset(coil_inner_width1,
