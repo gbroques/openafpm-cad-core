@@ -15,21 +15,23 @@ from .h_shape_frame import (assemble_h_shape_frame,
 from .hub import make_hub
 from .hub_threads import make_hub_threads
 from .master_of_puppets import create_master_of_puppets
+from .star_shape_frame import (assemble_star_shape_frame,
+                               calculate_star_channel_section_height)
 from .t_shape_frame import (assemble_t_shape_frame,
                             calculate_t_channel_section_height)
 
 # T Shape
 # =======
-rotor_radius = 130
-rotor_inner_circle = 32.5
-hub_holes_placement = 50
-magnet_length = 46
-hub_holes = 6
-holes = 6
-hub_rod_length = 330
-metal_length_l = 50
-metal_thickness_l = 6
-yaw_pipe_radius = 30.15
+# rotor_radius = 130
+# rotor_inner_circle = 32.5
+# hub_holes_placement = 50
+# magnet_length = 46
+# hub_holes = 6
+# holes = 6
+# hub_rod_length = 330
+# metal_length_l = 50
+# metal_thickness_l = 6
+# yaw_pipe_radius = 30.15
 
 # H Shape
 # =======
@@ -46,16 +48,16 @@ yaw_pipe_radius = 30.15
 
 # Star Shape
 # ==========
-# rotor_radius = 349
-# rotor_inner_circle = 81.5
-# hub_holes_placement = 102.5
-# magnet_length = 58
-# hub_holes = 8
-# holes = 7
-# hub_rod_length = 270
-# metal_length_l = 65
-# metal_thickness_l = 8
-# yaw_pipe_radius = 57.15
+rotor_radius = 349
+rotor_inner_circle = 81.5
+hub_holes_placement = 102.5
+magnet_length = 58
+hub_holes = 8
+holes = 7
+hub_rod_length = 270
+metal_length_l = 65
+metal_thickness_l = 8
+yaw_pipe_radius = 57.15
 
 """
 T Shape Frame
@@ -294,7 +296,7 @@ class StarShapeWindTurbine(WindTurbine):
                          flange_bottom_pad_length=45,
                          flange_top_pad_length=40,
                          number_of_hub_holes=6,
-                         assemble_frame=assemble_t_shape_frame)
+                         assemble_frame=assemble_star_shape_frame)
 
     def calculate_hub_z_offset(self):
         stator_thickness = self.magn_afpm_parameters['CoilInnerWidth1']
@@ -305,7 +307,7 @@ class StarShapeWindTurbine(WindTurbine):
         )
 
     def calculate_channel_section_height(self):
-        return calculate_h_channel_section_height(
+        return calculate_star_channel_section_height(
             self.magn_afpm_parameters['RotorDiskRadius'],
             self.magn_afpm_parameters['CoilLegWidth'],
             self.user_parameters['MetalLengthL'],
