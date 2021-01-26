@@ -5,7 +5,7 @@ import FreeCAD as App
 from FreeCAD import Placement, Rotation, Vector
 
 from .common import enforce_recompute_last_spreadsheet, find_object_by_label
-from .channel_section import make_channel_section
+from .channel_section import make_channel_section, make_end_bracket
 
 __all__ = ['assemble_t_shape_frame', 'calculate_t_channel_section_height']
 
@@ -15,6 +15,7 @@ def assemble_t_shape_frame(document, frame_path, metal_length_l, channel_section
                          frame_path,
                          metal_length_l,
                          channel_section_height)
+    make_end_bracket(document, frame_path, channel_section_height)
 
 
 def _merge_piece(document, path, label):

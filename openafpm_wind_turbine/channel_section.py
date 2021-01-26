@@ -30,6 +30,20 @@ def make_channel_section(document, frame_path, metal_length_l, channel_section_h
     ])
 
 
+def make_end_bracket(document, frame_path, channel_section_height):
+    end_bracket_label = 'EndBracket'
+    _merge_piece(document, frame_path, end_bracket_label)
+    end_bracket = find_object_by_label(
+        document,
+        end_bracket_label)
+    document.recompute()
+    App.setActiveDocument(document.Name)
+    placement = Placement(end_bracket.Placement)
+    placement.move(Vector(0, 0, channel_section_height))
+    end_bracket.Placement = placement
+    return end_bracket
+
+
 def _merge_piece(document, path, label):
     document.mergeProject(
         os.path.join(path, label + '.FCStd'))
