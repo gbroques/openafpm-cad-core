@@ -16,6 +16,8 @@ def assemble_t_shape_frame(document, frame_path, metal_length_l, channel_section
                          metal_length_l,
                          channel_section_height)
     make_end_bracket(document, frame_path, channel_section_height)
+    tail_hinge_end_bracket_label = 'TailHingeEndBracket'
+    _merge_piece(document, frame_path, tail_hinge_end_bracket_label)
 
 
 def _merge_piece(document, path, label):

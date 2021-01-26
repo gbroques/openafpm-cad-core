@@ -32,6 +32,7 @@ hub_rod_length = 330
 metal_length_l = 50
 metal_thickness_l = 6
 yaw_pipe_radius = 30.15
+offset = 125
 
 # H Shape
 # =======
@@ -45,6 +46,7 @@ yaw_pipe_radius = 30.15
 # metal_length_l = 50
 # metal_thickness_l = 6
 # yaw_pipe_radius = 44.5
+# offset = 125
 
 # Star Shape
 # ==========
@@ -58,6 +60,7 @@ yaw_pipe_radius = 30.15
 # metal_length_l = 65
 # metal_thickness_l = 8
 # yaw_pipe_radius = 57.15
+# offset = 125
 
 """
 T Shape Frame
@@ -105,7 +108,7 @@ furling_tool_parameters = {
     'VaneThickness': 6,
     'VaneLength': 1200,
     'VaneWidth': 500,
-    'Offset': 400,
+    'Offset': offset
 }
 
 
