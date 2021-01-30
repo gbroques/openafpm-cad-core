@@ -5,6 +5,7 @@ import Draft
 import FreeCAD as App
 from FreeCAD import Placement, Rotation, Vector
 
+from .build_h_shape_frame import buid_h_shape_frame
 from .channel_section import make_channel_section
 from .common import enforce_recompute_last_spreadsheet, find_object_by_label
 
@@ -13,10 +14,10 @@ __all__ = ['assemble_star_shape_frame',
 
 
 def assemble_star_shape_frame(document, frame_path, metal_length_l, channel_section_height):
-    make_channel_section(document,
-                         frame_path,
-                         metal_length_l,
-                         channel_section_height)
+    buid_h_shape_frame(document,
+                       frame_path,
+                       metal_length_l,
+                       channel_section_height)
 
 
 def _merge_piece(document, path, label):

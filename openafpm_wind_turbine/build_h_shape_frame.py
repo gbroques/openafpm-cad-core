@@ -28,9 +28,9 @@ def buid_h_shape_frame(document, frame_path, metal_length_l, channel_section_hei
     expression_tuple = find_expression(
         tail_hinge_end_bracket.ExpressionEngine, 'Placement.Base.x')
     if expression_tuple is None:
-        FreeCAD.Console.PrintError(
+        App.Console.PrintError(
             'No expression with key "Placement.Base.x" found for EndBracket.')
-        exit(1)
+        return None
     key, expression = expression_tuple
     positive_expression = expression.replace('-', '')
     base = tail_hinge_end_bracket.Placement.Base
