@@ -22,17 +22,17 @@ from .t_shape_frame import (assemble_t_shape_frame,
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 32.5
-# hub_holes_placement = 50
-# magnet_length = 46
-# hub_holes = 6
-# holes = 6
-# hub_rod_length = 330
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 30.15
-# offset = 125
+rotor_radius = 130
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
+magnet_length = 46
+hub_holes = 6
+holes = 6
+hub_rod_length = 330
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 30.15
+offset = 125
 
 # H Shape
 # =======
@@ -50,25 +50,17 @@ from .t_shape_frame import (assemble_t_shape_frame,
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
-hub_holes = 8
-holes = 7
-hub_rod_length = 270
-metal_length_l = 65
-metal_thickness_l = 8
-yaw_pipe_radius = 57.15
-offset = 125
-
-"""
-T Shape Frame
-
-  A
-BC BC
-  D
-"""
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
+# hub_holes = 8
+# holes = 7
+# hub_rod_length = 270
+# metal_length_l = 65
+# metal_thickness_l = 8
+# yaw_pipe_radius = 57.15
+# offset = 125
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,

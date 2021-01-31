@@ -1,23 +1,28 @@
 import os
 
-import Draft
-import FreeCAD as App
-from FreeCAD import Placement, Rotation, Vector
-
-from .common import enforce_recompute_last_spreadsheet, find_object_by_label
 from .channel_section import make_channel_section, make_end_bracket
+from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
+                     make_compound)
 
 __all__ = ['assemble_t_shape_frame', 'calculate_t_channel_section_height']
 
 
 def assemble_t_shape_frame(document, frame_path, metal_length_l, channel_section_height):
-    make_channel_section(document,
-                         frame_path,
-                         metal_length_l,
-                         channel_section_height)
-    make_end_bracket(document, frame_path, channel_section_height)
+    channel_section = make_channel_section(document,
+                                           frame_path,
+                                           metal_length_l,
+                                           channel_section_height)
+    end_bracket = make_end_bracket(
+        document, frame_path, channel_section_height)
     tail_hinge_end_bracket_label = 'TailHingeEndBracket'
     _merge_piece(document, frame_path, tail_hinge_end_bracket_label)
+    tail_hinge_end_bracket = find_object_by_label(
+        document, tail_hinge_end_bracket_label)
+    return make_compound(document, 'Frame', [
+        channel_section,
+        end_bracket,
+        tail_hinge_end_bracket
+    ])
 
 
 def _merge_piece(document, path, label):
