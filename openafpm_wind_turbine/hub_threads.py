@@ -29,11 +29,10 @@ def _create_polar_array(part, n, y_offset):
     exterior_angle = _calculate_exterior_angle(n)
     previous = part
     for i in range(n - 1):
-        clone = Draft.clone(previous)
-        Draft.rotate(clone, exterior_angle, Vector(
-            0, 0, 0), axis=Vector(0, 0, 1), copy=False)
-        array.append(clone)
-        previous = clone
+        copy = Draft.rotate(previous, exterior_angle, Vector(
+            0, 0, 0), axis=Vector(0, 0, 1), copy=True)
+        array.append(copy)
+        previous = copy
     return array
 
 

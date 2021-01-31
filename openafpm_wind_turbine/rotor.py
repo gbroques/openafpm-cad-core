@@ -3,6 +3,7 @@ import os
 import Draft
 import FreeCAD as App
 import FreeCADGui as Gui
+from FreeCAD import Vector
 
 from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
                      make_compound)
@@ -27,13 +28,11 @@ def make_rotors(base_path,
         document, rotor_path)
     document.recompute()
     App.setActiveDocument(document.Name)
-    top_rotor = Draft.clone(bottom_rotor)
-    top_rotor.Label = 'TopRotor'
-    _position_top_rotor(top_rotor,
-                        coil_inner_width_1,
-                        disk_thickness,
-                        magnet_thickness,
-                        distance_between_stator_and_rotor)
+    top_rotor = _make_top_rotor(bottom_rotor,
+                                coil_inner_width_1,
+                                disk_thickness,
+                                magnet_thickness,
+                                distance_between_stator_and_rotor)
     _move_bottom_rotor(bottom_rotor,
                        coil_inner_width_1,
                        disk_thickness,
@@ -73,21 +72,23 @@ def _move_bottom_rotor(rotor,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
-    Draft.move(rotor, App.Vector(0, 0, -z))
+    Draft.move(rotor, Vector(0, 0, -z))
 
 
-def _position_top_rotor(top_rotor,
-                        coil_inner_width_1,
-                        disk_thickness,
-                        magnet_thickness,
-                        distance_between_stator_and_rotor):
-    Draft.rotate(top_rotor, 180.0, App.Vector(0.0, 0.0, 0.0),
-                 axis=App.Vector(0.0, 1.0, 0.0), copy=False)
+def _make_top_rotor(bottom_rotor,
+                    coil_inner_width_1,
+                    disk_thickness,
+                    magnet_thickness,
+                    distance_between_stator_and_rotor):
+    top_rotor = Draft.rotate(bottom_rotor, 180, Vector(0, 0, 0),
+                             axis=Vector(0, 1, 0), copy=True)
+    top_rotor.Label = 'TopRotor'
     z = _calculate_rotor_z_offset(coil_inner_width_1,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
-    Draft.move(top_rotor, App.Vector(0, 0, z))
+    Draft.move(top_rotor, Vector(0, 0, z))
+    return top_rotor
 
 
 def _calculate_rotor_z_offset(coil_inner_width_1,
