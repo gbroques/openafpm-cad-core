@@ -18,7 +18,24 @@ def assemble_star_shape_frame(document, frame_path, metal_length_l, channel_sect
                        frame_path,
                        metal_length_l,
                        channel_section_height)
-
+    left_middle_bracket_label = 'LeftMiddleBracket'
+    _merge_piece(document, frame_path, left_middle_bracket_label)
+    left_middle_bracket = find_object_by_label(document, left_middle_bracket_label)
+    placement = Placement(left_middle_bracket.Placement)
+    placement.move(Vector(
+        -metal_length_l,
+        metal_length_l,
+        (channel_section_height + metal_length_l) / 2))
+    left_middle_bracket.Placement = placement
+    right_middle_bracket_label = 'RightMiddleBracket'
+    _merge_piece(document, frame_path, right_middle_bracket_label)
+    right_middle_bracket = find_object_by_label(document, right_middle_bracket_label)
+    placement = Placement(right_middle_bracket.Placement)
+    placement.move(Vector(
+        0,
+        metal_length_l,
+        (channel_section_height + metal_length_l) / 2))
+    right_middle_bracket.Placement = placement
 
 def _merge_piece(document, path, label):
     document.mergeProject(

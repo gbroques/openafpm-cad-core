@@ -32,3 +32,11 @@ def find_object_by_label(document, label):
     if len(objects) == 0:
         return None
     return objects[0]
+
+
+def find_expression(expression_engine_tuples, key):
+    matches = list(
+        filter(lambda pair: pair[0] == key, expression_engine_tuples))
+    if len(matches) == 0:
+        return None
+    return matches[0]

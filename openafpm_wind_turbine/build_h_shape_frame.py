@@ -10,7 +10,8 @@ import FreeCAD as App
 from FreeCAD import Placement, Rotation, Vector
 
 from .channel_section import make_channel_section, make_end_bracket
-from .common import enforce_recompute_last_spreadsheet, find_object_by_label
+from .common import (enforce_recompute_last_spreadsheet, find_expression,
+                     find_object_by_label)
 
 __all__ = ['build_h_shape_frame']
 
@@ -37,14 +38,6 @@ def buid_h_shape_frame(document, frame_path, metal_length_l, channel_section_hei
     placement = Placement(base, Rotation(0, 90, 180))
     tail_hinge_end_bracket.Placement = placement
     tail_hinge_end_bracket.setExpression(key, positive_expression)
-
-
-def find_expression(expression_engine_tuples, key):
-    matches = list(
-        filter(lambda pair: pair[0] == key, expression_engine_tuples))
-    if len(matches) == 0:
-        return None
-    return matches[0]
 
 
 def _merge_piece(document, path, label):
