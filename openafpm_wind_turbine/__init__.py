@@ -22,17 +22,17 @@ from .t_shape_frame import (assemble_t_shape_frame,
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 32.5
-# hub_holes_placement = 50
-# magnet_length = 46
-# hub_holes = 6
-# holes = 6
-# hub_rod_length = 330
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 30.15
-# offset = 125
+rotor_radius = 130
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
+magnet_length = 46
+hub_holes = 6
+holes = 6
+hub_rod_length = 330
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 30.15
+offset = 125
 
 # H Shape
 # =======
@@ -50,17 +50,17 @@ from .t_shape_frame import (assemble_t_shape_frame,
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
-hub_holes = 8
-holes = 7
-hub_rod_length = 270
-metal_length_l = 65
-metal_thickness_l = 8
-yaw_pipe_radius = 57.15
-offset = 125
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
+# hub_holes = 8
+# holes = 7
+# hub_rod_length = 270
+# metal_length_l = 65
+# metal_thickness_l = 8
+# yaw_pipe_radius = 57.15
+# offset = 125
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -152,49 +152,49 @@ class WindTurbine(ABC):
         if not self.has_separate_master_files:
             _open_master(self.base_path)
 
-        # alternator_name = 'Alternator'
-        # alternator = make_alternator(
-        #     self.base_path,
-        #     self.has_separate_master_files,
-        #     self.doc,
-        #     alternator_name,
-        #     self.magn_afpm_parameters['CoilInnerWidth1'],
-        #     self.magn_afpm_parameters['DiskThickness'],
-        #     self.magn_afpm_parameters['MagnetThickness'],
-        #     self.distance_between_stator_and_rotor)
-
-        # hub_name = 'Hub'
-        # hub = make_hub(
-        #     self.base_path,
-        #     self.doc,
-        #     hub_name,
-        #     self.flange_top_pad_length)
-        # self._move_hub(hub)
-        # hub_z_offset = self.calculate_hub_z_offset()
-        # middle_flange_pad_thickness = 15
-        # thread_z_offset = hub_z_offset + middle_flange_pad_thickness
-        # threads_name = 'Threads'
-        # threads = make_hub_threads(self.doc,
-        #                            threads_name,
-        #                            self.user_parameters['HubHoles'],
-        #                            hub_rod_length,
-        #                            self.number_of_hub_holes,
-        #                            self.user_parameters['HubHolesPlacement'],
-        #                            thread_z_offset)
-        frame = make_frame(
+        alternator_name = 'Alternator'
+        alternator = make_alternator(
             self.base_path,
             self.has_separate_master_files,
             self.doc,
-            self.assemble_frame,
-            self.user_parameters['MetalLengthL'],
-            self.calculate_channel_section_height())
+            alternator_name,
+            self.magn_afpm_parameters['CoilInnerWidth1'],
+            self.magn_afpm_parameters['DiskThickness'],
+            self.magn_afpm_parameters['MagnetThickness'],
+            self.distance_between_stator_and_rotor)
+
+        hub_name = 'Hub'
+        hub = make_hub(
+            self.base_path,
+            self.doc,
+            hub_name,
+            self.flange_top_pad_length)
+        self._move_hub(hub)
+        hub_z_offset = self.calculate_hub_z_offset()
+        middle_flange_pad_thickness = 15
+        thread_z_offset = hub_z_offset + middle_flange_pad_thickness
+        threads_name = 'Threads'
+        threads = make_hub_threads(self.doc,
+                                   threads_name,
+                                   self.user_parameters['HubHoles'],
+                                   hub_rod_length,
+                                   self.number_of_hub_holes,
+                                   self.user_parameters['HubHolesPlacement'],
+                                   thread_z_offset)
+        # frame = make_frame(
+        #     self.base_path,
+        #     self.has_separate_master_files,
+        #     self.doc,
+        #     self.assemble_frame,
+        #     self.user_parameters['MetalLengthL'],
+        #     self.calculate_channel_section_height())
         self.doc.recompute()
-        # objects = [
-        #     alternator,
-        #     hub,
-        #     threads
-        # ]
-        # importWebGL.export(objects, 'wind-turbine-webgl.html')
+        objects = [
+            alternator,
+            hub,
+            threads
+        ]
+        importWebGL.export(objects, 'wind-turbine-webgl.html')
 
     def _move_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
