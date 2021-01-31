@@ -22,31 +22,31 @@ from .t_shape_frame import (assemble_t_shape_frame,
 
 # T Shape
 # =======
-rotor_radius = 130
-rotor_inner_circle = 32.5
-hub_holes_placement = 50
-magnet_length = 46
-hub_holes = 6
-holes = 6
-hub_rod_length = 330
-metal_length_l = 50
-metal_thickness_l = 6
-yaw_pipe_radius = 30.15
-offset = 125
+# rotor_radius = 130
+# rotor_inner_circle = 32.5
+# hub_holes_placement = 50
+# magnet_length = 46
+# hub_holes = 6
+# holes = 6
+# hub_rod_length = 330
+# metal_length_l = 50
+# metal_thickness_l = 6
+# yaw_pipe_radius = 30.15
+# offset = 125
 
 # H Shape
 # =======
-# rotor_radius = 230
-# rotor_inner_circle = 47.5
-# hub_holes_placement = 65
-# magnet_length = 46
-# hub_holes = 7
-# holes = 6
-# hub_rod_length = 250
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 44.5
-# offset = 125
+rotor_radius = 230
+rotor_inner_circle = 47.5
+hub_holes_placement = 65
+magnet_length = 46
+hub_holes = 7
+holes = 6
+hub_rod_length = 250
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 44.5
+offset = 125
 
 # Star Shape
 # ==========
