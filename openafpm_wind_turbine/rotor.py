@@ -81,8 +81,6 @@ def _position_top_rotor(top_rotor,
                         disk_thickness,
                         magnet_thickness,
                         distance_between_stator_and_rotor):
-    App.DraftWorkingPlane.alignToPointAndAxis(
-        App.Vector(0, 0, 0), App.Vector(0, 1, 0), 0)
     Draft.rotate(top_rotor, 180.0, App.Vector(0.0, 0.0, 0.0),
                  axis=App.Vector(0.0, 1.0, 0.0), copy=False)
     z = _calculate_rotor_z_offset(coil_inner_width_1,

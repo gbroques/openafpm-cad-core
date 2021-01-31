@@ -1,5 +1,4 @@
 import Draft
-import FreeCAD as App
 from FreeCAD import Placement, Vector, Rotation
 
 from .common import make_compound
@@ -28,8 +27,6 @@ def _create_polar_array(part, n, y_offset):
     array = [part]
     Draft.move(part, Vector(0, y_offset, 0))
     exterior_angle = _calculate_exterior_angle(n)
-    App.DraftWorkingPlane.alignToPointAndAxis(
-        Vector(0, 0, 0), Vector(0, 0, 1), 0)
     previous = part
     for i in range(n - 1):
         clone = Draft.clone(previous)
