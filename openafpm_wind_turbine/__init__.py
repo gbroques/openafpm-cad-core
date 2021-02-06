@@ -26,6 +26,7 @@ rotor_radius = 130
 rotor_inner_circle = 32.5
 hub_holes_placement = 50
 magnet_length = 46
+stator_thickness = 13
 hub_holes = 6
 holes = 6
 hub_rod_length = 330
@@ -40,6 +41,7 @@ offset = 125
 # rotor_inner_circle = 47.5
 # hub_holes_placement = 65
 # magnet_length = 46
+# stator_thickness = 13
 # hub_holes = 7
 # holes = 6
 # hub_rod_length = 250
@@ -54,6 +56,7 @@ offset = 125
 # rotor_inner_circle = 81.5
 # hub_holes_placement = 102.5
 # magnet_length = 58
+# stator_thickness = 15
 # hub_holes = 8
 # holes = 7
 # hub_rod_length = 270
@@ -69,8 +72,8 @@ magn_afpm_parameters = {
     'MagnetWidth': 30,
     'MagnetThickness': 10,
     'NumberMagnet': 12,
-    'StatorThickness': 13,
-    'CoilLegWidth': 23.26,
+    'StatorThickness': stator_thickness,
+    'CoilLegWidth': 22.5,
     'CoilInnerWidth1': 30,
     'CoilInnerWidth2': 30
 }
@@ -181,13 +184,20 @@ class WindTurbine(ABC):
                                    self.number_of_hub_holes,
                                    self.user_parameters['HubHolesPlacement'],
                                    thread_z_offset)
-        # frame = make_frame(
-        #     self.base_path,
-        #     self.has_separate_master_files,
-        #     self.doc,
-        #     self.assemble_frame,
-        #     self.user_parameters['MetalLengthL'],
-        #     self.calculate_channel_section_height())
+        frame = make_frame(
+            self.base_path,
+            self.has_separate_master_files,
+            self.doc,
+            self.assemble_frame,
+            self.user_parameters['MetalLengthL'],
+            self.calculate_channel_section_height())
+        # yaw -60
+        # TODO: Distance between tail hinge end bracket holes and
+        #       stator t end holes are different... Why?
+        #       269.14 vs 288.10 respectively.
+        #       Margin between tail hinge end bracket holes 20 from
+        #       spreadsheet, but getting 14 from the model. Why?
+        frame.Placement = Placement(frame.Placement.Base, Rotation(0, 0, -90))
         self.doc.recompute()
         objects = [
             alternator,
