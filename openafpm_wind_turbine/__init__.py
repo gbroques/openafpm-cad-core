@@ -75,7 +75,8 @@ magn_afpm_parameters = {
     'StatorThickness': stator_thickness,
     'CoilLegWidth': 22.5,
     'CoilInnerWidth1': 30,
-    'CoilInnerWidth2': 30
+    'CoilInnerWidth2': 30,
+    'MechanicalClearance': 5 # Distance between rotor and stator
 }
 
 user_parameters = {
@@ -132,7 +133,6 @@ class WindTurbine(ABC):
                  furling_tool_parameters,
                  base_dir,
                  has_separate_master_files,
-                 distance_between_stator_and_rotor,
                  flange_bottom_pad_length,
                  flange_top_pad_length,
                  number_of_hub_holes,
@@ -141,7 +141,6 @@ class WindTurbine(ABC):
         self.user_parameters = user_parameters
         self.furling_tool_parameters = furling_tool_parameters
         self.has_separate_master_files = has_separate_master_files
-        self.distance_between_stator_and_rotor = distance_between_stator_and_rotor
         self.flange_bottom_pad_length = flange_bottom_pad_length
         self.flange_top_pad_length = flange_top_pad_length
         self.number_of_hub_holes = number_of_hub_holes
@@ -161,10 +160,10 @@ class WindTurbine(ABC):
             self.has_separate_master_files,
             self.doc,
             alternator_name,
-            self.magn_afpm_parameters['CoilInnerWidth1'],
+            self.magn_afpm_parameters['StatorThickness'],
             self.magn_afpm_parameters['DiskThickness'],
             self.magn_afpm_parameters['MagnetThickness'],
-            self.distance_between_stator_and_rotor)
+            self.magn_afpm_parameters['MechanicalClearance'])
 
         hub_name = 'Hub'
         hub = make_hub(
@@ -235,7 +234,6 @@ class TShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='t_shape',
                          has_separate_master_files=True,
-                         distance_between_stator_and_rotor=30,
                          flange_bottom_pad_length=30,
                          flange_top_pad_length=30,
                          number_of_hub_holes=4,
@@ -243,11 +241,11 @@ class TShapeWindTurbine(WindTurbine):
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
-            self.magn_afpm_parameters['CoilInnerWidth1'],
+            self.magn_afpm_parameters['StatorThickness'],
             self.magn_afpm_parameters['DiskThickness'],
             self.magn_afpm_parameters['MagnetThickness'],
             self.flange_bottom_pad_length,
-            self.distance_between_stator_and_rotor
+            self.magn_afpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
@@ -267,7 +265,6 @@ class HShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='h_shape',
                          has_separate_master_files=True,
-                         distance_between_stator_and_rotor=36,
                          flange_bottom_pad_length=15,
                          flange_top_pad_length=30,
                          number_of_hub_holes=5,
@@ -275,11 +272,11 @@ class HShapeWindTurbine(WindTurbine):
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
-            self.magn_afpm_parameters['CoilInnerWidth1'],
+            self.magn_afpm_parameters['StatorThickness'],
             self.magn_afpm_parameters['DiskThickness'],
             self.magn_afpm_parameters['MagnetThickness'],
             self.flange_bottom_pad_length,
-            self.distance_between_stator_and_rotor
+            self.magn_afpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
@@ -297,18 +294,17 @@ class StarShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='star_shape',
                          has_separate_master_files=False,
-                         distance_between_stator_and_rotor=45,
                          flange_bottom_pad_length=45,
                          flange_top_pad_length=40,
                          number_of_hub_holes=6,
                          assemble_frame=assemble_star_shape_frame)
 
     def calculate_hub_z_offset(self):
-        stator_thickness = self.magn_afpm_parameters['CoilInnerWidth1']
+        stator_thickness = self.magn_afpm_parameters['StatorThickness']
         return (
             (stator_thickness / 2) +
             self.flange_bottom_pad_length +
-            self.distance_between_stator_and_rotor
+            self.magn_afpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
@@ -332,12 +328,11 @@ def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_tool_para
             magn_afpm_parameters, user_parameters, furling_tool_parameters)
 
 
-def calculate_hub_z_offset(coil_inner_width1,
+def calculate_hub_z_offset(stator_thickness,
                            disk_thickness,
                            magnet_thickness,
                            flange_bottom_pad_length,
                            distance_between_stator_and_rotor):
-    stator_thickness = coil_inner_width1
     rotor_resin_cast_thickness = (
         disk_thickness +
         magnet_thickness

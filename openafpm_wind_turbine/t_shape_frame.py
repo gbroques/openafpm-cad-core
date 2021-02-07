@@ -41,7 +41,6 @@ def calculate_t_channel_section_height(rotor_radius,
                                        metal_thickness_l,
                                        yaw_pipe_radius,
                                        offset):
-            
     resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
     X = distance_between_stub_axle_shaft_and_tail_hinge_end_bracket(
         rotor_radius, metal_thickness_l, yaw_pipe_radius, offset)

@@ -14,7 +14,7 @@ __all__ = ['make_rotors']
 def make_rotors(base_path,
                 has_separate_master_files,
                 document,
-                coil_inner_width_1,
+                stator_thickness,
                 disk_thickness,
                 magnet_thickness,
                 distance_between_stator_and_rotor):
@@ -29,12 +29,12 @@ def make_rotors(base_path,
     document.recompute()
     App.setActiveDocument(document.Name)
     top_rotor = _make_top_rotor(bottom_rotor,
-                                coil_inner_width_1,
+                                stator_thickness,
                                 disk_thickness,
                                 magnet_thickness,
                                 distance_between_stator_and_rotor)
     _move_bottom_rotor(bottom_rotor,
-                       coil_inner_width_1,
+                       stator_thickness,
                        disk_thickness,
                        magnet_thickness,
                        distance_between_stator_and_rotor)
@@ -64,11 +64,11 @@ def _merge_document(document, rotor_path, name):
 
 
 def _move_bottom_rotor(rotor,
-                       coil_inner_width_1,
+                       stator_thickness,
                        disk_thickness,
                        magnet_thickness,
                        distance_between_stator_and_rotor):
-    z = _calculate_rotor_z_offset(coil_inner_width_1,
+    z = _calculate_rotor_z_offset(stator_thickness,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
@@ -76,14 +76,14 @@ def _move_bottom_rotor(rotor,
 
 
 def _make_top_rotor(bottom_rotor,
-                    coil_inner_width_1,
+                    stator_thickness,
                     disk_thickness,
                     magnet_thickness,
                     distance_between_stator_and_rotor):
     top_rotor = Draft.rotate(bottom_rotor, 180, Vector(0, 0, 0),
                              axis=Vector(0, 1, 0), copy=True)
     top_rotor.Label = 'TopRotor'
-    z = _calculate_rotor_z_offset(coil_inner_width_1,
+    z = _calculate_rotor_z_offset(stator_thickness,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
@@ -91,11 +91,10 @@ def _make_top_rotor(bottom_rotor,
     return top_rotor
 
 
-def _calculate_rotor_z_offset(coil_inner_width_1,
+def _calculate_rotor_z_offset(stator_thickness,
                               disk_thickness,
                               magnet_thickness,
                               distance_between_stator_and_rotor):
-    stator_thickness = coil_inner_width_1
     rotor_thickness = _calculate_rotor_thickness(
         disk_thickness, magnet_thickness)
     return (

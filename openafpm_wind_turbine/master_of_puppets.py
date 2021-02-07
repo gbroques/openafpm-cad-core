@@ -14,9 +14,12 @@ def create_master_of_puppets(document_name,
                              user_parameters,
                              furling_tool_parameters):
     document = App.newDocument(document_name)
+    # TODO: Get rid of MechanicalClearance pop hack.
+    magn_afpm_parameters_copy = magn_afpm_parameters.copy()
+    magn_afpm_parameters_copy.pop('MechanicalClearance')
     _create_imported_sheet(document,
                            imported_spreadsheet_name,
-                           magn_afpm_parameters,
+                           magn_afpm_parameters_copy,
                            user_parameters,
                            furling_tool_parameters)
     document.recompute()
