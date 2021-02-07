@@ -18,7 +18,7 @@ def make_channel_section(document, frame_path, metal_length_l, channel_section_h
         angled_channel_section_label)
     document.recompute()
     App.setActiveDocument(document.Name)
-    right_angled_channel_section = Draft.clone(left_angled_channel_section)
+    right_angled_channel_section = document.copyObject(left_angled_channel_section, True)
     right_angled_channel_section.Placement = Placement(
         Vector(metal_length_l, 0, 0), Rotation(Vector(0, 0, 1), 90))
     left_angled_channel_section.Placement = Placement(

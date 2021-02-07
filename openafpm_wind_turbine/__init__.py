@@ -195,7 +195,8 @@ class WindTurbine(ABC):
         objects = [
             alternator,
             hub,
-            threads
+            threads,
+            frame
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
