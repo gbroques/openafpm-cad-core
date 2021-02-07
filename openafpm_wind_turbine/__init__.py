@@ -23,18 +23,18 @@ from .t_shape_frame import (
 
 # T Shape
 # =======
-# rotor_radius = 130
-# rotor_inner_circle = 32.5
-# hub_holes_placement = 50
-# magnet_length = 46
-# stator_thickness = 13
-# hub_holes = 6
-# holes = 6
-# hub_rod_length = 330
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 30.15
-# offset = 125
+rotor_radius = 130
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
+magnet_length = 46
+stator_thickness = 13
+hub_holes = 6
+holes = 6
+hub_rod_length = 330
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 30.15
+offset = 125
 
 # H Shape
 # =======
@@ -53,18 +53,18 @@ from .t_shape_frame import (
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
-stator_thickness = 15
-hub_holes = 8
-holes = 7
-hub_rod_length = 270
-metal_length_l = 65
-metal_thickness_l = 8
-yaw_pipe_radius = 57.15
-offset = 125
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
+# stator_thickness = 15
+# hub_holes = 8
+# holes = 7
+# hub_rod_length = 270
+# metal_length_l = 65
+# metal_thickness_l = 8
+# yaw_pipe_radius = 57.15
+# offset = 125
 
 magn_afpm_parameters = {
     'RotorDiskRadius': rotor_radius,
@@ -170,7 +170,7 @@ class WindTurbine(ABC):
             self.doc,
             hub_name,
             self.flange_top_pad_length)
-        self._move_hub(hub)
+        self._place_hub(hub)
         hub_z_offset = self.calculate_hub_z_offset()
         middle_flange_pad_thickness = 15
         thread_z_offset = hub_z_offset + middle_flange_pad_thickness
@@ -189,36 +189,7 @@ class WindTurbine(ABC):
             self.assemble_frame,
             self.user_parameters['MetalLengthL'],
             self.calculate_channel_section_height())
-        # y = Y(
-        #     self.magn_afpm_parameters['RotorDiskRadius'],
-        #     self.magn_afpm_parameters['CoilLegWidth'],
-        #     self.furling_tool_parameters['Offset'],
-        #     self.user_parameters['MetalLengthL'],
-        #     self.user_parameters['MetalThicknessL'],
-        #     self.user_parameters['YawPipeRadius'],
-        # )
-        # print('Y = ' + str(y))
-        # yaw -60
-        # TODO: Distance between tail hinge end bracket holes and
-        #       stator t end holes are different... Why?
-        #       269.14 vs 288.10 respectively.
-        #       Margin between tail hinge end bracket holes 20 from
-        #       spreadsheet, but getting 14 from the model. Why?
-        #
-        #       FORMULAS
-        #       --------
-        #       resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
-        #       I = -0.0056 * rotor_radius^2 + 2.14 * rotor_radius - 171
-        #       X = offset - (I + metal_thickness_l + yaw_pipe_radius)
-        #       BC = resine_stator_outer_radius + X - 0.5 * metal_length_l
-        #
-        #       Y = (metal_length_l * 0.5) + BC + (metal_length_l * 0.5)
-        vector = Vector(
-            frame.Placement.Base.x,
-            self.calculate_frame_y_offset(),
-            self.calculate_frame_z_offset())
-        frame.Placement = Placement(vector, Rotation(0, 0, -90))
-        self.adjust_positions_for_frame(alternator, hub, threads)
+        self.place_frame(frame)
 
         self.doc.recompute()
         objects = [
@@ -228,22 +199,11 @@ class WindTurbine(ABC):
         ]
         importWebGL.export(objects, 'wind-turbine-webgl.html')
 
-    def _move_hub(self, hub):
+    def _place_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
         placement = Placement()
         placement.move(Vector(0, 0, hub_z_offset))
         hub.Placement = placement
-
-    def calculate_frame_z_offset(self):
-        hub_z_offset = self.calculate_hub_z_offset()
-        # stub_axle_shaft_top defined in hub.py as well
-        stub_axle_shaft_top = 14
-        return (
-            hub_z_offset +
-            stub_axle_shaft_top +
-            self.user_parameters['MetalLengthL'] +
-            self.user_parameters['MetalThicknessL']
-        )
 
     @abstractmethod
     def calculate_hub_z_offset(self):
@@ -256,15 +216,9 @@ class WindTurbine(ABC):
             'Sub class must implement calculate_channel_section_height.')
 
     @abstractmethod
-    def calculate_frame_y_offset(self):
+    def place_frame(self, frame):
         raise NotImplementedError(
-            'Sub class must implement calculate_frame_y_offset.')
-
-    @abstractmethod
-    def adjust_positions_for_frame(self, alternator, hub, threads):
-        # TODO: This is a hack as H Shape does nothing in it's implementation.
-        raise NotImplementedError(
-            'Sub class must implement calculate_frame_y_offset.')
+            'Sub class must implement place_frame.')
 
 
 def _open_master(base_path):
@@ -308,12 +262,15 @@ class TShapeWindTurbine(WindTurbine):
             self.furling_tool_parameters['Offset']
         )
 
-    def adjust_positions_for_frame(self, alternator, hub, threads):
-        rotate_parts([
-            alternator,
-            hub,
-            threads
-        ], Rotation(-60, 0, 0))
+    def place_frame(self, frame):
+        x = frame.Placement.Base.x
+        y = self.calculate_frame_y_offset()
+        z = calculate_frame_z_offset(
+            self.calculate_hub_z_offset(),
+            self.user_parameters['MetalLengthL'],
+            self.user_parameters['MetalThicknessL'])
+        vector = Vector(x, -y, z)
+        frame.Placement = Placement(vector, Rotation(-180, 0, -90))
 
 
 class HShapeWindTurbine(WindTurbine):
@@ -342,11 +299,18 @@ class HShapeWindTurbine(WindTurbine):
             self.user_parameters['MetalLengthL'],
         )
 
+    def place_frame(self, frame):
+        x = frame.Placement.Base.x
+        y = self.calculate_frame_y_offset()
+        z = calculate_frame_z_offset(
+            self.calculate_hub_z_offset(),
+            self.user_parameters['MetalLengthL'],
+            self.user_parameters['MetalThicknessL'])
+        vector = Vector(x, y, z)
+        frame.Placement = Placement(vector, Rotation(0, 0, -90))
+
     def calculate_frame_y_offset(self):
         return -self.calculate_channel_section_height() / 2
-
-    def adjust_positions_for_frame(self, alternator, hub, threads):
-        pass
 
 
 class StarShapeWindTurbine(WindTurbine):
@@ -374,11 +338,18 @@ class StarShapeWindTurbine(WindTurbine):
             self.user_parameters['MetalLengthL'],
         )
 
+    def place_frame(self, frame):
+        x = frame.Placement.Base.x
+        y = self.calculate_frame_y_offset()
+        z = calculate_frame_z_offset(
+            self.calculate_hub_z_offset(),
+            self.user_parameters['MetalLengthL'],
+            self.user_parameters['MetalThicknessL'])
+        vector = Vector(x, y, z)
+        frame.Placement = Placement(vector, Rotation(0, 0, -90))
+
     def calculate_frame_y_offset(self):
         return -self.calculate_channel_section_height() / 2
-
-    def adjust_positions_for_frame(self, alternator, hub, threads):
-        pass
 
 
 def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_tool_parameters):
@@ -409,40 +380,14 @@ def calculate_hub_z_offset(stator_thickness,
     )
 
 
-# def Y(rotor_radius,
-#       coil_leg_width,
-#       offset,
-#       metal_length_l,
-#       metal_thickness_l,
-#       yaw_pipe_radius):
-#     resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
-#     I = -0.0056 * rotor_radius ** 2 + 2.14 * rotor_radius - 171
-#     X = offset - (I + metal_thickness_l + yaw_pipe_radius)
-#     BC = resine_stator_outer_radius + X - 0.5 * metal_length_l
-#     return (metal_length_l * 0.5) + BC + (metal_length_l * 0.5)
-
-
-# def A(rotor_radius,
-#       coil_leg_width,
-#       offset,
-#       metal_length_l,
-#       metal_thickness_l,
-#       yaw_pipe_radius):
-#     resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
-#     I = -0.0056 * rotor_radius ** 2 + 2.14 * rotor_radius - 171
-#     X = offset - (I + metal_thickness_l + yaw_pipe_radius)
-#     BC = resine_stator_outer_radius + X - 0.5 * metal_length_l
-#     return (metal_length_l * 0.5) + BC + (metal_length_l * 0.5)
-
-
-def rotate_parts(parts, rotation):
-    for part in parts:
-        rotate_part(part, rotation)
-
-
-def rotate_part(part, rotation):
-    y1, p1, r1 = part.Placement.Rotation.toEuler()
-    y2, p2, r2 = rotation.toEuler()
-    new_rotation = Rotation(y1 + y2, p1 + p2, r1 + r2)
-    placement = Placement(part.Placement.Base, new_rotation)
-    part.Placement = placement
+def calculate_frame_z_offset(hub_z_offset,
+                             metal_length_l,
+                             metal_thickness_l):
+    # stub_axle_shaft_top defined in hub.py as well
+    stub_axle_shaft_top = 14
+    return (
+        hub_z_offset +
+        stub_axle_shaft_top +
+        metal_length_l +
+        metal_thickness_l
+    )

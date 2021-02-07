@@ -44,14 +44,6 @@ def calculate_t_channel_section_height(rotor_radius,
     resine_stator_outer_radius = rotor_radius + coil_leg_width + 20
     X = distance_between_stub_axle_shaft_and_tail_hinge_end_bracket(
         rotor_radius, metal_thickness_l, yaw_pipe_radius, offset)
-    # print('X = ' + str(X))
-    # A = tail_hinge_end_bracket_length(rotor_radius,
-    #                                   coil_leg_width,
-    #                                   metal_thickness_l,
-    #                                   yaw_pipe_radius,
-    #                                   offset)
-    # print('A = ' + str(A))
-    # print('(A / 2) - 20 - 6 = ' + str((A / 2) - 20 - 6))
     return resine_stator_outer_radius - 25 + X
 
 
@@ -62,19 +54,3 @@ def distance_between_stub_axle_shaft_and_tail_hinge_end_bracket(rotor_radius,
     I = -0.0056 * rotor_radius ** 2 + 2.14 * rotor_radius - 171
     X = offset - (I + metal_thickness_l + yaw_pipe_radius)
     return X
-
-
-def tail_hinge_end_bracket_length(rotor_radius,
-                                  coil_leg_width,
-                                  metal_thickness_l,
-                                  yaw_pipe_radius,
-                                  offset):
-    ResineStatorOuterRadius = rotor_radius + coil_leg_width + 20
-    EX = distance_between_stub_axle_shaft_and_tail_hinge_end_bracket(
-        rotor_radius,
-        metal_thickness_l,
-        yaw_pipe_radius,
-        offset
-    )
-    Beta = math.sqrt(ResineStatorOuterRadius ** 2 - (25 + EX) ** 2)
-    return 2 * Beta + 2 * 20
