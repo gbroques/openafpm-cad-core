@@ -76,7 +76,7 @@ def _create_master_sheet(document, name, imported_spreadsheet_name):
         ['NumberMagnet', '=' + imported_spreadsheet_name + '.B8'],
         ['HubHolesPlacement', '=' + imported_spreadsheet_name + '.B26'],
         ['RotorInnerCircle', '=' + imported_spreadsheet_name + '.B27'],
-        ['StatorThickness', '=' + imported_spreadsheet_name + '.B11'],
+        ['StatorThickness', '=' + imported_spreadsheet_name + '.B9'],
         ['CoilLegWidth', '=' + imported_spreadsheet_name + '.B10'],
         ['CoilInnerWidth1', '=' + imported_spreadsheet_name + '.B11'],
         ['CoilInnerWidth2', '=' + imported_spreadsheet_name + '.B12'],
