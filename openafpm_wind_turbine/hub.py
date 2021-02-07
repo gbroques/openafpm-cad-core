@@ -41,6 +41,7 @@ def _merge_document(document, path, name):
 
 
 def move_stub_axle_shaft(stub_axle_shaft, flange_top_pad_length):
+    # stub_axle_shaft_top defined in __init__.py as well
     stub_axle_shaft_top = 14
     space_between_stub_axle_shaft_and_hub = 5
     z = (
