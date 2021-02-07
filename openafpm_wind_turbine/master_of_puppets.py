@@ -14,12 +14,9 @@ def create_master_of_puppets(document_name,
                              user_parameters,
                              furling_tool_parameters):
     document = App.newDocument(document_name)
-    # TODO: Get rid of MechanicalClearance pop hack.
-    magn_afpm_parameters_copy = magn_afpm_parameters.copy()
-    magn_afpm_parameters_copy.pop('MechanicalClearance')
     _create_imported_sheet(document,
                            imported_spreadsheet_name,
-                           magn_afpm_parameters_copy,
+                           magn_afpm_parameters,
                            user_parameters,
                            furling_tool_parameters)
     document.recompute()
@@ -68,49 +65,103 @@ def _create_master_sheet(document, name, imported_spreadsheet_name):
     sheet = document.addObject(
         'Spreadsheet::Sheet', name)
 
+    cell_alias_map = get_master_sheet_cell_alias_map()
+
+    def build_expression(field_name):
+        return '=' + imported_spreadsheet_name + '.' + field_name
+
     cells = [
         ['Inputs', ''],
-        ['Holes', '=' + imported_spreadsheet_name + '.B28'],
-        ['RotorRadius', '=' + imported_spreadsheet_name + '.B3'],
-        ['DiskThickness', '=' + imported_spreadsheet_name + '.B4'],
-        ['MagnetLength', '=' + imported_spreadsheet_name + '.B5'],
-        ['MagnetWidth', '=' + imported_spreadsheet_name + '.B6'],
-        ['MagnetThickness', '=' + imported_spreadsheet_name + '.B7'],
-        ['NumberMagnet', '=' + imported_spreadsheet_name + '.B8'],
-        ['HubHolesPlacement', '=' + imported_spreadsheet_name + '.B26'],
-        ['RotorInnerCircle', '=' + imported_spreadsheet_name + '.B27'],
-        ['StatorThickness', '=' + imported_spreadsheet_name + '.B9'],
-        ['CoilLegWidth', '=' + imported_spreadsheet_name + '.B10'],
-        ['CoilInnerWidth1', '=' + imported_spreadsheet_name + '.B11'],
-        ['CoilInnerWidth2', '=' + imported_spreadsheet_name + '.B12'],
-        ['Angle', '=' + imported_spreadsheet_name + '.B14'],
-        ['Offset', '=' + imported_spreadsheet_name + '.B24'],
-        ['ResineRotorMargin', '=' + imported_spreadsheet_name + '.B34'],
+        ['Holes', build_expression(cell_alias_map['Holes'])],
+        ['RotorRadius', build_expression(cell_alias_map['RotorRadius'])],
+        ['DiskThickness', build_expression(cell_alias_map['DiskThickness'])],
+        ['MagnetLength', build_expression(cell_alias_map['MagnetLength'])],
+        ['MagnetWidth', build_expression(cell_alias_map['MagnetWidth'])],
+        ['MagnetThickness', build_expression(
+            cell_alias_map['MagnetThickness'])],
+        ['NumberMagnet', build_expression(cell_alias_map['NumberMagnet'])],
+        ['HubHolesPlacement', build_expression(
+            cell_alias_map['HubHolesPlacement'])],
+        ['RotorInnerCircle', build_expression(
+            cell_alias_map['RotorInnerCircle'])],
+        ['StatorThickness', build_expression(
+            cell_alias_map['StatorThickness'])],
+        ['CoilLegWidth', build_expression(cell_alias_map['CoilLegWidth'])],
+        ['CoilInnerWidth1', build_expression(
+            cell_alias_map['CoilInnerWidth1'])],
+        ['CoilInnerWidth2', build_expression(
+            cell_alias_map['CoilInnerWidth2'])],
+        ['Angle', build_expression(cell_alias_map['Angle'])],
+        ['Offset', build_expression(cell_alias_map['Offset'])],
+        ['ResineRotorMargin', build_expression(
+            cell_alias_map['ResineRotorMargin'])],
         ['CharacteristicsOfMetalParts', ''],
-        ['MetalThicknessL', '=' + imported_spreadsheet_name + '.B30'],
-        ['MetalLengthL', '=' + imported_spreadsheet_name + '.B29'],
-        ['OuterRadiusYawPipe', '=' + imported_spreadsheet_name + '.B32'],
-        ['PipesThickness', '=' + imported_spreadsheet_name + '.B33'],
-        ['FlatMetalThickness', '=' + imported_spreadsheet_name + '.B31'],
+        ['MetalThicknessL', build_expression(
+            cell_alias_map['MetalThicknessL'])],
+        ['MetalLengthL', build_expression(cell_alias_map['MetalLengthL'])],
+        ['OuterRadiusYawPipe', build_expression(
+            cell_alias_map['OuterRadiusYawPipe'])],
+        ['PipesThickness', build_expression(cell_alias_map['PipesThickness'])],
+        ['FlatMetalThickness', build_expression(
+            cell_alias_map['FlatMetalThickness'])],
         ['HingeInnerBodyOuterRadius',
             '=RotorRadius < 187.5 ? 24.15 : RotorRadius < 275 ? 38 : 50.8'],
-        ['HubHoles', '=' + imported_spreadsheet_name + '.B35'],
+        ['HubHoles', build_expression(cell_alias_map['HubHoles'])],
         ['VariableInterParts', ''],
         ['ResineStatorOuterRadius', '=RotorRadius + CoilLegWidth + 20'],
         ['CharacteristicsOfFurling', ''],
-        ['BracketLength', '=' + imported_spreadsheet_name + '.B15'],
-        ['BracketWidth', '=' + imported_spreadsheet_name + '.B16'],
-        ['BracketThickness', '=' + imported_spreadsheet_name + '.B17'],
-        ['BoomLength', '=' + imported_spreadsheet_name + '.B18'],
-        ['VaneThickness', '=' + imported_spreadsheet_name + '.B21'],
-        ['VaneLength', '=' + imported_spreadsheet_name + '.B22'],
-        ['VaneWidth', '=' + imported_spreadsheet_name + '.B23'],
-        ['BoomPipeRadius', '=' + imported_spreadsheet_name + '.B19'],
-        ['BoomPipeThickness', '=' + imported_spreadsheet_name + '.B20']
+        ['BracketLength', build_expression(cell_alias_map['BracketLength'])],
+        ['BracketWidth', build_expression(cell_alias_map['BracketWidth'])],
+        ['BracketThickness', build_expression(
+            cell_alias_map['BracketThickness'])],
+        ['BoomLength', build_expression(cell_alias_map['BoomLength'])],
+        ['VaneThickness', build_expression(cell_alias_map['VaneThickness'])],
+        ['VaneLength', build_expression(cell_alias_map['VaneLength'])],
+        ['VaneWidth', build_expression(cell_alias_map['VaneWidth'])],
+        ['BoomPipeRadius', build_expression(cell_alias_map['BoomPipeRadius'])],
+        ['BoomPipeThickness', build_expression(
+            cell_alias_map['BoomPipeThickness'])]
     ]
 
     _populate_sheet(sheet, cells)
     return sheet
+
+
+def get_master_sheet_cell_alias_map():
+    # TODO: Get rid of this mapping by making all 'DIFFERENT!' fields the same.
+    return {
+        'Holes': 'Holes',
+        'RotorRadius': 'RotorDiskRadius',  # DIFFERENT!
+        'DiskThickness': 'DiskThickness',
+        'MagnetLength': 'MagnetLength',
+        'MagnetWidth': 'MagnetWidth',
+        'MagnetThickness': 'MagnetThickness',
+        'NumberMagnet': 'NumberMagnet',
+        'HubHolesPlacement': 'HubHolesPlacement',
+        'RotorInnerCircle': 'RotorInnerCircle',
+        'StatorThickness': 'StatorThickness',
+        'CoilLegWidth': 'CoilLegWidth',
+        'CoilInnerWidth1': 'CoilInnerWidth1',
+        'CoilInnerWidth2': 'CoilInnerWidth2',
+        'Angle': 'Angle',
+        'Offset': 'Offset',
+        'ResineRotorMargin': 'ResineRotorMargin',
+        'MetalThicknessL': 'MetalThicknessL',
+        'MetalLengthL': 'MetalLengthL',
+        'OuterRadiusYawPipe': 'YawPipeRadius',  # DIFFERENT!
+        'PipesThickness': 'PipeThickness',  # DIFFERENT!
+        'FlatMetalThickness': 'FlatMetalThickness',
+        'HubHoles': 'HubHoles',
+        'BracketLength': 'BracketLength',
+        'BracketWidth': 'BracketWidth',
+        'BracketThickness': 'BracketThickness',
+        'BoomLength': 'BoomLength',
+        'VaneThickness': 'VaneThickness',
+        'VaneLength': 'VaneLength',
+        'VaneWidth': 'VaneWidth',
+        'BoomPipeRadius': 'BoomPipeRadius',
+        'BoomPipeThickness': 'BoomPipeThickness'
+    }
 
 
 def _populate_sheet(sheet, cells):

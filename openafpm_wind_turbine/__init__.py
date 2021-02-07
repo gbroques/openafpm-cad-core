@@ -76,7 +76,7 @@ magn_afpm_parameters = {
     'CoilLegWidth': 22.5,
     'CoilInnerWidth1': 30,
     'CoilInnerWidth2': 30,
-    'MechanicalClearance': 5 # Distance between rotor and stator
+    'MechanicalClearance': 5 # Distance between rotor and stator (~ 1 - 6 mm)
 }
 
 user_parameters = {
