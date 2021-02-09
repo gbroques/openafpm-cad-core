@@ -65,7 +65,7 @@ def _create_master_sheet(document, name, imported_spreadsheet_name):
     sheet = document.addObject(
         'Spreadsheet::Sheet', name)
 
-    cell_alias_map = get_master_sheet_cell_alias_map()
+    cell_alias_map = _get_master_sheet_cell_alias_map()
 
     def build_expression(field_name):
         return '=' + imported_spreadsheet_name + '.' + field_name
@@ -127,7 +127,7 @@ def _create_master_sheet(document, name, imported_spreadsheet_name):
     return sheet
 
 
-def get_master_sheet_cell_alias_map():
+def _get_master_sheet_cell_alias_map():
     # TODO: Get rid of this mapping by making all 'DIFFERENT!' fields the same.
     return {
         'Holes': 'Holes',
