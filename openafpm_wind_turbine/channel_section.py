@@ -7,7 +7,8 @@ from FreeCAD import Placement, Rotation, Vector
 from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
                      make_compound)
 
-__all__ = ['make_channel_section']
+# TODO: Should this module be called "frame_common"?
+__all__ = ['make_channel_section', 'make_end_bracket']
 
 
 def make_channel_section(document, frame_path, metal_length_l, channel_section_height):
