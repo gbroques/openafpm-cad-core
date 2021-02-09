@@ -24,9 +24,3 @@ def make_frame(base_path,
 
 def _open_master(path):
     App.openDocument(os.path.join(path, 'MasterFrame.FCStd'))
-
-
-def _merge_stator_resin_cast(document, path, stator_resin_cast_label):
-    document.mergeProject(
-        os.path.join(path, stator_resin_cast_label + '.FCStd'))
-    enforce_recompute_last_spreadsheet(document)
