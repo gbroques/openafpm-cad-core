@@ -189,6 +189,7 @@ class WindTurbine(ABC):
             self.assemble_frame,
             self.user_parameters['MetalLengthL'],
             self.calculate_channel_section_height())
+        # TODO: Should "place_frame" be encapsulated by "make_frame"?
         self.place_frame(frame)
 
         self.doc.recompute()
