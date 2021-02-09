@@ -14,7 +14,6 @@ from .h_shape_frame import (assemble_h_shape_frame,
                             calculate_h_channel_section_height)
 from .hub import make_hub
 from .hub_threads import make_hub_threads
-from .master_of_puppets import create_master_of_puppets
 from .star_shape_frame import (assemble_star_shape_frame,
                                calculate_star_channel_section_height)
 from .t_shape_frame import (
