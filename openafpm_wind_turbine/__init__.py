@@ -3,7 +3,7 @@ from .wind_turbine import create_wind_turbine
 
 # T Shape
 # =======
-rotor_radius = 130
+rotor_radius = 150
 rotor_inner_circle = 32.5
 hub_holes_placement = 50
 magnet_length = 46
@@ -51,10 +51,11 @@ magn_afpm_parameters = {
     'MagnetThickness': 10,
     'NumberMagnet': 12,
     'StatorThickness': stator_thickness,
-    'CoilLegWidth': 22.5,
+    'CoilLegWidth': 22.5, # 22.5 reduced
     'CoilInnerWidth1': 30,
     'CoilInnerWidth2': 30,
-    'MechanicalClearance': 5  # Distance between rotor and stator (~ 1 - 6 mm)
+    # Airgap length
+    'MechanicalClearance': 3  # Distance between rotor and stator (~ 1 - 6 mm) 5 for others?
 }
 
 user_parameters = {
@@ -66,7 +67,7 @@ user_parameters = {
     'MetalThicknessL': metal_thickness_l,
     'FlatMetalThickness': 10,
     'YawPipeRadius': yaw_pipe_radius,
-    'PipeThickness': 6,
+    'PipeThickness': 5,
     'ResineRotorMargin': 5,
     'HubHoles': hub_holes  # Radius of hub holes
 }
