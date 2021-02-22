@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import Draft
 import FreeCAD as App
-import importWebGL
+import importOBJ
 import Part
 from FreeCAD import Placement, Rotation, Vector
 
@@ -110,7 +110,11 @@ class WindTurbine(ABC):
             threads,
             frame
         ]
-        importWebGL.export(objects, 'wind-turbine-webgl.html')
+        # Rotate model for Three.js
+        pl = Placement(Vector(), Rotation(-90, -180, -270))
+        for obj in objects:
+            obj.Placement = pl.multiply(obj.Placement)
+        importOBJ.export(objects, 'wind-turbine.obj')
 
     def _place_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
@@ -132,6 +136,7 @@ class WindTurbine(ABC):
     def place_frame(self, frame):
         raise NotImplementedError(
             'Sub class must implement place_frame.')
+
 
 class TShapeWindTurbine(WindTurbine):
     def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
