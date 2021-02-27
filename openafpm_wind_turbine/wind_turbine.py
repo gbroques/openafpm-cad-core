@@ -44,6 +44,7 @@ class WindTurbine(ABC):
                  base_dir,
                  has_separate_master_files,
                  flange_top_pad_length,
+                 flange_bottom_pad_length,
                  number_of_hub_holes,
                  assemble_frame,
                  hub_rod_length):
@@ -52,6 +53,7 @@ class WindTurbine(ABC):
         self.furling_tool_parameters = furling_tool_parameters
         self.has_separate_master_files = has_separate_master_files
         self.flange_top_pad_length = flange_top_pad_length
+        self.flange_bottom_pad_length = flange_bottom_pad_length
         self.number_of_hub_holes = number_of_hub_holes
         self.assemble_frame = assemble_frame
         self.hub_rod_length = hub_rod_length
@@ -75,15 +77,21 @@ class WindTurbine(ABC):
             self.magn_afpm_parameters['MagnetThickness'],
             self.magn_afpm_parameters['MechanicalClearance'])
 
+        middle_flange_pad_thickness = 16
+
         hub_name = 'Hub'
+        flange_length = (
+            self.flange_top_pad_length +
+            self.flange_bottom_pad_length +
+            middle_flange_pad_thickness
+        )
         hub = make_hub(
             self.base_path,
             self.doc,
             hub_name,
-            self.flange_top_pad_length)
+            flange_length)
         self._place_hub(hub)
         hub_z_offset = self.calculate_hub_z_offset()
-        middle_flange_pad_thickness = 15
         thread_z_offset = hub_z_offset + middle_flange_pad_thickness
         threads_name = 'Threads'
         threads = make_hub_threads(self.doc,
@@ -145,7 +153,8 @@ class TShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='t_shape',
                          has_separate_master_files=True,
-                         flange_top_pad_length=30,
+                         flange_top_pad_length=40,
+                         flange_bottom_pad_length=45,
                          number_of_hub_holes=4,
                          assemble_frame=assemble_t_shape_frame,
                          hub_rod_length=330)
@@ -193,7 +202,8 @@ class HShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='h_shape',
                          has_separate_master_files=True,
-                         flange_top_pad_length=30,
+                         flange_top_pad_length=40,
+                         flange_bottom_pad_length=45,
                          number_of_hub_holes=5,
                          assemble_frame=assemble_h_shape_frame,
                          hub_rod_length=250)
@@ -234,7 +244,8 @@ class StarShapeWindTurbine(WindTurbine):
                          furling_tool_parameters,
                          base_dir='star_shape',
                          has_separate_master_files=False,
-                         flange_top_pad_length=40,
+                         flange_top_pad_length=75,
+                         flange_bottom_pad_length=85,
                          number_of_hub_holes=6,
                          assemble_frame=assemble_star_shape_frame,
                          hub_rod_length=270)
