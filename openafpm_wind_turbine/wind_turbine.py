@@ -77,19 +77,21 @@ class WindTurbine(ABC):
             self.magn_afpm_parameters['MagnetThickness'],
             self.magn_afpm_parameters['MechanicalClearance'])
 
+        flange_cover_thickness = 10
         middle_flange_pad_thickness = 16
 
         hub_name = 'Hub'
-        flange_length = (
+        stub_axle_shaft_z_offset = (
             self.flange_top_pad_length +
             self.flange_bottom_pad_length +
-            middle_flange_pad_thickness
+            middle_flange_pad_thickness +
+            flange_cover_thickness
         )
         hub = make_hub(
             self.base_path,
             self.doc,
             hub_name,
-            flange_length)
+            stub_axle_shaft_z_offset)
         self._place_hub(hub)
         hub_z_offset = self.calculate_hub_z_offset()
         thread_z_offset = hub_z_offset + middle_flange_pad_thickness

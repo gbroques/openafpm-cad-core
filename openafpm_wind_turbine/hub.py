@@ -16,6 +16,14 @@ def make_hub(base_path,
     """
     hub_path = os.path.join(base_path, 'Hub')
 
+    frame_side_flange_cover_label = 'FrameSideFlangeCover'
+    _merge_document(document, hub_path, frame_side_flange_cover_label)
+    frame_side_flange_cover = find_object_by_label(document, frame_side_flange_cover_label)
+
+    rotor_side_flange_cover_label = 'RotorSideFlangeCover'
+    _merge_document(document, hub_path, rotor_side_flange_cover_label)
+    rotor_side_flange_cover = find_object_by_label(document, rotor_side_flange_cover_label)
+
     stub_axle_shaft_label = 'StubAxleShaft'
     _merge_document(document, hub_path, stub_axle_shaft_label)
     stub_axle_shaft = find_object_by_label(document, stub_axle_shaft_label)
@@ -30,6 +38,8 @@ def make_hub(base_path,
             item.enforceRecompute()
 
     return make_compound(document, name, [
+        frame_side_flange_cover,
+        rotor_side_flange_cover,
         stub_axle_shaft,
         flange
     ])
