@@ -16,7 +16,7 @@ def make_hub(base_path,
     """
     hub_path = os.path.join(base_path, 'Hub')
 
-    stub_axle_shaft_label = 'StubAxleShaftFix'
+    stub_axle_shaft_label = 'StubAxleShaft'
     _merge_document(document, hub_path, stub_axle_shaft_label)
     stub_axle_shaft = find_object_by_label(document, stub_axle_shaft_label)
     move_stub_axle_shaft(stub_axle_shaft, stub_axle_shaft_z_offset)
