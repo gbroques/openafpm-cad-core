@@ -4,8 +4,8 @@ import Draft
 import FreeCAD as App
 from FreeCAD import Placement, Rotation, Vector
 
-from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
-                     make_compound)
+from .common import (clone_body, enforce_recompute_last_spreadsheet,
+                     find_object_by_label, make_compound)
 
 # TODO: Should this module be called "frame_common"?
 __all__ = ['make_channel_section', 'make_end_bracket']
@@ -21,7 +21,7 @@ def make_channel_section(document, frame_path, metal_length_l, channel_section_h
     document.recompute()
     App.setActiveDocument(document.Name)
     right_angled_channel_section_name = 'Right' + angled_channel_section_label
-    right_angled_channel_section = _clone_body(
+    right_angled_channel_section = clone_body(
         document, right_angled_channel_section_name, left_angled_channel_section)
     right_angled_channel_section.Placement = Placement(
         Vector(metal_length_l, 0, 0), Rotation(Vector(0, 0, 1), 90))
@@ -52,14 +52,3 @@ def _merge_piece(document, path, label):
     document.mergeProject(
         os.path.join(path, label + '.FCStd'))
     enforce_recompute_last_spreadsheet(document)
-
-
-def _clone_body(document, name, body_to_clone):
-    body = document.addObject('PartDesign::Body', name)
-    clone = document.addObject(
-        'PartDesign::FeatureBase', body_to_clone.Label + 'Clone')
-    clone.BaseFeature = body_to_clone
-    clone.Placement = body_to_clone.Placement
-    body.Group = [clone]
-    body.Tip = clone
-    return body

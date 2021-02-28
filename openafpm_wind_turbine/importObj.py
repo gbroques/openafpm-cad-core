@@ -34,9 +34,8 @@ else:
 
 p = Draft.precision()
 
-if open.__module__ in ['__builtin__','io']:
+if open.__module__ in ['__builtin__', 'io']:
     pythonopen = open
-
 
 
 def decode(txt):
@@ -63,13 +62,13 @@ def export(exportList, filename, colors=None):
     outfile.write("# http://www.freecadweb.org\n")
     offsetv = 1
     offsetvn = 1
-    objectslist = Draft.getGroupContents(exportList, walls=True,
-                                         addgroups=True)
-    objectslist = Arch.pruneIncluded(objectslist)
+    # objectslist = Draft.getGroupContents(exportList, walls=True,
+    #                                      addgroups=True)
+    # objectslist = Arch.pruneIncluded(objectslist)
     filenamemtl = filename[:-4] + ".mtl"
     materials = []
     outfile.write("mtllib " + os.path.basename(filenamemtl) + "\n")
-    for obj in objectslist:
+    for obj in exportList:
         if obj.isDerivedFrom("Part::Feature") or obj.isDerivedFrom("Mesh::Feature") or obj.isDerivedFrom("App::Link"):
             hires = None
             if FreeCAD.GuiUp:

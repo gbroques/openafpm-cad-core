@@ -1,12 +1,11 @@
 import os
 
-import Draft
 import FreeCAD as App
 import FreeCADGui as Gui
-from FreeCAD import Vector
+from FreeCAD import Vector, Placement, Rotation
 
-from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
-                     make_compound)
+from .common import (clone_body, enforce_recompute_last_spreadsheet,
+                     find_object_by_label, make_compound)
 
 __all__ = ['make_rotors']
 
@@ -28,7 +27,8 @@ def make_rotors(base_path,
         document, rotor_path)
     document.recompute()
     App.setActiveDocument(document.Name)
-    top_rotor = _make_top_rotor(bottom_rotor,
+    top_rotor = _make_top_rotor(document,
+                                bottom_rotor,
                                 stator_thickness,
                                 disk_thickness,
                                 magnet_thickness,
@@ -47,12 +47,19 @@ def _open_rotor_master(rotor_path):
 
 def _assemble_bottom_rotor(document, rotor_path):
     rotor_resin_cast_label = 'RotorResinCast'
-    rotor_disc1_label = 'Disc1'
     _merge_document(document, rotor_path, rotor_resin_cast_label)
+    rotor_resin_cast = find_object_by_label(document, rotor_resin_cast_label)
+    rotor_resin_cast.Label = 'Bottom' + rotor_resin_cast.Label
+
+    rotor_disc1_label = 'Disc1'
     _merge_document(document, rotor_path, rotor_disc1_label)
-    rotor = make_compound(document, 'BottomRotor', [
-        find_object_by_label(document, rotor_resin_cast_label),
-        find_object_by_label(document, rotor_disc1_label)
+    rotor_disc1 = find_object_by_label(document, rotor_disc1_label)
+    rotor_disc1.Label = 'Bottom' + rotor_disc1.Label
+
+    rotor = document.addObject('App::DocumentObjectGroup', 'BottomRotor')
+    rotor.addObjects([
+        rotor_resin_cast,
+        rotor_disc1
     ])
     return rotor
 
@@ -63,7 +70,7 @@ def _merge_document(document, rotor_path, name):
     enforce_recompute_last_spreadsheet(document)
 
 
-def _move_bottom_rotor(rotor,
+def _move_bottom_rotor(bottom_rotor,
                        stator_thickness,
                        disk_thickness,
                        magnet_thickness,
@@ -72,22 +79,29 @@ def _move_bottom_rotor(rotor,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
-    Draft.move(rotor, Vector(0, 0, -z))
+    for obj in bottom_rotor.Group:
+        obj.Placement = Placement(Vector(0, 0, -z), Rotation())
 
 
-def _make_top_rotor(bottom_rotor,
+def _make_top_rotor(document,
+                    bottom_rotor,
                     stator_thickness,
                     disk_thickness,
                     magnet_thickness,
                     distance_between_stator_and_rotor):
-    top_rotor = Draft.rotate(bottom_rotor, 180, Vector(0, 0, 0),
-                             axis=Vector(0, 1, 0), copy=True)
-    top_rotor.Label = 'TopRotor'
     z = _calculate_rotor_z_offset(stator_thickness,
                                   disk_thickness,
                                   magnet_thickness,
                                   distance_between_stator_and_rotor)
-    Draft.move(top_rotor, Vector(0, 0, z))
+    clones = []
+    for obj in bottom_rotor.Group:
+        name = obj.Label.replace('Bottom', 'Top')
+        clone = clone_body(document, name, obj)
+        clone.Placement = Placement(Vector(0, 0, z), Rotation(Vector(0, 1, 0), 180))
+        clones.append(clone)
+
+    top_rotor = document.addObject('App::DocumentObjectGroup', 'TopRotor')
+    top_rotor.addObjects(clones)
     return top_rotor
 
 

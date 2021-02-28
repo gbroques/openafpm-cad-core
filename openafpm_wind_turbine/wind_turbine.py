@@ -115,20 +115,16 @@ class WindTurbine(ABC):
 
         self.doc.recompute()
         objects = [
-            *alternator.Group,
+            alternator,
             hub,
             threads,
             frame
         ]
         # Rotate model for Three.js
         pl = Placement(Vector(), Rotation(-90, -180, -270))
-        for obj in objects:
-            if obj.TypeId == 'App::DocumentObjectGroup':
-                for o in obj.Group:
-                    o.Placement = pl.multiply(o.Placement)
-            else:
-                obj.Placement = pl.multiply(obj.Placement)
-        importOBJ.export(objects, 'wind-turbine.obj')
+        place_objects(objects, pl)
+        ungrouped = ungroup_objects(objects)
+        importOBJ.export(ungrouped, 'wind-turbine.obj')
 
     def _place_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
@@ -309,7 +305,6 @@ def calculate_hub_z_offset(stator_thickness,
 def calculate_frame_z_offset(hub_z_offset,
                              metal_length_l,
                              metal_thickness_l):
-    # stub_axle_shaft_top defined in hub.py as well
     stub_axle_shaft_top = 14
     return (
         hub_z_offset +
@@ -317,3 +312,26 @@ def calculate_frame_z_offset(hub_z_offset,
         metal_length_l +
         metal_thickness_l
     )
+
+
+def place_objects(objects, placement):
+    for obj in objects:
+        if is_object_group(obj.TypeId):
+            place_objects(obj.Group, placement)
+        else:
+            obj.Placement = placement.multiply(obj.Placement)
+
+
+def ungroup_objects(objects):
+    ungrouped = []
+    for obj in objects:
+        if is_object_group(obj):
+            objs = ungroup_objects(obj.Group)
+            ungrouped.extend(objs)
+        else:
+            ungrouped.append(obj)
+    return ungrouped
+
+
+def is_object_group(obj):
+    return obj.TypeId == 'App::DocumentObjectGroup'

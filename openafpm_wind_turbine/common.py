@@ -40,3 +40,14 @@ def find_expression(expression_engine_tuples, key):
     if len(matches) == 0:
         return None
     return matches[0]
+
+
+def clone_body(document, name, body_to_clone):
+    body = document.addObject('PartDesign::Body', name)
+    clone = document.addObject(
+        'PartDesign::FeatureBase', body_to_clone.Label + 'Clone')
+    clone.BaseFeature = body_to_clone
+    clone.Placement = body_to_clone.Placement
+    body.Group = [clone]
+    body.Tip = clone
+    return body
