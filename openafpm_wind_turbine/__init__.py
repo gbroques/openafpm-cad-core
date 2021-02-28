@@ -3,31 +3,31 @@ from .wind_turbine import create_wind_turbine
 
 # T Shape
 # =======
-# rotor_radius = 150
-# rotor_inner_circle = 32.5
-# hub_holes_placement = 50
-# magnet_length = 46
-# stator_thickness = 13
-# hub_holes = 6
-# holes = 6
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 30.15
-# offset = 125
-
-# H Shape
-# =======
-rotor_radius = 230
-rotor_inner_circle = 47.5
-hub_holes_placement = 65
+rotor_radius = 150
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
 magnet_length = 46
 stator_thickness = 13
-hub_holes = 7
+hub_holes = 6
 holes = 6
 metal_length_l = 50
 metal_thickness_l = 6
-yaw_pipe_radius = 44.5
+yaw_pipe_radius = 30.15
 offset = 125
+
+# H Shape
+# =======
+# rotor_radius = 230
+# rotor_inner_circle = 47.5
+# hub_holes_placement = 65
+# magnet_length = 46
+# stator_thickness = 13
+# hub_holes = 7
+# holes = 6
+# metal_length_l = 50
+# metal_thickness_l = 6
+# yaw_pipe_radius = 44.5
+# offset = 125
 
 # Star Shape
 # ==========

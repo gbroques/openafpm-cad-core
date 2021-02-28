@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 
 import Draft
 import FreeCAD as App
-import importOBJ
 import Part
 from FreeCAD import Placement, Rotation, Vector
 
+from . import importObj as importOBJ
 from .alternator import make_alternator
 from .common import make_compound
 from .frame import make_frame
@@ -115,7 +115,7 @@ class WindTurbine(ABC):
 
         self.doc.recompute()
         objects = [
-            alternator,
+            *alternator.Group,
             hub,
             threads,
             frame
@@ -123,7 +123,11 @@ class WindTurbine(ABC):
         # Rotate model for Three.js
         pl = Placement(Vector(), Rotation(-90, -180, -270))
         for obj in objects:
-            obj.Placement = pl.multiply(obj.Placement)
+            if obj.TypeId == 'App::DocumentObjectGroup':
+                for o in obj.Group:
+                    o.Placement = pl.multiply(o.Placement)
+            else:
+                obj.Placement = pl.multiply(obj.Placement)
         importOBJ.export(objects, 'wind-turbine.obj')
 
     def _place_hub(self, hub):
