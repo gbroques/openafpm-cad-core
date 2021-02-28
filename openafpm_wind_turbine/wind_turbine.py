@@ -134,6 +134,7 @@ class WindTurbine(ABC):
 
     @abstractmethod
     def calculate_hub_z_offset(self):
+        # TODO: This no longer differs for each subclass
         raise NotImplementedError(
             'Sub class must implement calculate_hub_z_offset.')
 
@@ -253,9 +254,10 @@ class StarShapeWindTurbine(WindTurbine):
                          hub_rod_length=270)
 
     def calculate_hub_z_offset(self):
-        stator_thickness = self.magn_afpm_parameters['StatorThickness']
-        return (
-            (stator_thickness / 2) +
+        return calculate_hub_z_offset(
+            self.magn_afpm_parameters['StatorThickness'],
+            self.magn_afpm_parameters['DiskThickness'],
+            self.magn_afpm_parameters['MagnetThickness'],
             self.magn_afpm_parameters['MechanicalClearance']
         )
 
