@@ -316,7 +316,7 @@ def calculate_frame_z_offset(hub_z_offset,
 
 def place_objects(objects, placement):
     for obj in objects:
-        if is_object_group(obj.TypeId):
+        if is_object_group(obj):
             place_objects(obj.Group, placement)
         else:
             obj.Placement = placement.multiply(obj.Placement)
