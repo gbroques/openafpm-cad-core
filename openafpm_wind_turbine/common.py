@@ -1,6 +1,7 @@
 import sys
 
-from FreeCAD import Console
+from FreeCAD import Console, Vector
+import Draft
 
 
 def enforce_recompute_last_spreadsheet(document):
@@ -51,3 +52,26 @@ def clone_body(document, name, body_to_clone):
     body.Group = [clone]
     body.Tip = clone
     return body
+
+
+def create_polar_array(part, n, y_offset):
+    array = [part]
+    Draft.move(part, Vector(0, y_offset, 0))
+    exterior_angle = _calculate_exterior_angle(n)
+    previous = part
+    for i in range(n - 1):
+        copy = Draft.rotate(previous, exterior_angle, Vector(
+            0, 0, 0), axis=Vector(0, 0, 1), copy=True)
+        array.append(copy)
+        previous = copy
+    return array
+
+
+def _calculate_exterior_angle(n):
+    """
+    Calculate exterior angle for an "n" sided regular polygon.
+
+    Reference:
+    https://www.mathsisfun.com/geometry/regular-polygons.html
+    """
+    return 360 / n

@@ -13,7 +13,8 @@ def make_alternator(base_path,
                     stator_thickness,
                     disk_thickness,
                     magnet_thickness,
-                    distance_between_stator_and_rotor):
+                    distance_between_stator_and_rotor,
+                    magnets):
     """
     The alternator consists of the stator,
     sandwiched by two rotors.
@@ -30,7 +31,8 @@ def make_alternator(base_path,
         stator_thickness,
         disk_thickness,
         magnet_thickness,
-        distance_between_stator_and_rotor)
+        distance_between_stator_and_rotor,
+        magnets)
     alternator = document.addObject('App::DocumentObjectGroup', name)
 
     alternator.addObjects([

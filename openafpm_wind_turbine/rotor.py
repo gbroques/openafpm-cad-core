@@ -16,7 +16,8 @@ def make_rotors(base_path,
                 stator_thickness,
                 disk_thickness,
                 magnet_thickness,
-                distance_between_stator_and_rotor):
+                distance_between_stator_and_rotor,
+                magnets):
     rotor_path = os.path.join(base_path, 'Rotor')
     if has_separate_master_files:
         _open_rotor_master(rotor_path)
@@ -24,7 +25,7 @@ def make_rotors(base_path,
         Gui.setActiveDocument(document.Name)
         Gui.SendMsgToActiveView('ViewFit')
     bottom_rotor = _assemble_bottom_rotor(
-        document, rotor_path)
+        document, rotor_path, magnets)
     document.recompute()
     App.setActiveDocument(document.Name)
     top_rotor = _make_top_rotor(document,
@@ -45,7 +46,7 @@ def _open_rotor_master(rotor_path):
     App.openDocument(os.path.join(rotor_path, 'Master.FCStd'))
 
 
-def _assemble_bottom_rotor(document, rotor_path):
+def _assemble_bottom_rotor(document, rotor_path, magnets):
     rotor_resin_cast_label = 'RotorResinCast'
     _merge_document(document, rotor_path, rotor_resin_cast_label)
     rotor_resin_cast = find_object_by_label(document, rotor_resin_cast_label)
@@ -56,10 +57,13 @@ def _assemble_bottom_rotor(document, rotor_path):
     rotor_disc1 = find_object_by_label(document, rotor_disc1_label)
     rotor_disc1.Label = 'Bottom' + rotor_disc1.Label
 
+    magnets.Label = 'Bottom' + magnets.Label
+
     rotor = document.addObject('App::DocumentObjectGroup', 'BottomRotor')
     rotor.addObjects([
         rotor_resin_cast,
-        rotor_disc1
+        rotor_disc1,
+        magnets
     ])
     return rotor
 
@@ -97,7 +101,8 @@ def _make_top_rotor(document,
     for obj in bottom_rotor.Group:
         name = obj.Label.replace('Bottom', 'Top')
         clone = clone_body(document, name, obj)
-        clone.Placement = Placement(Vector(0, 0, z), Rotation(Vector(0, 1, 0), 180))
+        clone.Placement = Placement(
+            Vector(0, 0, z), Rotation(Vector(0, 1, 0), 180))
         clones.append(clone)
 
     top_rotor = document.addObject('App::DocumentObjectGroup', 'TopRotor')

@@ -14,6 +14,7 @@ from .h_shape_frame import (assemble_h_shape_frame,
                             calculate_h_channel_section_height)
 from .hub import make_hub
 from .hub_threads import make_hub_threads
+from .magnet import make_rotor_magnets
 from .star_shape_frame import (assemble_star_shape_frame,
                                calculate_star_channel_section_height)
 from .t_shape_frame import (
@@ -66,6 +67,14 @@ class WindTurbine(ABC):
         if not self.has_separate_master_files:
             _open_master(self.base_path)
 
+        magnets = make_rotor_magnets(
+            self.doc,
+            self.magn_afpm_parameters['MagnetLength'],
+            self.magn_afpm_parameters['MagnetWidth'],
+            self.magn_afpm_parameters['MagnetThickness'],
+            self.magn_afpm_parameters['NumberMagnet'],
+            self.magn_afpm_parameters['RotorDiskRadius'])
+
         alternator_name = 'Alternator'
         alternator = make_alternator(
             self.base_path,
@@ -75,7 +84,8 @@ class WindTurbine(ABC):
             self.magn_afpm_parameters['StatorThickness'],
             self.magn_afpm_parameters['DiskThickness'],
             self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['MechanicalClearance'])
+            self.magn_afpm_parameters['MechanicalClearance'],
+            magnets)
 
         flange_cover_thickness = 10
         middle_flange_pad_thickness = 16
