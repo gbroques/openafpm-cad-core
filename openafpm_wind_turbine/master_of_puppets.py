@@ -12,13 +12,13 @@ def create_master_of_puppets(document_name,
                              master_spreadsheet_name,
                              magn_afpm_parameters,
                              user_parameters,
-                             furling_tool_parameters):
+                             furling_parameters):
     document = App.newDocument(document_name)
     _create_imported_sheet(document,
                            imported_spreadsheet_name,
                            magn_afpm_parameters,
                            user_parameters,
-                           furling_tool_parameters)
+                           furling_parameters)
     document.recompute()
     _create_master_sheet(document, master_spreadsheet_name,
                          imported_spreadsheet_name)
@@ -29,11 +29,11 @@ def _create_imported_sheet(document,
                            name,
                            magn_afpm_parameters,
                            user_parameters,
-                           furling_tool_parameters):
+                           furling_parameters):
     sheet = document.addObject('Spreadsheet::Sheet', name)
     magn_afpm_cells = _dict_to_cells(magn_afpm_parameters)
     user_cells = _dict_to_cells(user_parameters)
-    furling_tool_cells = _dict_to_cells(furling_tool_parameters)
+    furling_tool_cells = _dict_to_cells(furling_parameters)
     cells = [
         ['Inputs', 'Value'],
 

@@ -23,24 +23,24 @@ from .t_shape_frame import (
 __all__ = ['create_wind_turbine']
 
 
-def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_tool_parameters):
+def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_parameters):
     rotor_radius = magn_afpm_parameters['RotorDiskRadius']
     if 0 <= rotor_radius < 187.5:
         return TShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_tool_parameters)
+            magn_afpm_parameters, user_parameters, furling_parameters)
     elif 187.5 <= rotor_radius <= 275:
         return HShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_tool_parameters)
+            magn_afpm_parameters, user_parameters, furling_parameters)
     else:
         return StarShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_tool_parameters)
+            magn_afpm_parameters, user_parameters, furling_parameters)
 
 
 class WindTurbine(ABC):
     def __init__(self,
                  magn_afpm_parameters,
                  user_parameters,
-                 furling_tool_parameters,
+                 furling_parameters,
                  base_dir,
                  has_separate_master_files,
                  flange_top_pad_length,
@@ -50,7 +50,7 @@ class WindTurbine(ABC):
                  hub_rod_length):
         self.magn_afpm_parameters = magn_afpm_parameters
         self.user_parameters = user_parameters
-        self.furling_tool_parameters = furling_tool_parameters
+        self.furling_parameters = furling_parameters
         self.has_separate_master_files = has_separate_master_files
         self.flange_top_pad_length = flange_top_pad_length
         self.flange_bottom_pad_length = flange_bottom_pad_length
@@ -150,10 +150,10 @@ class WindTurbine(ABC):
 
 
 class TShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
-                         furling_tool_parameters,
+                         furling_parameters,
                          base_dir='t_shape',
                          has_separate_master_files=True,
                          flange_top_pad_length=40,
@@ -176,7 +176,7 @@ class TShapeWindTurbine(WindTurbine):
             self.magn_afpm_parameters['CoilLegWidth'],
             self.user_parameters['MetalThicknessL'],
             self.user_parameters['YawPipeRadius'],
-            self.furling_tool_parameters['Offset']
+            self.furling_parameters['Offset']
         )
 
     def calculate_frame_y_offset(self):
@@ -184,7 +184,7 @@ class TShapeWindTurbine(WindTurbine):
             self.magn_afpm_parameters['RotorDiskRadius'],
             self.user_parameters['MetalThicknessL'],
             self.user_parameters['YawPipeRadius'],
-            self.furling_tool_parameters['Offset']
+            self.furling_parameters['Offset']
         )
 
     def place_frame(self, frame):
@@ -199,10 +199,10 @@ class TShapeWindTurbine(WindTurbine):
 
 
 class HShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
-                         furling_tool_parameters,
+                         furling_parameters,
                          base_dir='h_shape',
                          has_separate_master_files=True,
                          flange_top_pad_length=40,
@@ -241,10 +241,10 @@ class HShapeWindTurbine(WindTurbine):
 
 
 class StarShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_tool_parameters):
+    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
         super().__init__(magn_afpm_parameters,
                          user_parameters,
-                         furling_tool_parameters,
+                         furling_parameters,
                          base_dir='star_shape',
                          has_separate_master_files=False,
                          flange_top_pad_length=75,
