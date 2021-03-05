@@ -1,7 +1,7 @@
 from .common import (enforce_recompute_last_spreadsheet, find_object_by_label,
                      make_compound)
 from .rotor import make_rotors
-from .stator import load_stator
+from .stator import make_stator
 
 __all__ = ['make_alternator']
 
@@ -14,15 +14,20 @@ def make_alternator(base_path,
                     disk_thickness,
                     magnet_thickness,
                     distance_between_stator_and_rotor,
-                    magnets):
+                    magnets,
+                    number_of_coils,
+                    inner_stator_hole_radius):
     """
     The alternator consists of the stator,
     sandwiched by two rotors.
     """
-    stator_resin_cast_label = 'StatorResinCast'
-    load_stator(base_path, has_separate_master_files,
-                document, stator_resin_cast_label)
-    stator_resin_cast = find_object_by_label(document, stator_resin_cast_label)
+    stator_name = 'Stator'
+    stator = make_stator(base_path,
+                         has_separate_master_files,
+                         document,
+                         stator_name,
+                         number_of_coils,
+                         inner_stator_hole_radius)
 
     bottom_rotor, top_rotor = make_rotors(
         base_path,
@@ -36,7 +41,7 @@ def make_alternator(base_path,
     alternator = document.addObject('App::DocumentObjectGroup', name)
 
     alternator.addObjects([
-        stator_resin_cast,
+        stator,
         bottom_rotor,
         top_rotor
     ])

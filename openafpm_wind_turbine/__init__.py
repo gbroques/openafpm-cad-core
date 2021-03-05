@@ -1,6 +1,9 @@
 from .master_of_puppets import create_master_of_puppets
 from .wind_turbine import create_wind_turbine
 
+# TODO: Coil
+# Inner stator hole radius = RotorRadius - MagnetLength - CoilLegWidth
+
 # TODO: Yaw bearing
 # T SHAPE
 # =======

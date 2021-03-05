@@ -22,19 +22,19 @@ Thus, the parameterized model includes three major parts:
 
 1. The `alternator <https://en.wikipedia.org/wiki/Wind_turbine_design#Generator>`_, composed of 2 rotors with permanent magnets bonded to steel discs and a stator made of coils fixed in resin.
 2. **Nacelle**, composed of different metal parts supporting the alternator and a hub allowing the rotation of the rotors.
-3. `Tail <https://en.wikipedia.org/wiki/Wind_turbine_design#Yawing>`_ and `vane <https://en.wikipedia.org/wiki/Weather_vane>`_, allowing the wind turbine to be oriented into the wind and acting as mechanical protection (feathering) in the event of strong winds.
+3. `Tail <https://en.wikipedia.org/wiki/Wind_turbine_design#Yawing>`_ and `vane <https://en.wikipedia.org/wiki/Weather_vane>`_, allowing the wind turbine to be oriented into the wind and acting as mechanical protection (furling) in the event of strong winds.
 
 Three main variants from smallest to largest:
 
-+------------+----------------+-------------------+
-| Variant    | Rotor Radius   | Attachment Points |
-+============+================+===================+
-| T Shape    | 0 - 187.5 mm   | 3                 |
-+------------+----------------+-------------------+
-| H Shape    | 187.5 - 275 mm | 4                 |
-+------------+----------------+-------------------+
-| Star Shape | > 275 mm       | 6                 |
-+------------+----------------+-------------------+
++------------+----------------+-------------------+-----------------+
+| Variant    | Rotor Radius   | Attachment Points | Number of Coils |
++============+================+===================+=================+
+| T Shape    | 0 - 187.5 mm   | 3                 | 9 (6)           |
++------------+----------------+-------------------+-----------------+
+| H Shape    | 187.5 - 275 mm | 4                 | 12              |
++------------+----------------+-------------------+-----------------+
+| Star Shape | > 275 mm       | 6                 | 24              +
++------------+----------------+-------------------+-----------------+
 
 We can observe the different parts (from left to right):
 

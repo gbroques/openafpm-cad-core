@@ -76,6 +76,12 @@ class WindTurbine(ABC):
             self.magn_afpm_parameters['RotorDiskRadius'])
 
         alternator_name = 'Alternator'
+        number_of_coils = round(self.magn_afpm_parameters['NumberMagnet'] * 0.75)
+        inner_stator_hole_radius = (
+            self.magn_afpm_parameters['RotorDiskRadius'] -
+            self.magn_afpm_parameters['MagnetLength'] -
+            self.magn_afpm_parameters['CoilLegWidth']
+        )
         alternator = make_alternator(
             self.base_path,
             self.has_separate_master_files,
@@ -85,7 +91,9 @@ class WindTurbine(ABC):
             self.magn_afpm_parameters['DiskThickness'],
             self.magn_afpm_parameters['MagnetThickness'],
             self.magn_afpm_parameters['MechanicalClearance'],
-            magnets)
+            magnets,
+            number_of_coils,
+            inner_stator_hole_radius)
 
         flange_cover_thickness = 10
         middle_flange_pad_thickness = 16
