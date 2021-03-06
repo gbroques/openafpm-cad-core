@@ -12,6 +12,7 @@ def make_coils(stator_path, document, number_of_coils, y_offset):
     coil_label = 'Coil'
     _merge_coil(document, stator_path, coil_label)
     coil = find_object_by_label(document, coil_label)
+    document.recompute()
     coils = create_polar_array(coil, number_of_coils, y_offset)
     return make_compound(document, 'Coils', coils)
 
