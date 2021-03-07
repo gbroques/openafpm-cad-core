@@ -244,6 +244,24 @@ wget http://mirrors.kernel.org/ubuntu/pool/main/e/expat/libexpat1_2.1.0-7ubuntu0
 sudo dpkg -i *.deb
 ```
 
+Installing Package
+------------------
+From ``~/.FreeCAD/Mod``:
+
+.. code-block::
+
+   ln -s path/to/openafpm-cad-core/ openafpm-cad-core
+
+
+Installing Test Macro
+---------------------
+From ``~/.FreeCAD/Macro``:
+
+.. code-block::
+
+   ln -s path/to/openafpm-cad-core/test.py test.py
+
+
 WebGL
 -----
 * https://wiki.opensourceecology.org/wiki/WebGL
