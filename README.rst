@@ -278,3 +278,7 @@ Links
   * `A Wind Turbine Recipe Book (metric edition) by Hugh Piggott <http://scoraigwind.co.uk/pdf-metric-edition-of-recipe-book-at-scribd/>`_
 
 * `[Wikipedia] Wind turbine design <https://en.wikipedia.org/wiki/Wind_turbine_design>`_
+
+Related Repositories
+--------------------
+* `openafpm-cad-visualization <https://github.com/gbroques/openafpm-cad-visualization>`_
