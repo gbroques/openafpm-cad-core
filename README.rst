@@ -1,5 +1,5 @@
-OpenAFPM Wind Turbine
-======================
+OpenAFPM CAD Core
+=================
 Locally Manufactured Small Wind Turbines.
 
 Due to the mechanical strength of the materials, the model is limited to wind turbines smaller than 10m in diameter -- the diameter swept by the blades
