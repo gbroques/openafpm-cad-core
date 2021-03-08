@@ -214,19 +214,19 @@ def create_spreadsheet_document(document_name,
     document = App.newDocument(document_name)
     sheet_name = 'Spreadsheet'
     sheet = document.addObject('Spreadsheet::Sheet', sheet_name)
-    magn_afpm_cells = _dict_to_cells(magnafpm_parameters)
+    magnafpm_cells = _dict_to_cells(magnafpm_parameters)
     furling_cells = _dict_to_cells(furling_parameters)
     user_cells = _dict_to_cells(user_parameters)
     cells = [
         ['MagnAFPM', ''],
-        *magn_afpm_cells,
+        *magnafpm_cells,
         ['Furling', ''],
         *furling_cells,
         ['User', ''],
         *user_cells
     ]
 
-    _populate_sheet(sheet, cells)
+    _populate_spreadsheet(sheet, cells)
     document.recompute()
     return document
 
@@ -235,7 +235,7 @@ def _dict_to_cells(dictionary):
     return [[key, value] for key, value in dictionary.items()]
 
 
-def _populate_sheet(sheet, cells):
+def _populate_spreadsheet(sheet, cells):
     for i, (key, value) in enumerate(cells):
         number = str(i + 1)
         key_cell = 'A' + number
