@@ -98,4 +98,10 @@ furling_parameters = {
 }
 
 
-visualize(magn_afpm_parameters, user_parameters, furling_parameters)
+wind_turbine = visualize(magn_afpm_parameters, user_parameters, furling_parameters)
+
+obj_file_contents = wind_turbine.to_obj()
+
+with open('wind-turbine.obj', 'w') as f:
+    f.write(obj_file_contents)
+    print('wind-turbine.obj created.')

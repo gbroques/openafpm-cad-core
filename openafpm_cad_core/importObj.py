@@ -12,6 +12,7 @@ Adapting this code is somewhat of a hack, but in the future we will use glTF ins
 Modifications:
   * Use object Label instead of Name for object name.
   * Remove mtl or materials generation.
+  * Return .obj file contents as string instead of writing to a file.
 """
 
 import os
@@ -35,28 +36,12 @@ else:
 
 p = Draft.precision()
 
-if open.__module__ in ['__builtin__', 'io']:
-    pythonopen = open
+def export(exportList) -> str:
+    """
+    Transforms a list of objects into a Wavefront .obj file contents.
+    """
+    lines = []
 
-
-def decode(txt):
-
-    if sys.version_info.major < 3:
-        if isinstance(txt, unicode):
-            return txt.encode("utf8")
-    return txt
-
-
-def export(exportList, filename, colors=None):
-    """export(exportList,filename,colors=None):
-    Called when freecad exports a file. exportList is a list
-    of objects, filename is the .obj file to export (a .mtl
-    file with same name will also be created together), and
-    optionally colors can be a dict containing ["objectName:colorTuple"]
-    pairs for use in non-GUI mode."""
-
-    import codecs
-    outfile = codecs.open(filename, "wb", encoding="utf8")
     offsetv = 1
     offsetvn = 1
 
@@ -103,22 +88,22 @@ def export(exportList, filename, colors=None):
                             obj, obj.Mesh, offsetv, offsetvn)
                 if vlist is None:
                     FreeCAD.Console.PrintError(
-                        "Unable to export object "+obj.Label+". Skipping.\n")
+                        "Unable to export object " + obj.Label + ". Skipping.\n")
                 else:
                     offsetv += len(vlist)
                     offsetvn += len(vnlist)
-                    outfile.write("o " + obj.Label + "\n")
+                    lines.append('o ' + obj.Label)
 
-                    # write geometry
                     for v in vlist:
-                        outfile.write("v" + v + "\n")
+                        lines.append('v' + v)
                     for vn in vnlist:
-                        outfile.write("vn" + vn + "\n")
+                        lines.append('vn' + vn)
                     for e in elist:
-                        outfile.write("l" + e + "\n")
+                        lines.append('l' + e)
                     for f in flist:
-                        outfile.write("f" + f + "\n")
-    outfile.close()
+                        lines.append('f' + f)
+    return '\n'.join(lines)
+
 
 def getIndices(obj, shape, offsetv, offsetvn):
     "returns a list with 2 lists: vertices and face indexes, offset with the given amount"

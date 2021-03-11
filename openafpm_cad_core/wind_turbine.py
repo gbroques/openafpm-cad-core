@@ -63,7 +63,7 @@ class WindTurbine(ABC):
             os.path.dirname(__file__), 'documents', base_dir)
         self.doc = App.newDocument('WindTurbine')
 
-    def render(self):
+    def to_obj(self):
         if not self.has_separate_master_files:
             _open_master(self.base_path)
 
@@ -142,7 +142,8 @@ class WindTurbine(ABC):
         pl = Placement(Vector(), Rotation(-90, -180, -270))
         place_objects(objects, pl)
         ungrouped = ungroup_objects(objects)
-        importOBJ.export(ungrouped, 'wind-turbine.obj')
+        obj_file_contents = importOBJ.export(ungrouped)
+        return obj_file_contents
 
     def _place_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()
