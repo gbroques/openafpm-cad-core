@@ -235,17 +235,17 @@ def _dict_to_cells(dictionary):
     return [[key, value] for key, value in dictionary.items()]
 
 
-def _populate_spreadsheet(sheet, cells):
+def _populate_spreadsheet(spreadsheet, cells):
     for i, (key, value) in enumerate(cells):
         number = str(i + 1)
         key_cell = 'A' + number
         value_cell = 'B' + number
-        sheet.set(key_cell, key)
-        sheet.set(value_cell, str(value))
+        spreadsheet.set(key_cell, key)
+        spreadsheet.set(value_cell, str(value))
         if value:
-            sheet.setAlias(value_cell, key)
+            spreadsheet.setAlias(value_cell, key)
         else:
-            sheet.setStyle(key_cell, 'bold')
+            spreadsheet.setStyle(key_cell, 'bold')
 
 
 Gui.Control.closeDialog()

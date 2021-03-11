@@ -11,6 +11,7 @@ Adapting this code is somewhat of a hack, but in the future we will use glTF ins
 
 Modifications:
   * Use object Label instead of Name for object name.
+  * Remove mtl or materials generation.
 """
 
 import os
@@ -56,18 +57,9 @@ def export(exportList, filename, colors=None):
 
     import codecs
     outfile = codecs.open(filename, "wb", encoding="utf8")
-    ver = FreeCAD.Version()
-    outfile.write("# FreeCAD v" + ver[0] + "." +
-                  ver[1] + " build" + ver[2] + " Arch module\n")
-    outfile.write("# http://www.freecadweb.org\n")
     offsetv = 1
     offsetvn = 1
-    # objectslist = Draft.getGroupContents(exportList, walls=True,
-    #                                      addgroups=True)
-    # objectslist = Arch.pruneIncluded(objectslist)
-    filenamemtl = filename[:-4] + ".mtl"
-    materials = []
-    outfile.write("mtllib " + os.path.basename(filenamemtl) + "\n")
+
     for obj in exportList:
         if obj.isDerivedFrom("Part::Feature") or obj.isDerivedFrom("Mesh::Feature") or obj.isDerivedFrom("App::Link"):
             hires = None
@@ -117,35 +109,6 @@ def export(exportList, filename, colors=None):
                     offsetvn += len(vnlist)
                     outfile.write("o " + obj.Label + "\n")
 
-                    # write material
-                    m = False
-                    if hasattr(obj, "Material"):
-                        if obj.Material:
-                            if hasattr(obj.Material, "Material"):
-                                outfile.write(
-                                    "usemtl " + obj.Material.Name + "\n")
-                                materials.append(obj.Material)
-                                m = True
-                    if not m:
-                        if colors:
-                            if obj.Name in colors:
-                                color = colors[obj.Name]
-                                if color:
-                                    if isinstance(color[0], tuple):
-                                        # this is a diffusecolor. For now, use the first color - #TODO: Support per-face colors
-                                        color = color[0]
-                                    #print("found color for obj",obj.Name,":",color)
-                                    mn = Draft.getrgb(color, testbw=False)[1:]
-                                    outfile.write("usemtl color_" + mn + "\n")
-                                    materials.append(("color_" + mn, color, 0))
-                        elif FreeCAD.GuiUp:
-                            if hasattr(obj.ViewObject, "ShapeColor") and hasattr(obj.ViewObject, "Transparency"):
-                                mn = Draft.getrgb(
-                                    obj.ViewObject.ShapeColor, testbw=False)[1:]
-                                outfile.write("usemtl color_" + mn + "\n")
-                                materials.append(
-                                    ("color_" + mn, obj.ViewObject.ShapeColor, obj.ViewObject.Transparency))
-
                     # write geometry
                     for v in vlist:
                         outfile.write("v" + v + "\n")
@@ -156,37 +119,6 @@ def export(exportList, filename, colors=None):
                     for f in flist:
                         outfile.write("f" + f + "\n")
     outfile.close()
-    FreeCAD.Console.PrintMessage(
-        translate("Arch", "Successfully written") + " " + decode(filename) + "\n")
-    if materials:
-        outfile = pythonopen(filenamemtl, "w")
-        outfile.write(
-            "# FreeCAD v" + ver[0] + "." + ver[1] + " build" + ver[2] + " Arch module\n")
-        outfile.write("# https://www.freecadweb.org\n")
-        kinds = {"AmbientColor": "Ka ", "DiffuseColor": "Kd ",
-                 "SpecularColor": "Ks ", "EmissiveColor": "Ke ", "Transparency": "Tr "}
-        done = []  # store names to avoid duplicates
-        for mat in materials:
-            if isinstance(mat, tuple):
-                if not mat[0] in done:
-                    outfile.write("newmtl " + mat[0] + "\n")
-                    outfile.write(
-                        "Kd " + str(mat[1][0]) + " " + str(mat[1][1]) + " " + str(mat[1][2]) + "\n")
-                    outfile.write("Tr " + str(mat[2]/100) + "\n")
-                    done.append(mat[0])
-            else:
-                if not mat.Name in done:
-                    outfile.write("newmtl " + mat.Name + "\n")
-                    for prop in kinds:
-                        if prop in mat.Material:
-                            outfile.write(
-                                kinds[prop] + mat.Material[prop].strip("()").replace(',', ' ') + "\n")
-                    done.append(mat.Name)
-        outfile.write("# Material Count: " + str(len(materials)))
-        outfile.close()
-        FreeCAD.Console.PrintMessage(
-            translate("Arch", "Successfully written") + ' ' + decode(filenamemtl) + "\n")
-
 
 def getIndices(obj, shape, offsetv, offsetvn):
     "returns a list with 2 lists: vertices and face indexes, offset with the given amount"
@@ -279,7 +211,6 @@ def getIndices(obj, shape, offsetv, offsetvn):
                 else:
                     fi = ""
                     for e in f.OuterWire.OrderedEdges:
-                        # print(e.Vertexes[0].Point,e.Vertexes[1].Point)
                         v = e.Vertexes[0]
                         ind = findVert(v, shape.Vertexes)
                         if ind is None:
