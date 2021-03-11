@@ -53,7 +53,7 @@ offset = 125
 # offset = 125
 
 
-magn_afpm_parameters = {
+magnafpm_parameters = {
     'RotorDiskRadius': rotor_radius,
     'DiskThickness': 10,
     'MagnetLength': magnet_length,
@@ -98,7 +98,7 @@ furling_parameters = {
 }
 
 
-wind_turbine = visualize(magn_afpm_parameters, user_parameters, furling_parameters)
+wind_turbine = visualize(magnafpm_parameters, user_parameters, furling_parameters)
 
 obj_file_contents = wind_turbine.to_obj()
 

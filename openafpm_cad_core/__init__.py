@@ -26,7 +26,7 @@ from .wind_turbine import create_wind_turbine, WindTurbine
 # 3. Yaw pipe body
 
 
-def visualize(magn_afpm_parameters: dict,
+def visualize(magnafpm_parameters: dict,
               user_parameters: dict,
               furling_parameters: dict) -> WindTurbine:
     master_of_puppets_doc_name = 'Master of Puppets'
@@ -36,10 +36,10 @@ def visualize(magn_afpm_parameters: dict,
         master_of_puppets_doc_name,
         imported_spreadsheet_name,
         master_spreadsheet_name,
-        magn_afpm_parameters,
+        magnafpm_parameters,
         user_parameters,
         furling_parameters)
     master_of_puppets_doc.recompute()
 
     return create_wind_turbine(
-        magn_afpm_parameters, user_parameters, furling_parameters)
+        magnafpm_parameters, user_parameters, furling_parameters)

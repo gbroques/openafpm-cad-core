@@ -24,22 +24,22 @@ from .t_shape_frame import (
 __all__ = ['create_wind_turbine']
 
 
-def create_wind_turbine(magn_afpm_parameters, user_parameters, furling_parameters):
-    rotor_radius = magn_afpm_parameters['RotorDiskRadius']
+def create_wind_turbine(magnafpm_parameters, user_parameters, furling_parameters):
+    rotor_radius = magnafpm_parameters['RotorDiskRadius']
     if 0 <= rotor_radius < 187.5:
         return TShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_parameters)
+            magnafpm_parameters, user_parameters, furling_parameters)
     elif 187.5 <= rotor_radius <= 275:
         return HShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_parameters)
+            magnafpm_parameters, user_parameters, furling_parameters)
     else:
         return StarShapeWindTurbine(
-            magn_afpm_parameters, user_parameters, furling_parameters)
+            magnafpm_parameters, user_parameters, furling_parameters)
 
 
 class WindTurbine(ABC):
     def __init__(self,
-                 magn_afpm_parameters,
+                 magnafpm_parameters,
                  user_parameters,
                  furling_parameters,
                  base_dir,
@@ -49,7 +49,7 @@ class WindTurbine(ABC):
                  number_of_hub_holes,
                  assemble_frame,
                  hub_rod_length):
-        self.magn_afpm_parameters = magn_afpm_parameters
+        self.magnafpm_parameters = magnafpm_parameters
         self.user_parameters = user_parameters
         self.furling_parameters = furling_parameters
         self.has_separate_master_files = has_separate_master_files
@@ -69,28 +69,28 @@ class WindTurbine(ABC):
 
         magnets = make_rotor_magnets(
             self.doc,
-            self.magn_afpm_parameters['MagnetLength'],
-            self.magn_afpm_parameters['MagnetWidth'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['NumberMagnet'],
-            self.magn_afpm_parameters['RotorDiskRadius'])
+            self.magnafpm_parameters['MagnetLength'],
+            self.magnafpm_parameters['MagnetWidth'],
+            self.magnafpm_parameters['MagnetThickness'],
+            self.magnafpm_parameters['NumberMagnet'],
+            self.magnafpm_parameters['RotorDiskRadius'])
 
         alternator_name = 'Alternator'
-        number_of_coils = round(self.magn_afpm_parameters['NumberMagnet'] * 0.75)
+        number_of_coils = round(self.magnafpm_parameters['NumberMagnet'] * 0.75)
         inner_stator_hole_radius = (
-            self.magn_afpm_parameters['RotorDiskRadius'] -
-            self.magn_afpm_parameters['MagnetLength'] -
-            self.magn_afpm_parameters['CoilLegWidth']
+            self.magnafpm_parameters['RotorDiskRadius'] -
+            self.magnafpm_parameters['MagnetLength'] -
+            self.magnafpm_parameters['CoilLegWidth']
         )
         alternator = make_alternator(
             self.base_path,
             self.has_separate_master_files,
             self.doc,
             alternator_name,
-            self.magn_afpm_parameters['StatorThickness'],
-            self.magn_afpm_parameters['DiskThickness'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['MechanicalClearance'],
+            self.magnafpm_parameters['StatorThickness'],
+            self.magnafpm_parameters['DiskThickness'],
+            self.magnafpm_parameters['MagnetThickness'],
+            self.magnafpm_parameters['MechanicalClearance'],
             magnets,
             number_of_coils,
             inner_stator_hole_radius)
@@ -169,8 +169,8 @@ class WindTurbine(ABC):
 
 
 class TShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magn_afpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='t_shape',
@@ -183,16 +183,16 @@ class TShapeWindTurbine(WindTurbine):
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
-            self.magn_afpm_parameters['StatorThickness'],
-            self.magn_afpm_parameters['DiskThickness'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['MechanicalClearance']
+            self.magnafpm_parameters['StatorThickness'],
+            self.magnafpm_parameters['DiskThickness'],
+            self.magnafpm_parameters['MagnetThickness'],
+            self.magnafpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
         return calculate_t_channel_section_height(
-            self.magn_afpm_parameters['RotorDiskRadius'],
-            self.magn_afpm_parameters['CoilLegWidth'],
+            self.magnafpm_parameters['RotorDiskRadius'],
+            self.magnafpm_parameters['CoilLegWidth'],
             self.user_parameters['MetalThicknessL'],
             self.user_parameters['YawPipeRadius'],
             self.furling_parameters['Offset']
@@ -200,7 +200,7 @@ class TShapeWindTurbine(WindTurbine):
 
     def calculate_frame_y_offset(self):
         return -distance_between_stub_axle_shaft_and_tail_hinge_end_bracket(
-            self.magn_afpm_parameters['RotorDiskRadius'],
+            self.magnafpm_parameters['RotorDiskRadius'],
             self.user_parameters['MetalThicknessL'],
             self.user_parameters['YawPipeRadius'],
             self.furling_parameters['Offset']
@@ -218,8 +218,8 @@ class TShapeWindTurbine(WindTurbine):
 
 
 class HShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magn_afpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='h_shape',
@@ -232,16 +232,16 @@ class HShapeWindTurbine(WindTurbine):
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
-            self.magn_afpm_parameters['StatorThickness'],
-            self.magn_afpm_parameters['DiskThickness'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['MechanicalClearance']
+            self.magnafpm_parameters['StatorThickness'],
+            self.magnafpm_parameters['DiskThickness'],
+            self.magnafpm_parameters['MagnetThickness'],
+            self.magnafpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
         return calculate_h_channel_section_height(
-            self.magn_afpm_parameters['RotorDiskRadius'],
-            self.magn_afpm_parameters['CoilLegWidth'],
+            self.magnafpm_parameters['RotorDiskRadius'],
+            self.magnafpm_parameters['CoilLegWidth'],
             self.user_parameters['MetalLengthL'],
         )
 
@@ -260,8 +260,8 @@ class HShapeWindTurbine(WindTurbine):
 
 
 class StarShapeWindTurbine(WindTurbine):
-    def __init__(self, magn_afpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magn_afpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='star_shape',
@@ -274,16 +274,16 @@ class StarShapeWindTurbine(WindTurbine):
 
     def calculate_hub_z_offset(self):
         return calculate_hub_z_offset(
-            self.magn_afpm_parameters['StatorThickness'],
-            self.magn_afpm_parameters['DiskThickness'],
-            self.magn_afpm_parameters['MagnetThickness'],
-            self.magn_afpm_parameters['MechanicalClearance']
+            self.magnafpm_parameters['StatorThickness'],
+            self.magnafpm_parameters['DiskThickness'],
+            self.magnafpm_parameters['MagnetThickness'],
+            self.magnafpm_parameters['MechanicalClearance']
         )
 
     def calculate_channel_section_height(self):
         return calculate_star_channel_section_height(
-            self.magn_afpm_parameters['RotorDiskRadius'],
-            self.magn_afpm_parameters['CoilLegWidth'],
+            self.magnafpm_parameters['RotorDiskRadius'],
+            self.magnafpm_parameters['CoilLegWidth'],
             self.user_parameters['MetalLengthL'],
         )
 
