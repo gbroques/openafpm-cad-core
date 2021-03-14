@@ -149,7 +149,7 @@ class WindTurbine(ABC):
         hub_z_offset = self.calculate_hub_z_offset()
         placement = Placement()
         placement.move(Vector(0, 0, hub_z_offset))
-        hub.Placement = placement
+        place_objects(hub.Group, placement)
 
     @abstractmethod
     def calculate_hub_z_offset(self):

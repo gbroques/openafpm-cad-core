@@ -1,7 +1,7 @@
 import os
 from FreeCAD import Placement, Vector
 
-from .common import find_object_by_label, make_compound
+from .common import find_object_by_label
 
 __all__ = ['make_hub']
 
@@ -37,12 +37,16 @@ def make_hub(base_path,
         for item in flange.Group:
             item.enforceRecompute()
 
-    return make_compound(document, name, [
+
+    hub = document.addObject('App::DocumentObjectGroup', name)
+
+    hub.addObjects([
         frame_side_flange_cover,
         rotor_side_flange_cover,
         stub_axle_shaft,
         flange
     ])
+    return hub
 
 
 def _merge_document(document, path, name):
