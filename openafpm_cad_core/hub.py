@@ -37,7 +37,6 @@ def make_hub(base_path,
         for item in flange.Group:
             item.enforceRecompute()
 
-
     hub = document.addObject('App::DocumentObjectGroup', name)
 
     hub.addObjects([

@@ -76,6 +76,7 @@ class WindTurbine(ABC):
             self.magnafpm_parameters['RotorDiskRadius'])
 
         alternator_name = 'Alternator'
+        # T Shape, number of coils = RotorRadius <= 125 ? 6 : 9
         number_of_coils = round(self.magnafpm_parameters['NumberMagnet'] * 0.75)
         inner_stator_hole_radius = (
             self.magnafpm_parameters['RotorDiskRadius'] -
