@@ -69,6 +69,6 @@ Name                  Calculation
 ``OuterCircumradius`` (``RotorDiskRadius`` + ``CoilLegWidth`` + ``20``) / ``cos(30°)``
 ``HolesCircumradius`` ``RotorRadius`` + ``CoilLegWidth`` + ``0.5`` *
                       (``OuterCircumradius`` -
-                      ``RotorRadius`` -
+                      ``RotorDiskRadius`` -
                       ``CoilLegWidth``)
 ===================== ================================================================
