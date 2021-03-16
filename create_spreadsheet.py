@@ -19,7 +19,7 @@ class WindTurbine(Enum):
 
 parameters_by_variant = {
     WindTurbine.T_SHAPE: {
-        'magnafpm': {
+        'MagnAFPM': {
             'RotorDiskRadius': 150,
             'DiskThickness': 10,
             'MagnetLength': 46,
@@ -32,7 +32,7 @@ parameters_by_variant = {
             'CoilInnerWidth2': 30,
             'MechanicalClearance': 3
         },
-        'furling': {
+        'OpenFurl': {
             'Angle': 20,
             'BracketLength': 300,
             'BracketWidth': 30,
@@ -45,7 +45,7 @@ parameters_by_variant = {
             'VaneWidth': 500,
             'Offset': 125
         },
-        'user': {
+        'User': {
             'HubHolesPlacement': 50,
             'RotorInnerCircle': 32.5,
             'Holes': 6,
@@ -59,7 +59,7 @@ parameters_by_variant = {
         }
     },
     WindTurbine.H_SHAPE: {
-        'magnafpm': {
+        'MagnAFPM': {
             'RotorDiskRadius': 230,
             'DiskThickness': 10,
             'MagnetLength': 46,
@@ -72,7 +72,7 @@ parameters_by_variant = {
             'CoilInnerWidth2': 30,
             'MechanicalClearance': 3
         },
-        'furling': {
+        'OpenFurl': {
             'Angle': 20,
             'BracketLength': 300,
             'BracketWidth': 30,
@@ -85,7 +85,7 @@ parameters_by_variant = {
             'VaneWidth': 500,
             'Offset': 125
         },
-        'user': {
+        'User': {
             'HubHolesPlacement': 65,
             'RotorInnerCircle': 47.5,
             'Holes': 6,
@@ -99,7 +99,7 @@ parameters_by_variant = {
         }
     },
     WindTurbine.STAR_SHAPE: {
-        'magnafpm': {
+        'MagnAFPM': {
             'RotorDiskRadius': 349,
             'DiskThickness': 10,
             'MagnetLength': 58,
@@ -112,7 +112,7 @@ parameters_by_variant = {
             'CoilInnerWidth2': 30,
             'MechanicalClearance': 3
         },
-        'furling': {
+        'OpenFurl': {
             'Angle': 20,
             'BracketLength': 300,
             'BracketWidth': 30,
@@ -125,7 +125,7 @@ parameters_by_variant = {
             'VaneWidth': 500,
             'Offset': 125
         },
-        'user': {
+        'User': {
             'HubHolesPlacement': 102.5,
             'RotorInnerCircle': 81.5,
             'Holes': 7,
@@ -195,40 +195,30 @@ class TaskPanel:
         current_text = self.combo_box.currentText()
         variant = WindTurbine(current_text)
         parameters = parameters_by_variant[variant]
-        create_spreadsheet_document(
-            'WindTurbine',
-            parameters['magnafpm'],
-            parameters['furling'],
-            parameters['user'])
+        create_spreadsheet_document('WindTurbine', parameters)
         Gui.Control.closeDialog()
 
 
 def get_rotor_disk_radius(variant):
-    return str(parameters_by_variant[variant]['magnafpm']['RotorDiskRadius'])
+    return str(parameters_by_variant[variant]['MagnAFPM']['RotorDiskRadius'])
 
 
-def create_spreadsheet_document(document_name,
-                                magnafpm_parameters,
-                                furling_parameters,
-                                user_parameters):
+def create_spreadsheet_document(document_name, parameters_by_key):
     document = App.newDocument(document_name)
     sheet_name = 'Spreadsheet'
     sheet = document.addObject('Spreadsheet::Sheet', sheet_name)
-    magnafpm_cells = _dict_to_cells(magnafpm_parameters)
-    furling_cells = _dict_to_cells(furling_parameters)
-    user_cells = _dict_to_cells(user_parameters)
-    cells = [
-        ['MagnAFPM', ''],
-        *magnafpm_cells,
-        ['Furling', ''],
-        *furling_cells,
-        ['User', ''],
-        *user_cells
-    ]
+    cells = _buid_cells(parameters_by_key)
 
     _populate_spreadsheet(sheet, cells)
     document.recompute()
     return document
+
+def _buid_cells(parameters_by_key):
+    cells = []
+    for key, parameters in parameters_by_key.items():
+        cells.append([key, ''])
+        cells.extend(_dict_to_cells(parameters))
+    return cells
 
 
 def _dict_to_cells(dictionary):

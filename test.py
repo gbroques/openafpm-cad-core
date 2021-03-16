@@ -55,6 +55,7 @@ offset = 125
 
 magnafpm_parameters = {
     'RotorDiskRadius': rotor_radius,
+    # RotorDiskThickness
     'DiskThickness': 10,
     'MagnetLength': magnet_length,
     'MagnetWidth': 30,
@@ -62,9 +63,9 @@ magnafpm_parameters = {
     'NumberMagnet': number_magnet,
     'StatorThickness': stator_thickness,
     'CoilLegWidth': 22.5,  # 22.5 reduced
-    # Coil Outer Hole Width
+    # CoilOuterHoleWidth
     'CoilInnerWidth1': 30,
-    # Coil Inner Hole Width
+    # CoilInnerHoleWidth
     'CoilInnerWidth2': 30, # Inner and outer with respect to center of rotor disk.
     # Airgap length
     # Distance between rotor and stator (~ 1 - 6 mm) 5 for others?
@@ -73,15 +74,21 @@ magnafpm_parameters = {
 
 user_parameters = {
     # Distance between center of hub hole and center of alternator
+    # HubHolesCircumradius
     'HubHolesPlacement': hub_holes_placement,
     'RotorInnerCircle': rotor_inner_circle,
-    'Holes': holes,  # Radius of outer holes on stator
+    'Holes': holes,  # Radius of stator mount holes
     'MetalLengthL': metal_length_l,
     'MetalThicknessL': metal_thickness_l,
     'FlatMetalThickness': 10,
     'YawPipeRadius': yaw_pipe_radius,
     'PipeThickness': 5,
+    # The hole in the surrond is about 5 mm larger in
+    # radius than the magnet rotor so that the casting covers
+    # and protects the edges of the magnets
+    # RotorResinCastMargin
     'ResineRotorMargin': 5,
+    # HubHoleRadius
     'HubHoles': hub_holes  # Radius of hub holes
 }
 
