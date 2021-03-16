@@ -8,6 +8,7 @@ from FreeCAD import Placement, Rotation, Vector
 
 from . import importObj as importOBJ
 from .alternator import make_alternator
+from .coil import make_coils
 from .common import make_compound
 from .frame import make_frame
 from .h_shape_frame import (assemble_h_shape_frame,
@@ -59,8 +60,10 @@ class WindTurbine(ABC):
         self.assemble_frame = assemble_frame
         self.hub_rod_length = hub_rod_length
 
-        self.base_path = os.path.join(
-            os.path.dirname(__file__), 'documents', base_dir)
+        documents_path = os.path.join(
+            os.path.dirname(__file__), 'documents')
+        self.common_path = os.path.join(documents_path, 'common')
+        self.base_path = os.path.join(documents_path, base_dir)
         self.doc = App.newDocument('WindTurbine')
 
     def to_obj(self):
@@ -78,12 +81,15 @@ class WindTurbine(ABC):
 
         alternator_name = 'Alternator'
         # T Shape, number of coils = RotorRadius <= 125 ? 6 : 9
-        number_of_coils = round(self.magnafpm_parameters['NumberMagnet'] * 0.75)
+        number_of_coils = round(
+            self.magnafpm_parameters['NumberMagnet'] * 0.75)
         inner_stator_hole_radius = (
             self.magnafpm_parameters['RotorDiskRadius'] -
             self.magnafpm_parameters['MagnetLength'] -
             self.magnafpm_parameters['CoilLegWidth']
         )
+        coils = make_coils(self.common_path, self.doc,
+                           number_of_coils, inner_stator_hole_radius)
         alternator = make_alternator(
             self.base_path,
             self.has_separate_master_files,
@@ -94,8 +100,7 @@ class WindTurbine(ABC):
             self.magnafpm_parameters['MagnetThickness'],
             self.magnafpm_parameters['MechanicalClearance'],
             magnets,
-            number_of_coils,
-            inner_stator_hole_radius)
+            coils)
 
         flange_cover_thickness = 10
         middle_flange_pad_thickness = 16

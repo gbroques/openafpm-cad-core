@@ -15,8 +15,7 @@ def make_alternator(base_path,
                     magnet_thickness,
                     distance_between_stator_and_rotor,
                     magnets,
-                    number_of_coils,
-                    inner_stator_hole_radius):
+                    coils):
     """
     The alternator consists of the stator,
     sandwiched by two rotors.
@@ -26,8 +25,7 @@ def make_alternator(base_path,
                          has_separate_master_files,
                          document,
                          stator_name,
-                         number_of_coils,
-                         inner_stator_hole_radius)
+                         coils)
 
     bottom_rotor, top_rotor = make_rotors(
         base_path,

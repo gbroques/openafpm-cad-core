@@ -62,8 +62,10 @@ magnafpm_parameters = {
     'NumberMagnet': number_magnet,
     'StatorThickness': stator_thickness,
     'CoilLegWidth': 22.5,  # 22.5 reduced
+    # Coil Outer Hole Width
     'CoilInnerWidth1': 30,
-    'CoilInnerWidth2': 30,
+    # Coil Inner Hole Width
+    'CoilInnerWidth2': 30, # Inner and outer with respect to center of rotor disk.
     # Airgap length
     # Distance between rotor and stator (~ 1 - 6 mm) 5 for others?
     'MechanicalClearance': 3
