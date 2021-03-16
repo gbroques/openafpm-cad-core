@@ -67,6 +67,7 @@ class WindTurbine(ABC):
         if not self.has_separate_master_files:
             _open_master(self.base_path)
 
+        App.setActiveDocument(self.doc.Name)
         magnets = make_rotor_magnets(
             self.doc,
             self.magnafpm_parameters['MagnetLength'],
