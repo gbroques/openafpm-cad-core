@@ -60,6 +60,7 @@ magnafpm_parameters = {
     'MagnetLength': magnet_length,
     'MagnetWidth': 30,
     'MagnetThickness': 10,
+    # NumberOfMagnets
     'NumberMagnet': number_magnet,
     'StatorThickness': stator_thickness,
     'CoilLegWidth': 22.5,  # 22.5 reduced
@@ -76,7 +77,9 @@ user_parameters = {
     # Distance between center of hub hole and center of alternator
     # HubHolesCircumradius
     'HubHolesPlacement': hub_holes_placement,
+    # RotorInnerHoleRadius
     'RotorInnerCircle': rotor_inner_circle,
+    # StatorMountHoleRadius
     'Holes': holes,  # Radius of stator mount holes
     'MetalLengthL': metal_length_l,
     'MetalThicknessL': metal_thickness_l,
@@ -100,6 +103,7 @@ furling_parameters = {
     'BoomLength': 1000,
     'BoomPipeRadius': 24.15,
     'BoomPipeThickness': 5,
+    # TODO: Reorder: L x W x T
     'VaneThickness': 6,
     'VaneLength': 1200,
     'VaneWidth': 500,
