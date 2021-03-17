@@ -11,4 +11,4 @@ Rotor
 =====
 
 * `Rotor Disk <rotor_disk_parameters.rst>`_
-* Rotor Resin Cast
+* `Rotor Resin Cast <rotor_resin_cast_parameters.rst>`_
