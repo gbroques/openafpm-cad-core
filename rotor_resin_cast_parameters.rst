@@ -17,8 +17,8 @@ Calculated
 ===================== ==========================================================
 Name                  Calculation
 ===================== ==========================================================
-``OuterRadius``       ``RotorDiskRadius`` + ``ResineRotorMargin``
-``Thickness``         ``DiskThickness`` + ``MagnetThickness``
+``OuterRadius``       ``RotorDiskRadius + ResineRotorMargin``
+``Thickness``         ``DiskThickness + MagnetThickness``
 ===================== ==========================================================
 
 Variants
@@ -36,7 +36,8 @@ Calculated
 ===================== ==========================================================
 Name                  Calculation
 ===================== ==========================================================
-``InnerRadius``       ``HubHolesPlacement + 0.5 * (RotorRadius - MagnetLength - HubHolesPlacement)``
+``InnerRadius``       ``HubHolesPlacement + 0.5 *
+                      (RotorDiskRadius - MagnetLength - HubHolesPlacement)``
 ===================== ==========================================================
 
 H Shape & Star Shape
@@ -47,5 +48,5 @@ Calculated
 ===================== ==========================================================
 Name                  Calculation
 ===================== ==========================================================
-``InnerRadius``       ``RotorDiskRadius`` - ``MagnetLength`` - 25
+``InnerRadius``       ``RotorDiskRadius - MagnetLength - 25``
 ===================== ==========================================================
