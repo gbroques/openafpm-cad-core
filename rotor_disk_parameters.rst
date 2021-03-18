@@ -13,6 +13,12 @@ User
 * ``HubHolesPlacement``
 * ``HubHoles``
 
+Variants
+--------
+
+ALL
+^^^
+
 Calculated
 """"""""""
 
@@ -24,10 +30,9 @@ Name                  Calculation
 
 Star Shape
 ^^^^^^^^^^
-In addition to the above parameters and calculations.
 
 MagnAFPM
---------
+""""""""
 * ``MagnetLength``
 
 Calculated

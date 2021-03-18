@@ -20,12 +20,12 @@ T Shape
 
 Calculated
 """"""""""
-===================== ==========================================================
+===================== =================================================
 Name                  Calculation
-===================== ==========================================================
-``InnerHoleRadius``   ``RotorDiskRadius`` - ``MagnetLength`` - ``CoilLegWidth``
-``HolesCircumradius`` ``RotorDiskRadius`` + ``CoilLegWidth`` + ``20``
-===================== ==========================================================
+===================== =================================================
+``InnerHoleRadius``   ``RotorDiskRadius - MagnetLength - CoilLegWidth``
+``HolesCircumradius`` ``RotorDiskRadius + CoilLegWidth + 20``
+===================== =================================================
 
 Static
 """"""
@@ -41,12 +41,12 @@ H Shape
 
 Calculated
 """"""""""
-===================== =========================================================
+===================== =================================================
 Name                  Calculation
-===================== =========================================================
-``InnerHoleRadius``   ``RotorDiskRadius`` - ``MagnetLength`` - ``CoilLegWidth``
-``HolesCircumradius`` ``RotorDiskRadius`` + ``CoilLegWidth`` + ``20``
-===================== =========================================================
+===================== =================================================
+``InnerHoleRadius``   ``RotorDiskRadius - MagnetLength - CoilLegWidth``
+``HolesCircumradius`` ``RotorDiskRadius + CoilLegWidth + 20``
+===================== =================================================
 
 Static
 """"""
@@ -62,13 +62,11 @@ Star Shape
 
 Calculated
 """"""""""
-===================== ================================================================
+===================== ======================================================
 Name                  Calculation
-===================== ================================================================
-``InnerHoleRadius``   ``RotorDiskRadius`` - ``MagnetLength`` - ``CoilLegWidth``
-``OuterCircumradius`` (``RotorDiskRadius`` + ``CoilLegWidth`` + ``20``) / ``cos(30°)``
-``HolesCircumradius`` ``RotorRadius`` + ``CoilLegWidth`` + ``0.5`` *
-                      (``OuterCircumradius`` -
-                      ``RotorDiskRadius`` -
-                      ``CoilLegWidth``)
-===================== ================================================================
+===================== ======================================================
+``InnerHoleRadius``   ``RotorDiskRadius - MagnetLength - CoilLegWidth``
+``OuterCircumradius`` ``(RotorDiskRadius + CoilLegWidth + 20) / cos(30°)
+``HolesCircumradius`` ``RotorRadius + CoilLegWidth + 0.5 *
+                      (OuterCircumradius - RotorDiskRadius - CoilLegWidth)``
+===================== ======================================================
