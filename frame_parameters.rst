@@ -42,7 +42,7 @@ Calculated
 ============================ ================================================================
 Name                         Calculation
 ============================ ================================================================
-``StatorHolesCircumradius``  ``RotorRadius + CoilLegWidth + 20``
+``StatorHolesCircumradius``  ``RotorDiskRadius + CoilLegWidth + 20``
 ``Delta``                    ``100 - 8 *
                              (25 - StatorHolesCircumradius * StatorHolesCircumradius)``
 ``alpha``                    ``(10 + Delta ^ 0.5) / 4``

@@ -139,6 +139,9 @@ class WindTurbine(ABC):
         self.place_frame(frame)
 
         self.doc.recompute()
+
+        self._group_spreadsheets()
+
         objects = [
             alternator,
             hub,
@@ -151,6 +154,12 @@ class WindTurbine(ABC):
         ungrouped = ungroup_objects(objects)
         obj_file_contents = importOBJ.export(ungrouped)
         return obj_file_contents
+
+    def _group_spreadsheets(self):
+        spreadsheets = self.doc.findObjects('Spreadsheet::Sheet')
+        spreadsheets_group = self.doc.addObject(
+            'App::DocumentObjectGroup', 'Spreadsheets')
+        spreadsheets_group.addObjects(spreadsheets)
 
     def _place_hub(self, hub):
         hub_z_offset = self.calculate_hub_z_offset()

@@ -81,8 +81,8 @@ user_parameters = {
     'RotorInnerCircle': rotor_inner_circle,
     # StatorMountHoleRadius
     'Holes': holes,  # Radius of stator mount holes
-    'MetalLengthL': metal_length_l,
-    'MetalThicknessL': metal_thickness_l,
+    'MetalLengthL': metal_length_l, # Width of angle bar (frame)
+    'MetalThicknessL': metal_thickness_l, # Thickness of angle bar (frame)
     'FlatMetalThickness': 10,
     'YawPipeRadius': yaw_pipe_radius,
     'PipeThickness': 5,
