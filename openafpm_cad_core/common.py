@@ -54,6 +54,8 @@ def clone_body(document, name, body_to_clone):
     return body
 
 
+# TODO: Use https://wiki.freecadweb.org/Draft_PolarArray
+#       when upgrading to FreeCAD 19.
 def create_polar_array(part, n, y_offset):
     array = [part]
     Draft.move(part, Vector(0, y_offset, 0))

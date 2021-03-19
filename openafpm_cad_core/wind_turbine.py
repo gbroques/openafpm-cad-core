@@ -129,7 +129,6 @@ class WindTurbine(ABC):
                                    thread_z_offset)
         frame = make_frame(
             self.base_path,
-            self.has_separate_master_files,
             self.doc,
             self.assemble_frame,
             self.user_parameters['MetalLengthL'],
