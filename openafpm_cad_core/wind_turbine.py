@@ -92,7 +92,6 @@ class WindTurbine(ABC):
                            number_of_coils, inner_stator_hole_radius)
         alternator = make_alternator(
             self.base_path,
-            self.has_separate_master_files,
             self.doc,
             alternator_name,
             self.magnafpm_parameters['StatorThickness'],

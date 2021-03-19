@@ -7,7 +7,6 @@ __all__ = ['make_alternator']
 
 
 def make_alternator(base_path,
-                    has_separate_master_files,
                     document,
                     name,
                     stator_thickness,
@@ -28,7 +27,6 @@ def make_alternator(base_path,
 
     bottom_rotor, top_rotor = make_rotors(
         base_path,
-        has_separate_master_files,
         document,
         stator_thickness,
         disk_thickness,

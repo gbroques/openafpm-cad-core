@@ -11,7 +11,6 @@ __all__ = ['make_rotors']
 
 
 def make_rotors(base_path,
-                has_separate_master_files,
                 document,
                 stator_thickness,
                 disk_thickness,
@@ -19,8 +18,6 @@ def make_rotors(base_path,
                 distance_between_stator_and_rotor,
                 magnets):
     rotor_path = os.path.join(base_path, 'Rotor')
-    if has_separate_master_files:
-        _open_rotor_master(rotor_path)
     if hasattr(Gui, 'setActiveDocument') and hasattr(Gui, 'SendMsgToActiveView'):
         Gui.setActiveDocument(document.Name)
         Gui.SendMsgToActiveView('ViewFit')
@@ -40,10 +37,6 @@ def make_rotors(base_path,
                        magnet_thickness,
                        distance_between_stator_and_rotor)
     return bottom_rotor, top_rotor
-
-
-def _open_rotor_master(rotor_path):
-    App.openDocument(os.path.join(rotor_path, 'Master.FCStd'))
 
 
 def _assemble_bottom_rotor(document, rotor_path, magnets):
