@@ -1,20 +1,15 @@
 import os
 
-import FreeCAD as App
-
 from .common import enforce_recompute_last_spreadsheet, find_object_by_label
 
 __all__ = ['make_stator']
 
 
 def make_stator(base_path,
-                has_separate_master_files,
                 document,
                 stator_name,
                 coils):
     stator_path = os.path.join(base_path, 'Stator')
-    if has_separate_master_files:
-        _open_stator_master(stator_path)
 
     stator_resin_cast_label = 'StatorResinCast'
     _merge_stator_resin_cast(document, stator_path, stator_resin_cast_label)
@@ -27,10 +22,6 @@ def make_stator(base_path,
         coils
     ])
     return stator
-
-
-def _open_stator_master(stator_path):
-    App.openDocument(os.path.join(stator_path, 'MasterStator.FCStd'))
 
 
 def _merge_stator_resin_cast(document, stator_path, stator_resin_cast_label):

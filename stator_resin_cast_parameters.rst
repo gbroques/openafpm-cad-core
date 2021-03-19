@@ -46,6 +46,7 @@ Name                  Calculation
 ===================== =================================================
 ``InnerHoleRadius``   ``RotorDiskRadius - MagnetLength - CoilLegWidth``
 ``HolesCircumradius`` ``RotorDiskRadius + CoilLegWidth + 20``
+``HolesPlacement``    TODO: Is this necessary?
 ===================== =================================================
 
 Static

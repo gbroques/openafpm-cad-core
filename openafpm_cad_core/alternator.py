@@ -22,7 +22,6 @@ def make_alternator(base_path,
     """
     stator_name = 'Stator'
     stator = make_stator(base_path,
-                         has_separate_master_files,
                          document,
                          stator_name,
                          coils)
