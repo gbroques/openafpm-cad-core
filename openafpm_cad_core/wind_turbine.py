@@ -54,7 +54,6 @@ class WindTurbine(ABC):
                  user_parameters,
                  furling_parameters,
                  base_dir,
-                 has_separate_master_files,
                  flange_top_pad_length,
                  flange_bottom_pad_length,
                  number_of_hub_holes,
@@ -63,7 +62,6 @@ class WindTurbine(ABC):
         self.magnafpm_parameters = magnafpm_parameters
         self.user_parameters = user_parameters
         self.furling_parameters = furling_parameters
-        self.has_separate_master_files = has_separate_master_files
         self.flange_top_pad_length = flange_top_pad_length
         self.flange_bottom_pad_length = flange_bottom_pad_length
         self.number_of_hub_holes = number_of_hub_holes
@@ -77,9 +75,6 @@ class WindTurbine(ABC):
         self.doc = document
 
     def to_obj(self):
-        if not self.has_separate_master_files:
-            _open_master(self.base_path)
-
         App.setActiveDocument(self.doc.Name)
         magnets = make_rotor_magnets(
             self.doc,
@@ -199,7 +194,6 @@ class TShapeWindTurbine(WindTurbine):
                          user_parameters,
                          furling_parameters,
                          base_dir='t_shape',
-                         has_separate_master_files=True,
                          flange_top_pad_length=40,
                          flange_bottom_pad_length=45,
                          number_of_hub_holes=4,
@@ -249,7 +243,6 @@ class HShapeWindTurbine(WindTurbine):
                          user_parameters,
                          furling_parameters,
                          base_dir='h_shape',
-                         has_separate_master_files=True,
                          flange_top_pad_length=40,
                          flange_bottom_pad_length=45,
                          number_of_hub_holes=5,
@@ -292,7 +285,6 @@ class StarShapeWindTurbine(WindTurbine):
                          user_parameters,
                          furling_parameters,
                          base_dir='star_shape',
-                         has_separate_master_files=False,
                          flange_top_pad_length=75,
                          flange_bottom_pad_length=85,
                          number_of_hub_holes=6,
@@ -326,11 +318,6 @@ class StarShapeWindTurbine(WindTurbine):
 
     def calculate_frame_y_offset(self):
         return -self.calculate_channel_section_height() / 2
-
-
-def _open_master(base_path):
-    App.openDocument(os.path.join(
-        base_path, 'MasterBigWindturbine.FCStd'))
 
 
 def calculate_hub_z_offset(stator_thickness,
