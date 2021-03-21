@@ -25,21 +25,31 @@ from .t_shape_frame import (
 __all__ = ['create_wind_turbine']
 
 
-def create_wind_turbine(magnafpm_parameters, user_parameters, furling_parameters):
+def create_wind_turbine(document, magnafpm_parameters, user_parameters, furling_parameters):
     rotor_radius = magnafpm_parameters['RotorDiskRadius']
     if 0 <= rotor_radius < 187.5:
         return TShapeWindTurbine(
-            magnafpm_parameters, user_parameters, furling_parameters)
+            document,
+            magnafpm_parameters,
+            user_parameters,
+            furling_parameters)
     elif 187.5 <= rotor_radius <= 275:
         return HShapeWindTurbine(
-            magnafpm_parameters, user_parameters, furling_parameters)
+            document,
+            magnafpm_parameters,
+            user_parameters,
+            furling_parameters)
     else:
         return StarShapeWindTurbine(
-            magnafpm_parameters, user_parameters, furling_parameters)
+            document,
+            magnafpm_parameters,
+            user_parameters,
+            furling_parameters)
 
 
 class WindTurbine(ABC):
     def __init__(self,
+                 document,
                  magnafpm_parameters,
                  user_parameters,
                  furling_parameters,
@@ -64,7 +74,7 @@ class WindTurbine(ABC):
             os.path.dirname(__file__), 'documents')
         self.common_path = os.path.join(documents_path, 'common')
         self.base_path = os.path.join(documents_path, base_dir)
-        self.doc = App.newDocument('WindTurbine')
+        self.doc = document
 
     def to_obj(self):
         if not self.has_separate_master_files:
@@ -183,8 +193,9 @@ class WindTurbine(ABC):
 
 
 class TShapeWindTurbine(WindTurbine):
-    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magnafpm_parameters,
+    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(document,
+                         magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='t_shape',
@@ -232,8 +243,9 @@ class TShapeWindTurbine(WindTurbine):
 
 
 class HShapeWindTurbine(WindTurbine):
-    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magnafpm_parameters,
+    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(document,
+                         magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='h_shape',
@@ -274,8 +286,9 @@ class HShapeWindTurbine(WindTurbine):
 
 
 class StarShapeWindTurbine(WindTurbine):
-    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(magnafpm_parameters,
+    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(document,
+                         magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='star_shape',

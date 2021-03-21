@@ -42,4 +42,7 @@ def visualize(magnafpm_parameters: dict,
     master_of_puppets_doc.recompute()
 
     return create_wind_turbine(
-        magnafpm_parameters, user_parameters, furling_parameters)
+        master_of_puppets_doc,
+        magnafpm_parameters,
+        user_parameters,
+        furling_parameters)
