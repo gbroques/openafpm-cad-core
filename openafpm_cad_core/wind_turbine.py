@@ -89,7 +89,9 @@ class WindTurbine(ABC):
 
     def save_as(self, path):
         filename = os.path.basename(self.doc.FileName)
-        self.doc.saveAs(os.path.join(path, filename))
+        filepath = os.path.join(path, filename)
+        self.doc.saveAs(filepath)
+        return filepath
 
     def _assemble(self):
         App.setActiveDocument(self.doc.Name)
