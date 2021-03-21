@@ -9,18 +9,18 @@ from openafpm_cad_core import visualize
 
 # T Shape
 # =======
-# rotor_radius = 150
-# rotor_inner_circle = 32.5
-# hub_holes_placement = 50
-# magnet_length = 46
-# number_magnet = 12
-# stator_thickness = 13
-# hub_holes = 6
-# holes = 6
-# metal_length_l = 50
-# metal_thickness_l = 6
-# yaw_pipe_radius = 30.15
-# offset = 125
+rotor_radius = 150
+rotor_inner_circle = 32.5
+hub_holes_placement = 50
+magnet_length = 46
+number_magnet = 12
+stator_thickness = 13
+hub_holes = 6
+holes = 6
+metal_length_l = 50
+metal_thickness_l = 6
+yaw_pipe_radius = 30.15
+offset = 125
 
 # H Shape
 # =======
@@ -39,18 +39,18 @@ from openafpm_cad_core import visualize
 
 # Star Shape
 # ==========
-rotor_radius = 349
-rotor_inner_circle = 81.5
-hub_holes_placement = 102.5
-magnet_length = 58
-number_magnet = 32
-stator_thickness = 15
-hub_holes = 8
-holes = 7
-metal_length_l = 65
-metal_thickness_l = 8
-yaw_pipe_radius = 57.15
-offset = 125
+# rotor_radius = 349
+# rotor_inner_circle = 81.5
+# hub_holes_placement = 102.5
+# magnet_length = 58
+# number_magnet = 32
+# stator_thickness = 15
+# hub_holes = 8
+# holes = 7
+# metal_length_l = 65
+# metal_thickness_l = 8
+# yaw_pipe_radius = 57.15
+# offset = 125
 
 
 magnafpm_parameters = {
