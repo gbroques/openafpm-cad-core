@@ -30,11 +30,9 @@ def visualize(magnafpm_parameters: dict,
               user_parameters: dict,
               furling_parameters: dict) -> WindTurbine:
     master_of_puppets_doc_name = 'Master of Puppets'
-    imported_spreadsheet_name = 'Spreadsheet001'
     master_spreadsheet_name = 'Spreadsheet'
     master_of_puppets_doc = create_master_of_puppets(
         master_of_puppets_doc_name,
-        imported_spreadsheet_name,
         master_spreadsheet_name,
         magnafpm_parameters,
         user_parameters,
