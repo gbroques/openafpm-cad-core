@@ -16,6 +16,7 @@ from .h_shape_frame import (assemble_h_shape_frame,
 from .hub import make_hub
 from .hub_threads import make_hub_threads
 from .magnet import make_rotor_magnets
+from .master_of_puppets import create_master_of_puppets
 from .star_shape_frame import (assemble_star_shape_frame,
                                calculate_star_channel_section_height)
 from .t_shape_frame import (
@@ -25,23 +26,20 @@ from .t_shape_frame import (
 __all__ = ['create_wind_turbine']
 
 
-def create_wind_turbine(document, magnafpm_parameters, user_parameters, furling_parameters):
+def create_wind_turbine(magnafpm_parameters, user_parameters, furling_parameters):
     rotor_radius = magnafpm_parameters['RotorDiskRadius']
     if 0 <= rotor_radius < 187.5:
         return TShapeWindTurbine(
-            document,
             magnafpm_parameters,
             user_parameters,
             furling_parameters)
     elif 187.5 <= rotor_radius <= 275:
         return HShapeWindTurbine(
-            document,
             magnafpm_parameters,
             user_parameters,
             furling_parameters)
     else:
         return StarShapeWindTurbine(
-            document,
             magnafpm_parameters,
             user_parameters,
             furling_parameters)
@@ -49,7 +47,6 @@ def create_wind_turbine(document, magnafpm_parameters, user_parameters, furling_
 
 class WindTurbine(ABC):
     def __init__(self,
-                 document,
                  magnafpm_parameters,
                  user_parameters,
                  furling_parameters,
@@ -72,9 +69,29 @@ class WindTurbine(ABC):
             os.path.dirname(__file__), 'documents')
         self.common_path = os.path.join(documents_path, 'common')
         self.base_path = os.path.join(documents_path, base_dir)
-        self.doc = document
+
+        master_of_puppets_doc_name = 'Master of Puppets'
+        master_spreadsheet_name = 'Spreadsheet'
+        master_of_puppets_doc = create_master_of_puppets(
+            master_of_puppets_doc_name,
+            master_spreadsheet_name,
+            magnafpm_parameters,
+            user_parameters,
+            furling_parameters)
+        self.doc = master_of_puppets_doc
+        master_of_puppets_doc.recompute()
+        self._objects = self._assemble()
 
     def to_obj(self):
+        ungrouped = ungroup_objects(self._objects)
+        obj_file_contents = importOBJ.export(ungrouped)
+        return obj_file_contents
+
+    def save_as(self, path):
+        filename = os.path.basename(self.doc.FileName)
+        self.doc.saveAs(os.path.join(path, filename))
+
+    def _assemble(self):
         App.setActiveDocument(self.doc.Name)
         magnets = make_rotor_magnets(
             self.doc,
@@ -143,7 +160,7 @@ class WindTurbine(ABC):
 
         self.doc.recompute()
 
-        self._group_spreadsheets()
+        self._group_spreadsheets(self.doc)
 
         objects = [
             alternator,
@@ -154,13 +171,11 @@ class WindTurbine(ABC):
         # Rotate model for Three.js
         pl = Placement(Vector(), Rotation(-90, -180, -270))
         place_objects(objects, pl)
-        ungrouped = ungroup_objects(objects)
-        obj_file_contents = importOBJ.export(ungrouped)
-        return obj_file_contents
+        return objects
 
-    def _group_spreadsheets(self):
-        spreadsheets = self.doc.findObjects('Spreadsheet::Sheet')
-        spreadsheets_group = self.doc.addObject(
+    def _group_spreadsheets(self, document):
+        spreadsheets = document.findObjects('Spreadsheet::Sheet')
+        spreadsheets_group = document.addObject(
             'App::DocumentObjectGroup', 'Spreadsheets')
         spreadsheets_group.addObjects(spreadsheets)
 
@@ -188,9 +203,8 @@ class WindTurbine(ABC):
 
 
 class TShapeWindTurbine(WindTurbine):
-    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(document,
-                         magnafpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='t_shape',
@@ -237,9 +251,8 @@ class TShapeWindTurbine(WindTurbine):
 
 
 class HShapeWindTurbine(WindTurbine):
-    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(document,
-                         magnafpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='h_shape',
@@ -279,9 +292,8 @@ class HShapeWindTurbine(WindTurbine):
 
 
 class StarShapeWindTurbine(WindTurbine):
-    def __init__(self, document, magnafpm_parameters, user_parameters, furling_parameters):
-        super().__init__(document,
-                         magnafpm_parameters,
+    def __init__(self, magnafpm_parameters, user_parameters, furling_parameters):
+        super().__init__(magnafpm_parameters,
                          user_parameters,
                          furling_parameters,
                          base_dir='star_shape',

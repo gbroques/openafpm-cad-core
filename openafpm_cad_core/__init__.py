@@ -1,4 +1,3 @@
-from .master_of_puppets import create_master_of_puppets
 from .wind_turbine import create_wind_turbine, WindTurbine
 
 # TODO: Yaw bearing
@@ -29,18 +28,7 @@ from .wind_turbine import create_wind_turbine, WindTurbine
 def visualize(magnafpm_parameters: dict,
               user_parameters: dict,
               furling_parameters: dict) -> WindTurbine:
-    master_of_puppets_doc_name = 'Master of Puppets'
-    master_spreadsheet_name = 'Spreadsheet'
-    master_of_puppets_doc = create_master_of_puppets(
-        master_of_puppets_doc_name,
-        master_spreadsheet_name,
-        magnafpm_parameters,
-        user_parameters,
-        furling_parameters)
-    master_of_puppets_doc.recompute()
-
     return create_wind_turbine(
-        master_of_puppets_doc,
         magnafpm_parameters,
         user_parameters,
         furling_parameters)
