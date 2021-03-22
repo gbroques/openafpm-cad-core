@@ -70,10 +70,10 @@ class WindTurbine(ABC):
         self.common_path = os.path.join(documents_path, 'common')
         self.base_path = os.path.join(documents_path, base_dir)
 
-        master_of_puppets_doc_name = 'Master of Puppets'
+        self.doc_name = 'Master of Puppets'
         master_spreadsheet_name = 'Spreadsheet'
         master_of_puppets_doc = create_master_of_puppets(
-            master_of_puppets_doc_name,
+            self.doc_name,
             master_spreadsheet_name,
             magnafpm_parameters,
             user_parameters,
@@ -87,8 +87,8 @@ class WindTurbine(ABC):
         obj_file_contents = importOBJ.export(ungrouped)
         return obj_file_contents
 
-    def save_as(self, path):
-        filename = os.path.basename(self.doc.FileName)
+    def save_to(self, path):
+        filename = self.doc_name + '.FCStd'
         filepath = os.path.join(path, filename)
         self.doc.saveAs(filepath)
         return filepath
