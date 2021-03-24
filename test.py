@@ -15,6 +15,7 @@ hub_holes_placement = 50
 magnet_length = 46
 number_magnet = 12
 stator_thickness = 13
+coil_leg_width = 21
 hub_holes = 6
 holes = 6
 metal_length_l = 50
@@ -30,6 +31,7 @@ offset = 125
 # magnet_length = 46
 # number_magnet = 16
 # stator_thickness = 13
+# coil_leg_width = 22.5
 # hub_holes = 7
 # holes = 6
 # metal_length_l = 50
@@ -45,6 +47,7 @@ offset = 125
 # magnet_length = 58
 # number_magnet = 32
 # stator_thickness = 15
+# coil_leg_width = 22.5
 # hub_holes = 8
 # holes = 7
 # metal_length_l = 65
@@ -63,7 +66,7 @@ magnafpm_parameters = {
     # NumberOfMagnets
     'NumberMagnet': number_magnet,
     'StatorThickness': stator_thickness,
-    'CoilLegWidth': 22.5,  # 22.5 reduced
+    'CoilLegWidth': coil_leg_width,
     # CoilOuterHoleWidth
     'CoilInnerWidth1': 30,
     # CoilInnerHoleWidth
