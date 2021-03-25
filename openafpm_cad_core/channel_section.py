@@ -34,8 +34,7 @@ def make_channel_section(document, frame_path, metal_length_l, channel_section_h
     ])
 
 
-def make_end_bracket(document, frame_path, channel_section_height):
-    end_bracket_label = 'EndBracket'
+def make_end_bracket(document, frame_path, channel_section_height, end_bracket_label):
     _merge_piece(document, frame_path, end_bracket_label)
     end_bracket = find_object_by_label(
         document,

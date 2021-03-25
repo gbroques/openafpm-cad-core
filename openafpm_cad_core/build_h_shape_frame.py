@@ -19,14 +19,14 @@ def buid_h_shape_frame(document, frame_path, metal_length_l, channel_section_hei
                                            frame_path,
                                            metal_length_l,
                                            channel_section_height)
+    end_bracket_label = 'TailHingeEndBracketFix'
     end_bracket = make_end_bracket(
-        document, frame_path, channel_section_height)
-    end_bracket_label = 'EndBracket'
+        document, frame_path, channel_section_height, end_bracket_label)
     _merge_piece(document, frame_path, end_bracket_label)
     tail_hinge_end_bracket = find_object_by_label(
         document, end_bracket_label + '001')
     expression_tuple = find_expression(
-        tail_hinge_end_bracket.ExpressionEngine, 'Placement.Base.x')
+        tail_hinge_end_bracket.ExpressionEngine, '.Placement.Base.x')
     if expression_tuple is None:
         Console.PrintError(
             'No expression with key "Placement.Base.x" found for EndBracket.')
