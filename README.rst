@@ -282,3 +282,7 @@ Links
 Related Repositories
 --------------------
 * `openafpm-cad-visualization <https://github.com/gbroques/openafpm-cad-visualization>`_
+
+FreeCAD Version
+---------------
+Requires FreeCAD 19.1 or greater.

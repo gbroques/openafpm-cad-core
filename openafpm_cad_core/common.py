@@ -54,19 +54,13 @@ def clone_body(document, name, body_to_clone):
     return body
 
 
-# TODO: Use https://wiki.freecadweb.org/Draft_PolarArray
-#       when upgrading to FreeCAD 19.
 def create_polar_array(part, n, y_offset):
-    array = [part]
     Draft.move(part, Vector(0, y_offset, 0))
-    exterior_angle = _calculate_exterior_angle(n)
-    previous = part
-    for i in range(n - 1):
-        copy = Draft.rotate(previous, exterior_angle, Vector(
-            0, 0, 0), axis=Vector(0, 0, 1), copy=True)
-        array.append(copy)
-        previous = copy
-    return array
+    return Draft.make_polar_array(part,
+                                  number=n,
+                                  angle=360,
+                                  center=Vector(0, 0, 0),
+                                  use_link=True)
 
 
 def _calculate_exterior_angle(n):
