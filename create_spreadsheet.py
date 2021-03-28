@@ -151,25 +151,37 @@ class TaskPanel:
         # Row 1
         row1 = QtGui.QHBoxLayout()
 
-        label = QtGui.QLabel('<strong>Variant:</strong>', self.form)
-        self.combo_box = self.create_combo_box()
+        label = QtGui.QLabel('<strong>Document Name:</strong>', self.form)
+        self.line_edit = QtGui.QLineEdit(self.form)
+        self.line_edit.setText('WindTurbine')
 
         row1.addWidget(label)
-        row1.addWidget(self.combo_box)
+        row1.addWidget(self.line_edit)
 
         layout.addLayout(row1)
 
         # Row 2
         row2 = QtGui.QHBoxLayout()
 
+        label = QtGui.QLabel('<strong>Variant:</strong>', self.form)
+        self.combo_box = self.create_combo_box()
+
+        row2.addWidget(label)
+        row2.addWidget(self.combo_box)
+
+        layout.addLayout(row2)
+
+        # Row 3
+        row3 = QtGui.QHBoxLayout()
+
         rotor_disk_radius_label = QtGui.QLabel(
             '<strong>Rotor Disk Radius:</strong>', self.form)
         self.rotor_disk_radius_value = self.create_rotor_disk_radius_value()
 
-        row2.addWidget(rotor_disk_radius_label)
-        row2.addWidget(self.rotor_disk_radius_value)
+        row3.addWidget(rotor_disk_radius_label)
+        row3.addWidget(self.rotor_disk_radius_value)
 
-        layout.addLayout(row2)
+        layout.addLayout(row3)
 
     def create_rotor_disk_radius_value(self):
         default_variant = WindTurbine.T_SHAPE
@@ -195,7 +207,7 @@ class TaskPanel:
         current_text = self.combo_box.currentText()
         variant = WindTurbine(current_text)
         parameters = parameters_by_variant[variant]
-        create_spreadsheet_document('WindTurbine', parameters)
+        create_spreadsheet_document(self.line_edit.text(), parameters)
         Gui.Control.closeDialog()
 
 
