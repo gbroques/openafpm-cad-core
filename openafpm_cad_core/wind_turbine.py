@@ -65,10 +65,10 @@ class WindTurbine(ABC):
         self.assemble_frame = assemble_frame
         self.hub_rod_length = hub_rod_length
 
-        documents_path = os.path.join(
+        self.documents_path = os.path.join(
             os.path.dirname(__file__), 'documents')
-        self.common_path = os.path.join(documents_path, 'common')
-        self.base_path = os.path.join(documents_path, base_dir)
+        self.common_path = os.path.join(self.documents_path, 'common')
+        self.base_path = os.path.join(self.documents_path, base_dir)
 
         self.doc_name = 'Master of Puppets'
         master_spreadsheet_name = 'Spreadsheet'
@@ -134,11 +134,8 @@ class WindTurbine(ABC):
             middle_flange_pad_thickness +
             flange_cover_thickness
         )
-        hub = make_hub(
-            self.base_path,
-            self.doc,
-            hub_name,
-            stub_axle_shaft_z_offset)
+        hub_path = os.path.join(self.documents_path, 'Hub')
+        hub = make_hub(hub_path, self.doc)
         self._place_hub(hub)
         hub_z_offset = self.calculate_hub_z_offset()
         thread_z_offset = hub_z_offset + middle_flange_pad_thickness
