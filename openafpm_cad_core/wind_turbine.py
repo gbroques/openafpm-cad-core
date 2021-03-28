@@ -83,8 +83,7 @@ class WindTurbine(ABC):
         self._objects = self._assemble()
 
     def to_obj(self):
-        ungrouped = ungroup_objects(self._objects)
-        obj_file_contents = importOBJ.export(ungrouped)
+        obj_file_contents = importOBJ.export(self._objects)
         return obj_file_contents
 
     def save_to(self, path):
@@ -367,17 +366,6 @@ def place_objects(objects, placement):
             place_objects(obj.Group, placement)
         else:
             obj.Placement = placement.multiply(obj.Placement)
-
-
-def ungroup_objects(objects):
-    ungrouped = []
-    for obj in objects:
-        if is_object_group(obj):
-            objs = ungroup_objects(obj.Group)
-            ungrouped.extend(objs)
-        else:
-            ungrouped.append(obj)
-    return ungrouped
 
 
 def is_object_group(obj):

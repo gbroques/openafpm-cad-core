@@ -5,7 +5,7 @@ See:
   https://en.wikipedia.org/wiki/Wavefront_.obj_file
 
 Adapted from:
-  https://github.com/FreeCAD/FreeCAD/blob/0.19/src/Mod/Arch/importOBJ.py#L149-L273
+  https://github.com/FreeCAD/FreeCAD/blob/0.19.1/src/Mod/Arch/importOBJ.py#L149-L273
 
 Adapting this code is somewhat of a hack, but in the future we will use glTF instead. 
 
@@ -18,10 +18,10 @@ Modifications:
 import os
 import sys
 
-import Arch
 import Draft
 import DraftGeomUtils
 import FreeCAD
+import Mesh
 import MeshPart
 import Part
 
@@ -36,6 +36,9 @@ else:
 
 p = Draft.precision()
 
+__all__ = ['export']
+
+
 def export(exportList) -> str:
     """
     Transforms a list of objects into a Wavefront .obj file contents.
@@ -45,7 +48,8 @@ def export(exportList) -> str:
     offsetv = 1
     offsetvn = 1
 
-    for obj in exportList:
+    objects = _ungroup_objects(exportList)
+    for obj in objects:
         if obj.isDerivedFrom("Part::Feature") or obj.isDerivedFrom("Mesh::Feature") or obj.isDerivedFrom("App::Link"):
             hires = None
             if FreeCAD.GuiUp:
@@ -77,14 +81,14 @@ def export(exportList) -> str:
                 visible = True
             if visible:
                 if hires:
-                    vlist, vnlist, elist, flist = getIndices(
+                    vlist, vnlist, elist, flist = _getIndices(
                         obj, hires, offsetv, offsetvn)
                 else:
                     if hasattr(obj, "Shape") and obj.Shape:
-                        vlist, vnlist, elist, flist = getIndices(
+                        vlist, vnlist, elist, flist = _getIndices(
                             obj, obj.Shape, offsetv, offsetvn)
                     elif hasattr(obj, "Mesh") and obj.Mesh:
-                        vlist, vnlist, elist, flist = getIndices(
+                        vlist, vnlist, elist, flist = _getIndices(
                             obj, obj.Mesh, offsetv, offsetvn)
                 if vlist is None:
                     FreeCAD.Console.PrintError(
@@ -102,10 +106,10 @@ def export(exportList) -> str:
                         lines.append('l' + e)
                     for f in flist:
                         lines.append('f' + f)
-    return '\n'.join(lines)
+    return '\n'.join(lines) + '\n'
 
 
-def getIndices(obj, shape, offsetv, offsetvn):
+def _getIndices(obj, shape, offsetv, offsetvn):
     "returns a list with 2 lists: vertices and face indexes, offset with the given amount"
     vlist = []
     vnlist = []
@@ -157,7 +161,7 @@ def getIndices(obj, shape, offsetv, offsetvn):
 
         for i, vn in enumerate(mesh.Topology[1]):
             flist.append(" "+str(vn[0]+offsetv)+"//"+str(i+offsetvn)+" "+str(
-                vn[1]+offsetv)+"//"+str(i+offsetvn)+" "+str(vn[2]+offsetv)+"//"+str(i+offsetvn)+" ")
+                vn[1]+offsetv)+"//"+str(i+offsetvn)+" "+str(vn[2]+offsetv)+"//"+str(i+offsetvn))
     else:
         if curves:
             for v in curves[0]:
@@ -176,11 +180,11 @@ def getIndices(obj, shape, offsetv, offsetvn):
                 for e in shape.Edges:
                     if DraftGeomUtils.geomType(e) == "Line":
                         ei = " " + \
-                            str(findVert(e.Vertexes[0],
-                                         shape.Vertexes) + offsetv)
+                            str(_findVert(e.Vertexes[0],
+                                          shape.Vertexes) + offsetv)
                         ei += " " + \
-                            str(findVert(e.Vertexes[-1],
-                                         shape.Vertexes) + offsetv)
+                            str(_findVert(e.Vertexes[-1],
+                                          shape.Vertexes) + offsetv)
                         elist.append(ei)
             for f in shape.Faces:
                 if len(f.Wires) > 1:
@@ -191,15 +195,44 @@ def getIndices(obj, shape, offsetv, offsetvn):
                         for vi in fdata:
                             vdata = Part.Vertex(tris[0][vi])
                             fi += " " + \
-                                str(findVert(vdata, shape.Vertexes) + offsetv)
+                                str(_findVert(vdata, shape.Vertexes) + offsetv)
                         flist.append(fi)
                 else:
                     fi = ""
                     for e in f.OuterWire.OrderedEdges:
                         v = e.Vertexes[0]
-                        ind = findVert(v, shape.Vertexes)
+                        ind = _findVert(v, shape.Vertexes)
                         if ind is None:
                             return None, None, None
                         fi += " " + str(ind + offsetv)
                     flist.append(fi)
     return vlist, vnlist, elist, flist
+
+
+def _findVert(aVertex, aList):
+    "finds aVertex in aList, returns index"
+    for i in range(len(aList)):
+        if (round(aVertex.X, p) == round(aList[i].X, p)):
+            if (round(aVertex.Y, p) == round(aList[i].Y, p)):
+                if (round(aVertex.Z, p) == round(aList[i].Z, p)):
+                    return i
+    return None
+
+
+def _ungroup_objects(objects):
+    ungrouped = []
+    for obj in objects:
+        if _is_group(obj):
+            objs = _ungroup_objects(obj.Group)
+            ungrouped.extend(objs)
+        else:
+            ungrouped.append(obj)
+    return ungrouped
+
+
+def _is_group(obj):
+    group_types = {
+        'App::DocumentObjectGroup',
+        'App::Part'
+    }
+    return obj.TypeId in group_types
