@@ -9,6 +9,8 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtGui
 
+DEFAULT_SPREADSHEET_NAME = 'Master of Puppets'
+
 
 @unique
 class WindTurbine(Enum):
@@ -153,7 +155,7 @@ class TaskPanel:
 
         label = QtGui.QLabel('<strong>Document Name:</strong>', self.form)
         self.line_edit = QtGui.QLineEdit(self.form)
-        self.line_edit.setText('WindTurbine')
+        self.line_edit.setText(DEFAULT_SPREADSHEET_NAME)
 
         row1.addWidget(label)
         row1.addWidget(self.line_edit)
@@ -224,6 +226,7 @@ def create_spreadsheet_document(document_name, parameters_by_key):
     _populate_spreadsheet(sheet, cells)
     document.recompute()
     return document
+
 
 def _buid_cells(parameters_by_key):
     cells = []
