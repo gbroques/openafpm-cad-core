@@ -142,6 +142,16 @@ parameters_by_variant = {
     }
 }
 
+calculated = {
+    'ResineStatorOuterRadius': '=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)'
+}
+
+t_shape = {
+    'Frame': {
+        'Beta': '=(Spreadsheet.ResineStatorOuterRadius ^ 2 - (25 + X)^2)^0.5'
+    }
+}
+
 
 class TaskPanel:
     def __init__(self, title):
@@ -221,6 +231,8 @@ def create_spreadsheet_document(document_name, parameters_by_key):
     document = App.newDocument(document_name)
     sheet_name = 'Spreadsheet'
     sheet = document.addObject('Spreadsheet::Sheet', sheet_name)
+
+    parameters_by_key['Calculated'] = calculated
     cells = _buid_cells(parameters_by_key)
 
     _populate_spreadsheet(sheet, cells)
@@ -250,7 +262,7 @@ def _populate_spreadsheet(spreadsheet, cells):
         if value:
             spreadsheet.setAlias(value_cell, key)
         else:
-            spreadsheet.setStyle(key_cell, 'bold')
+            spreadsheet.setStyle(key_cell, 'underline')
 
 
 Gui.Control.closeDialog()
