@@ -146,9 +146,65 @@ calculated = {
     'ResineStatorOuterRadius': '=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)'
 }
 
-t_shape = {
+t_shape_parameters_by_key = {
+    'Inputs': {
+        'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
+        'Offset': '=Spreadsheet.Offset',
+        'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
+        'MetalThicknessL': '=Spreadsheet.MetalThicknessL',
+        'MetalLengthL': '=Spreadsheet.MetalLengthL',
+        'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius'
+    },
+    'Yaw Bearing to Frame Junction': {
+        'I': '=-0.0056 * RotorDiskRadius^2 + 2.14 * RotorDiskRadius - 171',
+    },
     'Frame': {
-        'Beta': '=(Spreadsheet.ResineStatorOuterRadius ^ 2 - (25 + X)^2)^0.5'
+        'X': '=Offset - (I + MetalThicknessL + YawPipeRadius)',
+        'Beta': '=(ResineStatorOuterRadius^2 - (25 + X)^2)^0.5',
+        'a': '=2 * Beta + 2 * 20',
+        'BC': '=ResineStatorOuterRadius + X - 0.5 * MetalLengthL',
+        'D': '=MetalLengthL * 2'
+    }
+}
+
+h_shape_parameters_by_key = {
+    'Inputs': {
+        'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
+        'Offset': '=Spreadsheet.Offset',
+        'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
+        'MetalLengthL': '=Spreadsheet.MetalLengthL',
+        'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius'
+    },
+    'Frame': {
+        'Delta': '=100 - 8 * (25 - ResineStatorOuterRadius * ResineStatorOuterRadius)',
+        'Alpha': '=(10 + Delta ^ 0.5) / 4',
+        # G is determined by trigonometry from the radius of the holes in the frame.
+        # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
+        'G': '=2 * Alpha + 40',
+        'H': '=G - 2 * MetalLengthL',  # To make the frame square
+        'MM': '=RotorDiskRadius < 275 ? 100 : 115',
+        'L': '=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)',
+    }
+}
+
+star_shape_parameters_by_key = {
+    'Inputs': {
+        'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius',
+        'Holes': '=Spreadsheet.Holes',
+        'Offset': '=Spreadsheet.Offset',
+        'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
+        'MetalLengthL': '=Spreadsheet.MetalLengthL',
+        'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
+        'CoilLegWidth': '=Spreadsheet.CoilLegWidth',
+    },
+    'Frame': {
+        'StatorHolesCircle': '=RotorDiskRadius + CoilLegWidth + 0.5 * (ResineStatorOuterRadius - (RotorDiskRadius + CoilLegWidth))',
+        'a': '=2 * sin(30) * StatorHolesCircle + 2 * (25 + Holes)',
+        'B': '=2 * StatorHolesCircle * ((1 - sin(30) * sin(30)^0.5)) - MetalLengthL',
+        # 25 is the margin from the holes to the edge of the metal.
+        'C': '=StatorHolesCircle - MetalLengthL + Holes + 25',
+        'MM': '=RotorDiskRadius < 275 ? 100 : 115',
+        'L': '=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)'
     }
 }
 
@@ -229,18 +285,23 @@ def get_rotor_disk_radius(variant):
 
 def create_spreadsheet_document(document_name, parameters_by_key):
     document = App.newDocument(document_name)
-    sheet_name = 'Spreadsheet'
-    sheet = document.addObject('Spreadsheet::Sheet', sheet_name)
-
     parameters_by_key['Calculated'] = calculated
-    cells = _buid_cells(parameters_by_key)
-
-    _populate_spreadsheet(sheet, cells)
+    _add_spreadsheet(document, 'Spreadsheet', parameters_by_key)
+    _add_spreadsheet(document, 'TShape', t_shape_parameters_by_key)
+    _add_spreadsheet(document, 'HShape', h_shape_parameters_by_key)
+    _add_spreadsheet(document, 'StarShape', h_shape_parameters_by_key)
     document.recompute()
     return document
 
 
-def _buid_cells(parameters_by_key):
+def _add_spreadsheet(document, name, parameters_by_key):
+    sheet = document.addObject(
+        'Spreadsheet::Sheet', name)
+    cells = _build_cells(parameters_by_key)
+    _populate_spreadsheet(sheet, cells)
+
+
+def _build_cells(parameters_by_key):
     cells = []
     for key, parameters in parameters_by_key.items():
         cells.append([key, ''])
