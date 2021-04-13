@@ -289,7 +289,7 @@ def create_spreadsheet_document(document_name, parameters_by_key):
     _add_spreadsheet(document, 'Spreadsheet', parameters_by_key)
     _add_spreadsheet(document, 'TShape', t_shape_parameters_by_key)
     _add_spreadsheet(document, 'HShape', h_shape_parameters_by_key)
-    _add_spreadsheet(document, 'StarShape', h_shape_parameters_by_key)
+    _add_spreadsheet(document, 'StarShape', star_shape_parameters_by_key)
     document.recompute()
     return document
 
