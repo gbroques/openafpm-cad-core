@@ -324,8 +324,18 @@ class TaskPanel:
         current_text = self.combo_box.currentText()
         variant = WindTurbine(current_text)
         parameters = parameters_by_variant[variant]
-        create_spreadsheet_document(self.line_edit.text(), parameters)
+        document = create_spreadsheet_document(self.line_edit.text(), parameters)
         Gui.Control.closeDialog()
+        document.saveAs(
+            '/home/g/.FreeCAD/Mod/openafpm-cad-core/openafpm_cad_core/documents/common/Master of Puppets.FCStd')
+        alternator_document = App.openDocument(
+            '/home/g/.FreeCAD/Mod/openafpm-cad-core/openafpm_cad_core/documents/common/Alternator.FCStd')
+        document.recompute(None, True, True)
+        sort_in_dependency_order = True
+        document_by_name = App.listDocuments(sort_in_dependency_order)
+        documents = document_by_name.values()
+        for doc in documents:
+            doc.recompute(None, True, True)
 
 
 def get_rotor_disk_radius(variant):
