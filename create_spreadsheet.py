@@ -200,7 +200,7 @@ star_shape_parameters_by_key = {
     'Frame': {
         'StatorHolesCircle': '=RotorDiskRadius + CoilLegWidth + 0.5 * (ResineStatorOuterRadius - (RotorDiskRadius + CoilLegWidth))',
         'a': '=2 * sin(30) * StatorHolesCircle + 2 * (25 + Holes)',
-        'B': '=2 * StatorHolesCircle * ((1 - sin(30) * sin(30)^0.5)) - MetalLengthL',
+        'B': '=2 * StatorHolesCircle * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
         # 25 is the margin from the holes to the edge of the metal.
         'C': '=StatorHolesCircle - MetalLengthL + Holes + 25',
         'MM': '=RotorDiskRadius < 275 ? 100 : 115',
