@@ -330,11 +330,15 @@ class TaskPanel:
             '/home/g/.FreeCAD/Mod/openafpm-cad-core/openafpm_cad_core/documents/common/Master of Puppets.FCStd')
         alternator_document = App.openDocument(
             '/home/g/.FreeCAD/Mod/openafpm-cad-core/openafpm_cad_core/documents/common/Alternator.FCStd')
+        for obj in document.Objects:
+            obj.recompute()
         document.recompute(None, True, True)
         sort_in_dependency_order = True
         document_by_name = App.listDocuments(sort_in_dependency_order)
         documents = document_by_name.values()
         for doc in documents:
+            for obj in doc.Objects:
+                obj.recompute()
             doc.recompute(None, True, True)
 
 
