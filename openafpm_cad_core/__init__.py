@@ -44,7 +44,7 @@ __all__ = [
 def visualize(magnafpm_parameters: dict,
               user_parameters: dict,
               furling_parameters: dict) -> WindTurbine:
-    return create_wind_turbine(
+    return load_turbine(
         magnafpm_parameters,
         user_parameters,
         furling_parameters)

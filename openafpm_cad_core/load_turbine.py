@@ -3,6 +3,7 @@ from pathlib import Path
 import FreeCAD as App
 
 from .create_spreadsheet_document import create_spreadsheet_document
+from .wind_turbine import WindTurbine
 
 __all__ = ['load_turbine']
 
@@ -29,3 +30,4 @@ def load_turbine(magnafpm_parameters: dict,
         for obj in doc.Objects:
             obj.recompute()
         doc.recompute(None, True, True)
+    return WindTurbine(alternator_document)
