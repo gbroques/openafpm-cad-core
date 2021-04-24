@@ -9,7 +9,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtGui
 
-from .create_spreadsheet_document import create_spreadsheet_document
+from .load_turbine import load_turbine
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 
@@ -200,12 +200,10 @@ class CreateSpreadsheetTaskPanel:
         current_text = self.combo_box.currentText()
         variant = WindTurbine(current_text)
         parameters = parameters_by_variant[variant]
-        document = create_spreadsheet_document(parameters['MagnAFPM'],
-                                               parameters['OpenFurl'],
-                                               parameters['User'])
+        load_turbine(parameters['MagnAFPM'],
+                     parameters['OpenFurl'],
+                     parameters['User'])
         Gui.Control.closeDialog()
-        if self.on_close:
-            self.on_close(document)
 
 
 def get_rotor_disk_radius(variant):
