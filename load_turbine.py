@@ -1,6 +1,5 @@
 """
-FreeCAD macro to create WindTurbine document
-with spreadsheet containing input parameters.
+FreeCAD macro to load wind turbine.
 """
 
 import FreeCAD as App

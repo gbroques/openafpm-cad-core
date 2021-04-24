@@ -1,6 +1,6 @@
 """
-FreeCAD macro to create WindTurbine document
-with spreadsheet containing input parameters.
+FreeCAD macro to create document with
+spreadsheet containing input parameters.
 """
 
 import FreeCADGui as Gui
