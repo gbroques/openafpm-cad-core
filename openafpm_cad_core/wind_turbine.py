@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 
 from . import importObj as importOBJ
-from .common import find_object_by_label
+from .find_object_by_label import find_object_by_label
 from .make_archive import make_archive
 
 __all__ = ['WindTurbine']
