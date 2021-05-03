@@ -1,6 +1,6 @@
-from .wind_turbine import create_wind_turbine, WindTurbine
 from .create_spreadsheet_task_panel import CreateSpreadsheetTaskPanel
 from .load_turbine import load_turbine
+from .wind_turbine import WindTurbine
 
 __all__ = [
     'visualize',

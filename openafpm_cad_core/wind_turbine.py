@@ -1,10 +1,10 @@
 import os
-
 from pathlib import Path
+from typing import List
 
 from . import importObj as importOBJ
-from .make_archive import make_archive
 from .common import find_object_by_label
+from .make_archive import make_archive
 
 __all__ = ['WindTurbine']
 
@@ -15,11 +15,29 @@ class WindTurbine:
 
     def to_obj(self):
         alternator = find_object_by_label(self.root_document, 'Alternator')
-        obj_file_contents = importOBJ.export([alternator])
+        obj_file_contents = importOBJ.export(
+            [alternator], object_name_getter, keep_unresolved)
         return obj_file_contents
 
     def save_to(self, path):
         package_path = Path(__file__).parent.absolute()
         source = package_path.joinpath('documents')
         destination = Path(path).joinpath('WindTurbine.zip')
-        return make_archive(source, destination)
+        return make_archive(str(source), str(destination))
+
+
+def object_name_getter(obj: object, path: List[object]) -> str:
+    rotor_disk_labels = {
+        'RotorDisk',
+        'RotorResinCast',
+        'Magnets'
+    }
+    if obj.Label in rotor_disk_labels:
+        is_top = any([o.Label.startswith('Top') for o in path])
+        label_prefix = 'Top' if is_top else 'Bottom'
+        return label_prefix + obj.Label
+    return obj.Label
+
+
+def keep_unresolved(obj: object, path: List[object]) -> bool:
+    return obj.Label == 'Frame'
