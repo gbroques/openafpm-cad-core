@@ -3,6 +3,7 @@ from pathlib import Path
 import FreeCAD as App
 
 from .create_spreadsheet_document import create_spreadsheet_document
+from .gui_document import get_gui_document_by_path, write_gui_documents
 from .wind_turbine import WindTurbine
 
 __all__ = ['load_turbine']
@@ -15,6 +16,7 @@ def load_turbine(magnafpm_parameters: dict,
         magnafpm_parameters, furling_parameters, user_parameters)
     package_path = Path(__file__).parent.absolute()
     documents_path = package_path.joinpath('documents')
+    gui_document_by_path = get_gui_document_by_path(documents_path)
     spreadsheet_document_path = documents_path.joinpath(
         'Master of Puppets.FCStd')
     spreadsheet_document.saveAs(str(spreadsheet_document_path))
@@ -31,4 +33,5 @@ def load_turbine(magnafpm_parameters: dict,
             obj.recompute()
         document.recompute(None, True, True)
         document.save()
+    write_gui_documents(gui_document_by_path)
     return WindTurbine(alternator_document)

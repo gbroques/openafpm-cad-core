@@ -14,7 +14,6 @@ def make_archive(source: str, destination: str) -> str:
     format = base.split('.')[1]
     archive_from = os.path.dirname(source)
     archive_to = os.path.basename(source.strip(os.sep))
-    print(source, destination, archive_from, archive_to)
     shutil.make_archive(name, format, archive_from, archive_to)
     shutil.move('%s.%s' % (name, format), destination)
     return destination
