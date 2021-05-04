@@ -14,7 +14,7 @@ def load_turbine(magnafpm_parameters: dict,
     spreadsheet_document = create_spreadsheet_document(
         magnafpm_parameters, furling_parameters, user_parameters)
     package_path = Path(__file__).parent.absolute()
-    documents_path = package_path.joinpath('documents', 'common')
+    documents_path = package_path.joinpath('documents')
     spreadsheet_document_path = documents_path.joinpath(
         'Master of Puppets.FCStd')
     spreadsheet_document.saveAs(str(spreadsheet_document_path))
@@ -26,8 +26,9 @@ def load_turbine(magnafpm_parameters: dict,
     sort_in_dependency_order = True
     document_by_name = App.listDocuments(sort_in_dependency_order)
     documents = document_by_name.values()
-    for doc in documents:
-        for obj in doc.Objects:
+    for document in documents:
+        for obj in document.Objects:
             obj.recompute()
-        doc.recompute(None, True, True)
+        document.recompute(None, True, True)
+        document.save()
     return WindTurbine(alternator_document)
