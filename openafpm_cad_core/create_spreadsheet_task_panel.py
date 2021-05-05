@@ -4,12 +4,11 @@ with spreadsheet containing input parameters.
 """
 
 from enum import Enum, unique
+from typing import Any, Callable
 
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtGui
-
-from .load_turbine import load_turbine
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 
@@ -146,7 +145,9 @@ parameters_by_variant = {
 
 
 class CreateSpreadsheetTaskPanel:
-    def __init__(self, title, on_close=None):
+    def __init__(self,
+                 title: str,
+                 on_close: Callable[[dict, dict, dict], Any] = None):
         self.form = QtGui.QWidget()
         self.form.setWindowTitle(title)
         self.on_close = on_close
@@ -200,9 +201,10 @@ class CreateSpreadsheetTaskPanel:
         current_text = self.combo_box.currentText()
         variant = WindTurbine(current_text)
         parameters = parameters_by_variant[variant]
-        load_turbine(parameters['MagnAFPM'],
-                     parameters['OpenFurl'],
-                     parameters['User'])
+        if self.on_close:
+            self.on_close(parameters['MagnAFPM'],
+                          parameters['OpenFurl'],
+                          parameters['User'])
         Gui.Control.closeDialog()
 
 
