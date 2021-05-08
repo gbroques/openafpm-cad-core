@@ -58,7 +58,9 @@ def _populate_spreadsheet(spreadsheet, cells):
 
 def _get_calculated_parameters():
     return {
-        'ResineStatorOuterRadius': '=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)'
+        'ResineStatorOuterRadius': '=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
+        'YawPipeScaleFactor': '=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
+        'YawPipeLength': '=RotorDiskRadius * YawPipeScaleFactor * 2'
     }
 
 
