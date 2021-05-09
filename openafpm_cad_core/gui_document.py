@@ -1,4 +1,5 @@
 import time
+import zipfile
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
@@ -19,6 +20,9 @@ def get_gui_document_by_path(base_path: Path) -> dict:
 
 def write_gui_documents(gui_document_by_path: dict) -> None:
     for path, gui_document_contents in gui_document_by_path.items():
+        gui_document_path = zipfile.Path(path, at='GuiDocument.xml')
+        if gui_document_path.exists():
+            continue
         with ZipFile(path, 'a', ZIP_DEFLATED) as fcstd:
             member = ZipInfo('GuiDocument.xml', time.localtime()[:6])
             member.compress_type = ZIP_DEFLATED
