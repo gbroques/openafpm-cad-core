@@ -4,7 +4,7 @@ FreeCAD Macro to test openafpm_cad_core package.
 import sys
 sys.path.append('/home/g/Desktop/squashfs-root/usr/lib/')
 import FreeCAD
-from openafpm_cad_core import visualize
+from openafpm_cad_core.app import visualize
 
 
 # T Shape

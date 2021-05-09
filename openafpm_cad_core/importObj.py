@@ -23,7 +23,6 @@ Modifications:
 
 from typing import Callable, List, Tuple
 
-import Draft
 import FreeCAD as App
 import MeshPart
 
@@ -87,10 +86,9 @@ def _get_indices(shape, offsetv: int, offsetvn: int) -> Tuple[List[str], List[st
     mesh = MeshPart.meshFromShape(
         Shape=shape, LinearDeflection=0.1, AngularDeflection=0.7, Relative=True)
     for v in mesh.Topology[0]:
-        p = Draft.precision()
-        vlist.append(str(round(v[0], p)) + ' ' +
-                     str(round(v[1], p)) + ' ' +
-                     str(round(v[2], p)))
+        vlist.append(str(round(v[0], 6)) + ' ' +
+                     str(round(v[1], 6)) + ' ' +
+                     str(round(v[2], 6)))
 
     for vn in mesh.Facets:
         vnlist.append(str(vn.Normal[0]) + ' ' +

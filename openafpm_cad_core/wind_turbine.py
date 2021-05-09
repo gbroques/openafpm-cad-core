@@ -14,9 +14,9 @@ class WindTurbine:
         self.root_document = root_document
 
     def to_obj(self):
-        alternator = find_object_by_label(self.root_document, 'Alternator')
+        wind_turbine = find_object_by_label(self.root_document, 'WindTurbine')
         obj_file_contents = importOBJ.export(
-            [alternator], object_name_getter, keep_unresolved)
+            [wind_turbine], object_name_getter, keep_unresolved)
         return obj_file_contents
 
     def save_to(self, path):
@@ -40,4 +40,4 @@ def object_name_getter(obj: object, path: List[object]) -> str:
 
 
 def keep_unresolved(obj: object, path: List[object]) -> bool:
-    return obj.Label == 'Frame'
+    return obj.Label in {'Frame', 'YawBearing'}
