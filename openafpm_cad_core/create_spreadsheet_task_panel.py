@@ -86,7 +86,7 @@ parameters_by_variant = {
             'VaneThickness': 6,
             'VaneLength': 1200,
             'VaneWidth': 500,
-            'Offset': 125
+            'Offset': 250
         },
         'User': {
             'HubHolesPlacement': 65,
@@ -126,7 +126,7 @@ parameters_by_variant = {
             'VaneThickness': 6,
             'VaneLength': 1200,
             'VaneWidth': 500,
-            'Offset': 125
+            'Offset': 250
         },
         'User': {
             'HubHolesPlacement': 102.5,
