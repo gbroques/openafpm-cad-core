@@ -75,7 +75,7 @@ def _get_t_shape_parameters_by_key():
             'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius'
         },
         'Yaw Bearing to Frame Junction': {
-            'I': '=-0.0056 * RotorDiskRadius^2 + 2.14 * RotorDiskRadius - 171',
+            'I': '=1 / 70 * (sqrt(77280 * RotorDiskRadius - 9503975) + 235)',
             'j': '=0.32 * RotorDiskRadius - 3',
             'k': '=0.2 * RotorDiskRadius - 5'
         },
