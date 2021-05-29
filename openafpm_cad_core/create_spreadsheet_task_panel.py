@@ -103,7 +103,7 @@ parameters_by_variant = {
     },
     WindTurbine.STAR_SHAPE: {
         'MagnAFPM': {
-            'RotorDiskRadius': 349,
+            'RotorDiskRadius': 350,
             'DiskThickness': 10,
             'MagnetLength': 58,
             'MagnetWidth': 30,
@@ -116,17 +116,17 @@ parameters_by_variant = {
             'MechanicalClearance': 3
         },
         'OpenFurl': {
-            'Angle': 20,
-            'BracketLength': 300,
-            'BracketWidth': 30,
-            'BracketThickness': 5,
-            'BoomLength': 1000,
+            'Angle': 15,
+            'BracketLength': 600,
+            'BracketWidth': 50,
+            'BracketThickness': 6,
+            'BoomLength': 1800,
             'BoomPipeRadius': 24.15,
             'BoomPipeThickness': 5,
-            'VaneThickness': 6,
+            'VaneThickness': 9,
             'VaneLength': 1200,
-            'VaneWidth': 500,
-            'Offset': 250
+            'VaneWidth': 900,
+            'Offset': 500
         },
         'User': {
             'HubHolesPlacement': 102.5,
