@@ -62,7 +62,11 @@ def _get_calculated_parameters():
         'YawPipeScaleFactor': '=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
         'YawPipeLength': '=RotorDiskRadius * YawPipeScaleFactor * 2',
         'YawBearingTopPlateHoleRadius': '=RotorDiskRadius < 187.5 ? 10 : 15',
-        'HingeInnerBodyOuterRadius': '=RotorDiskRadius < 187.5 ? 24.15 : (RotorDiskRadius < 275 ? 38 : 44.5)'
+        'HingeInnerBodyOuterRadius': '=RotorDiskRadius < 187.5 ? 24.15 : (RotorDiskRadius < 275 ? 38 : 44.5)',
+        'YawBearingTailHingeJunctionHeight': '85',
+        'YawBearingTailHingeJunctionChamfer': '15',
+        'YawBearingTailHingeJunctionInnerWidth': '=tan(Angle) * YawBearingTailHingeJunctionHeight',
+        'YawBearingTailHingeJunctionFullWidth': '=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth'
     }
 
 
