@@ -1,0 +1,25 @@
+digraph DocumentTree {
+    rankdir=LR;
+    labelloc=b;
+    fontsize=32;
+    label="Document Tree";
+    RotorDisk -> Disc1
+    Stator -> CoilAssembly
+    Alternator -> HubThreadAssembly
+    Hub -> Flange
+    RotorDisk -> MagnetAssembly
+    Hub -> FrameSideFlangeCover
+    Frame -> HShapeFrame
+    Stator -> FourHoleStatorResinCast
+    HShapeFrame -> TwoHoleEndBracket
+    Hub -> RotorSideFlangeCover
+    Alternator -> RotorDisk
+    Hub -> StubAxleShaft
+    Channel -> ChannelSection
+    HShapeFrame -> Channel
+    Alternator -> Stator
+    RotorDisk -> RotorResinCast
+    Alternator -> Frame
+    ChannelSection -> HShapeChannelSection
+    Alternator -> Hub
+}
