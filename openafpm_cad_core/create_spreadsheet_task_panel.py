@@ -36,7 +36,7 @@ parameters_by_variant = {
             'MechanicalClearance': 3
         },
         'OpenFurl': {
-            'Angle': 20,
+            'VerticalPlaneAngle': 20,
             'BracketLength': 300,
             'BracketWidth': 30,
             'BracketThickness': 5,
@@ -76,7 +76,7 @@ parameters_by_variant = {
             'MechanicalClearance': 3
         },
         'OpenFurl': {
-            'Angle': 20,
+            'VerticalPlaneAngle': 20,
             'BracketLength': 300,
             'BracketWidth': 30,
             'BracketThickness': 5,
@@ -116,7 +116,7 @@ parameters_by_variant = {
             'MechanicalClearance': 3
         },
         'OpenFurl': {
-            'Angle': 15,
+            'VerticalPlaneAngle': 15,
             'BracketLength': 600,
             'BracketWidth': 50,
             'BracketThickness': 6,

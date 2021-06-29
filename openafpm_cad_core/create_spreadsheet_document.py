@@ -67,7 +67,7 @@ def _get_calculated_parameters():
         'YawBearingTailHingeJunctionHeight': '85',
         'HingeOuterBodyLength': '=HingeInnerBodyLength - YawBearingTailHingeJunctionHeight - 10 - 10',
         'YawBearingTailHingeJunctionChamfer': '15',
-        'hypotenuse': '=(YawBearingTailHingeJunctionHeight - FlatMetalThickness) / cos(Angle)',
+        'hypotenuse': '=(YawBearingTailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
         'YawBearingTailHingeJunctionInnerWidth': '=sqrt(hypotenuse ^ 2 - (YawBearingTailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
         'YawBearingTailHingeJunctionFullWidth': '=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth'
     }
