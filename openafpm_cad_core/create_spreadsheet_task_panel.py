@@ -58,7 +58,8 @@ parameters_by_variant = {
             'YawPipeRadius': 30.15,
             'PipeThickness': 5,
             'ResineRotorMargin': 5,
-            'HubHoles': 6
+            'HubHoles': 6,
+            'HorizontalPlaneAngle': 55
         }
     },
     WindTurbine.H_SHAPE: {
@@ -98,7 +99,8 @@ parameters_by_variant = {
             'YawPipeRadius': 44.5,
             'PipeThickness': 5,
             'ResineRotorMargin': 5,
-            'HubHoles': 7
+            'HubHoles': 7,
+            'HorizontalPlaneAngle': 55
         }
     },
     WindTurbine.STAR_SHAPE: {
@@ -138,7 +140,8 @@ parameters_by_variant = {
             'YawPipeRadius': 57.15,
             'PipeThickness': 5,
             'ResineRotorMargin': 5,
-            'HubHoles': 8
+            'HubHoles': 8,
+            'HorizontalPlaneAngle': 55
         }
     }
 }
