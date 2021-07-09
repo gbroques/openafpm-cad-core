@@ -190,5 +190,11 @@ def _get_hub_parameters_by_key():
             'HShapeNumberOfHoles': '5',
             'StarShapeNumberOfHoles': '6',
             'NumberOfHoles': '=RotorDiskRadius < 187.5 ? TShapeNumberOfHoles : (RotorDiskRadius < 275 ? HShapeNumberOfHoles : StarShapeNumberOfHoles)'
+        },
+        'Stub Axle Shaft Radius': {
+            'TShapeStubAxleShaftRadius': '18',
+            'HShapeStubAxleShaftRadius': '22.5',
+            'StarShapeStubAxleShaftRadius': '30',
+            'StubAxleShaftRadius': '=RotorDiskRadius < 187.5 ? TShapeStubAxleShaftRadius : (RotorDiskRadius < 275 ? HShapeStubAxleShaftRadius : StarShapeStubAxleShaftRadius)'
         }
     }
