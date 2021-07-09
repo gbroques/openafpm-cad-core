@@ -108,13 +108,13 @@ parameters_by_variant = {
             'RotorDiskRadius': 350,
             'DiskThickness': 10,
             'MagnetLength': 58,
-            'MagnetWidth': 30,
+            'MagnetWidth': 27,
             'MagnetThickness': 10,
             'NumberMagnet': 32,
             'StatorThickness': 15,
-            'CoilLegWidth': 22.5,
-            'CoilInnerWidth1': 30,
-            'CoilInnerWidth2': 30,
+            'CoilLegWidth': 22.4,
+            'CoilInnerWidth1': 40,
+            'CoilInnerWidth2': 27,
             'MechanicalClearance': 3
         },
         'OpenFurl': {
@@ -138,7 +138,7 @@ parameters_by_variant = {
             'MetalThicknessL': 8,
             'FlatMetalThickness': 10,
             'YawPipeRadius': 57.15,
-            'PipeThickness': 5,
+            'PipeThickness': 6,
             'ResineRotorMargin': 5,
             'HubHoles': 8,
             'HorizontalPlaneAngle': 55
