@@ -42,5 +42,6 @@ def keep_unresolved(obj: object, path: List[object]) -> bool:
     return obj.Label in {
         'Frame',
         'YawBearing',
-        'TailHinge'
+        'TailHinge',
+        'TailBoom'
     }
