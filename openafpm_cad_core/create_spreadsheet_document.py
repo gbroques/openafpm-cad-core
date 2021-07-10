@@ -64,7 +64,7 @@ def _get_calculated_parameters():
         'YawBearingTopPlateHoleRadius': '=RotorDiskRadius < 187.5 ? 10 : 15',
         'HingeInnerBodyOuterRadius': '=RotorDiskRadius < 187.5 ? 24.15 : (RotorDiskRadius < 275 ? 38 : 44.5)',
         'HingeInnerBodyLength': '=0.8 * 2 * RotorDiskRadius',
-        'YawBearingTailHingeJunctionHeight': '85',
+        'YawBearingTailHingeJunctionHeight': '92.5',
         'HingeOuterBodyLength': '=HingeInnerBodyLength - YawBearingTailHingeJunctionHeight - 10 - 10',
         'YawBearingTailHingeJunctionChamfer': '15',
         'hypotenuse': '=(YawBearingTailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
