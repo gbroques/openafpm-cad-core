@@ -81,7 +81,8 @@ def _get_t_shape_parameters_by_key():
             'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
             'MetalThicknessL': '=Spreadsheet.MetalThicknessL',
             'MetalLengthL': '=Spreadsheet.MetalLengthL',
-            'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius'
+            'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius',
+            'Holes': '=Spreadsheet.Holes'
         },
         'Yaw Bearing to Frame Junction': {
             'I': '=1 / 70 * (sqrt(77280 * RotorDiskRadius - 9503975) + 235)',
@@ -89,10 +90,21 @@ def _get_t_shape_parameters_by_key():
             'k': '=0.2 * RotorDiskRadius - 5'
         },
         'Frame': {
-            'X': '=Offset - (I + MetalThicknessL + YawPipeRadius)',
-            'Beta': '=(ResineStatorOuterRadius^2 - (25 + X)^2)^0.5',
-            'a': '=2 * Beta + 2 * 20',
-            'BC': '=ResineStatorOuterRadius + X - 0.5 * MetalLengthL',
+            'X': '=Offset - (I + YawPipeRadius)',
+            # 30 degrees because 360 / 3 = 120 - 90 = 30.
+            # Divide by 3 for because the T Shape has 3 holes.
+            # cos(30) * ResineStatorOuterRadius = bottom of right triangle
+            # * 2 to get both sides.
+            # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
+            # Add the radius for holes on each side, + Spreadsheet.Holes * 2.
+            'a': '=cos(30) * ResineStatorOuterRadius * 2 + 40 + Holes * 2',
+            # Total vertical distance of T Shape from bottom hole to two top holes.
+            # This is the opposite, or vertical left side of the right triangle plus,
+            # the stator resin cast radius.
+            'TShapeVerticalDistance': '=(sin(30) * ResineStatorOuterRadius) + ResineStatorOuterRadius',
+            # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.
+            # MetalLengthL is the length of the brackets.
+            'BC': '=TShapeVerticalDistance - MetalLengthL',
             'D': '=MetalLengthL * 2'
         }
     }
