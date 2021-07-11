@@ -20,6 +20,7 @@ def create_spreadsheet_document(magnafpm_parameters: dict,
     _add_spreadsheet(document, 'HShape', _get_h_shape_parameters_by_key())
     _add_spreadsheet(document, 'StarShape', _get_star_shape_parameters_by_key())
     _add_spreadsheet(document, 'Hub', _get_hub_parameters_by_key())
+    _add_spreadsheet(document, 'Tail', _get_tail_parameters_by_key())
     document.recompute()
     return document
 
@@ -128,6 +129,37 @@ def _get_h_shape_parameters_by_key():
             'H': '=G - 2 * MetalLengthL',  # To make the frame square
             'MM': '=RotorDiskRadius < 275 ? 100 : 115',
             'L': '=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)',
+        }
+    }
+
+
+def _get_tail_parameters_by_key():
+    return {
+        'Inputs': {
+            'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
+            'HingeInnerBodyOuterRadius': '=Spreadsheet.HingeInnerBodyOuterRadius',
+            'VerticalPlaneAngle': '=Spreadsheet.VerticalPlaneAngle',
+            'HingeInnerBodyLength': '=Spreadsheet.HingeInnerBodyLength',
+            'HingeOuterBodyLength': '=Spreadsheet.HingeOuterBodyLength',
+            'YawBearingTailHingeJunctionHeight': '=Spreadsheet.YawBearingTailHingeJunctionHeight',
+            'YawBearingTailHingeJunctionFullWidth': '=Spreadsheet.YawBearingTailHingeJunctionFullWidth',
+            'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
+        },
+        'Calculated': {
+            'TailBoomTriangularBraceWidth': '=0.27 * RotorDiskRadius',
+            'TailHingePipeZ': '=-HingeInnerBodyOuterRadius * sin(VerticalPlaneAngle)',
+            'h1': '=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
+            'h2': '=YawBearingTailHingeJunctionHeight / cos(VerticalPlaneAngle)',
+            'OuterHingeJunctionVerticalGap': '=HingeInnerBodyLength - HingeOuterBodyLength - h2 - h1',
+            'HorizontalPipeLength': '=sin(90 - VerticalPlaneAngle) * YawPipeRadius',
+            'HorizontalEstimate': '=cos(90 - VerticalPlaneAngle) * (TailBoomTriangularBraceWidth + OuterHingeJunctionVerticalGap)',
+            'HorizontalDistanceBetweenOuterYawPipes': '=YawBearingTailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
+            'OuterTailHingeLowEndStopAngle': '=-(90deg - atan(YawPipeRadius / HorizontalDistanceBetweenOuterYawPipes))',
+        },
+        'Vane': {
+            'DistanceToFirstHole': '30',
+            'DistanceBetweenHoles': '150',
+            'VaneBracketAngle': '45'
         }
     }
 
