@@ -6,11 +6,13 @@ __all__ = ['create_spreadsheet_document']
 def create_spreadsheet_document(magnafpm_parameters: dict,
                                 furling_parameters: dict,
                                 user_parameters: dict):
+    static_parameters = _get_static_parameters()
     calculated_parameters = _get_calculated_parameters()
     parameters_by_key = {
         'MagnAFPM': magnafpm_parameters,
         'OpenFurl': furling_parameters,
         'User': user_parameters,
+        'Static': static_parameters,
         'Calculated': calculated_parameters
     }
     document = App.newDocument('Master of Puppets')
@@ -18,7 +20,8 @@ def create_spreadsheet_document(magnafpm_parameters: dict,
     _add_spreadsheet(document, 'Spreadsheet', parameters_by_key)
     _add_spreadsheet(document, 'TShape', _get_t_shape_parameters_by_key())
     _add_spreadsheet(document, 'HShape', _get_h_shape_parameters_by_key())
-    _add_spreadsheet(document, 'StarShape', _get_star_shape_parameters_by_key())
+    _add_spreadsheet(document, 'StarShape',
+                     _get_star_shape_parameters_by_key())
     _add_spreadsheet(document, 'Hub', _get_hub_parameters_by_key())
     _add_spreadsheet(document, 'Tail', _get_tail_parameters_by_key())
     document.recompute()
@@ -57,17 +60,23 @@ def _populate_spreadsheet(spreadsheet, cells):
             spreadsheet.setStyle(key_cell, 'underline')
 
 
+def _get_static_parameters():
+    return {
+        'YawBearingTailHingeJunctionHeight': '92.5',
+        'YawBearingTailHingeJunctionChamfer': '15',
+    }
+
+
 def _get_calculated_parameters():
     return {
+        'StatorMountingStudsLength': '=RotorDiskRadius < 275 ? 150 : 200',
         'ResineStatorOuterRadius': '=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
         'YawPipeScaleFactor': '=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
         'YawPipeLength': '=RotorDiskRadius * YawPipeScaleFactor * 2',
         'YawBearingTopPlateHoleRadius': '=RotorDiskRadius < 187.5 ? 10 : 15',
         'HingeInnerBodyOuterRadius': '=RotorDiskRadius < 187.5 ? 24.15 : (RotorDiskRadius < 275 ? 38 : 44.5)',
         'HingeInnerBodyLength': '=0.8 * 2 * RotorDiskRadius',
-        'YawBearingTailHingeJunctionHeight': '92.5',
         'HingeOuterBodyLength': '=HingeInnerBodyLength - YawBearingTailHingeJunctionHeight - 10 - 10',
-        'YawBearingTailHingeJunctionChamfer': '15',
         'hypotenuse': '=(YawBearingTailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
         'YawBearingTailHingeJunctionInnerWidth': '=sqrt(hypotenuse ^ 2 - (YawBearingTailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
         'YawBearingTailHingeJunctionFullWidth': '=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth'
