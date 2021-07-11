@@ -130,14 +130,21 @@ def _get_h_shape_parameters_by_key():
             'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius'
         },
         'Frame': {
+            # https://calcresource.com/geom-rectangle.html
+            'CentralAngle': '=360 / 4',
+            'Theta': '=CentralAngle / 2',
+            'Inradius': '=cos(Theta) * ResineStatorOuterRadius',
+            'IsoscelesRightTriangleHypotenuseRatio': '=1 / cos(Theta)',
+            'HorizontalDistanceBetweenHoles': '=ResineStatorOuterRadius * IsoscelesRightTriangleHypotenuseRatio',
+            # Distance from hole to outside edge of frame.
+            'HoleMargin': '20',
+            # TODO: Are Delta and Alpha used or referenced anywhere?
             'Delta': '=100 - 8 * (25 - ResineStatorOuterRadius * ResineStatorOuterRadius)',
             'Alpha': '=(10 + Delta ^ 0.5) / 4',
-            # G is determined by trigonometry from the radius of the holes in the frame.
-            # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
-            'G': '=2 * Alpha + 40',
-            'H': '=G - 2 * MetalLengthL',  # To make the frame square
+            'G': '=HorizontalDistanceBetweenHoles + HoleMargin * 2',
+            'H': '=Inradius * 2 - MetalLengthL',  # To make the frame square.
             'MM': '=RotorDiskRadius < 275 ? 100 : 115',
-            'L': '=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)',
+            'L': '=YawPipeRadius + Offset / cos(Theta) + 0.5 * MM * cos(Theta)',
         }
     }
 
