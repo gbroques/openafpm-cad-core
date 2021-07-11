@@ -138,9 +138,6 @@ def _get_h_shape_parameters_by_key():
             'HorizontalDistanceBetweenHoles': '=ResineStatorOuterRadius * IsoscelesRightTriangleHypotenuseRatio',
             # Distance from hole to outside edge of frame.
             'HoleMargin': '20',
-            # TODO: Are Delta and Alpha used or referenced anywhere?
-            'Delta': '=100 - 8 * (25 - ResineStatorOuterRadius * ResineStatorOuterRadius)',
-            'Alpha': '=(10 + Delta ^ 0.5) / 4',
             'G': '=HorizontalDistanceBetweenHoles + HoleMargin * 2',
             'H': '=Inradius * 2 - MetalLengthL',  # To make the frame square.
             'MM': '=RotorDiskRadius < 275 ? 100 : 115',
