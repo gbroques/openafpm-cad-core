@@ -157,6 +157,7 @@ def _get_tail_parameters_by_key():
             'YawBearingTailHingeJunctionHeight': '=Spreadsheet.YawBearingTailHingeJunctionHeight',
             'YawBearingTailHingeJunctionFullWidth': '=Spreadsheet.YawBearingTailHingeJunctionFullWidth',
             'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
+            'HorizontalPlaneAngle': '=Spreadsheet.HorizontalPlaneAngle',
         },
         'Calculated': {
             'TailBoomTriangularBraceWidth': '=0.27 * RotorDiskRadius',
@@ -173,6 +174,74 @@ def _get_tail_parameters_by_key():
             'DistanceToFirstHole': '30',
             'DistanceBetweenHoles': '150',
             'VaneBracketAngle': '45'
+        },
+        'Outer Tail Hinge X Z': {
+            'PipeHeightOffset': '=HingeInnerBodyLength - HingeOuterBodyLength',
+            'XXX': '=sin(VerticalPlaneAngle) * PipeHeightOffset',
+            'ZZZ': '=cos(VerticalPlaneAngle) * PipeHeightOffset',
+            'OuterTailHingeX': '=XXX + TailHingePipeX',
+            'OuterTailHingeZ': '=ZZZ + TailHingePipeZ'
+        },
+        'Tail Boom Triangular Brace': {
+            'TailBoomTriangularBraceXOffset': '=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
+            'TailBoomTriangularBraceZOffset': '=cos(VerticalPlaneAngle) * TailBoomTriangularBraceWidth'
+        },
+        'Tail Angle': {
+            'DefaultTailAngle': '110',
+            'TailAngle': '=180 - HorizontalPlaneAngle - DefaultTailAngle'
+        },
+        'P': {
+            'Px': '=TailXInitial + OuterTailHingeX + TailBoomTriangularBraceXOffset',
+            'Py': '0',
+            'Py': '=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset'
+        },
+        'C': {
+            'Cx': '=OuterTailHingeX',
+            'Cy': '0',
+            'Cy': '=OuterTailHingeZ'
+        },
+        'C': {
+            'Cx': '=OuterTailHingeX',
+            'Cy': '0',
+            'Cy': '=OuterTailHingeZ'
+        },
+        'Q': {
+            'Cx': '=Px - Cx',
+            'Cy': 'Py - Cy',
+            'Cy': '=Pz - Cz'
+        },
+        'A': {
+            'Ax': '=sin(VerticalPlaneAngle)',
+            'Ay': '0',
+            'Ay': '=cos(VerticalPlaneAngle)'
+        },
+        # Rotation Matrix from Axis and Angle
+        # Formula: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+        'r1': {
+            'r11': '=cos(TailAngle) + Ax ^ 2 * (1 - cos(TailAngle))',
+            'r12': '=Ax * Ay * (1 - cos(TailAngle)) - Az * sin(TailAngle)',
+            'r13': '=Ax * Az * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
+        },
+        'r2': {
+            'r21': '=Ay * Ax * (1 - cos(TailAngle)) + Az * sin(TailAngle)',
+            'r22': '=cos(TailAngle) + Ay ^ 2 * (1 - cos(TailAngle))',
+            'r23': '=Ay * Az * (1 - cos(TailAngle)) - Ax * sin(TailAngle)',
+        },
+        'r3': {
+            'r31': '=Az * Ax * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
+            'r32': '=Az * Ay * (1 - cos(TailAngle)) + Ax * sin(TailAngle)',
+            'r33': '=cos(TailAngle) + Az ^ 2 * (1 - cos(TailAngle))',
+        },
+        # Rotation Matrix * (P - C)
+        'R': {
+            'Rx': '=r11 * Qx + r12 * Qy + r13 * Qz',
+            'Ry': '=r21 * Qx + r22 * Qy + r23 * Qz',
+            'Rz': '=r31 * Qx + r32 * Qy + r33 * Qz'
+        },
+        'Tail X Y Z': {
+            'TailX': '=Cx + Rx',
+            'TailY': '=Cy + Ry',
+            'TailZ': '=Cz + Rz'
         }
     }
 
