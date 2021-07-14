@@ -156,24 +156,23 @@ def _get_tail_parameters_by_key():
             'HingeOuterBodyLength': '=Spreadsheet.HingeOuterBodyLength',
             'YawBearingTailHingeJunctionHeight': '=Spreadsheet.YawBearingTailHingeJunctionHeight',
             'YawBearingTailHingeJunctionFullWidth': '=Spreadsheet.YawBearingTailHingeJunctionFullWidth',
+            'YawBearingTailHingeJunctionInnerWidth': '=Spreadsheet.YawBearingTailHingeJunctionInnerWidth',
+            'YawBearingTailHingeJunctionChamfer': '=Spreadsheet.YawBearingTailHingeJunctionChamfer',
             'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
             'HorizontalPlaneAngle': '=Spreadsheet.HorizontalPlaneAngle',
-        },
-        'Calculated': {
-            'TailBoomTriangularBraceWidth': '=0.27 * RotorDiskRadius',
-            'TailHingePipeZ': '=-HingeInnerBodyOuterRadius * sin(VerticalPlaneAngle)',
-            'h1': '=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
-            'h2': '=YawBearingTailHingeJunctionHeight / cos(VerticalPlaneAngle)',
-            'OuterHingeJunctionVerticalGap': '=HingeInnerBodyLength - HingeOuterBodyLength - h2 - h1',
-            'HorizontalPipeLength': '=sin(90 - VerticalPlaneAngle) * YawPipeRadius',
-            'HorizontalEstimate': '=cos(90 - VerticalPlaneAngle) * (TailBoomTriangularBraceWidth + OuterHingeJunctionVerticalGap)',
-            'HorizontalDistanceBetweenOuterYawPipes': '=YawBearingTailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
-            'OuterTailHingeLowEndStopAngle': '=-(90deg - atan(YawPipeRadius / HorizontalDistanceBetweenOuterYawPipes))',
+            'FlatMetalThickness': '=Spreadsheet.FlatMetalThickness',
+            'BoomPipeRadius': '=Spreadsheet.BoomPipeRadius'
         },
         'Vane': {
             'DistanceToFirstHole': '30',
             'DistanceBetweenHoles': '150',
             'VaneBracketAngle': '45'
+        },
+        'Tail Hinge Pipe X Z' : {
+            'XRotationOffset': '=HingeInnerBodyOuterRadius - cos(VerticalPlaneAngle) * HingeInnerBodyOuterRadius',
+            'TrigOffset': '=tan(VerticalPlaneAngle) * (YawBearingTailHingeJunctionHeight - FlatMetalThickness) + XRotationOffset',
+            'TailHingePipeX': '=HingeInnerBodyOuterRadius + YawPipeRadius - YawBearingTailHingeJunctionChamfer + YawBearingTailHingeJunctionInnerWidth - TrigOffset',
+            'TailHingePipeZ': '=-HingeInnerBodyOuterRadius * sin(VerticalPlaneAngle)'
         },
         'Outer Tail Hinge X Z': {
             'PipeHeightOffset': '=HingeInnerBodyLength - HingeOuterBodyLength',
@@ -181,6 +180,16 @@ def _get_tail_parameters_by_key():
             'ZZZ': '=cos(VerticalPlaneAngle) * PipeHeightOffset',
             'OuterTailHingeX': '=XXX + TailHingePipeX',
             'OuterTailHingeZ': '=ZZZ + TailHingePipeZ'
+        },
+        'Outer Tail Hinge Low End Stop': {
+            'TailBoomTriangularBraceWidth': '=0.27 * RotorDiskRadius',
+            'h1': '=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
+            'h2': '=YawBearingTailHingeJunctionHeight / cos(VerticalPlaneAngle)',
+            'OuterHingeJunctionVerticalGap': '=HingeInnerBodyLength - HingeOuterBodyLength - h2 - h1',
+            'HorizontalPipeLength': '=sin(90 - VerticalPlaneAngle) * YawPipeRadius',
+            'HorizontalEstimate': '=cos(90 - VerticalPlaneAngle) * (TailBoomTriangularBraceWidth + OuterHingeJunctionVerticalGap)',
+            'HorizontalDistanceBetweenOuterYawPipes': '=YawBearingTailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
+            'OuterTailHingeLowEndStopAngle': '=-(90deg - atan(YawPipeRadius / HorizontalDistanceBetweenOuterYawPipes))'
         },
         'Tail Boom Triangular Brace': {
             'TailBoomTriangularBraceXOffset': '=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
@@ -190,30 +199,34 @@ def _get_tail_parameters_by_key():
             'DefaultTailAngle': '110',
             'TailAngle': '=180 - HorizontalPlaneAngle - DefaultTailAngle'
         },
+        'Tail': {
+            'TailXInitial': '=cos(VerticalPlaneAngle) * YawPipeRadius',
+            'TailZOffset': '=-sin(VerticalPlaneAngle) * YawPipeRadius'
+        },
         'P': {
             'Px': '=TailXInitial + OuterTailHingeX + TailBoomTriangularBraceXOffset',
             'Py': '0',
-            'Py': '=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset'
+            'Pz': '=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset'
         },
         'C': {
             'Cx': '=OuterTailHingeX',
             'Cy': '0',
-            'Cy': '=OuterTailHingeZ'
+            'Cz': '=OuterTailHingeZ'
         },
         'C': {
             'Cx': '=OuterTailHingeX',
             'Cy': '0',
-            'Cy': '=OuterTailHingeZ'
+            'Cz': '=OuterTailHingeZ'
         },
         'Q': {
-            'Cx': '=Px - Cx',
-            'Cy': 'Py - Cy',
-            'Cy': '=Pz - Cz'
+            'Qx': '=Px - Cx',
+            'Qy': '=Py - Cy',
+            'Qz': '=Pz - Cz'
         },
         'A': {
             'Ax': '=sin(VerticalPlaneAngle)',
             'Ay': '0',
-            'Ay': '=cos(VerticalPlaneAngle)'
+            'Az': '=cos(VerticalPlaneAngle)'
         },
         # Rotation Matrix from Axis and Angle
         # Formula: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
