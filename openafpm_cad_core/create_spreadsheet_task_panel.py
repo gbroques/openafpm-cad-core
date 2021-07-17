@@ -3,14 +3,14 @@ FreeCAD macro to create wind turbine document
 with spreadsheet containing input parameters.
 """
 
-import json
 from enum import Enum, unique
-from pathlib import Path
 from typing import Any, Callable
 
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtGui
+
+from .get_default_parameters import get_default_parameters
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 
@@ -20,14 +20,6 @@ class WindTurbine(Enum):
     T_SHAPE = 'T Shape'
     H_SHAPE = 'H Shape'
     STAR_SHAPE = 'Star Shape'
-
-
-dir_path = Path(__file__).parent.resolve()
-parameters_path = dir_path.joinpath('parameters.json')
-
-
-with open(parameters_path) as f:
-    parameters_by_variant = json.load(f)
 
 
 class CreateSpreadsheetTaskPanel:
@@ -84,7 +76,7 @@ class CreateSpreadsheetTaskPanel:
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
         """
         variant = self.combo_box.currentText()
-        parameters = parameters_by_variant[variant]
+        parameters = get_default_parameters(variant)
         if self.on_close:
             self.on_close(parameters['magnafpm'],
                           parameters['furling'],
@@ -93,4 +85,5 @@ class CreateSpreadsheetTaskPanel:
 
 
 def get_rotor_disk_radius(variant: str):
-    return str(parameters_by_variant[variant]['magnafpm']['RotorDiskRadius'])
+    parameters = get_default_parameters(variant)
+    return str(parameters['magnafpm']['RotorDiskRadius'])
