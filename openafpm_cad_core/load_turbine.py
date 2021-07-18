@@ -19,6 +19,7 @@ def load_turbine(magnafpm_parameters: dict,
     gui_document_by_path = get_gui_document_by_path(documents_path)
     spreadsheet_document_path = documents_path.joinpath(
         'Master of Puppets.FCStd')
+    # TODO: Mutates filesystem
     spreadsheet_document.saveAs(str(spreadsheet_document_path))
     root_document_path = documents_path.joinpath('WindTurbine.FCStd')
     root_document = App.openDocument(str(root_document_path))
@@ -32,6 +33,8 @@ def load_turbine(magnafpm_parameters: dict,
         for obj in document.Objects:
             obj.recompute()
         document.recompute(None, True, True)
+        # TODO: Mutates filesystem
         document.save()
+    # TODO: Mutates filesystem
     write_gui_documents(gui_document_by_path)
     return WindTurbine(root_document)
