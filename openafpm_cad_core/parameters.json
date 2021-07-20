@@ -59,11 +59,11 @@
             "BracketLength": 600,
             "BracketWidth": 50,
             "BracketThickness": 6,
-            "BoomLength": 1000,
+            "BoomLength": 1800,
             "BoomPipeRadius": 24.15,
             "BoomPipeThickness": 5,
             "VaneThickness": 9,
-            "VaneLength": 1200,
+            "VaneLength": 2000,
             "VaneWidth": 900,
             "Offset": 250
         },
@@ -97,16 +97,16 @@
         },
         "furling": {
             "VerticalPlaneAngle": 15,
-            "BracketLength": 600,
+            "BracketLength": 900,
             "BracketWidth": 50,
             "BracketThickness": 6,
-            "BoomLength": 1800,
+            "BoomLength": 2600,
             "BoomPipeRadius": 24.15,
             "BoomPipeThickness": 5,
             "VaneThickness": 9,
-            "VaneLength": 1200,
-            "VaneWidth": 900,
-            "Offset": 500
+            "VaneLength": 3000,
+            "VaneWidth": 1260,
+            "Offset": 348
         },
         "user": {
             "HubHolesPlacement": 102.5,
@@ -118,7 +118,7 @@
             "YawPipeRadius": 57.15,
             "PipeThickness": 6,
             "ResineRotorMargin": 5,
-            "HubHoles": 8,
+            "HubHoles": 10,
             "HorizontalPlaneAngle": 55
         }
     }
