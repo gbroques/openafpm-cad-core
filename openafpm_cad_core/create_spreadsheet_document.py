@@ -150,6 +150,7 @@ def _get_tail_parameters_by_key():
     return {
         'Inputs': {
             'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
+            'BracketLength': '=Spreadsheet.BracketLength',
             'HingeInnerBodyOuterRadius': '=Spreadsheet.HingeInnerBodyOuterRadius',
             'VerticalPlaneAngle': '=Spreadsheet.VerticalPlaneAngle',
             'HingeInnerBodyLength': '=Spreadsheet.HingeInnerBodyLength',
@@ -164,8 +165,8 @@ def _get_tail_parameters_by_key():
             'BoomPipeRadius': '=Spreadsheet.BoomPipeRadius'
         },
         'Vane': {
-            'DistanceToFirstHole': '30',
-            'DistanceBetweenHoles': '150',
+            'DistanceToFirstHole': '=BracketLength / 10',
+            'DistanceBetweenHoles': '=BracketLength / 2',
             'VaneBracketAngle': '45'
         },
         'Tail Hinge Pipe X Z' : {
