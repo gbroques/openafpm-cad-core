@@ -23,7 +23,6 @@ Modifications:
 
 from typing import Callable, List, Tuple
 
-import FreeCAD as App
 import MeshPart
 
 from .resolve_objects import resolve_objects
