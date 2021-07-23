@@ -283,6 +283,43 @@ Related Repositories
 --------------------
 * `openafpm-cad-visualization <https://github.com/gbroques/openafpm-cad-visualization>`_
 
+Prerequisites
+-------------
+
+1. Install `conda <https://docs.conda.io/projects/conda/en/latest/>`_.
+
+Setup
+-----
+Execute the following commands from the root of this repository.
+
+1. Create ``openafpm-cad-core`` conda environment.
+
+  .. code-block::
+
+     conda env create --file environment.yml
+
+2. Activate ``openafpm-cad-core`` environment.
+
+  .. code-block::
+
+     conda activate openafpm-cad-core
+
+3. Add the ``$CONDA_PREFIX/lib`` directory to ``$PYTHONPATH`` (this allows ``FreeCAD`` to be imported as a module within python).
+  
+  .. code-block::
+
+     ./add_conda_path_to_python_path.sh
+
+4. Deactivate and re-activate ``openafpm-cad-core`` environment.
+
+  .. code-block::
+
+     conda deactivate && conda activate openafpm-cad-core
+
+Docs
+----
+Run ``make html`` from ``docs/`` with ``openafpm-cad-core`` conda environment activated.
+
 FreeCAD Version
 ---------------
 Requires FreeCAD 19.1 or greater.
