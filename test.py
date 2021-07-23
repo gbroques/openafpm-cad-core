@@ -4,18 +4,11 @@ FreeCAD Macro to test openafpm_cad_core package.
 import sys
 
 sys.path.append('/home/g/Desktop/squashfs-root/usr/lib/')
-from enum import Enum, unique
 
-from openafpm_cad_core.app import get_default_parameters, visualize
+from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
+                                   visualize)
 
-
-@unique
-class WindTurbine(Enum):
-    T_SHAPE = 'T Shape'
-    H_SHAPE = 'H Shape'
-    STAR_SHAPE = 'Star Shape'
-
-parameters = get_default_parameters(WindTurbine.T_SHAPE.value)
+parameters = get_default_parameters(WindTurbine.T_SHAPE)
 
 wind_turbine = visualize(
     parameters['magnafpm'],

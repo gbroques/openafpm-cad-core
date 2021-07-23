@@ -4,7 +4,7 @@ from typing import TypedDict
 
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-
+from .wind_turbine import WindTurbine
 
 class Parameters(TypedDict):
     magnafpm: MagnafpmParameters
@@ -14,7 +14,7 @@ class Parameters(TypedDict):
 __all__ = ['get_default_parameters']
 
 
-def get_default_parameters(variant: str) -> Parameters:
+def get_default_parameters(variant: WindTurbine) -> Parameters:
     """
     Variant must be one of "T Shape", "H Shape", or "Star Shape".
     """
@@ -23,4 +23,4 @@ def get_default_parameters(variant: str) -> Parameters:
 
     with open(parameters_path) as f:
         parameters_by_variant = json.load(f)
-    return parameters_by_variant[variant]
+    return parameters_by_variant[variant.value]

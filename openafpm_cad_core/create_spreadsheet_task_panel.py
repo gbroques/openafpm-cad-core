@@ -2,23 +2,15 @@
 FreeCAD macro to create wind turbine document
 with spreadsheet containing input parameters.
 """
-
-from enum import Enum, unique
 from typing import Any, Callable
 
 import FreeCADGui as Gui
 from PySide import QtGui
 
 from .get_default_parameters import get_default_parameters
+from .wind_turbine import WindTurbine
 
 __all__ = ['CreateSpreadsheetTaskPanel']
-
-
-@unique
-class WindTurbine(Enum):
-    T_SHAPE = 'T Shape'
-    H_SHAPE = 'H Shape'
-    STAR_SHAPE = 'Star Shape'
 
 
 class CreateSpreadsheetTaskPanel:
@@ -55,7 +47,7 @@ class CreateSpreadsheetTaskPanel:
         layout.addLayout(row2)
 
     def create_rotor_disk_radius_value(self):
-        default_variant = WindTurbine.T_SHAPE.value
+        default_variant = WindTurbine.T_SHAPE
         default_rotor_disk_radius = get_rotor_disk_radius(default_variant)
         return QtGui.QLabel(default_rotor_disk_radius, self.form)
 
@@ -66,15 +58,16 @@ class CreateSpreadsheetTaskPanel:
         combo_box.activated[str].connect(self.handle_combo_box_activated)
         return combo_box
 
-    def handle_combo_box_activated(self, selected_variant):
-        selected_rotor_disk_radius = get_rotor_disk_radius(selected_variant)
+    def handle_combo_box_activated(self, selected_variant: str):
+        selected_wind_turbine = WindTurbine(selected_variant)
+        selected_rotor_disk_radius = get_rotor_disk_radius(selected_wind_turbine)
         self.rotor_disk_radius_value.setText(selected_rotor_disk_radius)
 
     def accept(self):
         """
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
         """
-        variant = self.combo_box.currentText()
+        variant = WindTurbine(self.combo_box.currentText())
         parameters = get_default_parameters(variant)
         if self.on_close:
             self.on_close(parameters['magnafpm'],
@@ -83,6 +76,6 @@ class CreateSpreadsheetTaskPanel:
         Gui.Control.closeDialog()
 
 
-def get_rotor_disk_radius(variant: str):
+def get_rotor_disk_radius(variant: WindTurbine):
     parameters = get_default_parameters(variant)
     return str(parameters['magnafpm']['RotorDiskRadius'])

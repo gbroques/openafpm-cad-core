@@ -6,14 +6,14 @@ from .create_spreadsheet_document import create_spreadsheet_document
 from .gui_document import get_gui_document_by_path, write_gui_documents
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .wind_turbine import WindTurbine
+from .wind_turbine_model import WindTurbineModel
 
 __all__ = ['load_turbine']
 
 
 def load_turbine(magnafpm_parameters: MagnafpmParameters,
                  furling_parameters: FurlingParameters,
-                 user_parameters: UserParameters) -> WindTurbine:
+                 user_parameters: UserParameters) -> WindTurbineModel:
     spreadsheet_document = create_spreadsheet_document(
         magnafpm_parameters, furling_parameters, user_parameters)
     package_path = Path(__file__).parent.absolute()
@@ -39,4 +39,4 @@ def load_turbine(magnafpm_parameters: MagnafpmParameters,
         document.save()
     # TODO: Mutates filesystem
     write_gui_documents(gui_document_by_path)
-    return WindTurbine(root_document)
+    return WindTurbineModel(root_document)
