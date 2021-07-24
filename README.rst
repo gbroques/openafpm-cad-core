@@ -5,11 +5,11 @@ OpenAFPM (Axial Flux Permanent Magnet) generators for wind electric systems.
 
 Installing Package
 ------------------
-From ``~/.FreeCAD/Mod``:
+From the root of this repository:
 
 .. code-block::
 
-   ln -s path/to/openafpm-cad-core/ openafpm-cad-core
+   pip install --editable .
 
 
 Installing Macros
@@ -36,6 +36,7 @@ Links
 Related Repositories
 --------------------
 * `openafpm-cad-visualization <https://github.com/gbroques/openafpm-cad-visualization>`_
+* `openafpm-cad-desktop-app <https://github.com/gbroques/openafpm-cad-desktop-app>`_
 
 Prerequisites
 -------------
