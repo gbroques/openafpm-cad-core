@@ -75,6 +75,6 @@ Docs
 ----
 Run ``./make_docs.sh`` from ``docs/`` with ``openafpm-cad-core`` conda environment activated.
 
-FreeCAD Version
----------------
-Requires FreeCAD 19.1 or greater.
+Supported FreeCAD Versions
+--------------------------
+Currently tested with FreeCAD ``19.2``.
