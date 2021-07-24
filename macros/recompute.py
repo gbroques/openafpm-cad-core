@@ -1,5 +1,5 @@
 """
-FreeCAD macro to recomput all documents.
+FreeCAD macro to recompute all documents.
 """
 import FreeCAD as App
 
