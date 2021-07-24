@@ -7,3 +7,4 @@ docs/_build
 docs/openafpm_cad_core
 dist/
 *.egg-info
+*.obj
