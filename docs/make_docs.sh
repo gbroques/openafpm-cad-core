@@ -9,6 +9,10 @@
 # --------------------------------------------------------------
 source_directory="."
 build_directory="_build"
+
+rm -rf $build_directory
+rm -rf openafpm_cad_core
+
 python \
     -m sphinx \
     $source_directory \
