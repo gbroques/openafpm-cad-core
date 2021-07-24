@@ -1,4 +1,0 @@
-digraph G {
-    "Coil Winder" -> "Disc"
-    "Coil Winder" -> "Bobbin"
-}

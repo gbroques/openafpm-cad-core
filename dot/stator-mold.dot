@@ -1,6 +1,0 @@
-digraph G {
-    "Stator Mold" -> "Top Piece"
-    "Stator Mold" -> "Bottom Piece"
-    "Stator Mold" -> "Middle Piece"
-    "Stator Mold" -> "Island Piece"
-}

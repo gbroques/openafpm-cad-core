@@ -1,6 +1,0 @@
-digraph G {
-    "Rotor Mold" -> "End Piece"
-    "Rotor Mold" -> "Surround Piece"
-    "Rotor Mold" -> "Island Piece"
-    "Rotor Mold" -> "Magnet Jig"
-}
