@@ -12,13 +12,13 @@ From ``~/.FreeCAD/Mod``:
    ln -s path/to/openafpm-cad-core/ openafpm-cad-core
 
 
-Installing Test Macro
----------------------
-From ``~/.FreeCAD/Macro``:
+Installing Macros
+-----------------
+From the root of this repository:
 
 .. code-block::
 
-   ln -s path/to/openafpm-cad-core/test.py test.py
+   ./link_macros.bash
 
 
 Links
