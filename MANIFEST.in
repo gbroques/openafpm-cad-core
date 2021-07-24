@@ -1,0 +1,7 @@
+# Include extra files in Python package distribution.
+# https://packaging.python.org/guides/using-manifest-in/
+
+include README.rst
+include LICENSE
+include openafpm_cad_core/parameters.json
+recursive-include openafpm_cad_core/documents/ *

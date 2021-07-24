@@ -1,10 +1,6 @@
 """
-FreeCAD Macro to test openafpm_cad_core package.
+FreeCAD macro to visualize wind turbine using default values.
 """
-import sys
-
-sys.path.append('/home/g/Desktop/squashfs-root/usr/lib/')
-
 from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
                                    visualize)
 

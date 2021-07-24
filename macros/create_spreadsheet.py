@@ -1,8 +1,7 @@
 """
-FreeCAD macro to load wind turbine.
+FreeCAD macro to create spreadsheet that drives wind turbine model.
 """
 import FreeCADGui as Gui
-
 from openafpm_cad_core.app import create_spreadsheet_document
 from openafpm_cad_core.gui import CreateSpreadsheetTaskPanel
 

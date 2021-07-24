@@ -15,6 +15,9 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
+from openafpm_cad_core import _version as project_version  # noqa: E402
+
+
 # Add lib folder of conda env to sys.path for building docs on Read the Docs
 # and importing FreeCAD
 on_read_the_dcs = os.environ.get('READTHEDOCS') == 'True'
@@ -48,9 +51,8 @@ project = 'OpenAFPM CAD Core'
 author = 'G Roques'
 
 # The full version, including alpha/beta/rc tags
-version = '0.1.0-SNAPSHOT'
-release = version
-version = version
+release = project_version.__version__
+version = project_version.__version__
 
 
 # -- General configuration ---------------------------------------------------

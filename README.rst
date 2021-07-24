@@ -1,7 +1,7 @@
 OpenAFPM CAD Core
 =================
 
-OpenAFPM (Axial Flux Permanent Magnet) generators for wind electric systems
+OpenAFPM (Axial Flux Permanent Magnet) generators for wind electric systems.
 
 Installing Package
 ------------------
@@ -72,7 +72,7 @@ Execute the following commands from the root of this repository.
 
 Docs
 ----
-Run ``make html`` from ``docs/`` with ``openafpm-cad-core`` conda environment activated.
+Run ``./make_docs.sh`` from ``docs/`` with ``openafpm-cad-core`` conda environment activated.
 
 FreeCAD Version
 ---------------
