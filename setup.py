@@ -22,7 +22,9 @@ setup(
     packages=['openafpm_cad_core'],
     # Incude data files specified in MANIFEST.in file.
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'freecad-to-obj==0.1.0'
+    ],
     classifiers=[
         # Full List: https://pypi.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',

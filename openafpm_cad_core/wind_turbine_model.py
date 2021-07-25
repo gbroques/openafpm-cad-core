@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import List
 
-from . import importObj as importOBJ
+import freecad_to_obj
+
 from .find_object_by_label import find_object_by_label
 from .make_archive import make_archive
 
@@ -14,7 +15,7 @@ class WindTurbineModel:
 
     def to_obj(self):
         wind_turbine = find_object_by_label(self.root_document, 'WindTurbine')
-        obj_file_contents = importOBJ.export(
+        obj_file_contents = freecad_to_obj.export(
             [wind_turbine], object_name_getter, keep_unresolved)
         return obj_file_contents
 
