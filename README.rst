@@ -1,7 +1,7 @@
 OpenAFPM CAD Core
 =================
 
-OpenAFPM (Axial Flux Permanent Magnet) generators for wind electric systems.
+Repository containing OpenAFPM wind turbine CAD model.
 
 Installing Package
 ------------------

@@ -13,7 +13,7 @@ with io.open(path.join(current_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='openafpm-cad-core',
-    description='Core CAD model for OpenAFPM tools.',
+    description='Contains OpenAFPM wind turbine CAD model.',
     long_description=long_description,
     long_description_content_type='text/x-rst',
     url='https://github.com/gbroques/openafpm-cad-core',
