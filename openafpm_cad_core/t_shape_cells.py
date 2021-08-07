@@ -1,6 +1,11 @@
+from typing import List
+
 from .cell import Cell, Style
 
-t_shape_cells = [
+__all__ = ['t_shape_cells']
+
+#: Cells defining the T Shape spreadsheet.
+t_shape_cells: List[List[Cell]] = [
     # Inputs
     # ------
     [

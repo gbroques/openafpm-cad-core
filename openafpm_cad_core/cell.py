@@ -6,13 +6,21 @@ from __future__ import annotations
 from enum import Enum, unique
 from typing import List, Tuple
 
+__all__ = [
+    'Cell',
+    'Style',
+    'Alignment',
+    'Color'
+]
+
 
 @unique
 class Style(Enum):
     """Enumeration of cell styles.
 
-    See Also:
-    https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/Gui/PropertiesDialog.cpp#L161-L181
+    `See also, FreeCAD source code`__.
+
+    __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/Gui/PropertiesDialog.cpp#L161-L181
     """
     BOLD = 'bold'
     ITALIC = 'italic'
@@ -20,7 +28,12 @@ class Style(Enum):
 
     @classmethod
     def encode(cls, styles: List[Style]) -> str:
-        """https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/Cell.cpp#L960-L983"""
+        """Encode a set of styles as a string.
+
+        `See also, FreeCAD source code`__.
+
+        __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/Cell.cpp#L960-L983
+        """
         return '|'.join(map(lambda s: s.value, styles))
 
 
@@ -28,8 +41,10 @@ class Style(Enum):
 class Alignment(Enum):
     """Enumeration of cell alignment.
 
-    See Also:
-    https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/SheetPyImp.cpp#L695-L706
+    `See also, FreeCAD source code`__.
+
+    __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/SheetPyImp.cpp#L695-L706
+
     """
     LEFT = 'left'
     HORIZONTAL_CENTER = 'center'
@@ -40,7 +55,12 @@ class Alignment(Enum):
 
     @classmethod
     def encode(cls, alignments: Tuple[Alignment, Alignment]) -> str:
-        """https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/Cell.cpp#L901-L936"""
+        """Encode horizontal and vertical alignment as a string.
+
+        `See also, FreeCAD source code`__.
+
+        __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/Cell.cpp#L901-L936
+        """
         return '|'.join(map(lambda a: a.value, alignments))
 
 
@@ -60,7 +80,8 @@ class Cell:
                  styles: List[Style] = [],
                  horizontal_alignment: Alignment = Alignment.LEFT,
                  vertical_alignment: Alignment = Alignment.VERTICAL_CENTER,
-                 background: Tuple[float, float, float, float] = Color.WHITE.value,
+                 background: Tuple[float, float,
+                                   float, float] = Color.WHITE.value,
                  foreground: Tuple[float, float, float, float] = Color.BLACK.value) -> None:
         self.content = content
         self.alias = alias
@@ -77,3 +98,6 @@ class Cell:
     @property
     def alignment(self) -> str:
         return Alignment.encode((self.horizontal_alignment, self.vertical_alignment))
+
+    def __repr__(self) -> str:
+        return self.content
