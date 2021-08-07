@@ -1,6 +1,7 @@
-# Postpone evalutation of annotations
-# TODO: remove in pythong 3.10+
-# https://stackoverflow.com/questions/42845972/typed-python-using-the-classes-own-type-inside-class-definition#:~:text=https%3A//stackoverflow.com/a/42845998
+# Postpone evalutation of annotations.
+# TODO: Remove in Python 3.10 or greater.
+# See:
+#   https://stackoverflow.com/a/42845998
 from __future__ import annotations
 
 from enum import Enum, unique
