@@ -1,6 +1,10 @@
+import string
+from typing import List, Tuple, Union
+
 import FreeCAD as App
 from FreeCAD import Document
 
+from .cell import Cell, Style
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 
@@ -22,7 +26,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     document = App.newDocument('Master of Puppets')
 
     _add_spreadsheet(document, 'Spreadsheet', parameters_by_key)
-    _add_spreadsheet(document, 'TShape', _get_t_shape_parameters_by_key())
+    _add_spreadsheet(document, 'TShape', _get_t_shape_cells())
     _add_spreadsheet(document, 'HShape', _get_h_shape_parameters_by_key())
     _add_spreadsheet(document, 'StarShape',
                      _get_star_shape_parameters_by_key())
@@ -32,26 +36,29 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     return document
 
 
-def _add_spreadsheet(document: Document, name: str, parameters_by_key: dict) -> None:
+def _add_spreadsheet(document: Document, name: str, contents: Union[dict, List[List[Cell]]]) -> None:
     sheet = document.addObject(
         'Spreadsheet::Sheet', name)
-    cells = _build_cells(parameters_by_key)
-    _populate_spreadsheet(sheet, cells)
+    if type(contents) is dict:
+        cells = _build_cells(contents)
+        _populate_spreadsheet(sheet, cells)
+    else:
+        _populate_spreadsheet_with_cells(sheet, contents)
 
 
-def _build_cells(parameters_by_key) -> list:
+def _build_cells(parameters_by_key) -> List[Tuple[str, str]]:
     cells = []
     for key, parameters in parameters_by_key.items():
-        cells.append([key, ''])
+        cells.append((key, ''))
         cells.extend(_dict_to_cells(parameters))
     return cells
 
 
-def _dict_to_cells(dictionary: dict) -> list:
-    return [[key, value] for key, value in dictionary.items()]
+def _dict_to_cells(dictionary: dict) -> List[Tuple[str, str]]:
+    return [(key, value) for key, value in dictionary.items()]
 
 
-def _populate_spreadsheet(spreadsheet, cells: list) -> None:
+def _populate_spreadsheet(spreadsheet, cells: List[Tuple[str, str]]) -> None:
     for i, (key, value) in enumerate(cells):
         number = str(i + 1)
         key_cell = 'A' + number
@@ -62,6 +69,89 @@ def _populate_spreadsheet(spreadsheet, cells: list) -> None:
             spreadsheet.setAlias(value_cell, key)
         else:
             spreadsheet.setStyle(key_cell, 'underline')
+
+
+def _populate_spreadsheet_with_cells(spreadsheet, cells: List[List[Cell]]) -> None:
+    for row_index in range(len(cells)):
+        for col_index in range(len(cells[row_index])):
+            row_num = row_index + 1
+            col_num = col_index + 1
+            column = map_number_to_column(col_num)
+            cell_address = column + str(row_num)
+            cell = cells[row_index][col_index]
+            spreadsheet.set(cell_address, cell.content)
+            spreadsheet.setAlias(cell_address, cell.alias)
+            spreadsheet.setStyle(cell_address, cell.style)
+            spreadsheet.setAlignment(cell_address, cell.alignment)
+            spreadsheet.setBackground(cell_address, cell.background)
+            spreadsheet.setForeground(cell_address, cell.foreground)
+
+
+def map_number_to_column(number: int) -> str:
+    """
+    >>> map_number_to_column(1)
+    'A'
+
+    >>> map_number_to_column(2)
+    'B'
+
+    >>> map_number_to_column(26)
+    'Z'
+
+    >>> map_number_to_column(27)
+    'AA'
+
+    >>> map_number_to_column(28)
+    'AB'
+
+    >>> map_number_to_column(52)
+    'AZ'
+
+    >>> map_number_to_column(702)
+    'ZZ'
+    """
+    if number < 1:
+        raise ValueError('Number {} must be greater than 0.'.format(number))
+    num_letters = len(string.ascii_uppercase)
+    if number > num_letters:
+        first = map_number_to_column((number - 1) // num_letters)
+        second = map_number_to_column(number % num_letters)
+        return first + second
+    return string.ascii_uppercase[number - 1]
+
+
+def map_column_to_number(column: str) -> int:
+    """
+    >>> map_column_to_number('A')
+    1
+
+    >>> map_column_to_number('B')
+    2
+
+    >>> map_column_to_number('Z')
+    26
+
+    >>> map_column_to_number('AA')
+    27
+
+    >>> map_column_to_number('AB')
+    28
+
+    >>> map_column_to_number('AZ')
+    52
+
+    >>> map_column_to_number('ZZ')
+    702
+    """
+    sum = 0
+    for char in column:
+        if char not in string.ascii_uppercase:
+            raise ValueError(
+                'Column "{}" must only contain uppercase ASCII characters.'.format(column))
+        value = string.ascii_uppercase.find(char) + 1
+        num_letters = len(string.ascii_uppercase)
+        sum = sum * num_letters + value
+    return sum
 
 
 def _get_static_parameters() -> dict:
@@ -87,41 +177,54 @@ def _get_calculated_parameters() -> dict:
     }
 
 
-def _get_t_shape_parameters_by_key() -> dict:
-    return {
-        'Inputs': {
-            'RotorDiskRadius': '=Spreadsheet.RotorDiskRadius',
-            'Offset': '=Spreadsheet.Offset',
-            'YawPipeRadius': '=Spreadsheet.YawPipeRadius',
-            'MetalThicknessL': '=Spreadsheet.MetalThicknessL',
-            'MetalLengthL': '=Spreadsheet.MetalLengthL',
-            'ResineStatorOuterRadius': '=Spreadsheet.ResineStatorOuterRadius',
-            'Holes': '=Spreadsheet.Holes'
-        },
-        'Yaw Bearing to Frame Junction': {
-            'I': '=1 / 70 * (sqrt(77280 * RotorDiskRadius - 9503975) + 235)',
-            'j': '=0.32 * RotorDiskRadius - 3',
-            'k': '=0.2 * RotorDiskRadius - 5'
-        },
-        'Frame': {
-            'X': '=Offset - (I + YawPipeRadius)',
-            # 30 degrees because 360 / 3 = 120 - 90 = 30.
-            # Divide by 3 for because the T Shape has 3 holes.
-            # cos(30) * ResineStatorOuterRadius = bottom of right triangle
-            # * 2 to get both sides.
-            # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
-            # Add the radius for holes on each side, + Spreadsheet.Holes * 2.
-            'a': '=cos(30) * ResineStatorOuterRadius * 2 + 40 + Holes * 2',
-            # Total vertical distance of T Shape from bottom hole to two top holes.
-            # This is the opposite, or vertical left side of the right triangle plus,
-            # the stator resin cast radius.
-            'TShapeVerticalDistance': '=(sin(30) * ResineStatorOuterRadius) + ResineStatorOuterRadius',
-            # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.
-            # MetalLengthL is the length of the brackets.
-            'BC': '=TShapeVerticalDistance - MetalLengthL',
-            'D': '=MetalLengthL * 2'
-        }
-    }
+def _get_t_shape_cells() -> List[List[Cell]]:
+    return [
+        # Inputs
+        # ------
+        [Cell('Inputs', styles=[Style.UNDERLINE])],
+        [Cell('RotorDiskRadius'), Cell(
+            '=Spreadsheet.RotorDiskRadius', alias='RotorDiskRadius')],
+        [Cell('Offset'), Cell('=Spreadsheet.Offset', alias='Offset')],
+        [Cell('YawPipeRadius'), Cell(
+            '=Spreadsheet.YawPipeRadius', alias='YawPipeRadius')],
+        [Cell('MetalThicknessL'), Cell(
+            '=Spreadsheet.MetalThicknessL', alias='MetalThicknessL')],
+        [Cell('MetalLengthL'), Cell(
+            '=Spreadsheet.MetalLengthL', alias='MetalLengthL')],
+        [Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
+                                               alias='ResineStatorOuterRadius')],
+        [Cell('Holes'), Cell('=Spreadsheet.Holes', alias='Holes')],
+
+        # Yaw Bearing to Frame Junction
+        # -----------------------------
+        [Cell('Yaw Bearing to Frame Junction', styles=[Style.UNDERLINE])],
+        [Cell('I'), Cell(
+            '=1 / 70 * (sqrt(77280 * RotorDiskRadius - 9503975) + 235)', alias='I')],
+        [Cell('j'), Cell('=0.32 * RotorDiskRadius - 3', alias='j')],
+        [Cell('k'), Cell('=0.2 * RotorDiskRadius - 5', alias='k')],
+
+        # Frame
+        # -----
+        [Cell('Frame', styles=[Style.UNDERLINE])],
+        [Cell('X'), Cell('=Offset - (I + YawPipeRadius)', alias='X')],
+        # 30 degrees because 360 / 3 = 120 - 90 = 30.
+        # Divide by 3 for because the T Shape has 3 holes.
+        # cos(30) * ResineStatorOuterRadius = bottom of right triangle
+        # * 2 to get both sides.
+        # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
+        # Add the radius for holes on each side, + Spreadsheet.Holes * 2.
+        [Cell('a'), Cell(
+            '=cos(30) * ResineStatorOuterRadius * 2 + 40 + Holes * 2', alias='a')],
+        # Total vertical distance of T Shape from bottom hole to two top holes.
+        # This is the opposite, or vertical left side of the right triangle plus,
+        # the stator resin cast radius.
+        [Cell('TShapeVerticalDistance'), Cell('=(sin(30) * ResineStatorOuterRadius) + ResineStatorOuterRadius',
+                                              alias='TShapeVerticalDistance')],
+        # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.
+        # MetalLengthL is the length of the brackets.
+        [Cell('BC'), Cell('=TShapeVerticalDistance - MetalLengthL', alias='BC')],
+        [Cell('D'), Cell('=MetalLengthL * 2', alias='D')]
+    ]
 
 
 def _get_h_shape_parameters_by_key() -> dict:
