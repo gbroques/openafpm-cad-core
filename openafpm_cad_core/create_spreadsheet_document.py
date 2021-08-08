@@ -19,16 +19,16 @@ __all__ = ['create_spreadsheet_document']
 def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
                                 furling_parameters: FurlingParameters,
                                 user_parameters: UserParameters) -> Document:
-    static_parameters = _get_static_parameters()
-    calculated_parameters = _get_calculated_parameters()
+    static_cells = _get_static_cells()
+    calculated_cells = _get_calculated_cells()
     parameters_by_key = {
         'MagnAFPM': magnafpm_parameters,
         'OpenFurl': furling_parameters,
         'User': user_parameters,
     }
     cells = _build_cells(parameters_by_key)
-    cells.extend(static_parameters)
-    cells.extend(calculated_parameters)
+    cells.extend(static_cells)
+    cells.extend(calculated_cells)
     document = App.newDocument('Master of Puppets')
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
@@ -145,7 +145,7 @@ def map_column_to_number(column: str) -> int:
     return sum
 
 
-def _get_static_parameters() -> List[List[Cell]]:
+def _get_static_cells() -> List[List[Cell]]:
     return [
         [
             Cell('Static', styles=[Style.UNDERLINE])
@@ -161,7 +161,7 @@ def _get_static_parameters() -> List[List[Cell]]:
     ]
 
 
-def _get_calculated_parameters() -> List[List[Cell]]:
+def _get_calculated_cells() -> List[List[Cell]]:
     return [
         [
             Cell('Calculated', styles=[Style.UNDERLINE])
