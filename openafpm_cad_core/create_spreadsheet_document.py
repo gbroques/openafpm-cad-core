@@ -5,6 +5,7 @@ import FreeCAD as App
 from FreeCAD import Document
 
 from .cell import Cell, Style
+from .h_shape_cells import h_shape_cells
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .t_shape_cells import t_shape_cells
@@ -29,7 +30,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)
-    _add_spreadsheet(document, 'HShape', _get_h_shape_parameters_by_key())
+    _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape',
                      _get_star_shape_parameters_by_key())
     _add_spreadsheet(document, 'Hub', _get_hub_parameters_by_key())
@@ -206,79 +207,6 @@ def _get_calculated_parameters() -> List[List[Cell]]:
         [
             Cell('YawBearingTailHingeJunctionFullWidth'), Cell('=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth',
                                                                alias='YawBearingTailHingeJunctionFullWidth')
-        ]
-    ]
-
-
-def _get_h_shape_parameters_by_key() -> List[List[Cell]]:
-    return [
-        [
-            Cell('Inputs', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('RotorDiskRadius'), Cell('=Spreadsheet.RotorDiskRadius',
-                                          alias='RotorDiskRadius')
-        ],
-        [
-            Cell('Offset'), Cell('=Spreadsheet.Offset',
-                                 alias='Offset')
-        ],
-        [
-            Cell('YawPipeRadius'), Cell('=Spreadsheet.YawPipeRadius',
-                                        alias='YawPipeRadius')
-        ],
-        [
-            Cell('MetalLengthL'), Cell('=Spreadsheet.MetalLengthL',
-                                       alias='MetalLengthL')
-        ],
-        [
-            Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
-                                                  alias='ResineStatorOuterRadius')
-        ],
-        [
-            Cell('Frame', styles=[Style.UNDERLINE])
-        ],
-        # https://calcresource.com/geom-rectangle.html
-        [
-            Cell('CentralAngle'), Cell('=360 / 4',
-                                       alias='CentralAngle')
-        ],
-        [
-            Cell('Theta'), Cell('=CentralAngle / 2',
-                                alias='Theta')
-        ],
-        [
-            Cell('Inradius'), Cell('=cos(Theta) * ResineStatorOuterRadius',
-                                   alias='Inradius')
-        ],
-        [
-            Cell('IsoscelesRightTriangleHypotenuseRatio'), Cell('=1 / cos(Theta)',
-                                                                alias='IsoscelesRightTriangleHypotenuseRatio')
-        ],
-        [
-            Cell('HorizontalDistanceBetweenHoles'), Cell('=ResineStatorOuterRadius * IsoscelesRightTriangleHypotenuseRatio',
-                                                         alias='HorizontalDistanceBetweenHoles')
-        ],
-        # Distance from hole to outside edge of frame.
-        [
-            Cell('HoleMargin'), Cell('20',
-                                     alias='HoleMargin')
-        ],
-        [
-            Cell('G'), Cell('=HorizontalDistanceBetweenHoles + HoleMargin * 2',
-                            alias='G')
-        ],
-        [
-            Cell('H'), Cell('=Inradius * 2 - MetalLengthL',
-                            alias='H')
-        ],  # To make the frame square.
-        [
-            Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
-                             alias='MM')
-        ],
-        [
-            Cell('L'), Cell('=YawPipeRadius + Offset / cos(Theta) + 0.5 * MM * cos(Theta)',
-                            alias='L')
         ]
     ]
 
