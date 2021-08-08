@@ -8,6 +8,7 @@ from .cell import Cell, Style
 from .h_shape_cells import h_shape_cells
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
+from .star_shape_cells import star_shape_cells
 from .t_shape_cells import t_shape_cells
 
 __all__ = ['create_spreadsheet_document']
@@ -31,8 +32,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)
     _add_spreadsheet(document, 'HShape', h_shape_cells)
-    _add_spreadsheet(document, 'StarShape',
-                     _get_star_shape_parameters_by_key())
+    _add_spreadsheet(document, 'StarShape', star_shape_cells)
     _add_spreadsheet(document, 'Hub', _get_hub_parameters_by_key())
     _add_spreadsheet(document, 'Tail', _get_tail_parameters_by_key())
     document.recompute()
@@ -534,70 +534,6 @@ def _get_tail_parameters_by_key() -> List[List[Cell]]:
         [
             Cell('TailZ'), Cell('=Cz + Rz',
                                 alias='TailZ')
-        ]
-    ]
-
-
-def _get_star_shape_parameters_by_key() -> List[List[Cell]]:
-    return [
-        [
-            Cell('Inputs', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
-                                                  alias='ResineStatorOuterRadius')
-        ],
-        [
-            Cell('Holes'), Cell('=Spreadsheet.Holes',
-                                alias='Holes')
-        ],
-        [
-            Cell('Offset'), Cell('=Spreadsheet.Offset',
-                                 alias='Offset')
-        ],
-        [
-            Cell('YawPipeRadius'), Cell('=Spreadsheet.YawPipeRadius',
-                                        alias='YawPipeRadius')
-        ],
-        [
-            Cell('MetalLengthL'), Cell('=Spreadsheet.MetalLengthL',
-                                       alias='MetalLengthL')
-        ],
-        [
-            Cell('RotorDiskRadius'), Cell('=Spreadsheet.RotorDiskRadius',
-                                          alias='RotorDiskRadius')
-        ],
-        [
-            Cell('CoilLegWidth'), Cell('=Spreadsheet.CoilLegWidth',
-                                       alias='CoilLegWidth')
-        ],
-        [
-            Cell('Frame', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('StatorHolesCircle'), Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (ResineStatorOuterRadius - (RotorDiskRadius + CoilLegWidth))',
-                                            alias='StatorHolesCircle')
-        ],
-        [
-            Cell('a'), Cell('=2 * sin(30) * StatorHolesCircle + 2 * (25 + Holes)',
-                            alias='a')
-        ],
-        [
-            Cell('B'), Cell('=2 * StatorHolesCircle * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
-                            alias='B')
-        ],
-        # 25 is the margin from the holes to the edge of the metal.
-        [
-            Cell('C'), Cell('=StatorHolesCircle - MetalLengthL + Holes + 25',
-                            alias='C')
-        ],
-        [
-            Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
-                             alias='MM')
-        ],
-        [
-            Cell('L'), Cell('=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)',
-                            alias='L')
         ]
     ]
 
