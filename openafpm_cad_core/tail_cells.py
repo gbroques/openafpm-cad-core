@@ -191,141 +191,130 @@ tail_cells: List[List[Cell]] = [
                                   alias='TailZOffset')
     ],
     [
-        Cell('P', styles=[Style.UNDERLINE])
+        Cell('Px', styles=[Style.UNDERLINE]),
+        Cell('Py', styles=[Style.UNDERLINE]),
+        Cell('Pz', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('Px'), Cell('=TailXInitial + OuterTailHingeX + TailBoomTriangularBraceXOffset',
-                         alias='Px')
+        Cell('=TailXInitial + OuterTailHingeX + TailBoomTriangularBraceXOffset',
+             alias='Px'),
+        Cell('0',
+             alias='Py'),
+        Cell('=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset',
+             alias='Pz')
     ],
     [
-        Cell('Py'), Cell('0',
-                         alias='Py')
+        Cell('Cx', styles=[Style.UNDERLINE]),
+        Cell('Cy', styles=[Style.UNDERLINE]),
+        Cell('Cz', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('Pz'), Cell('=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset',
-                         alias='Pz')
+        Cell('=OuterTailHingeX',
+             alias='Cx'),
+        Cell('0',
+             alias='Cy'),
+        Cell('=OuterTailHingeZ',
+             alias='Cz')
     ],
     [
-        Cell('C', styles=[Style.UNDERLINE])
+        Cell('Qx', styles=[Style.UNDERLINE]),
+        Cell('Qy', styles=[Style.UNDERLINE]),
+        Cell('Qz', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('Cx'), Cell('=OuterTailHingeX',
-                         alias='Cx')
+        Cell('=Px - Cx',
+             alias='Qx'),
+        Cell('=Py - Cy',
+             alias='Qy'),
+        Cell('=Pz - Cz',
+             alias='Qz')
     ],
     [
-        Cell('Cy'), Cell('0',
-                         alias='Cy')
+        Cell('Ax', styles=[Style.UNDERLINE]),
+        Cell('Ay', styles=[Style.UNDERLINE]),
+        Cell('Az', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('Cz'), Cell('=OuterTailHingeZ',
-                         alias='Cz')
+        Cell('=sin(VerticalPlaneAngle)',
+             alias='Ax'),
+        Cell('0',
+             alias='Ay'),
+        Cell('=cos(VerticalPlaneAngle)',
+             alias='Az')
     ],
     [
-        Cell('Q', styles=[Style.UNDERLINE])
+        Cell('Rotation Matrix from Axis and Angle',
+             styles=[Style.UNDERLINE]),
+        Cell('Formula:'),
+        Cell('https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle')
     ],
     [
-        Cell('Qx'), Cell('=Px - Cx',
-                         alias='Qx')
+        Cell('r11', styles=[Style.UNDERLINE]),
+        Cell('r12', styles=[Style.UNDERLINE]),
+        Cell('r13', styles=[Style.UNDERLINE]),
     ],
     [
-        Cell('Qy'), Cell('=Py - Cy',
-                         alias='Qy')
+        Cell('=cos(TailAngle) + Ax ^ 2 * (1 - cos(TailAngle))',
+             alias='r11'),
+        Cell('=Ax * Ay * (1 - cos(TailAngle)) - Az * sin(TailAngle)',
+             alias='r12'),
+        Cell('=Ax * Az * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
+             alias='r13')
     ],
     [
-        Cell('Qz'), Cell('=Pz - Cz',
-                         alias='Qz')
+        Cell('r21', styles=[Style.UNDERLINE]),
+        Cell('r22', styles=[Style.UNDERLINE]),
+        Cell('r23', styles=[Style.UNDERLINE]),
     ],
     [
-        Cell('A', styles=[Style.UNDERLINE])
+        Cell('=Ay * Ax * (1 - cos(TailAngle)) + Az * sin(TailAngle)',
+             alias='r21'),
+        Cell('=cos(TailAngle) + Ay ^ 2 * (1 - cos(TailAngle))',
+             alias='r22'),
+        Cell('=Ay * Az * (1 - cos(TailAngle)) - Ax * sin(TailAngle)',
+             alias='r23')
     ],
     [
-        Cell('Ax'), Cell('=sin(VerticalPlaneAngle)',
-                         alias='Ax')
+        Cell('r31', styles=[Style.UNDERLINE]),
+        Cell('r32', styles=[Style.UNDERLINE]),
+        Cell('r33', styles=[Style.UNDERLINE]),
     ],
     [
-        Cell('Ay'), Cell('0',
-                         alias='Ay')
+        Cell('=Az * Ax * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
+             alias='r31'),
+        Cell('=Az * Ay * (1 - cos(TailAngle)) + Ax * sin(TailAngle)',
+             alias='r32'),
+        Cell('=cos(TailAngle) + Az ^ 2 * (1 - cos(TailAngle))',
+             alias='r33')
     ],
     [
-        Cell('Az'), Cell('=cos(VerticalPlaneAngle)',
-                         alias='Az')
-    ],
-    # Rotation Matrix from Axis and Angle
-    # Formula: https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-    [
-        Cell('r1', styles=[Style.UNDERLINE])
+        Cell('Rotation Matrix * (P - C)',
+             styles=[Style.UNDERLINE])
     ],
     [
-        Cell('r11'), Cell('=cos(TailAngle) + Ax ^ 2 * (1 - cos(TailAngle))',
-                          alias='r11')
+        Cell('Rx', styles=[Style.UNDERLINE]),
+        Cell('Ry', styles=[Style.UNDERLINE]),
+        Cell('Rz', styles=[Style.UNDERLINE]),
     ],
     [
-        Cell('r12'), Cell('=Ax * Ay * (1 - cos(TailAngle)) - Az * sin(TailAngle)',
-                          alias='r12')
+        Cell('=r11 * Qx + r12 * Qy + r13 * Qz',
+             alias='Rx'),
+        Cell('=r21 * Qx + r22 * Qy + r23 * Qz',
+             alias='Ry'),
+        Cell('=r31 * Qx + r32 * Qy + r33 * Qz',
+             alias='Rz')
     ],
     [
-        Cell('r13'), Cell('=Ax * Az * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
-                          alias='r13')
+        Cell('TailX', styles=[Style.UNDERLINE]),
+        Cell('TailY', styles=[Style.UNDERLINE]),
+        Cell('TailZ', styles=[Style.UNDERLINE]),
     ],
     [
-        Cell('r2', styles=[Style.UNDERLINE])
-    ],
-    [
-        Cell('r21'), Cell('=Ay * Ax * (1 - cos(TailAngle)) + Az * sin(TailAngle)',
-                          alias='r21')
-    ],
-    [
-        Cell('r22'), Cell('=cos(TailAngle) + Ay ^ 2 * (1 - cos(TailAngle))',
-                          alias='r22')
-    ],
-    [
-        Cell('r23'), Cell('=Ay * Az * (1 - cos(TailAngle)) - Ax * sin(TailAngle)',
-                          alias='r23')
-    ],
-    [
-        Cell('r3', styles=[Style.UNDERLINE])
-    ],
-    [
-        Cell('r31'), Cell('=Az * Ax * (1 - cos(TailAngle)) - Ay * sin(TailAngle)',
-                          alias='r31')
-    ],
-    [
-        Cell('r32'), Cell('=Az * Ay * (1 - cos(TailAngle)) + Ax * sin(TailAngle)',
-                          alias='r32')
-    ],
-    [
-        Cell('r33'), Cell('=cos(TailAngle) + Az ^ 2 * (1 - cos(TailAngle))',
-                          alias='r33')
-    ],
-    # Rotation Matrix * (P - C)
-    [
-        Cell('R', styles=[Style.UNDERLINE])
-    ],
-    [
-        Cell('Rx'), Cell('=r11 * Qx + r12 * Qy + r13 * Qz',
-                         alias='Rx')
-    ],
-    [
-        Cell('Ry'), Cell('=r21 * Qx + r22 * Qy + r23 * Qz',
-                         alias='Ry')
-    ],
-    [
-        Cell('Rz'), Cell('=r31 * Qx + r32 * Qy + r33 * Qz',
-                         alias='Rz')
-    ],
-    [
-        Cell('Tail X Y Z', styles=[Style.UNDERLINE])
-    ],
-    [
-        Cell('TailX'), Cell('=Cx + Rx',
-                            alias='TailX')
-    ],
-    [
-        Cell('TailY'), Cell('=Cy + Ry',
-                            alias='TailY')
-    ],
-    [
-        Cell('TailZ'), Cell('=Cz + Rz',
-                            alias='TailZ')
+        Cell('=Cx + Rx',
+             alias='TailX'),
+        Cell('=Cy + Ry',
+             alias='TailY'),
+        Cell('=Cz + Rz',
+             alias='TailZ')
     ]
 ]
