@@ -67,7 +67,15 @@ class Alignment(Enum):
 
 @unique
 class Color(Enum):
-    """Enumeration of default background and foreground colors."""
+    """Enumeration of default background and foreground colors in the form (r, g, b, a).
+
+    Where (r, g, b, a) are float values in the range 0 to 1 inclusive:
+
+    * r = red
+    * g = green
+    * b = blue
+    * a = alpha (opacity)
+    """
     WHITE = (1.0, 1.0, 1.0, 1.0)
     BLACK = (0.0, 0.0, 0.0, 1.0)
 
