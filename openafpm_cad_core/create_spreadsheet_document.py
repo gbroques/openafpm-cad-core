@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 import FreeCAD as App
 from FreeCAD import Document
 
+from .alternator_cells import alternator_cells
 from .cell import Cell, Style
 from .h_shape_cells import h_shape_cells
 from .hub_cells import hub_cells
@@ -32,6 +33,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     document = App.newDocument('Master of Puppets')
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
+    _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)
     _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape', star_shape_cells)
