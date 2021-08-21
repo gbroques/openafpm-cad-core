@@ -7,23 +7,23 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
                                      euler_angles: Tuple[str, str, str]) -> List[List[Cell]]:
     x, y, z = euler_angles
     def alias(a): return alias_namespace + a
-    Alpha = alias('Alpha')
-    Beta = alias('Beta')
-    Gamma = alias('Gamma')
-    R11 = alias('R11')
-    R12 = alias('R12')
-    R13 = alias('R13')
-    R21 = alias('R21')
-    R22 = alias('R22')
-    R23 = alias('R23')
-    R31 = alias('R31')
-    R32 = alias('R32')
-    R33 = alias('R33')
-    TraceR = alias('TraceR')
-    Angle = alias('Angle')
-    U11 = alias('U11')
-    U12 = alias('U12')
-    U13 = alias('U13')
+    # Euler Angles
+    Z = alias('Z')
+    Y = alias('Y')
+    X = alias('X')
+    # Quaternion
+    C1 = alias('C1')
+    C2 = alias('C2')
+    C3 = alias('C3')
+    S1 = alias('S1')
+    S2 = alias('S2')
+    S3 = alias('S3')
+    Qx = alias('Qx')
+    Qy = alias('Qy')
+    Qz = alias('Qz')
+    Qw = alias('Qw')
+    # Axis-angle
+    ScalingFactor = alias('ScalingFactor')
     NormalizationFactor = alias('NormalizationFactor')
     return [
         # Euler Angles
@@ -35,94 +35,69 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
             Cell('Z'), Cell('Y'), Cell('X')
         ],
         [
-            Cell(z, alias=Alpha),
-            Cell(y, alias=Beta),
-            Cell(x, alias=Gamma)
+            Cell(z, alias=Z),
+            Cell(y, alias=Y),
+            Cell(x, alias=X)
         ],
-        # Rotation Matrix
+        # Quaternion
         [
-            Cell('Rotation Matrix', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('R11'), Cell('R12'), Cell('R13')
+            Cell('Quaternion', styles=[Style.UNDERLINE])
         ],
         [
-            Cell(f'=cos({Alpha}) * cos({Beta})',
-                 alias=R11),
-            Cell(f'=cos({Alpha}) * sin({Beta}) * sin({Gamma}) - cos({Gamma}) * sin({Alpha})',
-                 alias=R12),
-            Cell(f'=sin({Alpha}) * sin({Gamma}) + cos({Alpha}) * cos({Gamma}) * sin({Beta})',
-                 alias=R13)
+            Cell('C1'), Cell('C2'), Cell('C3')
         ],
         [
-            Cell('R21'), Cell('R22'), Cell('R23')
+            Cell(f'=cos({Z} / 2))', alias=C1),
+            Cell(f'=cos({Y} / 2))', alias=C2),
+            Cell(f'=cos({X} / 2))', alias=C3)
         ],
         [
-            Cell(f'=cos({Beta}) * sin({Alpha})',
-                 alias=R21),
-            Cell(f'=cos({Alpha}) * cos({Gamma}) + sin({Alpha}) * sin({Beta}) * sin({Gamma})',
-                 alias=R22),
-            Cell(f'=cos({Gamma}) * sin({Alpha}) * sin({Beta}) - cos({Alpha}) * sin({Gamma})',
-                 alias=R23)
+            Cell('S1'), Cell('S2'), Cell('S3')
         ],
         [
-            Cell('R31'), Cell('R32'), Cell('R33')
+            Cell(f'=sin({Z} / 2))', alias=S1),
+            Cell(f'=sin({Y} / 2))', alias=S2),
+            Cell(f'=sin({X} / 2))', alias=S3)
         ],
         [
-            Cell(f'=-sin({Beta})',
-                 alias=R31),
-            Cell(f'=cos({Beta}) * sin({Gamma})',
-                 alias=R32),
-            Cell(f'=cos({Beta}) * cos({Gamma})',
-                 alias=R33)
-        ],
-        # Angle
-        [
-            Cell('Angle', styles=[Style.UNDERLINE])
+            Cell('Qx'), Cell('Qy'), Cell('Qz')
         ],
         [
-            Cell('TraceR'),
-            Cell(f'={R11} + {R22} + {R33}',
-                 alias=TraceR)
+            Cell(f'={C1}*{C2}*{S3} - {S1}*{S2}*{C3}', alias=Qx),
+            Cell(f'={C1}*{S2}*{C3} + {S1}*{C2}*{S3}', alias=Qy),
+            Cell(f'={S1}*{C2}*{C3} - {C1}*{S2}*{S3}', alias=Qz)
         ],
         [
-            Cell('Angle', styles=[Style.BOLD]),
-            Cell(f'=acos({TraceR} - 0.5)',
-                 alias=Angle)
+            Cell(f'={C1}*{C2}*{C3} + {S1}*{S2}*{S3}', alias=Qw),
         ],
-        # Axis
+        # Axis-angle
         [
-            Cell('Axis', styles=[Style.UNDERLINE])
+            Cell('Axis-angle', styles=[Style.UNDERLINE])
         ],
         [
-            Cell('U11'), Cell('U21'), Cell('U31'),
+            Cell('ScalingFactor'),
+            Cell('NormalizationFactor'),
+            Cell('Angle', styles=[Style.BOLD])
         ],
         [
-            Cell(f'={R32} - {R23}', alias=U11),
-            Cell(f'={R13} - {R31}', alias=U12),
-            Cell(f'={R21} - {R12}', alias=U13)
+            Cell(f'=sqrt(1 - {Qw} ^ 2)',
+                 alias=ScalingFactor),
+            Cell(f'={ScalingFactor} < 0.001 ? 1 : {ScalingFactor}',
+                 alias=NormalizationFactor),
+            Cell(f'=2 * acos({Qw})',
+                 alias=alias('Angle'))
         ],
         [
-            Cell('NormalizationFactor')
+            Cell('AxisX', styles=[Style.BOLD]),
+            Cell('AxisY', styles=[Style.BOLD]),
+            Cell('AxisZ', styles=[Style.BOLD])
         ],
         [
-            Cell(f'=1 / (2 * sin({Angle}))',
-                 alias=NormalizationFactor)
-        ],
-        [
-            Cell('AxisX',
-                 styles=[Style.BOLD]),
-            Cell('AxisY',
-                 styles=[Style.BOLD]),
-            Cell('AxisZ',
-                 styles=[Style.BOLD])
-        ],
-        [
-            Cell(f'={U11} * {NormalizationFactor}',
+            Cell(f'={Qx} / {NormalizationFactor}',
                  alias=alias('AxisX')),
-            Cell(f'={U12} * {NormalizationFactor}',
+            Cell(f'={Qy} / {NormalizationFactor}',
                  alias=alias('AxisY')),
-            Cell(f'={U13} * {NormalizationFactor}',
+            Cell(f'={Qz} / {NormalizationFactor}',
                  alias=alias('AxisZ'))
         ]
     ]
