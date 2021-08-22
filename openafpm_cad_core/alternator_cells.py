@@ -79,9 +79,9 @@ alternator_cells: List[List[Cell]] = [
     *create_euler_to_axis_angle_cells(
         'Alternator',
         (
-            '=RotorDiskRadius < 187.5 ? 90 : 180',
-            '0',
-            '-90'
+            '=RotorDiskRadius < 187.5 ? 90 : 0',
+            '=RotorDiskRadius < 187.5 ? 0 : 90',
+            '=RotorDiskRadius < 187.5 ? -90 : -180'
         )
     )
 ]
