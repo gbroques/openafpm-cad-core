@@ -33,11 +33,11 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     document = App.newDocument('Master of Puppets')
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
-    _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)
     _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape', star_shape_cells)
     _add_spreadsheet(document, 'Hub', hub_cells)
+    _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
     document.recompute()
     return document

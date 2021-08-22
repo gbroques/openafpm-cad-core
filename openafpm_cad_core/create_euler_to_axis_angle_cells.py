@@ -26,6 +26,9 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
     ScalingFactor = alias('ScalingFactor')
     NormalizationFactor = alias('NormalizationFactor')
     return [
+        [
+            Cell(alias_namespace, styles=[Style.UNDERLINE, Style.BOLD]),
+        ],
         # Euler Angles
         [
             Cell('Euler Angles', styles=[Style.UNDERLINE]),
@@ -68,6 +71,9 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
             Cell(f'={S1}*{C2}*{C3} - {C1}*{S2}*{S3}', alias=Qz)
         ],
         [
+            Cell('Qw')
+        ],
+        [
             Cell(f'={C1}*{C2}*{C3} + {S1}*{S2}*{S3}', alias=Qw),
         ],
         # Axis-angle
@@ -77,7 +83,7 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
         [
             Cell('ScalingFactor'),
             Cell('NormalizationFactor'),
-            Cell('Angle', styles=[Style.BOLD])
+            Cell(alias('Angle'), styles=[Style.BOLD])
         ],
         [
             Cell(f'=sqrt(1 - {Qw} ^ 2)',
@@ -88,9 +94,9 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
                  alias=alias('Angle'))
         ],
         [
-            Cell('AxisX', styles=[Style.BOLD]),
-            Cell('AxisY', styles=[Style.BOLD]),
-            Cell('AxisZ', styles=[Style.BOLD])
+            Cell(alias('AxisX'), styles=[Style.BOLD]),
+            Cell(alias('AxisY'), styles=[Style.BOLD]),
+            Cell(alias('AxisZ'), styles=[Style.BOLD])
         ],
         [
             Cell(f'={Qx} / {NormalizationFactor}',
