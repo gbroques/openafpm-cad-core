@@ -6,6 +6,8 @@ __all__ = ['tail_cells']
 
 #: Cells defining the Tail spreadsheet.
 tail_cells: List[List[Cell]] = [
+    # Inputs
+    # ------
     [
         Cell('Inputs', styles=[Style.UNDERLINE])
     ],
@@ -65,6 +67,8 @@ tail_cells: List[List[Cell]] = [
         Cell('BoomPipeRadius'), Cell('=Spreadsheet.BoomPipeRadius',
                                      alias='BoomPipeRadius')
     ],
+    # Vane
+    # ----
     [
         Cell('Vane', styles=[Style.UNDERLINE])
     ],
@@ -80,6 +84,8 @@ tail_cells: List[List[Cell]] = [
         Cell('VaneBracketAngle'), Cell('45',
                                        alias='VaneBracketAngle')
     ],
+    # Tail Hinge Pipe X Z
+    # -------------------
     [
         Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE])
     ],
@@ -99,6 +105,8 @@ tail_cells: List[List[Cell]] = [
         Cell('TailHingePipeZ'), Cell('=-HingeInnerBodyOuterRadius * sin(VerticalPlaneAngle)',
                                      alias='TailHingePipeZ')
     ],
+    # Outer Tail Hinge X Z
+    # --------------------
     [
         Cell('Outer Tail Hinge X Z', styles=[Style.UNDERLINE])
     ],
@@ -122,12 +130,39 @@ tail_cells: List[List[Cell]] = [
         Cell('OuterTailHingeZ'), Cell('=ZZZ + TailHingePipeZ',
                                       alias='OuterTailHingeZ')
     ],
+    # Tail Boom Triangular Brace
+    # --------------------------
     [
-        Cell('Outer Tail Hinge Low End Stop', styles=[Style.UNDERLINE])
+        Cell('Tail Boom Triangular Brace', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('TailBoomTriangularBraceWidth'), Cell('=0.27 * RotorDiskRadius',
+        Cell('BoomPipeHeight'), Cell('=BoomPipeRadius * 2',
+                                     alias='BoomPipeHeight')
+    ],
+    [
+        Cell('BoomPipeTailHingeHypotenuse'), Cell('=BoomPipeHeight / sin(90 - VerticalPlaneAngle)',
+                                                  alias='BoomPipeTailHingeHypotenuse')
+    ],
+    [
+        Cell('DistanceOfBoomFromTopOfOuterTailHinge'), Cell('10',
+                                                            alias='DistanceOfBoomFromTopOfOuterTailHinge')
+    ],
+    [
+        Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterBodyLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
                                                    alias='TailBoomTriangularBraceWidth')
+    ],
+    [
+        Cell('TailBoomTriangularBraceXOffset'), Cell('=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
+                                                     alias='TailBoomTriangularBraceXOffset')
+    ],
+    [
+        Cell('TailBoomTriangularBraceZOffset'), Cell('=cos(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
+                                                     alias='TailBoomTriangularBraceZOffset')
+    ],
+    # Outer Tail Hinge Low End Stop
+    # -----------------------------
+    [
+        Cell('Outer Tail Hinge Low End Stop', styles=[Style.UNDERLINE])
     ],
     [
         Cell('h1'), Cell('=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
@@ -157,17 +192,8 @@ tail_cells: List[List[Cell]] = [
         Cell('OuterTailHingeLowEndStopAngle'), Cell('=-(90deg - atan(YawPipeRadius / HorizontalDistanceBetweenOuterYawPipes))',
                                                     alias='OuterTailHingeLowEndStopAngle')
     ],
-    [
-        Cell('Tail Boom Triangular Brace', styles=[Style.UNDERLINE])
-    ],
-    [
-        Cell('TailBoomTriangularBraceXOffset'), Cell('=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
-                                                     alias='TailBoomTriangularBraceXOffset')
-    ],
-    [
-        Cell('TailBoomTriangularBraceZOffset'), Cell('=cos(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
-                                                     alias='TailBoomTriangularBraceZOffset')
-    ],
+    # Tail Angle
+    # ----------
     [
         Cell('Tail Angle', styles=[Style.UNDERLINE])
     ],
@@ -179,6 +205,8 @@ tail_cells: List[List[Cell]] = [
         Cell('TailAngle'), Cell('=180 - HorizontalPlaneAngle - DefaultTailAngle',
                                 alias='TailAngle')
     ],
+    # Tail
+    # ----
     [
         Cell('Tail', styles=[Style.UNDERLINE])
     ],
@@ -191,16 +219,41 @@ tail_cells: List[List[Cell]] = [
                                   alias='TailZOffset')
     ],
     [
+        Cell('NonRotatedTailX'), Cell('=TailXInitial + OuterTailHingeX',
+                                      alias='NonRotatedTailX')
+    ],
+    [
+        Cell('OuterTailHingeTruncatedHypotenuse'), Cell('=HingeOuterBodyLength - DistanceOfBoomFromTopOfOuterTailHinge',
+                                                        alias='OuterTailHingeTruncatedHypotenuse')
+    ],
+    [
+        Cell('OuterTailHingeXOffset'),
+        Cell('=cos(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
+             alias='OuterTailHingeXOffset')
+    ],
+    [
+        Cell('OuterTailHingeNegativeXOffset'), Cell('=BoomPipeHeight / tan(90 - VerticalPlaneAngle)',
+                                                    alias='OuterTailHingeNegativeXOffset')
+    ],
+    [
+        Cell('NonRotatedTailZ'), Cell('=OuterTailHingeZ - BoomPipeRadius + TailZOffset',
+                                      alias='NonRotatedTailZ')
+    ],
+    [
+        Cell('OuterTailHingeZOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
+                                            alias='OuterTailHingeZOffset')
+    ],
+    [
         Cell('Px', styles=[Style.UNDERLINE]),
         Cell('Py', styles=[Style.UNDERLINE]),
         Cell('Pz', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('=TailXInitial + OuterTailHingeX + TailBoomTriangularBraceXOffset',
+        Cell('=NonRotatedTailX + OuterTailHingeXOffset - OuterTailHingeNegativeXOffset',
              alias='Px'),
         Cell('0',
              alias='Py'),
-        Cell('=BoomPipeRadius + TailZOffset + OuterTailHingeZ + TailBoomTriangularBraceZOffset',
+        Cell('=NonRotatedTailZ + OuterTailHingeZOffset',
              alias='Pz')
     ],
     [
