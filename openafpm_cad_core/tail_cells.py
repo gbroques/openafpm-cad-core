@@ -369,5 +369,9 @@ tail_cells: List[List[Cell]] = [
              alias='TailY'),
         Cell('=Cz + Rz',
              alias='TailZ')
+    ],
+    [
+        Cell('TailBoomTriangularBraceZAxisAngle'), Cell('=asin(TailY / TailBoomTriangularBraceWidth)',
+                                                        alias='TailBoomTriangularBraceZAxisAngle')
     ]
 ]
