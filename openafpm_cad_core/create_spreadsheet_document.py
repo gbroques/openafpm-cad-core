@@ -13,6 +13,7 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
 from .star_shape_cells import star_shape_cells
 from .t_shape_cells import t_shape_cells
 from .tail_cells import tail_cells
+from .yaw_bearing_cells import yaw_bearing_cells
 
 __all__ = ['create_spreadsheet_document']
 
@@ -37,6 +38,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape', star_shape_cells)
     _add_spreadsheet(document, 'Hub', hub_cells)
+    _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
     _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
     document.recompute()
