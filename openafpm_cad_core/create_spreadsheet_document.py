@@ -155,10 +155,6 @@ def _get_static_cells() -> List[List[Cell]]:
             Cell('Static', styles=[Style.UNDERLINE])
         ],
         [
-            Cell('YawBearingTailHingeJunctionHeight'), Cell('92.5',
-                                                            alias='YawBearingTailHingeJunctionHeight')
-        ],
-        [
             Cell('YawBearingTailHingeJunctionChamfer'), Cell('15',
                                                              alias='YawBearingTailHingeJunctionChamfer')
         ],
@@ -198,6 +194,11 @@ def _get_calculated_cells() -> List[List[Cell]]:
             Cell('HingeInnerBodyLength'), Cell('=0.8 * 2 * RotorDiskRadius',
                                                alias='HingeInnerBodyLength')
         ],
+        [
+            Cell('YawBearingTailHingeJunctionHeight'), Cell('=HingeInnerBodyLength / 3',
+                                                            alias='YawBearingTailHingeJunctionHeight')
+        ],
+        # TODO: Why - 10 - 10?
         [
             Cell('HingeOuterBodyLength'), Cell('=HingeInnerBodyLength - YawBearingTailHingeJunctionHeight - 10 - 10',
                                                alias='HingeOuterBodyLength')
