@@ -23,7 +23,7 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('Offset'), Cell('=Spreadsheet.Offset',
-                                   alias='Offset')
+                             alias='Offset')
     ],
     [
         Cell('Width'), Cell('=HShape.MM',
@@ -40,8 +40,9 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('DistanceBetweenTopAndPipe'), Cell('=HalfWidth - YawPipeRadius',
                                                 alias='DistanceBetweenTopAndPipe')
     ],
+    # Protect against negative number for T Shape when Side is not tangent to Yaw Pipe.
     [
-        Cell('AV'), Cell('=FlatMetalThickness - DistanceBetweenTopAndPipe',
+        Cell('AV'), Cell('=FlatMetalThickness - DistanceBetweenTopAndPipe > 0 ? FlatMetalThickness - DistanceBetweenTopAndPipe : FlatMetalThickness',
                          alias='AV')
     ],
     [
