@@ -33,8 +33,8 @@ def object_name_getter(obj: object, path: List[object]) -> str:
         'Magnets'
     }
     if obj.Label in rotor_disk_labels:
-        is_top = any([o.Label.startswith('Top') for o in path])
-        label_prefix = 'Top' if is_top else 'Bottom'
+        is_front = any([o.Label.startswith('Front') for o in path])
+        label_prefix = 'Front' if is_front else 'Back'
         return label_prefix + obj.Label
     return obj.Label
 
