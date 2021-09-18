@@ -67,6 +67,10 @@ tail_cells: List[List[Cell]] = [
         Cell('BoomPipeRadius'), Cell('=Spreadsheet.BoomPipeRadius',
                                      alias='BoomPipeRadius')
     ],
+    [
+        Cell('BoomLength'), Cell('=Spreadsheet.BoomLength',
+                                 alias='BoomLength')
+    ],
     # Vane
     # ----
     [
@@ -150,6 +154,10 @@ tail_cells: List[List[Cell]] = [
     [
         Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterBodyLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
                                                    alias='TailBoomTriangularBraceWidth')
+    ],
+    [
+        Cell('TailBoomTriangularBraceLength'), Cell('=BoomLength / 3',
+                                                    alias='TailBoomTriangularBraceLength')
     ],
     [
         Cell('TailBoomTriangularBraceXOffset'), Cell('=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
