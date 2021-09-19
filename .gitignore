@@ -2,7 +2,6 @@
 __pycache__/
 *.pyc
 *.pyo
-*.FCStd*
 docs/_build
 docs/openafpm_cad_core
 dist/
