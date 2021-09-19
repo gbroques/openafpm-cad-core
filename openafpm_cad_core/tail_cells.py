@@ -201,7 +201,11 @@ tail_cells: List[List[Cell]] = [
                                                     alias='OuterTailHingeLowEndStopAngle')
     ],
     [
-        Cell('OuterTailHingeLowEndStopLength'), Cell('=sin(VerticalPlaneAngle) * HingeOuterBodyLength + YawPipeRadius * 2',
+        Cell('LowEndStopLengthToYawPipe'), Cell('=sin(VerticalPlaneAngle) * HingeOuterBodyLength + YawPipeRadius * 2',
+                                                alias='LowEndStopLengthToYawPipe')
+    ],
+    [
+        Cell('OuterTailHingeLowEndStopLength'), Cell('=LowEndStopLengthToYawPipe * 1.2',
                                                      alias='OuterTailHingeLowEndStopLength')
     ],
     # Tail Angle
