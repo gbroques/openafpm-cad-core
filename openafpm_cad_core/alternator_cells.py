@@ -25,34 +25,35 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('DiskThickness'),
-        Cell('MetalThicknessL'),
+        Cell('MetalLengthL'),
         Cell('MagnetThickness')
     ],
     [
         Cell('=Spreadsheet.DiskThickness',
              alias='DiskThickness'),
-        Cell('=Spreadsheet.MetalThicknessL',
-             alias='MetalThicknessL'),
+        Cell('=Spreadsheet.MetalLengthL',
+             alias='MetalLengthL'),
         Cell('=Spreadsheet.MagnetThickness',
              alias='MagnetThickness')
     ],
     [
-        Cell('MiddlePadThickness'), Cell('FrameSidePadWidth')
+        Cell('HexNutThickness'), Cell('MiddlePadThickness')
     ],
     [
+        Cell('=Spreadsheet.HexNutThickness',
+             alias='HexNutThickness'),
         Cell('=Hub.MiddlePadThickness',
              alias='MiddlePadThickness'),
-        Cell('=Hub.FrameSidePadWidth',
-             alias='FrameSidePadWidth')
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('RotorDiskThickness')
+        Cell('RotorDiskThickness'), Cell('LengthOfTwoNuts')
     ],
     [
-        Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness')
+        Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness'),
+        Cell('=HexNutThickness * 2', alias='LengthOfTwoNuts')
     ],
     [
         Cell('Frame', styles=[Style.UNDERLINE])
@@ -72,7 +73,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('0',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameY'),
-        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + MiddlePadThickness + FrameSidePadWidth + MetalThicknessL',
+        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + MiddlePadThickness + MetalLengthL + LengthOfTwoNuts',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameZ')
     ],
