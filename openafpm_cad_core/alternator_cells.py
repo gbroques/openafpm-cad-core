@@ -25,23 +25,41 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('DiskThickness'),
-        Cell('MetalLengthL'),
         Cell('MagnetThickness')
     ],
     [
         Cell('=Spreadsheet.DiskThickness',
              alias='DiskThickness'),
-        Cell('=Spreadsheet.MetalLengthL',
-             alias='MetalLengthL'),
         Cell('=Spreadsheet.MagnetThickness',
              alias='MagnetThickness')
     ],
     [
-        Cell('HexNutThickness'), Cell('MiddlePadThickness')
+        Cell('MetalLengthL'),
+        Cell('MetalThicknessL')
+    ],
+    [
+        Cell('=Spreadsheet.MetalLengthL',
+             alias='MetalLengthL'),
+        Cell('=Spreadsheet.MetalThicknessL',
+             alias='MetalThicknessL')
+    ],
+    [
+        Cell('HexNutThickness'),
+        Cell('DistanceThreadsExtendFromNuts'),
+        Cell('WasherThickness')
     ],
     [
         Cell('=Spreadsheet.HexNutThickness',
              alias='HexNutThickness'),
+        Cell('=Spreadsheet.DistanceThreadsExtendFromNuts',
+             alias='DistanceThreadsExtendFromNuts'),
+        Cell('=Spreadsheet.WasherThickness',
+             alias='WasherThickness'),
+    ],
+    [
+        Cell('MiddlePadThickness')
+    ],
+    [
         Cell('=Hub.MiddlePadThickness',
              alias='MiddlePadThickness'),
     ],
@@ -49,11 +67,15 @@ alternator_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('RotorDiskThickness'), Cell('LengthOfTwoNuts')
+        Cell('RotorDiskThickness'),
+        Cell('LengthOfTwoNuts'),
+        Cell('StatorMountingStudsLength')
     ],
     [
         Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness'),
-        Cell('=HexNutThickness * 2', alias='LengthOfTwoNuts')
+        Cell('=HexNutThickness * 2', alias='LengthOfTwoNuts'),
+        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 4 + MiddlePadThickness + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness',
+             alias='StatorMountingStudsLength')
     ],
     [
         Cell('Frame', styles=[Style.UNDERLINE])

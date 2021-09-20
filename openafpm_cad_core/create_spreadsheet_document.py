@@ -166,15 +166,10 @@ def _get_static_cells() -> List[List[Cell]]:
         ],
     ]
 
-
 def _get_calculated_cells() -> List[List[Cell]]:
     return [
         [
             Cell('Calculated', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('StatorMountingStudsLength'), Cell('=RotorDiskRadius < 275 ? 150 : 200',
-                                                    alias='StatorMountingStudsLength')
         ],
         [
             Cell('ResineStatorOuterRadius'), Cell('=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
