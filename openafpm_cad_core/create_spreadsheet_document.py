@@ -21,16 +21,22 @@ __all__ = ['create_spreadsheet_document']
 def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
                                 furling_parameters: FurlingParameters,
                                 user_parameters: UserParameters) -> Document:
-    static_cells = _get_static_cells()
-    calculated_cells = _get_calculated_cells()
     parameters_by_key = {
         'MagnAFPM': magnafpm_parameters,
         'OpenFurl': furling_parameters,
         'User': user_parameters,
     }
     cells = _build_cells(parameters_by_key)
+
+    static_cells = _get_static_cells()
     cells.extend(static_cells)
+
+    calculated_cells = _get_calculated_cells()
     cells.extend(calculated_cells)
+
+    fastener_cells = _get_fastener_cells()
+    cells.extend(fastener_cells)
+
     document = App.newDocument('Master of Puppets')
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
@@ -214,5 +220,29 @@ def _get_calculated_cells() -> List[List[Cell]]:
         [
             Cell('YawBearingTailHingeJunctionFullWidth'), Cell('=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth',
                                                                alias='YawBearingTailHingeJunctionFullWidth')
+        ]
+    ]
+
+
+def _get_fastener_cells() -> List[List[Cell]]:
+    return [
+        [
+            Cell('Fastener', styles=[Style.UNDERLINE])
+        ],
+        [
+            Cell('HexNutThickness'), Cell('10',
+                                          alias='HexNutThickness')
+        ],
+        [
+            Cell('WasherThickness'), Cell('2.5',
+                                          alias='WasherThickness')
+        ],
+        [
+            Cell('DistanceThreadsExtendFromNuts'), Cell('5',
+                                                        alias='DistanceThreadsExtendFromNuts')
+        ],
+        [
+            Cell('TailVaneBracketBoltLength'), Cell('=BracketThickness + VaneThickness + FlatMetalThickness + DistanceThreadsExtendFromNuts + WasherThickness',
+                                                    alias='TailVaneBracketBoltLength')
         ]
     ]
