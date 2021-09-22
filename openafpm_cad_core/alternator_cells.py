@@ -78,6 +78,22 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMountingStudsLength')
     ],
     [
+        Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('DistanceBetweenRotorDisks'),
+        Cell('NumberOfNutsBetweenRotorDisks'),
+        Cell('NumberOfWashersBetweenRotorDisks')
+    ],
+    [
+        Cell('=MagnetThickness * 2 + MechanicalClearance * 2 + StatorThickness',
+             alias='DistanceBetweenRotorDisks'),
+        Cell('=floor(DistanceBetweenRotorDisks / HexNutThickness)',
+             alias='NumberOfNutsBetweenRotorDisks'),
+        Cell('=floor(DistanceBetweenRotorDisks % HexNutThickness / WasherThickness)',
+             alias='NumberOfWashersBetweenRotorDisks')
+    ],
+    [
         Cell('Frame', styles=[Style.UNDERLINE])
     ],
     [
