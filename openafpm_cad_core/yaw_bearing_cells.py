@@ -99,7 +99,7 @@ yaw_bearing_cells: List[List[Cell]] = [
                                 alias='TopLength')
     ],
     [
-        Cell('SideLength'), Cell('=TopLength - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel',
+        Cell('SideLength'), Cell('=TopLength - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness',
                                  alias='SideLength')
     ]
 ]
