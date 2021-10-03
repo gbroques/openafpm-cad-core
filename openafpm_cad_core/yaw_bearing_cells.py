@@ -30,6 +30,18 @@ yaw_bearing_cells: List[List[Cell]] = [
                             alias='Width')
     ],
     [
+        Cell('L'), Cell('=HShape.L',
+                        alias='L')
+    ],
+    [
+        Cell('LOffset'), Cell('=HShape.LOffset',
+                              alias='LOffset')
+    ],
+    [
+        Cell('TopAngle'), Cell('=HShape.TopAngle',
+                               alias='TopAngle')
+    ],
+    [
         Cell('Side', styles=[Style.UNDERLINE])
     ],
     [
@@ -72,9 +84,6 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('TopAngle'), Cell('=45deg', alias='TopAngle')
-    ],
-    [
         Cell('AdjacentSide'), Cell('=Width / tan(TopAngle)',
                                    alias='AdjacentSide')
     ],
@@ -95,11 +104,7 @@ yaw_bearing_cells: List[List[Cell]] = [
                                                            alias='SideDistanceToReachAlternatorChannel')
     ],
     [
-        Cell('TopLength'), Cell('=YawPipeRadius + Offset / cos(TopAngle) + 0.5 * Width * cos(TopAngle)',
-                                alias='TopLength')
-    ],
-    [
-        Cell('SideLength'), Cell('=TopLength - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness',
+        Cell('SideLength'), Cell('=L - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness + LOffset',
                                  alias='SideLength')
     ]
 ]

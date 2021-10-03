@@ -164,7 +164,15 @@ def _get_static_cells() -> List[List[Cell]]:
             Cell('YawBearingTailHingeJunctionChamfer'), Cell('15',
                                                              alias='YawBearingTailHingeJunctionChamfer')
         ],
+        [
+            Cell('AlternatorTiltAngle')
+        ],
+        [
+            Cell('=4deg',
+                 alias='AlternatorTiltAngle')
+        ]
     ]
+
 
 def _get_calculated_cells() -> List[List[Cell]]:
     return [

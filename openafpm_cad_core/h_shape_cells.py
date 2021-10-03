@@ -30,6 +30,10 @@ h_shape_cells: List[List[Cell]] = [
                                               alias='ResineStatorOuterRadius')
     ],
     [
+        Cell('AlternatorTiltAngle'), Cell('=Spreadsheet.AlternatorTiltAngle',
+                                          alias='AlternatorTiltAngle')
+    ],
+    [
         Cell('Frame', styles=[Style.UNDERLINE])
     ],
     # https://calcresource.com/geom-rectangle.html
@@ -70,8 +74,23 @@ h_shape_cells: List[List[Cell]] = [
         Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
                          alias='MM')
     ],
+    # Ensure Side piece (undeneath Top flat bar to stiffen it),
+    # reaches the Channel Section of the Alternator due to Alternator tilt angle.
+    # This shortens L, and we adjust the Yaw Bearing in the X direction to compensate for it.
     [
-        Cell('L'), Cell('=YawPipeRadius + Offset / cos(Theta) + 0.5 * MM * cos(Theta)',
+        Cell('LOffset'), Cell('=tan(AlternatorTiltAngle) * MM',
+                              alias='LOffset')
+    ],
+    [
+        Cell('TopAngle'), Cell('=45deg',
+                               alias='TopAngle')
+    ],
+    [
+        Cell('L'), Cell('=YawPipeRadius + Offset / cos(TopAngle) + 0.5 * MM - LOffset',
                         alias='L')
-    ]
+    ],
+    [
+        Cell('LargeYawBearingXOffset'), Cell('=LOffset * cos(TopAngle)',
+                                             alias='LargeYawBearingXOffset')
+    ],
 ]
