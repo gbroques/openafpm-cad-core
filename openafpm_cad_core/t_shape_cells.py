@@ -109,7 +109,7 @@ t_shape_cells: List[List[Cell]] = [
         Cell('Frame', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('X'), Cell('=Offset - (I + YawPipeRadius)',
+        Cell('X'), Cell('=Offset - (I + YawPipeRadius + MetalThicknessL)',
                         alias='X')
     ],
     # 30 degrees because 360 / 3 = 120 - 90 = 30.
@@ -133,7 +133,7 @@ t_shape_cells: List[List[Cell]] = [
     # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.
     # MetalLengthL is the length of the brackets.
     [
-        Cell('BC'), Cell('=TShapeVerticalDistance - MetalLengthL',
+        Cell('BC'), Cell('=TShapeVerticalDistance - MetalLengthL - MetalThicknessL',
                          alias='BC')
     ],
     [
