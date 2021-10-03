@@ -57,11 +57,14 @@ alternator_cells: List[List[Cell]] = [
              alias='WasherThickness'),
     ],
     [
-        Cell('MiddlePadThickness')
+        Cell('MiddlePadThickness'),
+        Cell('FrameSidePadWidth')
     ],
     [
         Cell('=Hub.MiddlePadThickness',
              alias='MiddlePadThickness'),
+        Cell('=Hub.FrameSidePadWidth',
+             alias='FrameSidePadWidth'),
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE])
@@ -74,8 +77,28 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness'),
         Cell('=HexNutThickness * 2', alias='LengthOfTwoNuts'),
-        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 4 + MiddlePadThickness + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness',
+        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 4 + MiddlePadThickness + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness + FrameHubZOffset',
              alias='StatorMountingStudsLength')
+    ],
+    [
+        Cell('HubFrameOverlap'),
+        Cell('FrameHubPadding'),
+        Cell('FrameHubZOffset')
+    ],
+    [
+        Cell('=FrameSidePadWidth - (MetalLengthL - MetalThicknessL + LengthOfTwoNuts)',
+             alias='HubFrameOverlap'),
+        Cell('20',
+             alias='FrameHubPadding'),
+        Cell('=HubFrameOverlap > 0 ? HubFrameOverlap + FrameHubPadding : 0',
+             alias='FrameHubZOffset')
+    ],
+    [
+        Cell('DistanceBetweenFrameAndBackRotor')
+    ],
+    [
+        Cell('=MiddlePadThickness + LengthOfTwoNuts + FrameHubZOffset',
+             alias='DistanceBetweenFrameAndBackRotor')
     ],
     [
         Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE])
@@ -111,7 +134,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('0',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameY'),
-        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + MiddlePadThickness + MetalLengthL + LengthOfTwoNuts',
+        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + MiddlePadThickness + MetalLengthL + LengthOfTwoNuts + FrameHubZOffset',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameZ')
     ],
