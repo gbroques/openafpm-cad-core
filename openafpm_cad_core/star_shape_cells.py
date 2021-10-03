@@ -56,13 +56,5 @@ star_shape_cells: List[List[Cell]] = [
     [
         Cell('C'), Cell('=StatorHolesCircle - MetalLengthL + Holes + 25',
                         alias='C')
-    ],
-    [
-        Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
-                         alias='MM')
-    ],
-    [
-        Cell('L'), Cell('=YawPipeRadius + Offset / cos(45) + 0.5 * MM * cos(45)',
-                        alias='L')
     ]
 ]
