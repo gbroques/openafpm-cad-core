@@ -26,6 +26,10 @@ h_shape_cells: List[List[Cell]] = [
                                    alias='MetalLengthL')
     ],
     [
+        Cell('FlatMetalThickness'), Cell('=Spreadsheet.FlatMetalThickness',
+                                         alias='FlatMetalThickness')
+    ],
+    [
         Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
                                               alias='ResineStatorOuterRadius')
     ],
@@ -74,16 +78,16 @@ h_shape_cells: List[List[Cell]] = [
         Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
                          alias='MM')
     ],
+    [
+        Cell('TopAngle'), Cell('=45deg',
+                               alias='TopAngle')
+    ],
     # Ensure Side piece (undeneath Top flat bar to stiffen it),
     # reaches the Channel Section of the Alternator due to Alternator tilt angle.
     # This shortens L, and we adjust the Yaw Bearing in the X direction to compensate for it.
     [
-        Cell('LOffset'), Cell('=tan(AlternatorTiltAngle) * MM',
+        Cell('LOffset'), Cell('=tan(AlternatorTiltAngle) * MM + cos(TopAngle) * FlatMetalThickness',
                               alias='LOffset')
-    ],
-    [
-        Cell('TopAngle'), Cell('=45deg',
-                               alias='TopAngle')
     ],
     [
         Cell('L'), Cell('=YawPipeRadius + Offset / cos(TopAngle) + 0.5 * MM - LOffset',
