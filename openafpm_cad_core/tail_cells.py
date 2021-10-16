@@ -1,7 +1,7 @@
 from typing import List
 
 from .cell import Cell, Style
-from .create_rotate_point_cells import create_rotate_point_cells
+from .create_rotate_point_cells import create_rotate_point_around_cells
 
 __all__ = ['tail_cells']
 
@@ -256,7 +256,7 @@ tail_cells: List[List[Cell]] = [
         Cell('OuterTailHingeZOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
                                             alias='OuterTailHingeZOffset')
     ],
-    *create_rotate_point_cells(
+    *create_rotate_point_around_cells(
         # Namespace
         'Tail',
         (   # Point

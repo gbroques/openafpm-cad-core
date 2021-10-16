@@ -1,23 +1,28 @@
 from typing import List, Tuple
 
-from FreeCAD import Rotation, Vector
-
 from .cell import Cell, Style
 
+__all__ = [
+    'create_rotate_point_around_cells',
+    'create_rotate_vector_cells'
+]
 
-def create_rotate_point_cells(alias_namespace: str,
-                              point: Tuple[str, str, str],
-                              center: Tuple[str, str, str],
-                              rotation_axis: Tuple[str, str, str],
-                              rotation_angle: str) -> List[List[Cell]]:
+
+def create_rotate_point_around_cells(alias_namespace: str,
+                                     point: Tuple[str, str, str],
+                                     center: Tuple[str, str, str],
+                                     rotation_axis: Tuple[str, str, str],
+                                     rotation_angle: str) -> List[List[Cell]]:
     """
+    Rotates a point around a center offset from the origin.
+
     Equivalent FreeCAD Python code:
 
     ::
 
         rotated_point = C + rotation.multVec(P - C)
 
-    Where C = center, and P = point.
+    Where C is the center of rotation, and P is some point.
 
     See:
         https://forum.freecadweb.org/viewtopic.php?p=503328#p503328
@@ -26,28 +31,16 @@ def create_rotate_point_cells(alias_namespace: str,
     def alias(a): return alias_namespace + a
     pX, pY, pZ = point
     cX, cY, cZ = center
-    aX, aY, aZ = rotation_axis
 
     # Point and Center
     Px, Py, Pz = alias('Px'), alias('Py'), alias('Pz')
     Cx, Cy, Cz = alias('Cx'), alias('Cy'), alias('Cz')
 
-    # Q (P - C)
-    Qx, Qy, Qz = alias('Qx'), alias('Qy'), alias('Qz')
-
-    # Rotation Axis
-    Ax, Ay, Az = alias('Ax'), alias('Ay'), alias('Az')
-
-    # Rotation Angle
-    Angle = alias('Angle')
-
-    # Rotation Matrix
-    R11, R12, R13 = alias('R11'), alias('R12'), alias('R13')
-    R21, R22, R23 = alias('R21'), alias('R22'), alias('R23')
-    R31, R32, R33 = alias('R31'), alias('R32'), alias('R33')
-
-    # Rotation Matrix * Q
-    Rx, Ry, Rz = alias('Rx'), alias('Ry'), alias('Rz')
+    # The rotated P - C vector is called "Prime", for lack of a better name.
+    prime_alias_prefix = alias_namespace + 'Prime'
+    Rx = prime_alias_prefix + 'X'
+    Ry = prime_alias_prefix + 'Y'
+    Rz = prime_alias_prefix + 'Z'
 
     # Rotated Point
     RotatedX, RotatedY, RotatedZ = alias('X'), alias('Y'), alias('Z')
@@ -76,15 +69,77 @@ def create_rotate_point_cells(alias_namespace: str,
             Cell(cY, alias=Cy),
             Cell(cZ, alias=Cz)
         ],
+        *create_rotate_vector_cells(
+            prime_alias_prefix,
+            (
+                f'={Px} - {Cx}',
+                f'={Py} - {Cy}',
+                f'={Pz} - {Cz}'
+            ),
+            rotation_axis,
+            rotation_angle
+        ),
         [
-            Cell('Qx', styles=[Style.UNDERLINE]),
-            Cell('Qy', styles=[Style.UNDERLINE]),
-            Cell('Qz', styles=[Style.UNDERLINE])
+            Cell(RotatedX, styles=[Style.UNDERLINE]),
+            Cell(RotatedY, styles=[Style.UNDERLINE]),
+            Cell(RotatedZ, styles=[Style.UNDERLINE]),
         ],
         [
-            Cell(f'={Px} - {Cx}', alias=Qx),
-            Cell(f'={Py} - {Cy}', alias=Qy),
-            Cell(f'={Pz} - {Cz}', alias=Qz)
+            Cell(f'={Cx} + {Rx}',
+                 alias=RotatedX),
+            Cell(f'={Cy} + {Ry}',
+                 alias=RotatedY),
+            Cell(f'={Cz} + {Rz}',
+                 alias=RotatedZ)
+        ]
+    ]
+
+
+def create_rotate_vector_cells(alias_namespace: str,
+                               vector: Tuple[str, str, str],
+                               rotation_axis: Tuple[str, str, str],
+                               rotation_angle: str) -> List[List[Cell]]:
+    """
+    Rotates a vector.
+
+    Equivalent FreeCAD Python code:
+
+    ::
+
+        rotated_point = rotation.multVec(V)
+
+    Where V is some vector.
+    """
+    def alias(a): return alias_namespace + a
+    vX, vY, vZ = vector
+    aX, aY, aZ = rotation_axis
+
+    # Vector
+    Vx, Vy, Vz = alias('Vx'), alias('Vy'), alias('Vz')
+
+    # Rotation Axis
+    Ax, Ay, Az = alias('Ax'), alias('Ay'), alias('Az')
+
+    # Rotation Angle
+    Angle = alias('Angle')
+
+    # Rotation Matrix
+    R11, R12, R13 = alias('R11'), alias('R12'), alias('R13')
+    R21, R22, R23 = alias('R21'), alias('R22'), alias('R23')
+    R31, R32, R33 = alias('R31'), alias('R32'), alias('R33')
+
+    # Rotation Matrix * V
+    RotatedX, RotatedY, RotatedZ = alias('X'), alias('Y'), alias('Z')
+    return [
+        [
+            Cell('Vx', styles=[Style.UNDERLINE]),
+            Cell('Vy', styles=[Style.UNDERLINE]),
+            Cell('Vz', styles=[Style.UNDERLINE])
+        ],
+        [
+            Cell(vX, alias=Vx),
+            Cell(vY, alias=Vy),
+            Cell(vZ, alias=Vz)
         ],
         [
             Cell('Ax', styles=[Style.UNDERLINE]),
@@ -149,21 +204,8 @@ def create_rotate_point_cells(alias_namespace: str,
                  alias=R33)
         ],
         [
-            Cell('Rotation Matrix * (P - C)',
+            Cell('Rotation Matrix * V',
                  styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('Rx', styles=[Style.UNDERLINE]),
-            Cell('Ry', styles=[Style.UNDERLINE]),
-            Cell('Rz', styles=[Style.UNDERLINE]),
-        ],
-        [
-            Cell(f'={R11} * {Qx} + {R12} * {Qy} + {R13} * {Qz}',
-                 alias=Rx),
-            Cell(f'={R21} * {Qx} + {R22} * {Qy} + {R23} * {Qz}',
-                 alias=Ry),
-            Cell(f'={R31} * {Qx} + {R32} * {Qy} + {R33} * {Qz}',
-                 alias=Rz)
         ],
         [
             Cell(RotatedX, styles=[Style.UNDERLINE]),
@@ -171,11 +213,11 @@ def create_rotate_point_cells(alias_namespace: str,
             Cell(RotatedZ, styles=[Style.UNDERLINE]),
         ],
         [
-            Cell(f'={Cx} + {Rx}',
+            Cell(f'={R11} * {Vx} + {R12} * {Vy} + {R13} * {Vz}',
                  alias=RotatedX),
-            Cell(f'={Cy} + {Ry}',
+            Cell(f'={R21} * {Vx} + {R22} * {Vy} + {R23} * {Vz}',
                  alias=RotatedY),
-            Cell(f'={Cz} + {Rz}',
+            Cell(f'={R31} * {Vx} + {R32} * {Vy} + {R33} * {Vz}',
                  alias=RotatedZ)
         ]
     ]
