@@ -50,6 +50,9 @@ def create_rotate_point_around_cells(alias_namespace: str,
             Cell(alias_namespace, styles=[Style.UNDERLINE, Style.BOLD]),
         ],
         [
+            Cell('Point', styles=[Style.ITALIC])
+        ],
+        [
             Cell('Px', styles=[Style.UNDERLINE]),
             Cell('Py', styles=[Style.UNDERLINE]),
             Cell('Pz', styles=[Style.UNDERLINE])
@@ -58,6 +61,10 @@ def create_rotate_point_around_cells(alias_namespace: str,
             Cell(pX, alias=Px),
             Cell(pY, alias=Py),
             Cell(pZ, alias=Pz)
+        ],
+        [
+            Cell('Center', styles=[Style.ITALIC]),
+            Cell('to Rotate Around')
         ],
         [
             Cell('Cx', styles=[Style.UNDERLINE]),
@@ -69,6 +76,9 @@ def create_rotate_point_around_cells(alias_namespace: str,
             Cell(cY, alias=Cy),
             Cell(cZ, alias=Cz)
         ],
+        [
+            Cell('V = P  - C', styles=[Style.ITALIC])
+        ],
         *create_rotate_vector_cells(
             prime_alias_prefix,
             (
@@ -79,6 +89,9 @@ def create_rotate_point_around_cells(alias_namespace: str,
             rotation_axis,
             rotation_angle
         ),
+        [
+            Cell('R = C + Prime', styles=[Style.ITALIC])
+        ],
         [
             Cell(RotatedX, styles=[Style.UNDERLINE]),
             Cell(RotatedY, styles=[Style.UNDERLINE]),
@@ -132,6 +145,10 @@ def create_rotate_vector_cells(alias_namespace: str,
     RotatedX, RotatedY, RotatedZ = alias('X'), alias('Y'), alias('Z')
     return [
         [
+            Cell('Vector', styles=[Style.ITALIC]),
+            Cell('to Rotate')
+        ],
+        [
             Cell('Vx', styles=[Style.UNDERLINE]),
             Cell('Vy', styles=[Style.UNDERLINE]),
             Cell('Vz', styles=[Style.UNDERLINE])
@@ -154,7 +171,7 @@ def create_rotate_vector_cells(alias_namespace: str,
         ),
         [
             Cell('Rotation Matrix * V',
-                 styles=[Style.UNDERLINE])
+                 styles=[Style.ITALIC])
         ],
         [
             Cell(RotatedX, styles=[Style.UNDERLINE]),
@@ -238,7 +255,7 @@ def create_multiply_rotation_cells(alias_namespace: str,
         ),
         [
             Cell('Rotate A & B',
-                 styles=[Style.UNDERLINE])
+                 styles=[Style.ITALIC])
         ],
         [
             Cell(C11, styles=[Style.UNDERLINE]),
@@ -303,6 +320,9 @@ def create_rotation_matrix_cells(Matrix: MatrixType,
     Ax, Ay, Az = AxisAliases
     return [
         [
+            Cell('Rotation Axis', styles=[Style.ITALIC])
+        ],
+        [
             Cell('Ax', styles=[Style.UNDERLINE]),
             Cell('Ay', styles=[Style.UNDERLINE]),
             Cell('Az', styles=[Style.UNDERLINE])
@@ -320,8 +340,8 @@ def create_rotation_matrix_cells(Matrix: MatrixType,
         ],
         [
             Cell('Rotation Matrix from Axis and Angle',
-                 styles=[Style.UNDERLINE]),
-            Cell('Formula:'),
+                 styles=[Style.ITALIC]),
+            Cell('Formula:', styles=[Style.BOLD]),
             Cell(
                 'https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle')
         ],
