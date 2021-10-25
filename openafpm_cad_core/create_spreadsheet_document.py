@@ -7,6 +7,7 @@ from FreeCAD import Document
 from .alternator_cells import alternator_cells
 from .cell import Cell, Style
 from .h_shape_cells import h_shape_cells
+from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
@@ -47,6 +48,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
     _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
+    _add_spreadsheet(document, 'HighEndStop', high_end_stop_cells)
     document.recompute()
     return document
 

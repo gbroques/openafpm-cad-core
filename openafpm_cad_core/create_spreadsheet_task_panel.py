@@ -121,7 +121,7 @@ class CreateSpreadsheetTaskPanel:
             document = self.on_close(parameters['magnafpm'],
                                      parameters['furling'],
                                      parameters['user'])
-            if self.save_as:
+            if hasattr(self, 'save_as') and self.save_as:
                 document.saveAs(self.save_as)
                 App.Console.PrintMessage(f'Saved document as {self.save_as}')
         Gui.Control.closeDialog()
