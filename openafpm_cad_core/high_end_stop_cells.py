@@ -253,52 +253,17 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('0', alias='Zgiven'),
         # T = Zgiven - Az / (Bz - Az)
         # See above "Finding a point on a 3d line" answer.
-        Cell('=Zgiven - .OuterTailHingeHighEndStopFurledBase.z / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
+        Cell('=(Zgiven - .OuterTailHingeHighEndStopFurledBase.z) / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
              alias='T'),
         Cell('=.OuterTailHingeHighEndStopFurledBase + T * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
              alias='HighEndStopPointWhereZIsZero'),
         Cell('=abs(.HighEndStopPointWhereZIsZero.x) - YawPipeRadius',
              alias='HighEndStopWidth')
     ],
+    # SafetyCatch
+    # -----------
     [
-        Cell('MiddleOfHighEndStopVector'),
-        Cell('=create(<<vector>>; 0; BoomPipeRadius; 0)',
-             alias='MiddleOfHighEndStopVector')
-    ],
-    [
-        Cell('TailBoomVaneAssemblyGlobalOrigin'),
-        Cell('=TailHingeAssemblyLinkPlacement * TailHingeAssemblyPlacement * TailFurlPlacement * TailBase',
-             alias='TailBoomVaneAssemblyGlobalOrigin')
-    ],
-    [
-        Cell('MiddleOfHighEndStopGlobalPosition'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * MiddleOfHighEndStopVector',
-             alias='MiddleOfHighEndStopGlobalPosition')
-    ],
-    [
-        Cell('PerpendicularVectorToHighEndStop'),
-        Cell('=MiddleOfHighEndStopGlobalPosition - TailBoomVaneAssemblyGlobalOrigin',
-             alias='PerpendicularVectorToHighEndStop')
-    ],
-    [
-        Cell('NormalizedPerpendicularVectorToHighEndStop'),
-        Cell('=PerpendicularVectorToHighEndStop / .PerpendicularVectorToHighEndStop.Length',
-             alias='NormalizedPerpendicularVectorToHighEndStop')
-    ],
-    [
-        Cell('ScaledNormalizedPerpendicularVectorToHighEndStop'),
-        Cell('=NormalizedPerpendicularVectorToHighEndStop * HighEndStopWidth',
-             alias='ScaledNormalizedPerpendicularVectorToHighEndStop')
-    ],
-    [
-        Cell('YawBearingHighEndStopContactPoint'),
-        Cell('=HighEndStopPointWhereZIsZero + ScaledNormalizedPerpendicularVectorToHighEndStop',
-             alias='YawBearingHighEndStopContactPoint')
-    ],
-    [
-        Cell('ChangeInYPerMillimeter'),
-        Cell('=(OuterTailHingeHighEndStopOppositeEndFurledBase.y - OuterTailHingeHighEndStopFurledBase.y) / HighEndStopLength',
-             alias='ChangeInYPerMillimeter')
+        Cell('SafetyCatch', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('SafetyCatchWidth'),
@@ -306,31 +271,58 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='SafetyCatchWidth')
     ],
     [
-        Cell('SafetyCatchYOffset'),
-        Cell('=SafetyCatchWidth / 2 * ChangeInYPerMillimeter + FlatMetalThickness * 1.5',
-             alias='SafetyCatchYOffset')
+        Cell('SafetyCatchLength'),
+        Cell('=SafetyCatchWidth * 1.33',
+             alias='SafetyCatchLength')
     ],
     [
-        Cell('SafetyCatch', styles=[Style.UNDERLINE])
+        # of High End Stop
+        Cell('UpperBottomLeftCorner'),
+        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
+             alias='UpperBottomLeftCorner')
     ],
     [
-        Cell('x', horizontal_alignment=Alignment.RIGHT),
-        Cell('y', horizontal_alignment=Alignment.RIGHT),
-        Cell('z', horizontal_alignment=Alignment.RIGHT)
+        Cell('UpperBottomLeftCornerGlobal'),
+        Cell('=FurledHighEndStopGlobalParentPlacement * UpperBottomLeftCorner',
+             alias='UpperBottomLeftCornerGlobal')
     ],
     [
-        Cell('=-YawPipeRadius',
-             alias='SafetyCatchX'),
-        Cell('=.YawBearingHighEndStopContactPoint.y + SafetyCatchYOffset',
-             alias='SafetyCatchY'),
-        Cell('=Zgiven',
-             alias='SafetyCatchZ'),
+        # of High End Stop
+        Cell('UpperTopLeftCorner'),
+        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopLength)',
+             alias='UpperTopLeftCorner')
     ],
     [
-        Cell('Base')
+        Cell('UpperTopLeftCornerGlobal'),
+        Cell('=FurledHighEndStopGlobalParentPlacement * UpperTopLeftCorner',
+             alias='UpperTopLeftCornerGlobal')
     ],
     [
-        Cell('=create(<<vector>>; SafetyCatchX; SafetyCatchY; SafetyCatchZ)',
-             alias='SafetyCatchBase')
+        # Zgiven
+        # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
+        Cell('Zupper'),
+        Cell('=SafetyCatchWidth / 2',
+             alias='Zupper')
+    ],
+    [
+        # T
+        # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
+        Cell('Tupper'),
+        Cell('=(Zupper - .UpperBottomLeftCornerGlobal.z) / (.UpperTopLeftCornerGlobal.z - .UpperBottomLeftCornerGlobal.z)',
+             alias='Tupper')
+    ],
+    [
+        Cell('SafetyCatchPosition'),
+        Cell('=.UpperBottomLeftCornerGlobal + Tupper * (UpperTopLeftCornerGlobal - .UpperBottomLeftCornerGlobal)',
+             alias='SafetyCatchPosition')
+    ],
+    [
+        # Y position of the safety catch
+        # in coordinate system relative to
+        # yaw bearing centered at origin.
+        # +3 for a little extra clearance.
+        Cell('SafetyCatchY'),
+        Cell('=.SafetyCatchPosition.y + 3',
+             alias='SafetyCatchY')
     ]
 ]
