@@ -245,7 +245,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('Zgiven'),
         Cell('T'),
-        Cell('PointWhereZEqualsZero'),
+        Cell('HighEndStopPointWhereZIsZero'),
         Cell('HighEndStopWidth', styles=[Style.BOLD, Style.UNDERLINE]),
     ],
     [
@@ -256,9 +256,59 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=Zgiven - .OuterTailHingeHighEndStopFurledBase.z / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
              alias='T'),
         Cell('=.OuterTailHingeHighEndStopFurledBase + T * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
-             alias='PointWhereZEqualsZero'),
-        Cell('=abs(.PointWhereZEqualsZero.x) - YawPipeRadius',
+             alias='HighEndStopPointWhereZIsZero'),
+        Cell('=abs(.HighEndStopPointWhereZIsZero.x) - YawPipeRadius',
              alias='HighEndStopWidth')
+    ],
+    [
+        Cell('MiddleOfHighEndStopVector'),
+        Cell('=create(<<vector>>; 0; BoomPipeRadius; 0)',
+             alias='MiddleOfHighEndStopVector')
+    ],
+    [
+        Cell('TailBoomVaneAssemblyGlobalOrigin'),
+        Cell('=TailHingeAssemblyLinkPlacement * TailHingeAssemblyPlacement * TailFurlPlacement * TailBase',
+             alias='TailBoomVaneAssemblyGlobalOrigin')
+    ],
+    [
+        Cell('MiddleOfHighEndStopGlobalPosition'),
+        Cell('=FurledHighEndStopGlobalParentPlacement * MiddleOfHighEndStopVector',
+             alias='MiddleOfHighEndStopGlobalPosition')
+    ],
+    [
+        Cell('PerpendicularVectorToHighEndStop'),
+        Cell('=MiddleOfHighEndStopGlobalPosition - TailBoomVaneAssemblyGlobalOrigin',
+             alias='PerpendicularVectorToHighEndStop')
+    ],
+    [
+        Cell('NormalizedPerpendicularVectorToHighEndStop'),
+        Cell('=PerpendicularVectorToHighEndStop / .PerpendicularVectorToHighEndStop.Length',
+             alias='NormalizedPerpendicularVectorToHighEndStop')
+    ],
+    [
+        Cell('ScaledNormalizedPerpendicularVectorToHighEndStop'),
+        Cell('=NormalizedPerpendicularVectorToHighEndStop * HighEndStopWidth',
+             alias='ScaledNormalizedPerpendicularVectorToHighEndStop')
+    ],
+    [
+        Cell('YawBearingHighEndStopContactPoint'),
+        Cell('=HighEndStopPointWhereZIsZero + ScaledNormalizedPerpendicularVectorToHighEndStop',
+             alias='YawBearingHighEndStopContactPoint')
+    ],
+    [
+        Cell('ChangeInYPerMillimeter'),
+        Cell('=(OuterTailHingeHighEndStopOppositeEndFurledBase.y - OuterTailHingeHighEndStopFurledBase.y) / HighEndStopLength',
+             alias='ChangeInYPerMillimeter')
+    ],
+    [
+        Cell('SafetyCatchWidth'),
+        Cell('=YawPipeRadius',
+             alias='SafetyCatchWidth')
+    ],
+    [
+        Cell('SafetyCatchYOffset'),
+        Cell('=SafetyCatchWidth / 2 * ChangeInYPerMillimeter + FlatMetalThickness * 1.5',
+             alias='SafetyCatchYOffset')
     ],
     [
         Cell('SafetyCatch', styles=[Style.UNDERLINE])
@@ -271,9 +321,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=-YawPipeRadius',
              alias='SafetyCatchX'),
-        # FlatMetalThickness * 3 is a rough guess.
-        # To ensure that the safety catch is above the high end stop.
-        Cell('=.PointWhereZEqualsZero.y + FlatMetalThickness * 3',
+        Cell('=.YawBearingHighEndStopContactPoint.y + SafetyCatchYOffset',
              alias='SafetyCatchY'),
         Cell('=Zgiven',
              alias='SafetyCatchZ'),
