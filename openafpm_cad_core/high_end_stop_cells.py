@@ -152,7 +152,7 @@ high_end_stop_cells: List[List[Cell]] = [
                                 '=Tail.TailY',
                                 '=Tail.TailZ'),
                             axis=('0', '0', '1'),
-                            angle='=Tail.TailPrimeAngle'),
+                            angle='=Tail.TailAngle'),
     *create_placement_cells(name='TailBoomVaneAssembly',
                             base=('0', '0', '0'),
                             axis=('0', '1', '0'),

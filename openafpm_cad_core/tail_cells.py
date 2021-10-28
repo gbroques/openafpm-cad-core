@@ -1,7 +1,6 @@
 from typing import List
 
-from .cell import Cell, Style
-from .create_rotate_point_cells import create_rotate_point_around_cells
+from .cell import Alignment, Cell, Style
 
 __all__ = ['tail_cells']
 
@@ -256,27 +255,103 @@ tail_cells: List[List[Cell]] = [
         Cell('OuterTailHingeZOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
                                             alias='OuterTailHingeZOffset')
     ],
-    *create_rotate_point_around_cells(
-        # Namespace
-        'Tail',
-        (   # Point
-            '=NonRotatedTailX + OuterTailHingeXOffset - OuterTailHingeNegativeXOffset',
-            '0',
-            '=NonRotatedTailZ + OuterTailHingeZOffset'
-        ),
-        (   # Center
-            '=OuterTailHingeX',
-            '0',
-            '=OuterTailHingeZ'
-        ),
-        (   # Rotation Axis
-            '=sin(VerticalPlaneAngle)',
-            '0',
-            '=cos(VerticalPlaneAngle)'
-        ),
-        # Angle
-        '=180 - HorizontalPlaneAngle - DefaultTailAngle'
-    ),
+    [
+        # Tail Position Before Rotation
+        Cell('Point', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('x',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('y',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('z',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('Vector')
+    ],
+    [
+        Cell('=NonRotatedTailX + OuterTailHingeXOffset - OuterTailHingeNegativeXOffset',
+             alias='PointX'),
+        Cell('0',
+             alias='PointY'),
+        Cell('=NonRotatedTailZ + OuterTailHingeZOffset',
+             alias='PointZ'),
+        Cell('=create(<<vector>>; PointX; PointY; PointZ)',
+             alias='Point')
+    ],
+    [
+        # Center of Rotation
+        Cell('Center', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('x',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('y',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('z',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('Vector')
+    ],
+    [
+        Cell('=OuterTailHingeX',
+             alias='CenterX'),
+        Cell('0',
+             alias='CenterY'),
+        Cell('=OuterTailHingeZ',
+             alias='CenterZ'),
+        Cell('=create(<<vector>>; CenterX; CenterY; CenterZ)',
+             alias='Center')
+    ],
+    [
+        # Axis of Rotation
+        Cell('TailAxis', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('x',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('y',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('z',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('Axis')
+    ],
+    [
+        Cell('=sin(VerticalPlaneAngle)',
+             alias='TailAxisX'),
+        Cell('0',
+             alias='TailAxisY'),
+        Cell('=cos(VerticalPlaneAngle)',
+             alias='TailAxisZ'),
+        Cell('=create(<<vector>>; TailAxisX; TailAxisY; TailAxisZ)',
+             alias='TailAxis')
+    ],
+    [
+        Cell('Angle'),
+        Cell('Rotation'),
+        Cell('RotatedPoint')
+    ],
+    [
+        Cell('=180 - HorizontalPlaneAngle - DefaultTailAngle',
+             alias='TailAngle'),
+        Cell('=create(<<rotation>>; TailAxis; TailAngle)',
+             alias='TailRotation'),
+        Cell('=Center + TailRotation * (Point - Center)', alias='RotatedPoint')
+    ],
+    [
+        Cell('Tail', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('x',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('y',
+             horizontal_alignment=Alignment.RIGHT),
+        Cell('z',
+             horizontal_alignment=Alignment.RIGHT)
+    ],
+    [
+        Cell('=.RotatedPoint.x', alias='TailX'),
+        Cell('=.RotatedPoint.y', alias='TailY'),
+        Cell('=.RotatedPoint.z', alias='TailZ')
+    ],
     [
         Cell('TailBoomTriangularBraceZAxisAngle'), Cell('=asin(TailY / TailBoomTriangularBraceWidth)',
                                                         alias='TailBoomTriangularBraceZAxisAngle')
