@@ -50,17 +50,17 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
             Cell('C1'), Cell('C2'), Cell('C3')
         ],
         [
-            Cell(f'=cos({Z} / 2)', alias=C1),
-            Cell(f'=cos({Y} / 2)', alias=C2),
-            Cell(f'=cos({X} / 2)', alias=C3)
+            Cell(f'=cos({Z} / 2.0)', alias=C1),
+            Cell(f'=cos({Y} / 2.0)', alias=C2),
+            Cell(f'=cos({X} / 2.0)', alias=C3)
         ],
         [
             Cell('S1'), Cell('S2'), Cell('S3')
         ],
         [
-            Cell(f'=sin({Z} / 2)', alias=S1),
-            Cell(f'=sin({Y} / 2)', alias=S2),
-            Cell(f'=sin({X} / 2)', alias=S3)
+            Cell(f'=sin({Z} / 2.0)', alias=S1),
+            Cell(f'=sin({Y} / 2.0)', alias=S2),
+            Cell(f'=sin({X} / 2.0)', alias=S3)
         ],
         [
             Cell('Qx'), Cell('Qy'), Cell('Qz')
