@@ -67,7 +67,6 @@ class CreateSpreadsheetTaskPanel:
         row4.addWidget(self.save_as_location_label)
         layout.addLayout(row4)
 
-
         # Row 5
         row5 = QtGui.QHBoxLayout()
         save_as_button = QtGui.QPushButton(
@@ -90,8 +89,15 @@ class CreateSpreadsheetTaskPanel:
             f.write(self.save_as)
 
     def set_save_as_location_label(self):
-        self.save_as_location_label.setText(
-            self.save_as.replace(str(Path.home()), '~'))
+        label = self.save_as.replace(str(Path.home()), '~')
+
+        path_parts = label.split(os.path.sep)
+        middle_parts = list(map(lambda _: '..', path_parts[1:-2]))
+        truncated_path_parts = [path_parts[0]] + middle_parts + path_parts[-2:]
+        truncated_path = os.path.sep.join(truncated_path_parts)
+
+        self.save_as_location_label.setText(truncated_path)
+        self.save_as_location_label.setToolTip(label)
 
     def create_rotor_disk_radius_value(self):
         default_variant = WindTurbine.T_SHAPE
