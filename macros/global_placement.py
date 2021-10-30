@@ -9,7 +9,7 @@ def calculate_global_placement(child: object, placements: Placement = []) -> Pla
     placements.append(child.Placement)
     in_list = child.InList
     num_in = len(in_list)
-    if len(in_list) == 0:
+    if num_in == 0:
         global_placement = Placement()
         placements.reverse()  # Reverse list in order of parent to child.
         for placement in placements:

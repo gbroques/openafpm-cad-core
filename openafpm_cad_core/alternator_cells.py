@@ -64,7 +64,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('=Hub.MiddlePadThickness',
              alias='MiddlePadThickness'),
         Cell('=Hub.FrameSidePadWidth',
-             alias='FrameSidePadWidth'),
+             alias='FrameSidePadWidth')
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE])

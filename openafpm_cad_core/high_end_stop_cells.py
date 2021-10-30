@@ -81,28 +81,90 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius'),
-        Cell('=Master_of_Puppets#Spreadsheet.YawBearingTailHingeJunctionChamfer',
+        Cell('=Spreadsheet.YawBearingTailHingeJunctionChamfer',
              alias='Chamfer')
     ],
     [
         Cell('VerticalPlaneAngle'),
-        Cell('HorizontalPlaneAngle')
+        Cell('HorizontalPlaneAngle'),
+        Cell('AlternatorTiltAngle')
     ],
     [
         Cell('=Spreadsheet.VerticalPlaneAngle',
              alias='VerticalPlaneAngle'),
         Cell('=Spreadsheet.HorizontalPlaneAngle',
-             alias='HorizontalPlaneAngle')
+             alias='HorizontalPlaneAngle'),
+        Cell('=Spreadsheet.AlternatorTiltAngle',
+             alias='AlternatorTiltAngle')
     ],
     [
+        Cell('RotorDiskRadius'),
         Cell('YawPipeLength'),
         Cell('YawPipeRadius')
     ],
     [
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius'),
         Cell('=Spreadsheet.YawPipeLength',
              alias='YawPipeLength'),
         Cell('=Spreadsheet.YawPipeRadius',
              alias='YawPipeRadius')
+    ],
+    [
+        Cell('FrameZ'),
+        Cell('MetalLengthL'),
+        Cell('MetalThicknessL')
+    ],
+    [
+        Cell('=Alternator.FrameZ',
+             alias='FrameZ'),
+        Cell('=Spreadsheet.MetalLengthL',
+             alias='MetalLengthL'),
+        Cell('=Spreadsheet.MetalThicknessL',
+             alias='MetalThicknessL')
+    ],
+    [
+        Cell('TopAngle'),
+        Cell('HShapeChannelSectionHeight'),
+        Cell('StarShapeChannelSectionHeight')
+    ],
+    [
+        Cell('=HShape.TopAngle',
+             alias='TopAngle'),
+        Cell('=HShape.H',
+             alias='HShapeChannelSectionHeight'),
+        Cell('=StarShape.B',
+             alias='StarShapeChannelSectionHeight')
+    ],
+    [
+        Cell('Width'),
+        Cell('Offset'),
+        Cell('LargeYawBearingXOffset')
+    ],
+    [
+        Cell('=HShape.MM',
+             alias='Width'),
+        Cell('=Spreadsheet.Offset',
+             alias='Offset'),
+        Cell('=HShape.LargeYawBearingXOffset',
+             alias='LargeYawBearingXOffset'),
+    ],
+    [
+        Cell('TShape', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('X'), Cell('a')
+    ],
+    [
+        Cell('=TShape.X', alias='X'),
+        Cell('=TShape.a', alias='a')
+    ],
+    [
+        Cell('I'), Cell('k')
+    ],
+    [
+        Cell('=TShape.I', alias='I'),
+        Cell('=TShape.k', alias='k')
     ],
     # Static
     # ------
@@ -111,24 +173,180 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('HighEndStopLength'),
-        Cell('FurlAngle'),
-        Cell('FurlRotation')
+        Cell('Margin')
     ],
     [
         Cell('110',
              alias='HighEndStopLength'),
+        Cell('20', alias='Margin')
+    ],
+    [
+        Cell('FurlAxis'),
+        Cell('FurlAngle'),
+        Cell('FurlRotation')
+    ],
+    [
+        Cell('=create(<<vector>>; sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle))',
+             alias='FurlAxis'),
         Cell('=105deg',
              alias='FurlAngle'),
-        Cell('=create(<<rotation>>; create(<<vector>>; sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle)); FurlAngle)',
+        Cell('=create(<<rotation>>; FurlAxis; FurlAngle)',
              alias='FurlRotation')
+    ],
+    # SmallYawBearing
+    # ---------------
+    [
+        Cell('SmallYawBearing',
+             styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    [
+        Cell('Angle'),
+    ],
+    [
+        Cell('=90deg', alias='SmallYawBearingAngle'),
+    ],
+    [
+        Cell('x', horizontal_alignment=Alignment.RIGHT),
+        Cell('y', horizontal_alignment=Alignment.RIGHT),
+        Cell('z', horizontal_alignment=Alignment.RIGHT),
+    ],
+    [
+        Cell('=-FrameZ - YawPipeRadius - k + MetalLengthL - MetalThicknessL',
+             alias='SmallYawBearingX'),
+        Cell('=(-a / 2 + FlatMetalThickness + Margin * 2) * -1',
+             alias='SmallYawBearingY'),
+        Cell('=-X - YawPipeRadius * 2',
+             alias='SmallYawBearingZ'),
+    ],
+    # LargeYawBearing
+    # ---------------
+    [
+        Cell('LargeYawBearing',
+             styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    [
+        Cell('ChannelSectionHeight'),
+        Cell('HShapeYawBearingY'),
+        Cell('StarShapeYawBearingY')
+    ],
+    [
+        Cell('=RotorDiskRadius < 275 ? HShapeChannelSectionHeight : StarShapeChannelSectionHeight',
+             alias='ChannelSectionHeight'),
+        Cell('=ChannelSectionHeight * 0.25',
+             alias='HShapeYawBearingY'),
+        Cell('=MetalLengthL * 0.5 + FlatMetalThickness + Width + AlternatorLinkY',
+             alias='StarShapeYawBearingY')
+    ],
+    [
+        Cell('Angle')
+    ],
+    [
+        Cell('=-TopAngle',
+             alias='LargeYawBearingAngle')
+    ],
+    [
+        Cell('x', horizontal_alignment=Alignment.RIGHT),
+        Cell('y', horizontal_alignment=Alignment.RIGHT),
+        Cell('z', horizontal_alignment=Alignment.RIGHT),
+    ],
+    [
+        Cell('=LargeYawBearingZ - FrameZ + LargeYawBearingXOffset',
+             alias='LargeYawBearingX'),
+        Cell('=RotorDiskRadius < 275 ? HShapeYawBearingY : StarShapeYawBearingY',
+             alias='LargeYawBearingY'),
+        Cell('=-Offset',
+             alias='LargeYawBearingZ'),
+    ],
+    # SmallTailHinge
+    # --------------
+    [
+        Cell('SmallTailHinge',
+             styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    [
+        Cell('x', horizontal_alignment=Alignment.RIGHT),
+        Cell('y', horizontal_alignment=Alignment.RIGHT),
+        Cell('z', horizontal_alignment=Alignment.RIGHT),
+    ],
+    [
+        Cell('=SmallYawBearingX',
+             alias='SmallTailHingeX'),
+        Cell('=-YawPipeLength / 2',
+             alias='SmallTailHingeY'),
+        Cell('=SmallYawBearingZ',
+             alias='SmallTailHingeZ'),
+    ],
+    # LargeTailHinge
+    # --------------
+    [
+        Cell('LargeTailHinge',
+             styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    [
+        Cell('x', horizontal_alignment=Alignment.RIGHT),
+        Cell('y', horizontal_alignment=Alignment.RIGHT),
+        Cell('z', horizontal_alignment=Alignment.RIGHT),
+    ],
+    [
+        Cell('=LargeYawBearingX',
+             alias='LargeTailHingeX'),
+        Cell('=-(YawPipeLength - LargeYawBearingY)',
+             alias='LargeTailHingeY'),
+        Cell('=LargeYawBearingZ',
+             alias='LargeTailHingeZ'),
+    ],
+    # VerticalDistanceFromCenter
+    # --------------------------
+    [
+        Cell('VerticalDistanceFromCenter',
+             styles=[Style.UNDERLINE, Style.BOLD]),
+        Cell('Vertical distance of Yaw Bearing from Center of Hub',
+             styles=[Style.ITALIC])
+    ],
+    [
+        Cell('SmallVerticalDistanceFromCenter'),
+        Cell('=a / 2 - Margin * 2',
+             alias='SmallVerticalDistanceFromCenter')
+    ],
+    [
+        Cell('LargeVerticalDistanceFromCenter'),
+        Cell('=LargeYawBearingY',
+             alias='LargeVerticalDistanceFromCenter')
+    ],
+    [
+        Cell('VerticalDistanceFromCenter'),
+        Cell('=RotorDiskRadius < 187.5 ? SmallVerticalDistanceFromCenter : LargeVerticalDistanceFromCenter',
+             alias='VerticalDistanceFromCenter')
+    ],
+    [
+        Cell('AlternatorXoffset'),
+        Cell('=cos(90deg - AlternatorTiltAngle) * VerticalDistanceFromCenter',
+             alias='AlternatorXoffset')
     ],
     # Placement
     # ---------
     [
         Cell('Placement', styles=[Style.UNDERLINE, Style.BOLD])
     ],
+    *create_placement_cells(name='YawBearing',
+                            base=(
+                                '=RotorDiskRadius < 187.5 ? SmallYawBearingX : LargeYawBearingX',
+                                '=RotorDiskRadius < 187.5 ? SmallYawBearingY : LargeYawBearingY',
+                                '=RotorDiskRadius < 187.5 ? SmallYawBearingZ : LargeYawBearingZ'),
+                            axis=('0', '1', '0'),
+                            angle='=RotorDiskRadius < 187.5 ? SmallYawBearingAngle : LargeYawBearingAngle'),
+    *create_placement_cells(name='AlternatorLink',
+                            base=(
+                                '=YawBearingX - YawBearingX * cos(AlternatorTiltAngle) + AlternatorXoffset',
+                                '=-sin(AlternatorTiltAngle) * YawBearingX',
+                                '0'),
+                            axis=('0', '0', '1'),
+                            angle='=AlternatorTiltAngle'),
     *create_placement_cells(name='TailHingeAssemblyLink',
-                            base=('0', '=-YawPipeLength / 2', '0'),
+                            base=(
+                                '=RotorDiskRadius < 187.5 ? SmallTailHingeX : LargeTailHingeX',
+                                '=RotorDiskRadius < 187.5 ? SmallTailHingeY : LargeTailHingeY',
+                                '=RotorDiskRadius < 187.5 ? SmallTailHingeZ : LargeTailHingeZ'),
                             axis=('0.58', '0.58', '0.58'),
                             angle='=240deg'),
     *create_placement_cells(name='TailHingeAssembly',
@@ -250,15 +468,15 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         # Center of Yaw Bearing
-        Cell('0', alias='Zgiven'),
+        Cell('=YawBearingZ', alias='Zgiven'),
         # T = Zgiven - Az / (Bz - Az)
         # See above "Finding a point on a 3d line" answer.
         Cell('=(Zgiven - .OuterTailHingeHighEndStopFurledBase.z) / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
              alias='T'),
         Cell('=.OuterTailHingeHighEndStopFurledBase + T * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
              alias='HighEndStopPointWhereZIsZero'),
-        Cell('=abs(.HighEndStopPointWhereZIsZero.x) - YawPipeRadius',
-             alias='HighEndStopWidth')
+        Cell('=abs(.HighEndStopPointWhereZIsZero.x) - YawPipeRadius + YawBearingX',
+             alias='HighEndStopWidth')  # 57.12 desired for T Shape
     ],
     # SafetyCatch
     # -----------
@@ -301,7 +519,7 @@ high_end_stop_cells: List[List[Cell]] = [
         # Zgiven
         # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
         Cell('Zupper'),
-        Cell('=SafetyCatchWidth / 2',
+        Cell('=YawBearingZ + (SafetyCatchWidth / 2)',
              alias='Zupper')
     ],
     [

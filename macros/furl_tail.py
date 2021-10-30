@@ -1,34 +1,26 @@
-from math import cos, radians, sin
-
 import Draft
 import FreeCAD as App
-from FreeCAD import Vector
-
 
 documents_by_name = App.listDocuments()
 
 tail_document = documents_by_name['Tail']
 tail_document.openTransaction('furl')
 
+main_document = documents_by_name['Master_of_Puppets']
+
 # tail
 tail = tail_document.getObjectsByLabel('Tail')[0]
 
 # furl_angle
-main_document = documents_by_name['Master_of_Puppets']
 furl_angle = main_document.HighEndStop.FurlAngle.Value
 
-vertical_plane_angle = tail_document.Spreadsheet.VerticalPlaneAngle
+vertical_plane_angle = main_document.Spreadsheet.VerticalPlaneAngle
 
 # center
-x = tail_document.Spreadsheet.OuterTailHingeX
-y = 0
-z = tail_document.Spreadsheet.OuterTailHingeZ
-center = Vector(x, y, z)
+center = main_document.HighEndStop.OuterTailHingeBase
 
 # axis
-axis = Vector(sin(radians(vertical_plane_angle)),
-              0,
-              cos(radians(vertical_plane_angle)))
+axis = main_document.HighEndStop.FurlAxis
 
 Draft.rotate(
     [tail],

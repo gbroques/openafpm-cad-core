@@ -4,6 +4,7 @@ from typing import List
 import freecad_to_obj
 
 from .find_object_by_label import find_object_by_label
+from .get_furl_transforms import get_furl_transforms
 from .make_archive import make_archive
 
 __all__ = ['WindTurbineModel']
@@ -24,6 +25,9 @@ class WindTurbineModel:
         source = package_path.joinpath('documents')
         destination = Path(path).joinpath('WindTurbine.zip')
         return make_archive(str(source), str(destination))
+
+    def get_furl_transforms(self):
+        return get_furl_transforms(self.root_document)
 
 
 def object_name_getter(obj: object, path: List[object]) -> str:
