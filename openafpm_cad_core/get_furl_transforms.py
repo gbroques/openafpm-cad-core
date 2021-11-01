@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, TypedDict
 
 import FreeCAD as App
 from FreeCAD import Console, Document, Placement
@@ -8,7 +9,23 @@ from .find_object_by_label import find_object_by_label
 __all__ = ['get_furl_transforms']
 
 
-def get_furl_transforms(root_document: Document) -> dict:
+class Transform(TypedDict):
+    """An object representing a 3D transformation in Axis–angle representation."""
+
+    name: str
+    """Name for transform."""
+
+    position: List[float]
+    """3 element list containing x, y, and z coordinates."""
+
+    axis: List[float]
+    """Axis of rotation, 3 element list for x, y, and z axes."""
+
+    angle: float
+    """Angle of rotation (in radians)."""
+
+
+def get_furl_transforms(root_document: Document) -> List[Transform]:
     root_document_path = Path(root_document.FileName)
     documents_path = root_document_path.parent
     tail_document_path = documents_path.joinpath('Tail.FCStd')
@@ -30,7 +47,7 @@ def get_furl_transforms(root_document: Document) -> dict:
     ]
 
 
-def placement_to_dict(name: str, placement: Placement) -> dict:
+def placement_to_dict(name: str, placement: Placement) -> Transform:
     return {
         'name': name,
         'position': list(placement.Base),

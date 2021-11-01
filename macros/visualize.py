@@ -1,13 +1,18 @@
 """
-FreeCAD macro to visualize wind turbine using default values.
+FreeCAD macro to visualize wind turbines using default values.
 """
 from argparse import ArgumentParser
+from itertools import repeat
+from multiprocessing import Pool
+from pathlib import Path
+from typing import Tuple
 
 from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
                                    visualize)
 
 
-def create_obj_file(turbine: WindTurbine):
+def write_obj_file(path_turbine_pair: Tuple[Path, WindTurbine]) -> str:
+    path, turbine = path_turbine_pair
     parameters = get_default_parameters(turbine)
 
     wind_turbine_model = visualize(
@@ -18,27 +23,30 @@ def create_obj_file(turbine: WindTurbine):
     obj_file_contents = wind_turbine_model.to_obj()
 
     filename = turbine.value.lower().replace(' ', '-')
-    with open(f'{filename}.obj', 'w') as f:
+    filepath = path.joinpath(f'{filename}.obj')
+    with open(filepath, 'w') as f:
         f.write(obj_file_contents)
-        print(f'{filename}.obj created.')
+        return str(filepath.resolve())
 
 
 if __name__ == '__main__':
     parser = ArgumentParser(
-        description='Export wind turbine to .obj using default values.')
-    parser.add_argument('variant',
-                        metavar='<variant>',
+        description='Export wind turbines to .obj using default values.')
+    parser.add_argument('path',
+                        metavar='<path>',
                         type=str,
-                        choices={'t', 'h', 'star'},
-                        help='Type of wind turbine, T, H, or Star Shape.')
+                        help='Output path.')
 
     args = parser.parse_args()
 
-    variant_by_choice = {
-        't': WindTurbine.T_SHAPE,
-        'h': WindTurbine.H_SHAPE,
-        'star': WindTurbine.STAR_SHAPE
-    }
+    turbines = (
+        WindTurbine.T_SHAPE,
+        WindTurbine.H_SHAPE,
+        WindTurbine.STAR_SHAPE)
 
-    turbine = variant_by_choice[args.variant]
-    create_obj_file(turbine)
+    paths = repeat(Path(args.path), len(turbines))
+    pairs = tuple(zip(paths, turbines))
+    with Pool(3) as p:
+        filepaths = p.map(write_obj_file, pairs)
+        print('Created')
+        print('\n'.join(filepaths))

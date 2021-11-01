@@ -19,7 +19,8 @@ from .yaw_bearing_cells import yaw_bearing_cells
 __all__ = ['create_spreadsheet_document']
 
 
-def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
+def create_spreadsheet_document(name: str,
+                                magnafpm_parameters: MagnafpmParameters,
                                 furling_parameters: FurlingParameters,
                                 user_parameters: UserParameters) -> Document:
     parameters_by_key = {
@@ -38,7 +39,7 @@ def create_spreadsheet_document(magnafpm_parameters: MagnafpmParameters,
     fastener_cells = _get_fastener_cells()
     cells.extend(fastener_cells)
 
-    document = App.newDocument('Master of Puppets')
+    document = App.newDocument(name)
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)

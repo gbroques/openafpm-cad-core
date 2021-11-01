@@ -2,14 +2,14 @@
 FreeCAD macro to print furl tranforms using default values.
 """
 import json
-from argparse import ArgumentParser
-from typing import Union
+from multiprocessing import Pool
+from typing import List, Union
 
 from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
                                    visualize)
 
 
-def get_furl_transforms(turbine: WindTurbine):
+def get_furl_transforms(turbine: WindTurbine) -> List[dict]:
     parameters = get_default_parameters(turbine)
 
     wind_turbine_model = visualize(
@@ -95,22 +95,16 @@ class CompactJSONEncoder(json.JSONEncoder):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(
-        description='Export wind turbine to .obj using default values.')
-    parser.add_argument('variant',
-                        metavar='<variant>',
-                        type=str,
-                        choices={'t', 'h', 'star'},
-                        help='Type of wind turbine, T, H, or Star Shape.')
+    turbines = [
+        WindTurbine.T_SHAPE,
+        WindTurbine.H_SHAPE,
+        WindTurbine.STAR_SHAPE]
+    with Pool(3) as p:
+        t, h, star = p.map(get_furl_transforms, turbines)
 
-    args = parser.parse_args()
-
-    variant_by_choice = {
-        't': WindTurbine.T_SHAPE,
-        'h': WindTurbine.H_SHAPE,
-        'star': WindTurbine.STAR_SHAPE
-    }
-
-    turbine = variant_by_choice[args.variant]
-    furl_transforms = get_furl_transforms(turbine)
-    print(json.dumps(furl_transforms, cls=CompactJSONEncoder, indent=2))
+        furl_transforms = {
+            WindTurbine.T_SHAPE.value: t,
+            WindTurbine.H_SHAPE.value: h,
+            WindTurbine.STAR_SHAPE.value: star
+        }
+        print(json.dumps(furl_transforms, cls=CompactJSONEncoder, indent=2))

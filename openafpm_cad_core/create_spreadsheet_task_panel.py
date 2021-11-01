@@ -6,10 +6,7 @@ from typing import Any, Callable
 
 import FreeCADGui as Gui
 from PySide import QtGui
-import FreeCAD as App
-import os
-import tempfile
-from pathlib import Path
+
 from .get_default_parameters import get_default_parameters
 from .wind_turbine import WindTurbine
 
@@ -49,56 +46,6 @@ class CreateSpreadsheetTaskPanel:
 
         layout.addLayout(row2)
 
-        # Row 3
-        row3 = QtGui.QHBoxLayout()
-        save_as_label = QtGui.QLabel(
-            '<strong>Save As:</strong>', self.form)
-        row3.addWidget(save_as_label)
-        layout.addLayout(row3)
-
-        # Row 4
-        row4 = QtGui.QHBoxLayout()
-        self.save_as_location_label = QtGui.QLabel('', self.form)
-        self.tempfile = tempfile.tempdir + os.path.sep + 'freecad-last-save-location'
-        if os.path.exists(self.tempfile):
-            with open(self.tempfile) as f:
-                self.save_as = f.read()
-                self.set_save_as_location_label()
-        row4.addWidget(self.save_as_location_label)
-        layout.addLayout(row4)
-
-        # Row 5
-        row5 = QtGui.QHBoxLayout()
-        save_as_button = QtGui.QPushButton(
-            'Save As')
-        save_as_button.clicked.connect(self.handle_save_as)
-        row5.addWidget(save_as_button)
-
-        layout.addLayout(row5)
-
-    def handle_save_as(self):
-        save_as = QtGui.QFileDialog.getSaveFileName(
-            None,
-            'Save As',
-            App.ConfigGet('UserAppData') + os.path.sep + 'Mod',
-            'FreeCAD Document (*.FCStd)')
-        path, pattern = save_as
-        self.save_as = path
-        self.set_save_as_location_label()
-        with open(self.tempfile, 'w') as f:
-            f.write(self.save_as)
-
-    def set_save_as_location_label(self):
-        label = self.save_as.replace(str(Path.home()), '~')
-
-        path_parts = label.split(os.path.sep)
-        middle_parts = list(map(lambda _: '..', path_parts[1:-2]))
-        truncated_path_parts = [path_parts[0]] + middle_parts + path_parts[-2:]
-        truncated_path = os.path.sep.join(truncated_path_parts)
-
-        self.save_as_location_label.setText(truncated_path)
-        self.save_as_location_label.setToolTip(label)
-
     def create_rotor_disk_radius_value(self):
         default_variant = WindTurbine.T_SHAPE
         default_rotor_disk_radius = get_rotor_disk_radius(default_variant)
@@ -124,12 +71,9 @@ class CreateSpreadsheetTaskPanel:
         variant = WindTurbine(self.combo_box.currentText())
         parameters = get_default_parameters(variant)
         if self.on_close:
-            document = self.on_close(parameters['magnafpm'],
-                                     parameters['furling'],
-                                     parameters['user'])
-            if hasattr(self, 'save_as') and self.save_as:
-                document.saveAs(self.save_as)
-                App.Console.PrintMessage(f'Saved document as {self.save_as}')
+            self.on_close(parameters['magnafpm'],
+                          parameters['furling'],
+                          parameters['user'])
         Gui.Control.closeDialog()
 
 

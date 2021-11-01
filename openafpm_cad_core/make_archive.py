@@ -8,7 +8,7 @@ import shutil
 __all__ = ['make_archive']
 
 
-def make_archive(source: str, destination: str) -> str:
+def make_archive(source: str, destination: str) -> bytes:
     base = os.path.basename(destination)
     name = base.split('.')[0]
     format = base.split('.')[1]
@@ -16,4 +16,6 @@ def make_archive(source: str, destination: str) -> str:
     archive_to = os.path.basename(source.strip(os.sep))
     shutil.make_archive(name, format, archive_from, archive_to)
     shutil.move('%s.%s' % (name, format), destination)
-    return destination
+    with open(destination, 'rb') as zip:
+        bytes_content = zip.read()
+    return bytes_content
