@@ -7,8 +7,8 @@ from typing import Any, Callable
 import FreeCADGui as Gui
 from PySide import QtGui
 
-from .get_default_parameters import get_default_parameters
-from .wind_turbine import WindTurbine
+from ..get_default_parameters import get_default_parameters
+from ..wind_turbine import WindTurbine
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 

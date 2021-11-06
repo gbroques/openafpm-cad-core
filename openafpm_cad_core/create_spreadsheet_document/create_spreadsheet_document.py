@@ -1,16 +1,17 @@
-import string
-from typing import Any, Dict, List
+from typing import List
 
 import FreeCAD as App
 from FreeCAD import Document
 
+from ..parameter_groups import (FurlingParameters, MagnafpmParameters,
+                                UserParameters)
 from .alternator_cells import alternator_cells
 from .cell import Cell, Style
 from .h_shape_cells import h_shape_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
-from .parameter_groups import (FurlingParameters, MagnafpmParameters,
-                               UserParameters)
+from .parameters_by_key_to_cells import parameters_by_key_to_cells
+from .populate_spreadsheet import populate_spreadsheet
 from .star_shape_cells import star_shape_cells
 from .t_shape_cells import t_shape_cells
 from .tail_cells import tail_cells
@@ -23,12 +24,11 @@ def create_spreadsheet_document(name: str,
                                 magnafpm_parameters: MagnafpmParameters,
                                 furling_parameters: FurlingParameters,
                                 user_parameters: UserParameters) -> Document:
-    parameters_by_key = {
+    cells = parameters_by_key_to_cells({
         'MagnAFPM': magnafpm_parameters,
         'OpenFurl': furling_parameters,
         'User': user_parameters,
-    }
-    cells = _build_cells(parameters_by_key)
+    })
 
     static_cells = _get_static_cells()
     cells.extend(static_cells)
@@ -54,108 +54,12 @@ def create_spreadsheet_document(name: str,
     return document
 
 
-def _add_spreadsheet(document: Document, name: str, cells: List[List[Cell]]) -> None:
+def _add_spreadsheet(document: Document,
+                     name: str,
+                     cells: List[List[Cell]]) -> None:
     sheet = document.addObject(
         'Spreadsheet::Sheet', name)
-    _populate_spreadsheet_with_cells(sheet, cells)
-
-
-def _build_cells(parameters_by_key: Dict[str, Dict[str, Any]]) -> List[List[Cell]]:
-    cells = []
-    for key, parameters in parameters_by_key.items():
-        cells.append([Cell(key, styles=[Style.UNDERLINE])])
-        cells.extend(_dict_to_cells(parameters))
-    return cells
-
-
-def _dict_to_cells(dictionary: Dict[str, Any]) -> List[List[Cell]]:
-    return [
-        [Cell(key), Cell(str(value), alias=key)]
-        for key, value in dictionary.items()
-    ]
-
-
-def _populate_spreadsheet_with_cells(spreadsheet, cells: List[List[Cell]]) -> None:
-    for row_index in range(len(cells)):
-        for col_index in range(len(cells[row_index])):
-            row_num = row_index + 1
-            col_num = col_index + 1
-            column = map_number_to_column(col_num)
-            cell_address = column + str(row_num)
-            cell = cells[row_index][col_index]
-            spreadsheet.set(cell_address, cell.content)
-            spreadsheet.setAlias(cell_address, cell.alias)
-            spreadsheet.setStyle(cell_address, cell.style)
-            spreadsheet.setAlignment(cell_address, cell.alignment)
-            spreadsheet.setBackground(cell_address, cell.background)
-            spreadsheet.setForeground(cell_address, cell.foreground)
-
-
-def map_number_to_column(number: int) -> str:
-    """
-    >>> map_number_to_column(1)
-    'A'
-
-    >>> map_number_to_column(2)
-    'B'
-
-    >>> map_number_to_column(26)
-    'Z'
-
-    >>> map_number_to_column(27)
-    'AA'
-
-    >>> map_number_to_column(28)
-    'AB'
-
-    >>> map_number_to_column(52)
-    'AZ'
-
-    >>> map_number_to_column(702)
-    'ZZ'
-    """
-    if number < 1:
-        raise ValueError('Number {} must be greater than 0.'.format(number))
-    num_letters = len(string.ascii_uppercase)
-    if number > num_letters:
-        first = map_number_to_column((number - 1) // num_letters)
-        second = map_number_to_column(number % num_letters)
-        return first + second
-    return string.ascii_uppercase[number - 1]
-
-
-def map_column_to_number(column: str) -> int:
-    """
-    >>> map_column_to_number('A')
-    1
-
-    >>> map_column_to_number('B')
-    2
-
-    >>> map_column_to_number('Z')
-    26
-
-    >>> map_column_to_number('AA')
-    27
-
-    >>> map_column_to_number('AB')
-    28
-
-    >>> map_column_to_number('AZ')
-    52
-
-    >>> map_column_to_number('ZZ')
-    702
-    """
-    sum = 0
-    for char in column:
-        if char not in string.ascii_uppercase:
-            raise ValueError(
-                'Column "{}" must only contain uppercase ASCII characters.'.format(column))
-        value = string.ascii_uppercase.find(char) + 1
-        num_letters = len(string.ascii_uppercase)
-        sum = sum * num_letters + value
-    return sum
+    populate_spreadsheet(sheet, cells)
 
 
 def _get_static_cells() -> List[List[Cell]]:
