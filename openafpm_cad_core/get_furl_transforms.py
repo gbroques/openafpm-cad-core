@@ -28,7 +28,7 @@ class Transform(TypedDict):
 def get_furl_transforms(root_document: Document) -> List[Transform]:
     root_document_path = Path(root_document.FileName)
     documents_path = root_document_path.parent
-    tail_document_path = documents_path.joinpath('Tail.FCStd')
+    tail_document_path = documents_path.joinpath('Tail', 'Tail.FCStd')
     tail_document = App.openDocument(str(tail_document_path))
     tail = find_object_by_label(tail_document, 'Tail')
     if len(tail.InList) == 0:
