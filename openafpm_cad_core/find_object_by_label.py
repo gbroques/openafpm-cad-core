@@ -10,7 +10,6 @@ def _with_error_exit(find_object_by_label: Callable[[str], object]) -> Callable[
         if result is None:
             Console.PrintError(
                 'No object with Label "{}" found in document. Check {}.FCStd.'.format(label, label))
-            sys.exit(1)
         return result
     return wrapped
 
