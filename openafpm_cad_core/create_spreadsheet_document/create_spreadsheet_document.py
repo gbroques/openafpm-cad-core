@@ -13,7 +13,6 @@ from .hub_cells import hub_cells
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
 from .populate_spreadsheet import populate_spreadsheet
 from .star_shape_cells import star_shape_cells
-from .t_shape_cells import t_shape_cells
 from .tail_cells import tail_cells
 from .yaw_bearing_cells import yaw_bearing_cells
 
@@ -44,7 +43,6 @@ def create_spreadsheet_document(name: str,
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'Hub', hub_cells)
     _add_spreadsheet(document, 'Alternator', alternator_cells)
-    _add_spreadsheet(document, 'TShape', t_shape_cells)
     _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape', star_shape_cells)
     _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)

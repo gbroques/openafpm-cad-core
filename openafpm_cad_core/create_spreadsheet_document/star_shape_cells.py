@@ -32,8 +32,8 @@ star_shape_cells: List[List[Cell]] = [
         Cell('B'), Cell('=2 * StatorHolesCircumradius * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
                         alias='B')
     ],
-    # 25 is the margin from the holes to the edge of the metal.
     [
+        # 25 is the margin from the holes to the edge of the metal.
         Cell('C'), Cell('=StatorHolesCircumradius - MetalLengthL + Holes + 25',
                         alias='C')
     ]

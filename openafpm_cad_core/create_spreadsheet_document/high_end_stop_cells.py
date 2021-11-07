@@ -150,21 +150,22 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='LargeYawBearingXOffset'),
     ],
     [
-        Cell('TShape', styles=[Style.UNDERLINE])
+        Cell('T Shape', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('X'), Cell('a')
+        Cell('X'), Cell('TShapeTwoHoleEndBracketLength (A)')
     ],
     [
-        Cell('=TShape.X', alias='X'),
-        Cell('=TShape.a', alias='a')
+        Cell('=Alternator.X', alias='X'),
+        Cell('=Alternator.TShapeTwoHoleEndBracketLength',
+             alias='TShapeTwoHoleEndBracketLength')
     ],
     [
         Cell('I'), Cell('k')
     ],
     [
-        Cell('=TShape.I', alias='I'),
-        Cell('=TShape.k', alias='k')
+        Cell('=Alternator.I', alias='I'),
+        Cell('=Alternator.k', alias='k')
     ],
     # Static
     # ------
@@ -213,7 +214,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=-FrameZ - YawPipeRadius - k + MetalLengthL - MetalThicknessL',
              alias='SmallYawBearingX'),
-        Cell('=(-a / 2 + FlatMetalThickness + Margin * 2) * -1',
+        Cell('=(-TShapeTwoHoleEndBracketLength / 2 + FlatMetalThickness + Margin * 2) * -1',
              alias='SmallYawBearingY'),
         Cell('=-X - YawPipeRadius * 2',
              alias='SmallYawBearingZ'),
@@ -305,7 +306,7 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('SmallVerticalDistanceFromCenter'),
-        Cell('=a / 2 - Margin * 2',
+        Cell('=TShapeTwoHoleEndBracketLength / 2 - Margin * 2',
              alias='SmallVerticalDistanceFromCenter')
     ],
     [

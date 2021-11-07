@@ -71,9 +71,10 @@ h_shape_cells: List[List[Cell]] = [
                         alias='G')
     ],
     [
+        # To make the frame square.
         Cell('H'), Cell('=Inradius * 2 - MetalLengthL',
                         alias='H')
-    ],  # To make the frame square.
+    ],
     [
         Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',
                          alias='MM')
