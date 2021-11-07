@@ -129,7 +129,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('StarShapeChannelSectionHeight')
     ],
     [
-        Cell('=HShape.TopAngle',
+        Cell('=YawBearing.TopAngle',
              alias='TopAngle'),
         Cell('=Alternator.H',
              alias='HShapeChannelSectionHeight'),
@@ -142,11 +142,11 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('LargeYawBearingXOffset')
     ],
     [
-        Cell('=HShape.MM',
+        Cell('=YawBearing.MM',
              alias='Width'),
         Cell('=Spreadsheet.Offset',
              alias='Offset'),
-        Cell('=HShape.LargeYawBearingXOffset',
+        Cell('=YawBearing.LargeYawBearingXOffset',
              alias='LargeYawBearingXOffset'),
     ],
     [

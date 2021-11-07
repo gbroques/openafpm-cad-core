@@ -42,7 +42,6 @@ def create_spreadsheet_document(name: str,
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'Hub', hub_cells)
     _add_spreadsheet(document, 'Alternator', alternator_cells)
-    _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
     _add_spreadsheet(document, 'HighEndStop', high_end_stop_cells)

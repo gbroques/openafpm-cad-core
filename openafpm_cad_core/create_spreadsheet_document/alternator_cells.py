@@ -168,10 +168,10 @@ alternator_cells: List[List[Cell]] = [
         Cell('=floor(DistanceBetweenRotorDisks % HexNutThickness / WasherThickness)',
              alias='NumberOfWashersBetweenRotorDisks')
     ],
-    # Yaw Bearing to Frame Junction for T Shape
-    # -----------------------------------------
+    # Yaw Bearing to Frame Junction (T Shape)
+    # ---------------------------------------
     [
-        Cell('Yaw Bearing to Frame Junction for T Shape',
+        Cell('Yaw Bearing to Frame Junction (T Shape)',
              styles=[Style.UNDERLINE])
     ],
     # The formula for I comes from solving a system of equations for I as a function of RotorDiskRadius.

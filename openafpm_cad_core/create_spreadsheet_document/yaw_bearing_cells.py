@@ -10,42 +10,66 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('Inputs', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('YawPipeRadius'), Cell('=Spreadsheet.YawPipeRadius',
-                                    alias='YawPipeRadius')
+        Cell('YawPipeRadius'),
+        Cell('FlatMetalThickness'),
+        Cell('MetalLengthL'),
     ],
     [
-        Cell('FlatMetalThickness'), Cell('=Spreadsheet.FlatMetalThickness',
-                                         alias='FlatMetalThickness')
+        Cell('=Spreadsheet.YawPipeRadius',
+             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.FlatMetalThickness',
+             alias='FlatMetalThickness'),
+        Cell('=Spreadsheet.MetalLengthL',
+             alias='MetalLengthL')
     ],
     [
-        Cell('MetalLengthL'), Cell('=Spreadsheet.MetalLengthL',
-                                   alias='MetalLengthL')
+        Cell('Offset'),
+        Cell('RotorDiskRadius'),
+        Cell('AlternatorTiltAngle')
     ],
     [
-        Cell('Offset'), Cell('=Spreadsheet.Offset',
-                             alias='Offset')
+        Cell('=Spreadsheet.Offset',
+             alias='Offset'),
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius'),
+        Cell('=Spreadsheet.AlternatorTiltAngle',
+             alias='AlternatorTiltAngle')
     ],
     [
-        Cell('Width'), Cell('=HShape.MM',
-                            alias='Width')
+        Cell('Extended Yaw Bearing (H & Star Shape)', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('L'), Cell('=HShape.L',
-                        alias='L')
+        # M is a reserved alias in FreeCAD.
+        Cell('MM (M)'),
+        Cell('TopAngle')
     ],
     [
-        Cell('LOffset'), Cell('=HShape.LOffset',
-                              alias='LOffset')
+        Cell('=RotorDiskRadius < 275 ? 100 : 115',
+             alias='MM'),
+        Cell('=45deg',
+             alias='TopAngle')
     ],
     [
-        Cell('TopAngle'), Cell('=HShape.TopAngle',
-                               alias='TopAngle')
+        Cell('LOffset'),
+        Cell('L'),
+        Cell('LargeYawBearingXOffset'),
+    ],
+    [
+        # Ensure Side piece (undeneath Top flat bar to stiffen it),
+        # reaches the Channel Section of the Alternator due to Alternator tilt angle.
+        # This shortens L, and we adjust the Yaw Bearing in the X direction to compensate for it.
+        Cell('=tan(AlternatorTiltAngle) * MM + cos(TopAngle) * FlatMetalThickness',
+             alias='LOffset'),
+        Cell('=YawPipeRadius + Offset / cos(TopAngle) + 0.5 * MM - LOffset',
+             alias='L'),
+        Cell('=LOffset * cos(TopAngle)',
+             alias='LargeYawBearingXOffset')
     ],
     [
         Cell('Side', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HalfWidth'), Cell('=Width / 2',
+        Cell('HalfWidth'), Cell('=MM / 2',
                                 alias='HalfWidth')
     ],
     [
@@ -73,7 +97,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('=sqrt(YawPipeRadius ^ 2 - VO ^ 2)',
              alias='SideX',
              horizontal_alignment=Alignment.RIGHT),
-        Cell('=-Width',
+        Cell('=-MM',
              alias='SideY',
              horizontal_alignment=Alignment.RIGHT),
         Cell('=-HalfWidth',
@@ -84,7 +108,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('AdjacentSide'), Cell('=Width / tan(TopAngle)',
+        Cell('AdjacentSide'), Cell('=MM / tan(TopAngle)',
                                    alias='AdjacentSide')
     ],
     [
