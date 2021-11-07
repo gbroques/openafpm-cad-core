@@ -42,12 +42,12 @@ def create_spreadsheet_document(name: str,
     document = App.newDocument(name)
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
+    _add_spreadsheet(document, 'Hub', hub_cells)
+    _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'TShape', t_shape_cells)
     _add_spreadsheet(document, 'HShape', h_shape_cells)
     _add_spreadsheet(document, 'StarShape', star_shape_cells)
-    _add_spreadsheet(document, 'Hub', hub_cells)
     _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
-    _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
     _add_spreadsheet(document, 'HighEndStop', high_end_stop_cells)
     document.recompute()
@@ -82,10 +82,6 @@ def _get_calculated_cells() -> List[List[Cell]]:
     return [
         [
             Cell('Calculated', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('ResineStatorOuterRadius'), Cell('=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
-                                                  alias='ResineStatorOuterRadius')
         ],
         [
             Cell('YawPipeScaleFactor'), Cell('=RotorDiskRadius < 187.5 ? 0.95 : 0.9',

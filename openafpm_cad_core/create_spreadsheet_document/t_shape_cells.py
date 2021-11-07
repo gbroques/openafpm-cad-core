@@ -32,7 +32,7 @@ t_shape_cells: List[List[Cell]] = [
                                    alias='MetalLengthL')
     ],
     [
-        Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
+        Cell('ResineStatorOuterRadius'), Cell('=Alternator.ResineStatorOuterRadius',
                                               alias='ResineStatorOuterRadius')
     ],
     [

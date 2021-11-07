@@ -25,23 +25,29 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('DiskThickness'),
-        Cell('MagnetThickness')
+        Cell('MagnetThickness'),
+        Cell('MagnetLength')
     ],
     [
         Cell('=Spreadsheet.DiskThickness',
              alias='DiskThickness'),
         Cell('=Spreadsheet.MagnetThickness',
-             alias='MagnetThickness')
+             alias='MagnetThickness'),
+        Cell('=Spreadsheet.MagnetLength',
+             alias='MagnetLength')
     ],
     [
         Cell('MetalLengthL'),
-        Cell('MetalThicknessL')
+        Cell('MetalThicknessL'),
+        Cell('CoilLegWidth')
     ],
     [
         Cell('=Spreadsheet.MetalLengthL',
              alias='MetalLengthL'),
         Cell('=Spreadsheet.MetalThicknessL',
-             alias='MetalThicknessL')
+             alias='MetalThicknessL'),
+        Cell('=Spreadsheet.CoilLegWidth',
+             alias='CoilLegWidth')
     ],
     [
         Cell('HexNutThickness'),
@@ -65,6 +71,16 @@ alternator_cells: List[List[Cell]] = [
              alias='MiddlePadThickness'),
         Cell('=Hub.FrameSidePadWidth',
              alias='FrameSidePadWidth')
+    ],
+    [
+        Cell('Stator', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('ResineStatorOuterRadius')
+    ],
+    [
+        Cell('=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
+             alias='ResineStatorOuterRadius'),
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE])

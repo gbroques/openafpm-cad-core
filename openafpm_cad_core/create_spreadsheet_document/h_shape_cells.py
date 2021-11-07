@@ -30,7 +30,7 @@ h_shape_cells: List[List[Cell]] = [
                                          alias='FlatMetalThickness')
     ],
     [
-        Cell('ResineStatorOuterRadius'), Cell('=Spreadsheet.ResineStatorOuterRadius',
+        Cell('ResineStatorOuterRadius'), Cell('=Alternator.ResineStatorOuterRadius',
                                               alias='ResineStatorOuterRadius')
     ],
     [
