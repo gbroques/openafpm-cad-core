@@ -32,8 +32,8 @@ t_shape_cells: List[List[Cell]] = [
                                    alias='MetalLengthL')
     ],
     [
-        Cell('ResineStatorOuterRadius'), Cell('=Alternator.ResineStatorOuterRadius',
-                                              alias='ResineStatorOuterRadius')
+        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
+                                              alias='StatorHolesCircumradius')
     ],
     [
         Cell('Holes'), Cell('=Spreadsheet.Holes',
@@ -114,20 +114,20 @@ t_shape_cells: List[List[Cell]] = [
     ],
     # 30 degrees because 360 / 3 = 120 - 90 = 30.
     # Divide by 3 for because the T Shape has 3 holes.
-    # cos(30) * ResineStatorOuterRadius = bottom of right triangle
+    # cos(30) * StatorHolesCircumradius = bottom of right triangle
     # * 2 to get both sides.
     # 40 = 2 * margin. margin is the distance from the hole to the edge of the metal.
     # Add the radius for holes on each side, + Spreadsheet.Holes * 2.
     [
         Cell('a'), Cell(
-            '=cos(30) * ResineStatorOuterRadius * 2 + 40 + Holes * 2',
+            '=cos(30) * StatorHolesCircumradius * 2 + 40 + Holes * 2',
             alias='a')
     ],
     # Total vertical distance of T Shape from bottom hole to two top holes.
     # This is the opposite, or vertical left side of the right triangle plus,
     # the stator resin cast radius.
     [
-        Cell('TShapeVerticalDistance'), Cell('=(sin(30) * ResineStatorOuterRadius) + ResineStatorOuterRadius',
+        Cell('TShapeVerticalDistance'), Cell('=(sin(30) * StatorHolesCircumradius) + StatorHolesCircumradius',
                                              alias='TShapeVerticalDistance')
     ],
     # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.

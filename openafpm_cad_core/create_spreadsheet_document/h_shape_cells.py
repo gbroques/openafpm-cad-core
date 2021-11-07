@@ -30,8 +30,8 @@ h_shape_cells: List[List[Cell]] = [
                                          alias='FlatMetalThickness')
     ],
     [
-        Cell('ResineStatorOuterRadius'), Cell('=Alternator.ResineStatorOuterRadius',
-                                              alias='ResineStatorOuterRadius')
+        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
+                                              alias='StatorHolesCircumradius')
     ],
     [
         Cell('AlternatorTiltAngle'), Cell('=Spreadsheet.AlternatorTiltAngle',
@@ -50,7 +50,7 @@ h_shape_cells: List[List[Cell]] = [
                             alias='Theta')
     ],
     [
-        Cell('Inradius'), Cell('=cos(Theta) * ResineStatorOuterRadius',
+        Cell('Inradius'), Cell('=cos(Theta) * StatorHolesCircumradius',
                                alias='Inradius')
     ],
     [
@@ -58,7 +58,7 @@ h_shape_cells: List[List[Cell]] = [
                                                             alias='IsoscelesRightTriangleHypotenuseRatio')
     ],
     [
-        Cell('HorizontalDistanceBetweenHoles'), Cell('=ResineStatorOuterRadius * IsoscelesRightTriangleHypotenuseRatio',
+        Cell('HorizontalDistanceBetweenHoles'), Cell('=StatorHolesCircumradius * IsoscelesRightTriangleHypotenuseRatio',
                                                      alias='HorizontalDistanceBetweenHoles')
     ],
     # Distance from hole to outside edge of frame.

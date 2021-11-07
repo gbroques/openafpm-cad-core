@@ -10,8 +10,8 @@ star_shape_cells: List[List[Cell]] = [
         Cell('Inputs', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HexagonalStatorOuterCircumradius'), Cell('=Alternator.HexagonalStatorOuterCircumradius',
-                                                       alias='HexagonalStatorOuterCircumradius')
+        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
+                                              alias='StatorHolesCircumradius')
     ],
     [
         Cell('Holes'), Cell('=Spreadsheet.Holes',
@@ -41,20 +41,16 @@ star_shape_cells: List[List[Cell]] = [
         Cell('Frame', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('StatorHolesCircle'), Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (HexagonalStatorOuterCircumradius - (RotorDiskRadius + CoilLegWidth))',
-                                        alias='StatorHolesCircle')
-    ],
-    [
-        Cell('a'), Cell('=2 * sin(30) * StatorHolesCircle + 2 * (25 + Holes)',
+        Cell('a'), Cell('=2 * sin(30) * StatorHolesCircumradius + 2 * (25 + Holes)',
                         alias='a')
     ],
     [
-        Cell('B'), Cell('=2 * StatorHolesCircle * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
+        Cell('B'), Cell('=2 * StatorHolesCircumradius * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
                         alias='B')
     ],
     # 25 is the margin from the holes to the edge of the metal.
     [
-        Cell('C'), Cell('=StatorHolesCircle - MetalLengthL + Holes + 25',
+        Cell('C'), Cell('=StatorHolesCircumradius - MetalLengthL + Holes + 25',
                         alias='C')
     ]
 ]
