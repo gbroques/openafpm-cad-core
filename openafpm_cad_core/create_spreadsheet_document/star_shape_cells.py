@@ -10,32 +10,16 @@ star_shape_cells: List[List[Cell]] = [
         Cell('Inputs', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
-                                              alias='StatorHolesCircumradius')
-    ],
-    [
         Cell('Holes'), Cell('=Spreadsheet.Holes',
                             alias='Holes')
-    ],
-    [
-        Cell('Offset'), Cell('=Spreadsheet.Offset',
-                             alias='Offset')
-    ],
-    [
-        Cell('YawPipeRadius'), Cell('=Spreadsheet.YawPipeRadius',
-                                    alias='YawPipeRadius')
     ],
     [
         Cell('MetalLengthL'), Cell('=Spreadsheet.MetalLengthL',
                                    alias='MetalLengthL')
     ],
     [
-        Cell('RotorDiskRadius'), Cell('=Spreadsheet.RotorDiskRadius',
-                                      alias='RotorDiskRadius')
-    ],
-    [
-        Cell('CoilLegWidth'), Cell('=Spreadsheet.CoilLegWidth',
-                                   alias='CoilLegWidth')
+        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
+                                              alias='StatorHolesCircumradius')
     ],
     [
         Cell('Frame', styles=[Style.UNDERLINE])
