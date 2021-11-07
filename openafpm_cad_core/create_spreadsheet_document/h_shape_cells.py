@@ -22,58 +22,12 @@ h_shape_cells: List[List[Cell]] = [
                                     alias='YawPipeRadius')
     ],
     [
-        Cell('MetalLengthL'), Cell('=Spreadsheet.MetalLengthL',
-                                   alias='MetalLengthL')
-    ],
-    [
         Cell('FlatMetalThickness'), Cell('=Spreadsheet.FlatMetalThickness',
                                          alias='FlatMetalThickness')
     ],
     [
-        Cell('StatorHolesCircumradius'), Cell('=Alternator.StatorHolesCircumradius',
-                                              alias='StatorHolesCircumradius')
-    ],
-    [
         Cell('AlternatorTiltAngle'), Cell('=Spreadsheet.AlternatorTiltAngle',
                                           alias='AlternatorTiltAngle')
-    ],
-    [
-        Cell('Frame', styles=[Style.UNDERLINE])
-    ],
-    # https://calcresource.com/geom-rectangle.html
-    [
-        Cell('CentralAngle'), Cell('=360 / 4',
-                                   alias='CentralAngle')
-    ],
-    [
-        Cell('Theta'), Cell('=CentralAngle / 2',
-                            alias='Theta')
-    ],
-    [
-        Cell('Inradius'), Cell('=cos(Theta) * StatorHolesCircumradius',
-                               alias='Inradius')
-    ],
-    [
-        Cell('IsoscelesRightTriangleHypotenuseRatio'), Cell('=1 / cos(Theta)',
-                                                            alias='IsoscelesRightTriangleHypotenuseRatio')
-    ],
-    [
-        Cell('HorizontalDistanceBetweenHoles'), Cell('=StatorHolesCircumradius * IsoscelesRightTriangleHypotenuseRatio',
-                                                     alias='HorizontalDistanceBetweenHoles')
-    ],
-    # Distance from hole to outside edge of frame.
-    [
-        Cell('HoleMargin'), Cell('20',
-                                 alias='HoleMargin')
-    ],
-    [
-        Cell('G'), Cell('=HorizontalDistanceBetweenHoles + HoleMargin * 2',
-                        alias='G')
-    ],
-    [
-        # To make the frame square.
-        Cell('H'), Cell('=Inradius * 2 - MetalLengthL',
-                        alias='H')
     ],
     [
         Cell('MM'), Cell('=RotorDiskRadius < 275 ? 100 : 115',

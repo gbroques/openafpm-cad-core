@@ -131,7 +131,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=HShape.TopAngle',
              alias='TopAngle'),
-        Cell('=HShape.H',
+        Cell('=Alternator.H',
              alias='HShapeChannelSectionHeight'),
         Cell('=Alternator.B',
              alias='StarShapeChannelSectionHeight')
