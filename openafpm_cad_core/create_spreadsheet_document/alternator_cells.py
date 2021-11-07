@@ -76,11 +76,15 @@ alternator_cells: List[List[Cell]] = [
         Cell('Stator', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('ResineStatorOuterRadius')
+        # TODO: Rename to StatorHolesCircumradius
+        Cell('ResineStatorOuterRadius'),
+        Cell('HexagonalStatorOuterCircumradius')
     ],
     [
         Cell('=RotorDiskRadius < 275 ? (RotorDiskRadius + CoilLegWidth + 20) : (RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
              alias='ResineStatorOuterRadius'),
+        Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
+             alias='HexagonalStatorOuterCircumradius')
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE])

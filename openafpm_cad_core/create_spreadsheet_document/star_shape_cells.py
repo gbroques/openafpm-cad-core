@@ -10,8 +10,8 @@ star_shape_cells: List[List[Cell]] = [
         Cell('Inputs', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('ResineStatorOuterRadius'), Cell('=Alternator.ResineStatorOuterRadius',
-                                              alias='ResineStatorOuterRadius')
+        Cell('HexagonalStatorOuterCircumradius'), Cell('=Alternator.HexagonalStatorOuterCircumradius',
+                                                       alias='HexagonalStatorOuterCircumradius')
     ],
     [
         Cell('Holes'), Cell('=Spreadsheet.Holes',
@@ -41,7 +41,7 @@ star_shape_cells: List[List[Cell]] = [
         Cell('Frame', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('StatorHolesCircle'), Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (ResineStatorOuterRadius - (RotorDiskRadius + CoilLegWidth))',
+        Cell('StatorHolesCircle'), Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (HexagonalStatorOuterCircumradius - (RotorDiskRadius + CoilLegWidth))',
                                         alias='StatorHolesCircle')
     ],
     [
