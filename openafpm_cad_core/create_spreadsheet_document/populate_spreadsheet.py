@@ -1,4 +1,3 @@
-
 from typing import List
 
 from .cell import Cell
@@ -8,6 +7,15 @@ __all__ = ['populate_spreadsheet']
 
 
 def populate_spreadsheet(spreadsheet: object, cells: List[List[Cell]]) -> None:
+    """
+    Populates a spreadsheet object with the given cells.
+
+    ::
+
+        spreadsheet = document.addObject('Spreadsheet::Sheet', name)
+        populate_spreadsheet(spreadsheet, cells)
+
+    """
     for row_index in range(len(cells)):
         for col_index in range(len(cells[row_index])):
             row_num = row_index + 1
