@@ -76,13 +76,23 @@ alternator_cells: List[List[Cell]] = [
         Cell('Stator', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HexagonalStatorOuterCircumradius')
+        # The radius of the circle that circumscribes the hexagon
+        # of the stator resin cast for Star Shape.
+        Cell('HexagonalStatorOuterCircumradius'),
+        # Radius of the inner-most hole of stator.
+        Cell('StatorInnerHoleRadius')
     ],
     [
         Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
-             alias='HexagonalStatorOuterCircumradius')
+             alias='HexagonalStatorOuterCircumradius'),
+        Cell('=RotorDiskRadius - MagnetLength - CoilLegWidth',
+             alias='StatorInnerHoleRadius')
     ],
     [
+        # "Holes circumradius" is the radius of the circle that
+        # goes through the mounting holes of the stator.
+        # This is used in the Frame later to ensure
+        # the Frame holes and Stator holes align. 
         Cell('CircularStatorHolesCircumradius'),
         Cell('HexagonalStatorHolesCircumradius'),
         Cell('StatorHolesCircumradius')
