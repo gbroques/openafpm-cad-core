@@ -343,14 +343,14 @@ high_end_stop_cells: List[List[Cell]] = [
                                 '0'),
                             axis=('0', '0', '1'),
                             angle='=AlternatorTiltAngle'),
-    *create_placement_cells(name='TailHingeAssemblyLink',
+    *create_placement_cells(name='TailAssemblyLink',
                             base=(
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeX : LargeTailHingeX',
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeY : LargeTailHingeY',
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeZ : LargeTailHingeZ'),
                             axis=('0.58', '0.58', '0.58'),
                             angle='=240deg'),
-    *create_placement_cells(name='TailHingeAssembly',
+    *create_placement_cells(name='TailAssembly',
                             base=(
                                 '=Chamfer * cos(180 - HorizontalPlaneAngle)',
                                 '=Chamfer * sin(-(180 - HorizontalPlaneAngle))',
@@ -425,7 +425,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='TailFurlBase'),
         Cell('=create(<<placement>>; TailFurlBase; FurlRotation)',
              alias='TailFurlPlacement'),
-        Cell('=TailHingeAssemblyLinkPlacement * TailHingeAssemblyPlacement * TailFurlPlacement * TailPlacement * TailBoomVaneAssemblyPlacement',
+        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * TailFurlPlacement * TailPlacement * TailBoomVaneAssemblyPlacement',
              alias='FurledHighEndStopGlobalParentPlacement')
     ],
     [
