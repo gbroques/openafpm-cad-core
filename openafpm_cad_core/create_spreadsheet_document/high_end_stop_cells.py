@@ -81,7 +81,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius'),
-        Cell('=Spreadsheet.YawBearingTailHingeJunctionChamfer',
+        Cell('=Tail.YawBearingTailHingeJunctionChamfer',
              alias='Chamfer')
     ],
     [
@@ -105,7 +105,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=Spreadsheet.RotorDiskRadius',
              alias='RotorDiskRadius'),
-        Cell('=Spreadsheet.YawPipeLength',
+        Cell('=Tail.YawPipeLength',
              alias='YawPipeLength'),
         Cell('=Spreadsheet.YawPipeRadius',
              alias='YawPipeRadius')
