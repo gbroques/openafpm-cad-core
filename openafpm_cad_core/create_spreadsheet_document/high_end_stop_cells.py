@@ -81,7 +81,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius'),
-        Cell('=Tail.YawBearingTailHingeJunctionChamfer',
+        Cell('=Tail.TailHingeJunctionChamfer',
              alias='Chamfer')
     ],
     [

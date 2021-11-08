@@ -49,8 +49,8 @@ tail_cells: List[List[Cell]] = [
         Cell('Static', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('YawBearingTailHingeJunctionChamfer'), Cell('15',
-                                                         alias='YawBearingTailHingeJunctionChamfer')
+        Cell('TailHingeJunctionChamfer'), Cell('15',
+                                               alias='TailHingeJunctionChamfer')
     ],
     # Calculated
     # ----------
@@ -78,25 +78,25 @@ tail_cells: List[List[Cell]] = [
                                            alias='HingeInnerBodyLength')
     ],
     [
-        Cell('YawBearingTailHingeJunctionHeight'), Cell('=HingeInnerBodyLength / 3',
-                                                        alias='YawBearingTailHingeJunctionHeight')
+        Cell('TailHingeJunctionHeight'), Cell('=HingeInnerBodyLength / 3',
+                                              alias='TailHingeJunctionHeight')
     ],
     # TODO: Why - 10 - 10?
     [
-        Cell('HingeOuterBodyLength'), Cell('=HingeInnerBodyLength - YawBearingTailHingeJunctionHeight - 10 - 10',
+        Cell('HingeOuterBodyLength'), Cell('=HingeInnerBodyLength - TailHingeJunctionHeight - 10 - 10',
                                            alias='HingeOuterBodyLength')
     ],
     [
-        Cell('hypotenuse'), Cell('=(YawBearingTailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
+        Cell('hypotenuse'), Cell('=(TailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
                                  alias='hypotenuse')
     ],
     [
-        Cell('YawBearingTailHingeJunctionInnerWidth'), Cell('=sqrt(hypotenuse ^ 2 - (YawBearingTailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
-                                                            alias='YawBearingTailHingeJunctionInnerWidth')
+        Cell('TailHingeJunctionInnerWidth'), Cell('=sqrt(hypotenuse ^ 2 - (TailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
+                                                  alias='TailHingeJunctionInnerWidth')
     ],
     [
-        Cell('YawBearingTailHingeJunctionFullWidth'), Cell('=YawPipeRadius + HingeInnerBodyOuterRadius + YawBearingTailHingeJunctionInnerWidth',
-                                                           alias='YawBearingTailHingeJunctionFullWidth')
+        Cell('TailHingeJunctionFullWidth'), Cell('=YawPipeRadius + HingeInnerBodyOuterRadius + TailHingeJunctionInnerWidth',
+                                                 alias='TailHingeJunctionFullWidth')
     ],
     # Vane
     # ----
@@ -125,11 +125,11 @@ tail_cells: List[List[Cell]] = [
                                       alias='XRotationOffset')
     ],
     [
-        Cell('TrigOffset'), Cell('=tan(VerticalPlaneAngle) * (YawBearingTailHingeJunctionHeight - FlatMetalThickness) + XRotationOffset',
+        Cell('TrigOffset'), Cell('=tan(VerticalPlaneAngle) * (TailHingeJunctionHeight - FlatMetalThickness) + XRotationOffset',
                                  alias='TrigOffset')
     ],
     [
-        Cell('TailHingePipeX'), Cell('=HingeInnerBodyOuterRadius + YawPipeRadius - YawBearingTailHingeJunctionChamfer + YawBearingTailHingeJunctionInnerWidth - TrigOffset',
+        Cell('TailHingePipeX'), Cell('=HingeInnerBodyOuterRadius + YawPipeRadius - TailHingeJunctionChamfer + TailHingeJunctionInnerWidth - TrigOffset',
                                      alias='TailHingePipeX')
     ],
     [
@@ -204,7 +204,7 @@ tail_cells: List[List[Cell]] = [
                          alias='h1')
     ],
     [
-        Cell('h2'), Cell('=YawBearingTailHingeJunctionHeight / cos(VerticalPlaneAngle)',
+        Cell('h2'), Cell('=TailHingeJunctionHeight / cos(VerticalPlaneAngle)',
                          alias='h2')
     ],
     [
@@ -220,7 +220,7 @@ tail_cells: List[List[Cell]] = [
                                          alias='HorizontalEstimate')
     ],
     [
-        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=YawBearingTailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
+        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=TailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
                                                              alias='HorizontalDistanceBetweenOuterYawPipes')
     ],
     [
