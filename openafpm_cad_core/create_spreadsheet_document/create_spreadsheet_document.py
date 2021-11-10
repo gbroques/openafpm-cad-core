@@ -59,8 +59,9 @@ def _get_static_cells() -> List[List[Cell]]:
             Cell('Static', styles=[Style.UNDERLINE])
         ],
         [
-            Cell('AlternatorTiltAngle'), Cell('=4deg',
-                                              alias='AlternatorTiltAngle')
+            Cell('AlternatorTiltAngle'),
+            Cell('=4deg', alias='AlternatorTiltAngle'),
+            Cell('See right-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".')
         ],
     ]
 

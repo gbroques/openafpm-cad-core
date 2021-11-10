@@ -39,7 +39,9 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('Extended Yaw Bearing (H & Star Shape)', styles=[Style.UNDERLINE])
     ],
     [
+        # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         # M is a reserved alias in FreeCAD.
+        # TODO: Use standard prefix for this. Such as dimM for "dimension M"?
         Cell('MM (M)'),
         Cell('TopAngle')
     ],
@@ -51,6 +53,7 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('LOffset'),
+        # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         Cell('L'),
         Cell('LargeYawBearingXOffset'),
     ],
