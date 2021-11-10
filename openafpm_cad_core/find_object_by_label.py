@@ -18,6 +18,6 @@ def _with_logging(find_object_by_label: Callable[[str], object]) -> Callable[[st
         result = find_object_by_label(document, label)
         if result is None:
             Console.PrintError(
-                'No object with Label "{}" found in document. Check {}.FCStd.'.format(label, label))
+                'No object with Label "{}" found in document. Check {}.FCStd.'.format(label, document.Name))
         return result
     return wrapped
