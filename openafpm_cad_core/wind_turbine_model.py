@@ -76,5 +76,5 @@ def keep_unresolved(obj: object, path: List[object]) -> bool:
         'YawBearing',
         'OuterTailHinge',
         'TailHinge',
-        'TailBoom'
+        'TopTailVaneBracket'
     }
