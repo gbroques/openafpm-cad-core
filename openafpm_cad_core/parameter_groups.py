@@ -135,6 +135,8 @@ class FurlingParameters(TypedDict):
     For H Shape, see "Mounting the alternator to the yaw bearing" section on page 27 of "A Wind Turbine Recipe Book (2014)".
 
     Notably, the diagram on the left-hand side of page 29.
+
+    Further discussion can be found in "The tail" section on page 30.
     """
 
 
