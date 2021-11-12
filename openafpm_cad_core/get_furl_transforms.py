@@ -39,11 +39,11 @@ def get_furl_transforms(root_document: Document) -> List[Transform]:
             f'{tail.Label} has more than 1 parent. Choosing 1st.\n')
     tail_parent = tail.InList[0]
     parent_placement = calculate_global_placement(tail_parent)
-    outer_tail_hinge = find_object_by_label(tail_document, 'OuterTailHinge')
+    hinge_outer = find_object_by_label(tail_document, 'Hinge_Outer')
     return [
         placement_to_dict('parent', parent_placement),
         placement_to_dict('tail', tail.Placement),
-        placement_to_dict('hinge', outer_tail_hinge.Placement)
+        placement_to_dict('hinge', hinge_outer.Placement)
     ]
 
 
