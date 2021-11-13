@@ -545,5 +545,37 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('SafetyCatchY'),
         Cell('=.SafetyCatchPosition.y + SafetyCatchYPadding',
              alias='SafetyCatchY')
+    ],
+    # HighEndStopZ
+    # ------------
+    [
+        Cell('HighEndStopZ', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('InverseFurledHighEndStopGlobalParentPlacement'),
+        Cell('InverseHighEndStopPointWhereZEqualsZgiven'),
+        Cell('HalfHighEndStopLength')
+    ],
+    [
+        Cell('=minvert(.FurledHighEndStopGlobalParentPlacement)',
+             alias='InverseFurledHighEndStopGlobalParentPlacement'),
+        Cell('=InverseFurledHighEndStopGlobalParentPlacement * HighEndStopPointWhereZEqualsZgiven',
+             alias='InverseHighEndStopPointWhereZEqualsZgiven'),
+        Cell('=HighEndStopLength / 2',
+             alias='HalfHighEndStopLength')
+    ],
+    [
+        Cell('YawBearingContactZ'),
+        # In Tail_Assembly_BoomVane local coordinate space.
+        Cell('HighEndStopZ')
+    ],
+    [
+        Cell('=.InverseHighEndStopPointWhereZEqualsZgiven.z',
+             alias='YawBearingContactZ'),
+        # Adjust the Z position of the high end stop to center
+        # it with the contact point of the yaw bearing for Star Shape.
+        # TODO: This should be reconciled with OuterTailHingeHighEndStopZ
+        Cell('=YawBearingContactZ > HalfHighEndStopLength ? YawBearingContactZ - HalfHighEndStopLength : 0',
+             alias='HighEndStopZ')
     ]
 ]
