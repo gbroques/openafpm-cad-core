@@ -177,7 +177,7 @@ class UserParameters(TypedDict):
     """Radius of hub holes."""
 
     HorizontalPlaneAngle: float
-    """Angle of the alernator frame from a horizontal plane when welding the tail hinge.
+    """Angle of the alternator frame from a horizontal plane when welding the tail hinge.
     
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
