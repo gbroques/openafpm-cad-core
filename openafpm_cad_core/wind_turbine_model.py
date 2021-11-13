@@ -59,14 +59,14 @@ def to_obj(root_document: Document) -> str:
 
 def object_name_getter(obj: object, path: List[object]) -> str:
     rotor_disk_labels = {
-        'RotorDisk',
-        'RotorResinCast',
-        'Magnets'
+        'Rotor_Disk',
+        'Rotor_ResinCast',
+        'Rotor_Magnets'
     }
     if obj.Label in rotor_disk_labels:
-        is_front = any([o.Label.startswith('Front') for o in path])
-        label_prefix = 'Front' if is_front else 'Back'
-        return label_prefix + obj.Label
+        is_front = any([o.Label.endswith('Front') for o in path])
+        label_suffix = 'Front' if is_front else 'Back'
+        return obj.Label + '_' + label_suffix
     return obj.Label
 
 
@@ -74,7 +74,7 @@ def keep_unresolved(obj: object, path: List[object]) -> bool:
     return obj.Label in {
         'Frame',
         'YawBearing',
-        'OuterTailHinge',
-        'TailHinge',
-        'TopTailVaneBracket'
+        'Tail_Hinge_Outer',
+        'Tail_Hinge_Inner',
+        'Vane_Bracket_Top'
     }
