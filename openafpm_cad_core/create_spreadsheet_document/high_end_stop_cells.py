@@ -464,7 +464,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('Zgiven'),
         Cell('T'),
-        Cell('HighEndStopPointWhereZIsZero'),
+        Cell('HighEndStopPointWhereZEqualsZgiven'),
         Cell('HighEndStopWidth', styles=[Style.BOLD, Style.UNDERLINE]),
     ],
     [
@@ -475,8 +475,8 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=(Zgiven - .OuterTailHingeHighEndStopFurledBase.z) / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
              alias='T'),
         Cell('=.OuterTailHingeHighEndStopFurledBase + T * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
-             alias='HighEndStopPointWhereZIsZero'),
-        Cell('=abs(.HighEndStopPointWhereZIsZero.x) - YawPipeRadius + YawBearingX',
+             alias='HighEndStopPointWhereZEqualsZgiven'),
+        Cell('=abs(.HighEndStopPointWhereZEqualsZgiven.x) - YawPipeRadius + YawBearingX',
              alias='HighEndStopWidth')  # 57.12 desired for T Shape
     ],
     # SafetyCatch
@@ -536,12 +536,14 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='SafetyCatchPosition')
     ],
     [
+        Cell('SafetyCatchYPadding'),
+        Cell('2', alias='SafetyCatchYPadding')
+    ],
+    [
         # Y position of the safety catch
-        # in coordinate system relative to
-        # yaw bearing centered at origin.
-        # +3 for a little extra clearance.
+        # Plus padding for a little extra clearance.
         Cell('SafetyCatchY'),
-        Cell('=.SafetyCatchPosition.y + 3',
+        Cell('=.SafetyCatchPosition.y + SafetyCatchYPadding',
              alias='SafetyCatchY')
     ]
 ]
