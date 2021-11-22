@@ -92,6 +92,12 @@ class FurlingParameters(TypedDict):
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
+    HorizontalPlaneAngle: float
+    """Angle of the alternator frame from a horizontal plane when welding the tail hinge.
+    
+    See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
+    """
+
     BoomLength: float  # BoomPipeLength
     """Length of tail boom pipe.
     
@@ -175,9 +181,3 @@ class UserParameters(TypedDict):
 
     HubHoles: float  # HubHoleRadius
     """Radius of hub holes."""
-
-    HorizontalPlaneAngle: float
-    """Angle of the alternator frame from a horizontal plane when welding the tail hinge.
-    
-    See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
-    """
