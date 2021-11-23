@@ -64,6 +64,16 @@ def concatenate_cells(a: List[List[Cell]],
     return cells
 
 
+def calculate_y_of_ellipse(point_on_plane: Tuple[str, str, str],
+                           angle: str,
+                           alias: str) -> Cell:
+    Px, Py, Pz = point_on_plane
+    v = angle
+    # Assumes Vn, Cx, Cz, and r are already declared.
+    return Cell(f'=({Px} * .Vn.x + {Py} * .Vn.y + {Pz} * .Vn.z - Cx * .Vn.x - Cz * .Vn.z - .Vn.x * r * cos({v}) - .Vn.z * r * sin({v})) / .Vn.y',
+                alias=alias)
+
+
 #: Cells defining the High End Stop spreadsheet.
 high_end_stop_cells: List[List[Cell]] = [
     # Inputs
@@ -173,12 +183,12 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('HighEndStopLength'),
+        Cell('HighEndStopPlaneLength'),
         Cell('Margin')
     ],
     [
-        Cell('110',
-             alias='HighEndStopLength'),
+        Cell('110',  # The exact length of this isn't very important.
+             alias='HighEndStopPlaneLength'),
         Cell('20', alias='Margin')
     ],
     [
@@ -396,7 +406,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='OuterTailHingeHighEndStopOppositeEndX'),
         Cell('=OuterTailHingeHighEndStopY',
              alias='OuterTailHingeHighEndStopOppositeEndY'),
-        Cell('=HighEndStopLength',
+        Cell('=HighEndStopPlaneLength',
              alias='OuterTailHingeHighEndStopOppositeEndZ'),
     ],
     [
@@ -492,29 +502,88 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('SafetyCatchLength'),
         Cell('=SafetyCatchWidth * 1.33',
-             alias='SafetyCatchLength')
+             alias='SafetyCatchLength'),
+        Cell(),
+        # This note applies to entire right column, used to calculate LowerPointWhereZEqualsZgiven.
+        Cell('Used in High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
+             styles=[Style.ITALIC])
     ],
+    # ASCII drawings of high end stop planes for understanding below aliases (e.g. UpperBottomLeftCorner).
+    #
+    # Upper plane farthest from ground, seen from top view of turbine.
+    # Lower plane closest to the ground, seen from bottom view of turbine.
+    # ::
+    #
+    #         Upper
+    #     - - - - - - -
+    #     | \         | \\
+    #     |   \       |   \\
+    #     - - - - - - -     \\
+    #       \     \     \     \\
+    #         \     - - - - - - -
+    #           \   |       \   |
+    #             \ |         \ |
+    #               - - - - - - -
+    #                   Lower
+    #
+    # 3D ASCII Drawing Source: https://1j01.github.io/ascii-hypercube/
+    #
+    # Both Lower and Upper planes have Top, Left, Right, and Bottom sides.
+    # Top is farthest from the hinge, and closest to the vane.
+    # Bottom is closest to the hinge, and farthest from the vane.
+    # Left is closest to the yaw bearing, and farthest from boom (in furled position).
+    # Right is farthest from the yaw bearing, and closest to the boom (in furled position).
+    #
+    # ::
+    #
+    #              Top
+    #          ┌─────────┐          ^
+    #          │         │          |
+    #          │         │          |
+    #          │         │          |
+    #          │         │          |
+    #     Left │         │ Right    |  HighEndStopPlaneLength
+    #          │         │          |
+    #          │         │          |
+    #          │         │          |
+    #          │         │          |
+    #          └─────────┘          v
+    #            Bottom
+    #
+    # 2D ASCII Drawing Source: https://asciiflow.com/legacy/
     [
         # of High End Stop
         Cell('UpperBottomLeftCorner'),
         Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
-             alias='UpperBottomLeftCorner')
+             alias='UpperBottomLeftCorner'),
+        Cell('LowerBottomLeftCorner'),
+        Cell('=create(<<vector>>; FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
+             alias='LowerBottomLeftCorner')
     ],
     [
         Cell('UpperBottomLeftCornerGlobal'),
         Cell('=FurledHighEndStopGlobalParentPlacement * UpperBottomLeftCorner',
-             alias='UpperBottomLeftCornerGlobal')
+             alias='UpperBottomLeftCornerGlobal'),
+        Cell('UpperBottomLeftCornerGlobal'),
+        Cell('=FurledHighEndStopGlobalParentPlacement * LowerBottomLeftCorner',
+             alias='LowerBottomLeftCornerGlobal')
     ],
     [
         # of High End Stop
         Cell('UpperTopLeftCorner'),
-        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopLength)',
-             alias='UpperTopLeftCorner')
+        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopPlaneLength)',
+             alias='UpperTopLeftCorner'),
+        Cell('LowerTopLeftCorner'),
+        Cell('=create(<<vector>>; FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopPlaneLength)',
+             alias='LowerTopLeftCorner')
     ],
     [
         Cell('UpperTopLeftCornerGlobal'),
         Cell('=FurledHighEndStopGlobalParentPlacement * UpperTopLeftCorner',
-             alias='UpperTopLeftCornerGlobal')
+             alias='UpperTopLeftCornerGlobal'),
+        Cell('UpperTopLeftCornerGlobal'),
+        Cell('=FurledHighEndStopGlobalParentPlacement * LowerTopLeftCorner',
+             alias='LowerTopLeftCornerGlobal')
     ],
     [
         # Zgiven
@@ -528,12 +597,18 @@ high_end_stop_cells: List[List[Cell]] = [
         # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
         Cell('Tupper'),
         Cell('=(Zupper - .UpperBottomLeftCornerGlobal.z) / (.UpperTopLeftCornerGlobal.z - .UpperBottomLeftCornerGlobal.z)',
-             alias='Tupper')
+             alias='Tupper'),
+        Cell('Tlower'),
+        Cell('=(Zgiven - .LowerBottomLeftCornerGlobal.z) / (.LowerTopLeftCornerGlobal.z - .LowerBottomLeftCornerGlobal.z)',
+             alias='Tlower')
     ],
     [
         Cell('SafetyCatchPosition'),
         Cell('=.UpperBottomLeftCornerGlobal + Tupper * (UpperTopLeftCornerGlobal - .UpperBottomLeftCornerGlobal)',
-             alias='SafetyCatchPosition')
+             alias='SafetyCatchPosition'),
+        Cell('LowerPointWhereZEqualsZgiven'),
+        Cell('=.LowerBottomLeftCornerGlobal + Tlower * (.LowerTopLeftCornerGlobal - .LowerBottomLeftCornerGlobal)',
+             alias='LowerPointWhereZEqualsZgiven')
     ],
     [
         Cell('SafetyCatchYPadding'),
@@ -546,36 +621,158 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=.SafetyCatchPosition.y + SafetyCatchYPadding',
              alias='SafetyCatchY')
     ],
-    # HighEndStopZ
-    # ------------
+    # High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
+    # ------------------------------------------------------------------
+    # Calculate an ellipse to make the High End Stop fit the outer pipe of the Yaw Bearing.
     [
-        Cell('HighEndStopZ', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('InverseFurledHighEndStopGlobalParentPlacement'),
-        Cell('InverseHighEndStopPointWhereZEqualsZgiven'),
-        Cell('HalfHighEndStopLength')
+        Cell('InverseFurledHighEndStopGlobalParentPlacement')
     ],
     [
         Cell('=minvert(.FurledHighEndStopGlobalParentPlacement)',
-             alias='InverseFurledHighEndStopGlobalParentPlacement'),
-        Cell('=InverseFurledHighEndStopGlobalParentPlacement * HighEndStopPointWhereZEqualsZgiven',
-             alias='InverseHighEndStopPointWhereZEqualsZgiven'),
-        Cell('=HighEndStopLength / 2',
-             alias='HalfHighEndStopLength')
+             alias='InverseFurledHighEndStopGlobalParentPlacement')
     ],
     [
-        Cell('YawBearingContactZ'),
-        # In Tail_Assembly_BoomVane local coordinate space.
-        Cell('HighEndStopZ')
+        # Calculate two vectors, Va and Vb, on the High End Stop plane.
+        Cell('Va'), Cell('Vb')
     ],
     [
-        Cell('=.InverseHighEndStopPointWhereZEqualsZgiven.z',
-             alias='YawBearingContactZ'),
-        # Adjust the Z position of the high end stop to center
-        # it with the contact point of the yaw bearing for Star Shape.
-        # TODO: This should be reconciled with OuterTailHingeHighEndStopZ
-        Cell('=YawBearingContactZ > HalfHighEndStopLength ? YawBearingContactZ - HalfHighEndStopLength : 0',
-             alias='HighEndStopZ')
+        Cell('=OuterTailHingeHighEndStopOppositeEndFurledBase - OuterTailHingeHighEndStopFurledBase',
+             alias='Va'),
+        Cell('=LowerBottomLeftCornerGlobal - OuterTailHingeHighEndStopFurledBase',
+             alias='Vb')
+    ],
+    [
+        # Cross product Va and Vb to find vector perpendicular to the High End Stop plane, Vc.
+        # https://en.wikipedia.org/wiki/Cross_product
+        Cell('Vc'),
+        Cell('Va × Vb')
+    ],
+    [
+        Cell('=create(<<vector>>; .Va.y * .Vb.z - .Va.z * .Vb.y; .Va.z * .Vb.x - .Va.x * .Vb.z; .Va.x * .Vb.y - .Va.y * .Vb.x)',
+             alias='Vc'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        # Normalize Vc from step above.
+        Cell('Vn'),
+        Cell('Normalize Vc')
+    ],
+    [
+        Cell('=Vc / .Vc.Length', alias='Vn')
+    ],
+    # Relate the equations for a cylinder and plane together,
+    # to find the ellipse of intersection.
+    #
+    # Cylinder Equation (where height is in Y-direction):
+    #
+    #   (x-h)^2 + (z-k)^2 - r^2 = 0
+    #
+    #   Where (h, k) is the center of the cylinder,
+    #   and r is the radius.
+    #
+    # Plane Equation:
+    #
+    #   m * (x - a) + n * (y - b) + o * (z - c) = 0
+    #
+    #   Where (m, n, o) is a normal vector to the plane (i.e. perpendicular),
+    #   and (a, b, c) is a point on the plane.
+    #
+    # Height of Yaw Bearing cylinder is in Y-direction, so we solve for y.
+    #
+    # Using WolframAlpha:
+    # https://www.wolframalpha.com/input/?i=m+*+%28x+-+a%29+%2B+n+*+%28y+-+b%29+%2B+o+*+%28z+-+c%29+%3D+%28x-h%29%5E2+%2B+%28z-k%29%5E2+-+r%5E2+in+terms+of+y
+    #
+    # y = (a m + b n + c o + h^2 - 2 h x + k^2 - 2 k z - m x - o z - r^2 + x^2 + z^2) / n and n!=0
+    #
+    # Next, substitute values for x and z to create a function of v,
+    # where v is the angle (in degrees) of a cross-section of the cylinder.
+    #
+    # See "Curve of Intersection - A Cylinder and a Plane" YouTube video for explanation,
+    #     https://www.youtube.com/watch?v=ds3MrMUz3Z0
+    #
+    # Using WolframAlpha
+    # https://www.wolframalpha.com/input/?i=%28a+m+%2B+b+n+%2B+c+o+%2B+h%5E2+-+2+h+x+%2B+k%5E2+-+2+k+z+-+m+x+-+o+z+-+r%5E2+%2B+x%5E2+%2B+z%5E2%29+%2F+n+where+x+%3D+r+cos%28v%29+%2B+h+and+z+%3D+r+sin%28v%29+%2B+k
+    #
+    # y = (a m + b n + c o - h m - k o - m r cos(v) - o r sin(v)) / n
+    #
+    #   Used in calculate_y_of_ellipse function above.
+    #
+    # Setup short aliases for use in equations.
+    [
+        Cell('(r)adius'),
+    ],
+    [
+        Cell('=YawPipeRadius', alias='r')
+    ],
+    [
+        # Center of Cylinder (h, k)
+        # h and k are reserved aliases.
+        Cell('Cx'), Cell('Cz'), Cell('(C)enter')
+    ],
+    [
+        Cell('=YawBearingX', alias='Cx'),
+        Cell('=YawBearingZ', alias='Cz')
+    ],
+    [
+        Cell('(P)oint, (u)pper plane'),
+        Cell('(P)oint, (l)ower plane')
+    ],
+    [
+        Cell('Pu'),
+        Cell('Pl')
+    ],
+    [
+        Cell('=UpperBottomLeftCornerGlobal', alias='Pu'),
+        Cell('=LowerBottomLeftCornerGlobal', alias='Pl')
+    ],
+    [
+        # Y-value for Upper vertex of ellipse.
+        Cell('Yu (upper)'),
+        # Y-value for Lower vertex of ellipse.
+        Cell('Yl (lower)')
+    ],
+    [
+        calculate_y_of_ellipse(('.Pu.x', '.Pu.y', '.Pu.z'), '90', 'Yu'),
+        calculate_y_of_ellipse(('.Pl.x', '.Pl.y', '.Pl.z'), '-90', 'Yl')
+    ],
+    [
+        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('EllipseUpperVertexGlobal'),
+        Cell('EllipseLowerVertexGlobal'),
+        Cell('EllipseLowerCoVertexGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; Cx; Yu; Cz + r)',
+             alias='EllipseUpperVertexGlobal'),
+        Cell('=create(<<vector>>; Cx; Yl; Cz - r)',
+             alias='EllipseLowerVertexGlobal'),
+        # Point where High End Stop touches Yaw Bearing.
+        Cell('=LowerPointWhereZEqualsZgiven',
+             alias='EllipseLowerCoVertexGlobal')
+    ],
+    [
+        # Convert to "local" Tail_Stop_HighEnd coordinate system.
+        # For use in Sketcher constraints.
+        # The lower and upper vertexes (1 and 2) form the major axis.
+        # The lower co-vertex (3) forms the minor axis.
+        # 1, 2, and 3 numbering correspond to the following description:
+        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
+        Cell('EllipseUpperVertexLocal'),
+        Cell('EllipseLowerVertexLocal'),
+        Cell('EllipseLowerCoVertexLocal')
+    ],
+    [
+        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseUpperVertexGlobal - OuterTailHingeHighEndStopBase',
+             alias='EllipseUpperVertexLocal'),
+        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerVertexGlobal - OuterTailHingeHighEndStopBase',
+             alias='EllipseLowerVertexLocal'),
+        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerCoVertexGlobal - OuterTailHingeHighEndStopBase',
+             alias='EllipseLowerCoVertexLocal')
     ]
 ]
