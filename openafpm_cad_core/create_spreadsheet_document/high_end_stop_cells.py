@@ -496,12 +496,12 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('SafetyCatchWidth'),
-        Cell('=YawPipeRadius',
+        Cell('=YawPipeRadius * 1.67',
              alias='SafetyCatchWidth')
     ],
     [
         Cell('SafetyCatchLength'),
-        Cell('=SafetyCatchWidth * 1.33',
+        Cell('=YawPipeRadius * 1.33',
              alias='SafetyCatchLength'),
         Cell(),
         # This note applies to entire right column, used to calculate LowerPointWhereZEqualsZgiven.
@@ -612,7 +612,7 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('SafetyCatchYPadding'),
-        Cell('2', alias='SafetyCatchYPadding')
+        Cell('5', alias='SafetyCatchYPadding')
     ],
     [
         # Y position of the safety catch
