@@ -101,15 +101,15 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('VerticalPlaneAngle'),
         Cell('HorizontalPlaneAngle'),
-        Cell('AlternatorTiltAngle')
+        Cell('Offset')
     ],
     [
         Cell('=Spreadsheet.VerticalPlaneAngle',
              alias='VerticalPlaneAngle'),
         Cell('=Spreadsheet.HorizontalPlaneAngle',
              alias='HorizontalPlaneAngle'),
-        Cell('=Spreadsheet.AlternatorTiltAngle',
-             alias='AlternatorTiltAngle')
+        Cell('=Spreadsheet.Offset',
+             alias='Offset')
     ],
     [
         Cell('YawPipeRadius'),
@@ -123,13 +123,6 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='MetalLengthL'),
         Cell('=Spreadsheet.MetalThicknessL',
              alias='MetalThicknessL')
-    ],
-    [
-        Cell('Offset'),
-    ],
-    [
-        Cell('=Spreadsheet.Offset',
-             alias='Offset'),
     ],
     [
         Cell('Alternator', styles=[Style.UNDERLINE])
@@ -147,6 +140,13 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='HShapeChannelSectionHeight'),
         Cell('=Alternator.B',
              alias='StarShapeChannelSectionHeight')
+    ],
+    [
+        Cell('AlternatorTiltAngle')
+    ],
+    [
+        Cell('=Alternator.AlternatorTiltAngle',
+             alias='AlternatorTiltAngle')
     ],
     [
         Cell('T Shape', styles=[Style.ITALIC])

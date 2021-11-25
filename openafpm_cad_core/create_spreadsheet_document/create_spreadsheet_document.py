@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 import FreeCAD as App
 from FreeCAD import Document
@@ -6,7 +6,7 @@ from FreeCAD import Document
 from ..parameter_groups import (FurlingParameters, MagnafpmParameters,
                                 UserParameters)
 from .alternator_cells import alternator_cells
-from .cell import Cell, Style
+from .cell import Cell
 from .fastener_cells import fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
@@ -27,21 +27,30 @@ def create_spreadsheet_document(name: str,
         'Furling': furling_parameters,
         'User': user_parameters,
     })
+    cells_by_spreadsheet_name = {
+        'Spreadsheet': cells,
+        'Hub': hub_cells,
+        'Fastener': fastener_cells,
+        'Alternator': alternator_cells,
+        'YawBearing': yaw_bearing_cells,
+        'Tail': tail_cells,
+        'HighEndStop': high_end_stop_cells
+    }
+    return create_document(name, cells_by_spreadsheet_name)
 
-    static_cells = _get_static_cells()
-    cells.extend(static_cells)
 
+def create_document(name: str,
+                    cells_by_spreadsheet_name: Dict[str, List[List[Cell]]]) -> Document:
     document = App.newDocument(name)
-
-    _add_spreadsheet(document, 'Spreadsheet', cells)
-    _add_spreadsheet(document, 'Hub', hub_cells)
-    _add_spreadsheet(document, 'Fastener', fastener_cells)
-    _add_spreadsheet(document, 'Alternator', alternator_cells)
-    _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
-    _add_spreadsheet(document, 'Tail', tail_cells)
-    _add_spreadsheet(document, 'HighEndStop', high_end_stop_cells)
+    add_spreadsheets(document, cells_by_spreadsheet_name)
     document.recompute()
     return document
+
+
+def add_spreadsheets(document: Document,
+                     cells_by_spreadsheet_name: Dict[str, List[List[Cell]]]) -> None:
+    for spreadsheet_name, cells in cells_by_spreadsheet_name.items():
+        _add_spreadsheet(document, spreadsheet_name, cells)
 
 
 def _add_spreadsheet(document: Document,
@@ -50,16 +59,3 @@ def _add_spreadsheet(document: Document,
     sheet = document.addObject(
         'Spreadsheet::Sheet', name)
     populate_spreadsheet(sheet, cells)
-
-
-def _get_static_cells() -> List[List[Cell]]:
-    return [
-        [
-            Cell('Static', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('AlternatorTiltAngle'),
-            Cell('=4deg', alias='AlternatorTiltAngle'),
-            Cell('See right-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".')
-        ],
-    ]

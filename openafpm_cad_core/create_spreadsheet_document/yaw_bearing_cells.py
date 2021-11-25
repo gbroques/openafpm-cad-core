@@ -112,7 +112,11 @@ __all__ = ['yaw_bearing_cells']
 #: Cells defining the Yaw Bearing spreadsheet.
 yaw_bearing_cells: List[List[Cell]] = [
     [
-        Cell('Inputs', styles=[Style.UNDERLINE])
+        Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('Spreadsheet', styles=[Style.UNDERLINE])
+        # -------------------------------------------
     ],
     [
         Cell('YawPipeRadius'),
@@ -129,19 +133,27 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('Offset'),
-        Cell('RotorDiskRadius'),
-        Cell('AlternatorTiltAngle')
+        Cell('RotorDiskRadius')
     ],
     [
         Cell('=Spreadsheet.Offset',
              alias='Offset'),
         Cell('=Spreadsheet.RotorDiskRadius',
-             alias='RotorDiskRadius'),
-        Cell('=Spreadsheet.AlternatorTiltAngle',
+             alias='RotorDiskRadius')
+    ],
+    [
+        Cell('Alternator', styles=[Style.UNDERLINE])
+        # ------------------------------------------
+    ],
+    [
+        Cell('AlternatorTiltAngle')
+    ],
+    [
+        Cell('=Alternator.AlternatorTiltAngle',
              alias='AlternatorTiltAngle')
     ],
     [
-        Cell('Extended Yaw Bearing (H & Star Shape)', styles=[Style.UNDERLINE])
+        Cell('Extended Yaw Bearing (H & Star Shape)', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
@@ -174,7 +186,7 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='LargeYawBearingXOffset')
     ],
     [
-        Cell('Side', styles=[Style.UNDERLINE])
+        Cell('Side', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('HalfWidth'), Cell('=MM / 2',
@@ -213,7 +225,7 @@ yaw_bearing_cells: List[List[Cell]] = [
              horizontal_alignment=Alignment.RIGHT)
     ],
     [
-        Cell('SideLength', styles=[Style.UNDERLINE])
+        Cell('SideLength', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('AdjacentSide'),

@@ -98,6 +98,14 @@ alternator_cells: List[List[Cell]] = [
              alias='WasherThickness'),
     ],
     [
+        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    [
+        Cell('AlternatorTiltAngle'),
+        Cell('=4deg', alias='AlternatorTiltAngle'),
+        Cell('See right-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".')
+    ],
+    [
         Cell('Stator', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
