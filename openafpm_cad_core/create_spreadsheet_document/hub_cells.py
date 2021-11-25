@@ -77,12 +77,15 @@ hub_cells: List[List[Cell]] = [
         Cell(),
         Cell(),
         Cell('FrameSidePad', styles=[Style.BOLD, Style.UNDERLINE]),
+        Cell(),
         Cell('RotorSidePad', styles=[Style.BOLD, Style.UNDERLINE])
     ],
     [
         # Dimensions Table Header
         Cell(background=light_gray),
         Cell('MiddlePadRadiusMargin', styles=[Style.UNDERLINE]),
+        # Both FrameSidePad and RotorSidePad "protrude" from the MiddlePad.
+        # ProtrudingPadThickness controls the thickness for Frame and Rotor Side Pads.
         Cell('ProtrudingPadThickness', styles=[Style.UNDERLINE]),
         Cell('Radius', styles=[Style.UNDERLINE]),
         Cell('Width', styles=[Style.UNDERLINE]),
