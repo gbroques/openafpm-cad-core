@@ -82,17 +82,21 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('FlatMetalThickness'),
-        Cell('BoomPipeRadius'),
-        Cell('Chamfer')
+        Cell('Spreadsheet', styles=[Style.UNDERLINE])
+        # -------------------------------------------
     ],
     [
+        Cell('RotorDiskRadius'),
+        Cell('FlatMetalThickness'),
+        Cell('BoomPipeRadius'),
+    ],
+    [
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius'),
         Cell('=Spreadsheet.FlatMetalThickness',
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius'),
-        Cell('=Tail.TailHingeJunctionChamfer',
-             alias='Chamfer')
     ],
     [
         Cell('VerticalPlaneAngle'),
@@ -108,59 +112,44 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='AlternatorTiltAngle')
     ],
     [
-        Cell('RotorDiskRadius'),
-        Cell('YawPipeLength'),
-        Cell('YawPipeRadius')
-    ],
-    [
-        Cell('=Spreadsheet.RotorDiskRadius',
-             alias='RotorDiskRadius'),
-        Cell('=Tail.YawPipeLength',
-             alias='YawPipeLength'),
-        Cell('=Spreadsheet.YawPipeRadius',
-             alias='YawPipeRadius')
-    ],
-    [
-        Cell('FrameZ'),
+        Cell('YawPipeRadius'),
         Cell('MetalLengthL'),
         Cell('MetalThicknessL')
     ],
     [
-        Cell('=Alternator.FrameZ',
-             alias='FrameZ'),
+        Cell('=Spreadsheet.YawPipeRadius',
+             alias='YawPipeRadius'),
         Cell('=Spreadsheet.MetalLengthL',
              alias='MetalLengthL'),
         Cell('=Spreadsheet.MetalThicknessL',
              alias='MetalThicknessL')
     ],
     [
-        Cell('TopAngle'),
+        Cell('Offset'),
+    ],
+    [
+        Cell('=Spreadsheet.Offset',
+             alias='Offset'),
+    ],
+    [
+        Cell('Alternator', styles=[Style.UNDERLINE])
+        # ------------------------------------------
+    ],
+    [
+        Cell('FrameZ'),
         Cell('HShapeChannelSectionHeight'),
         Cell('StarShapeChannelSectionHeight')
     ],
     [
-        Cell('=YawBearing.TopAngle',
-             alias='TopAngle'),
+        Cell('=Alternator.FrameZ',
+             alias='FrameZ'),
         Cell('=Alternator.H',
              alias='HShapeChannelSectionHeight'),
         Cell('=Alternator.B',
              alias='StarShapeChannelSectionHeight')
     ],
     [
-        Cell('Width'),
-        Cell('Offset'),
-        Cell('LargeYawBearingXOffset')
-    ],
-    [
-        Cell('=YawBearing.MM',
-             alias='Width'),
-        Cell('=Spreadsheet.Offset',
-             alias='Offset'),
-        Cell('=YawBearing.LargeYawBearingXOffset',
-             alias='LargeYawBearingXOffset'),
-    ],
-    [
-        Cell('T Shape', styles=[Style.UNDERLINE])
+        Cell('T Shape', styles=[Style.ITALIC])
     ],
     [
         Cell('X'), Cell('TShapeTwoHoleEndBracketLength (A)')
@@ -176,6 +165,37 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=Alternator.I', alias='I'),
         Cell('=Alternator.k', alias='k')
+    ],
+    [
+        Cell('YawBearing', styles=[Style.UNDERLINE])
+        # ------------------------------------------
+    ],
+    [
+        Cell('TopAngle'),
+        Cell('Width'),
+        Cell('LargeYawBearingXOffset')
+    ],
+    [
+        Cell('=YawBearing.TopAngle',
+             alias='TopAngle'),
+        Cell('=YawBearing.MM',
+             alias='Width'),
+        Cell('=YawBearing.LargeYawBearingXOffset',
+             alias='LargeYawBearingXOffset'),
+    ],
+    [
+        Cell('Tail', styles=[Style.UNDERLINE])
+        # ------------------------------------
+    ],
+    [
+        Cell('Chamfer'),
+        Cell('YawPipeLength'),
+    ],
+    [
+        Cell('=Tail.TailHingeJunctionChamfer',
+             alias='Chamfer'),
+        Cell('=Tail.YawPipeLength',
+             alias='YawPipeLength')
     ],
     # Static
     # ------
@@ -236,6 +256,22 @@ high_end_stop_cells: List[List[Cell]] = [
              styles=[Style.UNDERLINE, Style.BOLD]),
     ],
     [
+        Cell('LargeYawBearingZPosition'),
+        Cell('LargeYawBearingXPosition'),
+        Cell('YawBearingXOffset'),
+        Cell('AlternatorLinkYOffset'),
+    ],
+    [
+        Cell('=-Offset',
+             alias='LargeYawBearingZPosition'),
+        Cell('=LargeYawBearingZPosition - FrameZ + LargeYawBearingXOffset',
+             alias='LargeYawBearingXPosition'),
+        Cell('=RotorDiskRadius < 187.5 ? SmallYawBearingX : LargeYawBearingX',
+             alias='YawBearingXOffset'),
+        Cell('=-sin(AlternatorTiltAngle) * YawBearingXOffset',
+             alias='AlternatorLinkYOffset')
+    ],
+    [
         Cell('ChannelSectionHeight'),
         Cell('HShapeYawBearingY'),
         Cell('StarShapeYawBearingY')
@@ -245,7 +281,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='ChannelSectionHeight'),
         Cell('=ChannelSectionHeight * 0.25',
              alias='HShapeYawBearingY'),
-        Cell('=MetalLengthL * 0.5 + FlatMetalThickness + Width + AlternatorLinkY',
+        Cell('=MetalLengthL * 0.5 + FlatMetalThickness + Width + AlternatorLinkYOffset',
              alias='StarShapeYawBearingY')
     ],
     [
@@ -261,11 +297,11 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('z', horizontal_alignment=Alignment.RIGHT),
     ],
     [
-        Cell('=LargeYawBearingZ - FrameZ + LargeYawBearingXOffset',
+        Cell('=LargeYawBearingXPosition',
              alias='LargeYawBearingX'),
         Cell('=RotorDiskRadius < 275 ? HShapeYawBearingY : StarShapeYawBearingY',
              alias='LargeYawBearingY'),
-        Cell('=-Offset',
+        Cell('=LargeYawBearingZPosition',
              alias='LargeYawBearingZ'),
     ],
     # SmallTailHinge
@@ -342,14 +378,14 @@ high_end_stop_cells: List[List[Cell]] = [
     *create_placement_cells(name='YawBearing',
                             base=(
                                 '=RotorDiskRadius < 187.5 ? SmallYawBearingX : LargeYawBearingX',
-                                '=RotorDiskRadius < 187.5 ? SmallYawBearingY : LargeYawBearingY',
+                                '=YawBearingXOffset',
                                 '=RotorDiskRadius < 187.5 ? SmallYawBearingZ : LargeYawBearingZ'),
                             axis=('0', '1', '0'),
                             angle='=RotorDiskRadius < 187.5 ? SmallYawBearingAngle : LargeYawBearingAngle'),
     *create_placement_cells(name='AlternatorLink',
                             base=(
                                 '=YawBearingX - YawBearingX * cos(AlternatorTiltAngle) + AlternatorXoffset',
-                                '=-sin(AlternatorTiltAngle) * YawBearingX',
+                                '=AlternatorLinkYOffset',
                                 '0'),
                             axis=('0', '0', '1'),
                             angle='=AlternatorTiltAngle'),
@@ -512,6 +548,7 @@ high_end_stop_cells: List[List[Cell]] = [
     #
     # Upper plane farthest from ground, seen from top view of turbine.
     # Lower plane closest to the ground, seen from bottom view of turbine.
+    #
     # ::
     #
     #         Upper
