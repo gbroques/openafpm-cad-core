@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import FreeCAD as App
+from FreeCAD import Document
 
 from .create_spreadsheet_document import create_spreadsheet_document
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
@@ -18,35 +19,45 @@ def load_turbine(magnafpm_parameters: MagnafpmParameters,
                                                        magnafpm_parameters,
                                                        furling_parameters,
                                                        user_parameters)
-    package_path = Path(__file__).parent.absolute()
-    documents_path = package_path.joinpath('documents')
+    documents_path = get_documents_path()
 
-    spreadsheet_document_path = documents_path.joinpath(
-        f'{spreadsheet_document_name}.FCStd')
-    # TODO: Saving the spreadsheet document might create a race condition
-    #       in a multi-user or concurrent environment.
-    #       In practice, this doesn't seem to be causing issues.
-    #       If it does present a problem, one solution would be to remove
-    #       all XLinks to the Master_of_Puppets document, and remove the saveAs below.
-    #       FreeCAD then throws errors that the "Linked document is not saved".
-    #       These errors are neglible, and everything still works correctly.
-    #       To get rid of the errors, we could make the Spreadsheet document a temporary document,
-    #       but temporary documents don't show up in the Tree view.
-    spreadsheet_document.saveAs(str(spreadsheet_document_path))
+    save_document(spreadsheet_document,
+                  documents_path,
+                  spreadsheet_document_name)
 
     root_document_name = 'WindTurbine'
-    root_document_path = documents_path.joinpath(f'{root_document_name}.FCStd')
-    root_document = App.openDocument(str(root_document_path))
-    for obj in spreadsheet_document.Objects:
-        obj.recompute()
-    spreadsheet_document.recompute(None, True, True)
+    root_document = open_document(documents_path, root_document_name)
+    recompute_document(spreadsheet_document)
 
+    recompute_all_documents()
+
+    return WindTurbineModel(root_document, spreadsheet_document)
+
+
+def get_documents_path() -> Path:
+    package_path = Path(__file__).parent.absolute()
+    return package_path.joinpath('documents')
+
+
+def open_document(path: Path, document_name: str) -> Document:
+    document_path = path.joinpath(f'{document_name}.FCStd')
+    return App.openDocument(str(document_path))
+
+
+def save_document(document: Document, path: Path, document_name: str):
+    document_path = path.joinpath(f'{document_name}.FCStd')
+    document.saveAs(str(document_path))
+
+
+def recompute_all_documents() -> None:
     sort_in_dependency_order = True
     document_by_name = App.listDocuments(sort_in_dependency_order)
     documents = document_by_name.values()
     for document in documents:
-        for obj in document.Objects:
-            obj.recompute()
-        document.recompute(None, True, True)
+        recompute_document(document)
 
-    return WindTurbineModel(root_document, spreadsheet_document)
+
+def recompute_document(document: Document) -> None:
+    for obj in document.Objects:
+        obj.recompute()
+    document.recompute(None, True, True)

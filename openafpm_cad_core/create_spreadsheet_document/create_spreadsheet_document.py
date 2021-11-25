@@ -24,7 +24,7 @@ def create_spreadsheet_document(name: str,
                                 user_parameters: UserParameters) -> Document:
     cells = parameters_by_key_to_cells({
         'MagnAFPM': magnafpm_parameters,
-        'OpenFurl': furling_parameters,
+        'Furling': furling_parameters,
         'User': user_parameters,
     })
 
