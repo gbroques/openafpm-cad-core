@@ -37,7 +37,7 @@ class MagnafpmParameters(TypedDict):
         https://openafpm.net/design-tips
     """
 
-    NumberMagnet: int  # NumberOfMagnets
+    NumberMagnet: int  # NumberOfMagnets, MagnetCount?
     """Number of magnets."""
 
     StatorThickness: float
@@ -162,7 +162,7 @@ class UserParameters(TypedDict):
     """Thickness of angle bars used in frame."""
 
     FlatMetalThickness: float
-    """Thickness of various metal pieces."""
+    """Thickness of various flat metal pieces which can be cut by a 2D CNC laser cutter."""
 
     YawPipeRadius: float
     """Radius of yaw bearing pipe including thickness."""
