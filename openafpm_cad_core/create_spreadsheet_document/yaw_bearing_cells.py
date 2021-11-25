@@ -4,6 +4,64 @@ from .cell import Alignment, Cell, Style
 
 __all__ = ['yaw_bearing_cells']
 
+# The following ASCII diagram (not drawn to scale) is a Bottom View depiction of YawBearing_Extended_Assembly.
+# 
+# It explains below AV, VO, and SideX calcuation.
+# A, V, and O are points, denoted by "•".
+# AV and VO are line segments from the corresponding points.
+#
+# Additionally, it includes L and MM dimensions mentioned in below spreadsheet cells.
+#
+#                                                            SideX
+#                                                         <--------->
+#                                                                     A
+#                      ^  +-------------------------------+---------•-------------+   ^
+#                      |  |                               |         |             |   |
+#  FlatMetalThickness  |  |           Side                |         | V           |   |
+#                      |  |                               |   , + ~ • ~ + ,       |   |
+#                      v  +-------------------------------+ '       |       ' ,   |   |
+#                                  /                    ,           |           , |   |
+#                                 /                    ,            |            ,|   |
+#                                /                    ,             | O           ,   |
+#                          Top  /                     ,             •             ,   |  MM
+#                              /                      ,                           ,   |
+#                             /                        ,                         ,|   |
+#                            /                          ,                       , |   |
+#                           /                   Yaw Pipe  ,                  , '  |   |
+#                          /                                ' + , _ _ _ ,  '      |   |
+#                         /                                                       |   |
+#                        / 45°                                                    |   |
+#                       +---------------------------------------------------------+   v
+#
+#                       <--------------------------------------------------------->
+#                                                     L
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# The following ASCII diagram (not drawn to scale) is a Bottom View depiction of the Top piece.
+# See YawBearing_Extended_Top document.
+#
+#                             ↗         +-----------------------------------------+   ^
+#                            /         /|                                         |   |
+#                           /         / |                                         |   |
+#                          /         /  |                                         |   |
+#                         /         /   |                                         |   |
+#                        /         /    |                                         |   |
+# HypotenuseTopTriangle /         /     |                                         |   |
+#                      /         /      |                                         |   |
+#                     /    Top  /       |                                         |   |  MM
+#                    /         /        | AdjacentSide                            |   |
+#                   /         /         |                                         |   |
+#                  /         /          |                                         |   |
+#                 /         /           |                                         |   |
+#                /         /            |                                         |   |
+#               /         /            _|                                         |   |
+#              ↙         / 45°        | |                                         |   |
+#                       +---------------+-----------------------------------------+   v
+#
+#                       <--------------------------------------------------------->
+#                                                     L
+#
+
 #: Cells defining the Yaw Bearing spreadsheet.
 yaw_bearing_cells: List[List[Cell]] = [
     [
