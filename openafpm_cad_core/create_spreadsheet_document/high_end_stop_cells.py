@@ -377,8 +377,8 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     *create_placement_cells(name='YawBearing',
                             base=(
-                                '=RotorDiskRadius < 187.5 ? SmallYawBearingX : LargeYawBearingX',
                                 '=YawBearingXOffset',
+                                '=RotorDiskRadius < 187.5 ? SmallYawBearingY : LargeYawBearingY',
                                 '=RotorDiskRadius < 187.5 ? SmallYawBearingZ : LargeYawBearingZ'),
                             axis=('0', '1', '0'),
                             angle='=RotorDiskRadius < 187.5 ? SmallYawBearingAngle : LargeYawBearingAngle'),
