@@ -7,6 +7,7 @@ __all__ = ['create_euler_to_axis_angle_cells']
 
 def create_euler_to_axis_angle_cells(alias_namespace: str,
                                      euler_angles: Tuple[str, str, str]) -> List[List[Cell]]:
+    """Create spreadsheet cells to convert Euler Angles to Axis-angle representation."""
     x, y, z = euler_angles
     def alias(a): return alias_namespace + a
     # Euler Angles
@@ -46,7 +47,8 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
         ],
         # Quaternion
         [
-            Cell('Quaternion', styles=[Style.UNDERLINE])
+            Cell('Quaternion', styles=[Style.UNDERLINE]),
+            Cell('Convert Euler Angles to Quaternion as an intermediate step to Axis-angle representation.')
         ],
         [
             Cell('C1'), Cell('C2'), Cell('C3')
@@ -78,9 +80,14 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
         [
             Cell(f'={C1}*{C2}*{C3} + {S1}*{S2}*{S3}', alias=Qw),
         ],
+        [
+            Cell('Reference', styles=[Style.ITALIC]),
+            Cell('https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Base/Rotation.cpp#L632-L658')
+        ],
         # Axis-angle
         [
-            Cell('Axis-angle', styles=[Style.UNDERLINE])
+            Cell('Axis-angle', styles=[Style.UNDERLINE]),
+            Cell('Convert Quaternion to Axis-angle representation.')
         ],
         [
             Cell('ScalingFactor'),
@@ -107,5 +114,10 @@ def create_euler_to_axis_angle_cells(alias_namespace: str,
                  alias=alias('AxisY')),
             Cell(f'={Qz} / {NormalizationFactor}',
                  alias=alias('AxisZ'))
+        ],
+        [
+            Cell('References', styles=[Style.ITALIC]),
+            Cell('https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm'),
+            Cell('https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Base/Rotation.cpp#L632-L658')
         ]
     ]
