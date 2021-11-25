@@ -44,7 +44,7 @@ def open_document(path: Path, document_name: str) -> Document:
     return App.openDocument(str(document_path))
 
 
-def save_document(document: Document, path: Path, document_name: str):
+def save_document(document: Document, path: Path, document_name: str) -> None:
     document_path = path.joinpath(f'{document_name}.FCStd')
     document.saveAs(str(document_path))
 
