@@ -8,7 +8,11 @@ __all__ = ['alternator_cells']
 #: Cells defining the Alternator spreadsheet.
 alternator_cells: List[List[Cell]] = [
     [
-        Cell('Inputs', styles=[Style.UNDERLINE])
+        Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('Spreadsheet', styles=[Style.UNDERLINE])
+        # -------------------------------------------
     ],
     [
         Cell('RotorDiskRadius'),
@@ -63,17 +67,8 @@ alternator_cells: List[List[Cell]] = [
              alias='YawPipeRadius'),
     ],
     [
-        Cell('HexNutThickness'),
-        Cell('DistanceThreadsExtendFromNuts'),
-        Cell('WasherThickness')
-    ],
-    [
-        Cell('=Spreadsheet.HexNutThickness',
-             alias='HexNutThickness'),
-        Cell('=Spreadsheet.DistanceThreadsExtendFromNuts',
-             alias='DistanceThreadsExtendFromNuts'),
-        Cell('=Spreadsheet.WasherThickness',
-             alias='WasherThickness'),
+        Cell('Hub', styles=[Style.UNDERLINE])
+        # -----------------------------------
     ],
     [
         Cell('MiddlePadThickness'),
@@ -86,7 +81,24 @@ alternator_cells: List[List[Cell]] = [
              alias='FrameSidePadWidth')
     ],
     [
-        Cell('Stator', styles=[Style.UNDERLINE])
+        Cell('Fastener', styles=[Style.UNDERLINE])
+        # ----------------------------------------
+    ],
+    [
+        Cell('HexNutThickness'),
+        Cell('DistanceThreadsExtendFromNuts'),
+        Cell('WasherThickness')
+    ],
+    [
+        Cell('=Fastener.HexNutThickness',
+             alias='HexNutThickness'),
+        Cell('=Fastener.DistanceThreadsExtendFromNuts',
+             alias='DistanceThreadsExtendFromNuts'),
+        Cell('=Fastener.WasherThickness',
+             alias='WasherThickness'),
+    ],
+    [
+        Cell('Stator', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # The radius of the circle that circumscribes the hexagon
@@ -119,7 +131,7 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorHolesCircumradius')
     ],
     [
-        Cell('Calculated', styles=[Style.UNDERLINE])
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('RotorDiskThickness'),
@@ -153,7 +165,7 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenFrameAndBackRotor')
     ],
     [
-        Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE])
+        Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('DistanceBetweenRotorDisks'),
@@ -172,7 +184,7 @@ alternator_cells: List[List[Cell]] = [
     # ---------------------------------------
     [
         Cell('Yaw Bearing to Frame Junction (T Shape)',
-             styles=[Style.UNDERLINE])
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     # The formula for I comes from solving a system of equations for I as a function of RotorDiskRadius.
     # The function should produce the following outputs, where f(RotorDiskRadius) = I:
@@ -232,7 +244,7 @@ alternator_cells: List[List[Cell]] = [
                         alias='k')
     ],
     [
-        Cell('Frame', styles=[Style.UNDERLINE])
+        Cell('Frame', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # Distance from hole to outside edge of frame.
@@ -243,7 +255,7 @@ alternator_cells: List[List[Cell]] = [
              alias='HoleMargin')
     ],
     [
-        Cell('T Shape', styles=[Style.ITALIC])
+        Cell('T Shape', styles=[Style.UNDERLINE])
     ],
     [
         Cell('X'), Cell('TShapeTwoHoleEndBracketLength (A)')
@@ -279,7 +291,7 @@ alternator_cells: List[List[Cell]] = [
              alias='D')
     ],
     [
-        Cell('H Shape', styles=[Style.ITALIC])
+        Cell('H Shape', styles=[Style.UNDERLINE])
     ],
     [
         Cell('CentralAngle'), Cell('Theta'), Cell('Inradius')
@@ -313,7 +325,7 @@ alternator_cells: List[List[Cell]] = [
              alias='H')
     ],
     [
-        Cell('Star Shape', styles=[Style.ITALIC])
+        Cell('Star Shape', styles=[Style.UNDERLINE])
     ],
     [
         Cell('StarShapeTwoHoleEndBracketLength (A)'),
@@ -330,7 +342,7 @@ alternator_cells: List[List[Cell]] = [
              alias='C')
     ],
     [
-        Cell('FrameLink', styles=[Style.ITALIC])
+        Cell('FrameLink', styles=[Style.UNDERLINE])
     ],
     [
         Cell('X',

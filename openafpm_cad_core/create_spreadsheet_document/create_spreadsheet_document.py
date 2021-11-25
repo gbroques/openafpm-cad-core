@@ -7,6 +7,7 @@ from ..parameter_groups import (FurlingParameters, MagnafpmParameters,
                                 UserParameters)
 from .alternator_cells import alternator_cells
 from .cell import Cell, Style
+from .fastener_cells import fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
@@ -30,13 +31,11 @@ def create_spreadsheet_document(name: str,
     static_cells = _get_static_cells()
     cells.extend(static_cells)
 
-    fastener_cells = _get_fastener_cells()
-    cells.extend(fastener_cells)
-
     document = App.newDocument(name)
 
     _add_spreadsheet(document, 'Spreadsheet', cells)
     _add_spreadsheet(document, 'Hub', hub_cells)
+    _add_spreadsheet(document, 'Fastener', fastener_cells)
     _add_spreadsheet(document, 'Alternator', alternator_cells)
     _add_spreadsheet(document, 'YawBearing', yaw_bearing_cells)
     _add_spreadsheet(document, 'Tail', tail_cells)
@@ -63,28 +62,4 @@ def _get_static_cells() -> List[List[Cell]]:
             Cell('=4deg', alias='AlternatorTiltAngle'),
             Cell('See right-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".')
         ],
-    ]
-
-
-def _get_fastener_cells() -> List[List[Cell]]:
-    return [
-        [
-            Cell('Fastener', styles=[Style.UNDERLINE])
-        ],
-        [
-            Cell('HexNutThickness'), Cell('10',
-                                          alias='HexNutThickness')
-        ],
-        [
-            Cell('WasherThickness'), Cell('2.5',
-                                          alias='WasherThickness')
-        ],
-        [
-            Cell('DistanceThreadsExtendFromNuts'), Cell('5',
-                                                        alias='DistanceThreadsExtendFromNuts')
-        ],
-        [
-            Cell('TailVaneBracketBoltLength'), Cell('=BracketThickness + VaneThickness + FlatMetalThickness + DistanceThreadsExtendFromNuts + WasherThickness',
-                                                    alias='TailVaneBracketBoltLength')
-        ]
     ]
