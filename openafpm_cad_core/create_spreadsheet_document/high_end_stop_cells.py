@@ -763,6 +763,26 @@ high_end_stop_cells: List[List[Cell]] = [
         # The lower co-vertex (3) forms the minor axis.
         # 1, 2, and 3 numbering correspond to the following description:
         # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
+        #
+        # Vertexes denoted by "x".
+        #
+        #          ^                         , - ~ ~~~ ~ - ,
+        #          |                     , '                 ' ,
+        #          |                   ,                         ,
+        #          |                  ,                           ,
+        #          |    Lower Vertex ,                             , Upper Vertex
+        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
+        #          |                 ,         Major Axis          ,
+        #          |                  ,                           ,
+        #          |                   ,                         ,
+        #          |                     ,                    , '
+        #          |                       ' - , _ _x_ _ ,  '
+        #          |
+        #          |                          Lower Co-vertex
+        #          |
+        #          +-------------------------------------------------------------->
+        #                                        X-axis
+        #
         Cell('EllipseUpperVertexLocal'),
         Cell('EllipseLowerVertexLocal'),
         Cell('EllipseLowerCoVertexLocal')

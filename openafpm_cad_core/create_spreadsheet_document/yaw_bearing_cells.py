@@ -1,107 +1,113 @@
+"""The following ASCII diagram (not drawn to scale) is a Bottom View depiction of ``YawBearing_Extended_Assembly``.
+
+It explains below ``AV``, ``VO``, and ``SideX`` calcuations.
+
+``A``, ``V``, and ``O`` are points, denoted by "•".
+
+``AV`` and ``VO`` are line segments from the corresponding points.
+
+Additionally, it includes ``L`` and ``MM`` dimensions mentioned in below spreadsheet cells.
+
+::
+
+                                                              SideX
+                                                           <--------->
+                                                                       A
+                        ^  +-------------------------------+---------•-------------+   ^
+                        |  |                               |         |             |   |
+    FlatMetalThickness  |  |           Side                |         | V           |   |
+                        |  |                               |   , + ~ • ~ + ,       |   |
+                        v  +-------------------------------+ '       |       ' ,   |   |
+                                    /                    ,           |           , |   |
+                                   /                    ,            |            ,|   |
+                                  /                    ,             | O           ,   |
+                            Top  /                     ,             •             ,   |  MM
+                                /                      ,                           ,   |
+                               /                        ,                         ,|   |
+                              /                          ,                       , |   |
+                             /                   Yaw Pipe  ,                  , '  |   |
+                            /                                ' + , _ _ _ ,  '      |   |
+                           /                                                       |   |
+                          / 45°                                                    |   |
+                         +---------------------------------------------------------+   v
+                         <--------------------------------------------------------->
+                                                       L
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following ASCII diagram (not drawn to scale) is a Bottom View depiction of the Top piece.
+
+See ``YawBearing_Extended_Top`` document.
+
+::
+
+                                ↗         +-----------------------------------------+   ^
+                               /         /|                                         |   |
+                              /         / |                                         |   |
+                             /         /  |                                         |   |
+                            /         /   |                                         |   |
+                           /         /    |                                         |   |
+    HypotenuseTopTriangle /         /     |                                         |   |
+                         /         /      |                                         |   |
+                        /    Top  /       |                                         |   |  MM
+                       /         /        | AdjacentSide                            |   |
+                      /         /         |                                         |   |
+                     /         /          |                                         |   |
+                    /         /           |                                         |   |
+                   /         /            |                                         |   |
+                  /         /            _|                                         |   |
+                 ↙         / 45°        | |                                         |   |
+                          +---------------+-----------------------------------------+   v
+                          <--------------------------------------------------------->
+                                                        L
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following ASCII diagram (not drawn to scale) is a Top View depiction,
+of the Top piece meeting the Channel Sections of Alternator Frame.
+
+::
+
+                                            +                                ^
+                     Frame Channel Sections |\\                              |
+                                            | \\                             |
+                 ^   +----------------------+  \\                            |
+                 |   +--------------------+ |   \\                           |
+                 |                        | |45° \\                          |
+                 |                        | |     \\                         |
+                 |                        | |      \\                        |
+    MetalLengthL |                        | |       \\                       |
+                 |                        | |        \\                      |
+                 |                        | |         \\                     |
+                 |                        | |          \\                    |
+                 |                        | |           \\                   |
+                 |                        | |            \\                  |
+    Alternator   V                Center  +-+             \\                 |  HypotenuseTopTriangle
+                                          | |              \\                |
+                                          | |               \\               |
+                                          | |                \\              |
+                                          | |                 \\             |
+                                          | |                  \\            |
+                                          | |                   \\           |
+                                          | |                    \\          |
+                                          | |                     \\         |
+                                          | |                      \\        |
+                    +---------------------+ |                       \\       |
+                    +-----------------------+                        \\      |
+                 ^                        \ |          Top            \\     |
+                 |                         \|\                         \\    |
+                 V                          + \                         \\   V
+    HalfSideChannelSectionOverhangDistance   \ \                         \\
+                                              \ \                         \\
+                                               \ \                         \\
+                                               Side
+                                          (underneath Top)
+"""
 from typing import List
 
 from .cell import Alignment, Cell, Style
 
 __all__ = ['yaw_bearing_cells']
-
-# The following ASCII diagram (not drawn to scale) is a Bottom View depiction of YawBearing_Extended_Assembly.
-# 
-# It explains below AV, VO, and SideX calcuation.
-# A, V, and O are points, denoted by "•".
-# AV and VO are line segments from the corresponding points.
-#
-# Additionally, it includes L and MM dimensions mentioned in below spreadsheet cells.
-#
-#                                                            SideX
-#                                                         <--------->
-#                                                                     A
-#                      ^  +-------------------------------+---------•-------------+   ^
-#                      |  |                               |         |             |   |
-#  FlatMetalThickness  |  |           Side                |         | V           |   |
-#                      |  |                               |   , + ~ • ~ + ,       |   |
-#                      v  +-------------------------------+ '       |       ' ,   |   |
-#                                  /                    ,           |           , |   |
-#                                 /                    ,            |            ,|   |
-#                                /                    ,             | O           ,   |
-#                          Top  /                     ,             •             ,   |  MM
-#                              /                      ,                           ,   |
-#                             /                        ,                         ,|   |
-#                            /                          ,                       , |   |
-#                           /                   Yaw Pipe  ,                  , '  |   |
-#                          /                                ' + , _ _ _ ,  '      |   |
-#                         /                                                       |   |
-#                        / 45°                                                    |   |
-#                       +---------------------------------------------------------+   v
-#
-#                       <--------------------------------------------------------->
-#                                                     L
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# The following ASCII diagram (not drawn to scale) is a Bottom View depiction of the Top piece.
-# See YawBearing_Extended_Top document.
-#
-#                             ↗         +-----------------------------------------+   ^
-#                            /         /|                                         |   |
-#                           /         / |                                         |   |
-#                          /         /  |                                         |   |
-#                         /         /   |                                         |   |
-#                        /         /    |                                         |   |
-# HypotenuseTopTriangle /         /     |                                         |   |
-#                      /         /      |                                         |   |
-#                     /    Top  /       |                                         |   |  MM
-#                    /         /        | AdjacentSide                            |   |
-#                   /         /         |                                         |   |
-#                  /         /          |                                         |   |
-#                 /         /           |                                         |   |
-#                /         /            |                                         |   |
-#               /         /            _|                                         |   |
-#              ↙         / 45°        | |                                         |   |
-#                       +---------------+-----------------------------------------+   v
-#
-#                       <--------------------------------------------------------->
-#                                                     L
-#
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# The following ASCII diagram (not drawn to scale) is a Top View depiction,
-# of the Top piece meeting the Channel Sections of Alternator Frame.
-#
-#                                          +                               ^
-#                   Frame Channel Sections |\                              |
-#                                          | \                             |
-#               ^   +----------------------+  \                            |
-#               |   +--------------------+ |   \                           |
-#               |                        | |45° \                          |
-#               |                        | |     \                         |
-#               |                        | |      \                        |
-#  MetalLengthL |                        | |       \                       |
-#               |                        | |        \                      |
-#               |                        | |         \                     |
-#               |                        | |          \                    |
-#               |                        | |           \                   |
-#               |                        | |            \                  |
-#  Alternator   V                Center  +-+             \                 |  HypotenuseTopTriangle
-#                                        | |              \                |
-#                                        | |               \               |
-#                                        | |                \              |
-#                                        | |                 \             |
-#                                        | |                  \            |
-#                                        | |                   \           |
-#                                        | |                    \          |
-#                                        | |                     \         |
-#                                        | |                      \        |
-#                  +---------------------+ |                       \       |
-#                  +-----------------------+                        \      |
-#               ^                        \ |          Top            \     |
-#               |                         \|\                         \    |
-#               V                          + \                         \   V
-#  HalfSideChannelSectionOverhangDistance   \ \                         \
-#                                            \ \                         \
-#                                             \ \                         \
-#
-#                                             Side
-#                                        (underneath Top)
-#
 
 #: Cells defining the Yaw Bearing spreadsheet.
 yaw_bearing_cells: List[List[Cell]] = [
@@ -210,27 +216,33 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('AdjacentSide'), Cell('=MM / tan(TopAngle)',
-                                   alias='AdjacentSide')
+        Cell('AdjacentSide'),
+        Cell('=MM / tan(TopAngle)',
+             alias='AdjacentSide')
     ],
     [
-        Cell('HypotenuseTopTriangle'), Cell('=AdjacentSide / sin(TopAngle)',
-                                            alias='HypotenuseTopTriangle')
+        Cell('HypotenuseTopTriangle'),
+        Cell('=AdjacentSide / sin(TopAngle)',
+             alias='HypotenuseTopTriangle')
     ],
     [
-        Cell('SideChannelSectionOverhangDistance'), Cell('=HypotenuseTopTriangle - MetalLengthL * 2',
-                                                         alias='SideChannelSectionOverhangDistance')
+        Cell('SideChannelSectionOverhangDistance'),
+        Cell('=HypotenuseTopTriangle - MetalLengthL * 2',
+             alias='SideChannelSectionOverhangDistance')
     ],
     [
-        Cell('HalfSideChannelSectionOverhangDistance'), Cell('=SideChannelSectionOverhangDistance / 2',
-                                                             alias='HalfSideChannelSectionOverhangDistance')
+        Cell('HalfSideChannelSectionOverhangDistance'),
+        Cell('=SideChannelSectionOverhangDistance / 2',
+             alias='HalfSideChannelSectionOverhangDistance')
     ],
     [
-        Cell('SideDistanceToReachAlternatorChannel'), Cell('=HalfSideChannelSectionOverhangDistance / sin(TopAngle)',
-                                                           alias='SideDistanceToReachAlternatorChannel')
+        Cell('SideDistanceToReachAlternatorChannel'),
+        Cell('=HalfSideChannelSectionOverhangDistance / sin(TopAngle)',
+             alias='SideDistanceToReachAlternatorChannel')
     ],
     [
-        Cell('SideLength'), Cell('=L - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness + LOffset',
-                                 alias='SideLength')
+        Cell('SideLength'),
+        Cell('=L - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness + LOffset',
+             alias='SideLength')
     ]
 ]
