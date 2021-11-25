@@ -61,6 +61,47 @@ __all__ = ['yaw_bearing_cells']
 #                       <--------------------------------------------------------->
 #                                                     L
 #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# The following ASCII diagram (not drawn to scale) is a Top View depiction,
+# of the Top piece meeting the Channel Sections of Alternator Frame.
+#
+#                                          +                               ^
+#                   Frame Channel Sections |\                              |
+#                                          | \                             |
+#               ^   +----------------------+  \                            |
+#               |   +--------------------+ |   \                           |
+#               |                        | |45° \                          |
+#               |                        | |     \                         |
+#               |                        | |      \                        |
+#  MetalLengthL |                        | |       \                       |
+#               |                        | |        \                      |
+#               |                        | |         \                     |
+#               |                        | |          \                    |
+#               |                        | |           \                   |
+#               |                        | |            \                  |
+#  Alternator   V                Center  +-+             \                 |  HypotenuseTopTriangle
+#                                        | |              \                |
+#                                        | |               \               |
+#                                        | |                \              |
+#                                        | |                 \             |
+#                                        | |                  \            |
+#                                        | |                   \           |
+#                                        | |                    \          |
+#                                        | |                     \         |
+#                                        | |                      \        |
+#                  +---------------------+ |                       \       |
+#                  +-----------------------+                        \      |
+#               ^                        \ |          Top            \     |
+#               |                         \|\                         \    |
+#               V                          + \                         \   V
+#  HalfSideChannelSectionOverhangDistance   \ \                         \
+#                                            \ \                         \
+#                                             \ \                         \
+#
+#                                             Side
+#                                        (underneath Top)
+#
 
 #: Cells defining the Yaw Bearing spreadsheet.
 yaw_bearing_cells: List[List[Cell]] = [
