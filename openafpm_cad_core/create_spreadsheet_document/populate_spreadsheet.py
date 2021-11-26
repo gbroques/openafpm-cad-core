@@ -10,7 +10,7 @@ def populate_spreadsheet(spreadsheet: object, cells: List[List[Cell]]) -> None:
     """
     Populates a spreadsheet object with the given cells.
 
-    ::
+    .. code-block:: python
 
         spreadsheet = document.addObject('Spreadsheet::Sheet', name)
         populate_spreadsheet(spreadsheet, cells)

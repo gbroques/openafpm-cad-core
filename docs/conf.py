@@ -62,7 +62,8 @@ version = project_version.__version__
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'openafpm_cad_core.freecad_spreadsheet'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -89,3 +90,12 @@ autodoc_mock_imports = [
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+# These folders are copied to the documentation's HTML output
+html_static_path = ['_static']
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'styles.css',
+]

@@ -51,7 +51,6 @@ __all__ = ['hub_cells']
 
 light_gray = (0.752941, 0.752941, 0.752941, 1.0)
 
-#: Cells defining the Hub spreadsheet.
 hub_cells: List[List[Cell]] = [
     [
         Cell('Inputs', styles=[Style.UNDERLINE])

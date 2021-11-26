@@ -74,7 +74,6 @@ def calculate_y_of_ellipse(point_on_plane: Tuple[str, str, str],
                 alias=alias)
 
 
-#: Cells defining the High End Stop spreadsheet.
 high_end_stop_cells: List[List[Cell]] = [
     # Inputs
     # ------

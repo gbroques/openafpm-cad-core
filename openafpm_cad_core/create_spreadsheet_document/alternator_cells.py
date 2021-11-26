@@ -5,7 +5,6 @@ from .create_euler_to_axis_angle_cells import create_euler_to_axis_angle_cells
 
 __all__ = ['alternator_cells']
 
-#: Cells defining the Alternator spreadsheet.
 alternator_cells: List[List[Cell]] = [
     [
         Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])

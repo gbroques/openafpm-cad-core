@@ -1,0 +1,27 @@
+/**
+* FreeCAD Spreadsheet directive styles.
+*/
+.underline {
+    text-decoration: underline
+}
+
+.freecad-spreadsheet-alias {
+    background-color: #feffaa !important;
+}
+.freecad-spreadsheet-alias > span {
+    border-bottom: 1px dotted;
+}
+
+/**
+* Make tables span 100% width of parent,
+* and cell content wrap instead of horizontal scrolling.
+* .wy-table-responsive class is specific to sphinx_rtd_theme.
+*/
+.wy-table-responsive > table.docutils {
+    table-layout: fixed;
+    width: 100%;
+}
+.wy-table-responsive > .docutils td {
+    word-wrap: break-word;
+    white-space: normal;
+}

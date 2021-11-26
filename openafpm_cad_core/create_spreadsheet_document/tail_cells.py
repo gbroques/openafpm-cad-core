@@ -4,7 +4,6 @@ from .cell import Alignment, Cell, Style
 
 __all__ = ['tail_cells']
 
-#: Cells defining the Tail spreadsheet.
 tail_cells: List[List[Cell]] = [
     # Inputs
     # ------

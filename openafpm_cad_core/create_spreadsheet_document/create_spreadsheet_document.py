@@ -7,7 +7,7 @@ from ..parameter_groups import (FurlingParameters, MagnafpmParameters,
                                 UserParameters)
 from .alternator_cells import alternator_cells
 from .cell import Cell
-from .fastener_cells import fastener_cells
+from .fastener_cells import get_fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
@@ -30,7 +30,7 @@ def create_spreadsheet_document(name: str,
     cells_by_spreadsheet_name = {
         'Spreadsheet': cells,
         'Hub': hub_cells,
-        'Fastener': fastener_cells,
+        'Fastener': get_fastener_cells(),
         'Alternator': alternator_cells,
         'YawBearing': yaw_bearing_cells,
         'Tail': tail_cells,

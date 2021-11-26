@@ -109,7 +109,6 @@ from .cell import Alignment, Cell, Style
 
 __all__ = ['yaw_bearing_cells']
 
-#: Cells defining the Yaw Bearing spreadsheet.
 yaw_bearing_cells: List[List[Cell]] = [
     [
         Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
