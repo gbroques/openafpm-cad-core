@@ -1,5 +1,7 @@
 
 """Module containing parameter group definitions.
+
+The wind turbine has many parameters which are organized into 3 broad categories.
 """
 
 from typing import TypedDict
@@ -12,7 +14,14 @@ __all__ = [
 
 
 class MagnafpmParameters(TypedDict):
-    """Parameters from the MagnAFPM tool."""
+    """Parameters from the MagnAFPM tool.
+    
+    These mainly relate to:
+    
+    * the alternator (a.k.a generator)
+    * how electricity is generated
+    * and (**magn**)etism.
+    """
 
     RotorDiskRadius: float
     """Radius of rotor disk."""
@@ -84,7 +93,23 @@ class MagnafpmParameters(TypedDict):
 
 
 class FurlingParameters(TypedDict):
-    """Furling Parameters."""
+    """Furling Parameters.
+    
+    These mainly relate to the tail, hinge, and "furling".
+
+    "*Furling*" is defined as:
+
+        an automatic self-protective operation that reduces exposure
+        to violent winds by facing the blades away from the wind.
+
+        That furling motion is produced by a lateral offset of
+        the blade rotor from the center of yaw.
+
+        The tail and it's hinge control the yawing motion,
+        so that it limits power production.
+
+    — page 60, Glossary section of "A Wind Turbine Recipe Book (2014)".
+    """
 
     VerticalPlaneAngle: float  # TailHingeAngle?
     """Angle between outer pipe of yaw-bearing and inner pipe of tail hinge.
@@ -134,9 +159,9 @@ class FurlingParameters(TypedDict):
     Offset: float  # AlternatorOffset?
     """Distance from center of alternator to yaw-bearing for furling action.
 
-    For T shape, Offset is used in calculation of X.
+    For T shape, ``Offset`` is used in calculation of ``X``.
     
-    Where X is described on the right-hand side of page 26 of "A Wind Turbine Recipe Book (2014)".
+    Where ``X`` is described on the right-hand side of page 26 of "A Wind Turbine Recipe Book (2014)".
     
     For H Shape, see "Mounting the alternator to the yaw bearing" section on page 27 of "A Wind Turbine Recipe Book (2014)".
 
@@ -147,7 +172,7 @@ class FurlingParameters(TypedDict):
 
 
 class UserParameters(TypedDict):
-    """User Parameters."""
+    """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
 
     RotorInnerCircle: float  # RotorDiskInnerHoleRadius
     """Inner hole radius of the rotor disk."""
