@@ -105,7 +105,10 @@ class spreadsheet_alias(Inline, TextElement):
 
     :meta private:
     """
-    pass
+
+    def __init__(self, alias, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.alias = alias
 
 
 def visit_spreadsheet_alias(self, node: Element) -> None:
@@ -194,8 +197,7 @@ def _build_rows(cells: List[List[Cell]]):
                     prev_node = node_instance
             else:
                 if cell.alias:
-                    node = spreadsheet_alias(text=str(cell))
-                    node.alias = cell.alias
+                    node = spreadsheet_alias(cell.alias, text=str(cell))
                     row.append(
                         node
                     )
