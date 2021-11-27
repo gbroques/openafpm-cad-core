@@ -15,16 +15,16 @@ def populate_spreadsheet(spreadsheet: object, cells: List[List[Cell]]) -> None:
         populate_spreadsheet(spreadsheet, cells)
 
     """
-    for cell, cell_address in enumerate_cells(cells):
+    for cell_address, cell in enumerate_cells(cells):
         populate_spreadsheet_with_cell(spreadsheet, cell_address, cell)
 
 
-def enumerate_cells(cells: List[List[Cell]]) -> Iterable[Tuple[Cell, str]]:
+def enumerate_cells(cells: List[List[Cell]]) -> Iterable[Tuple[str, Cell]]:
     for row_index in range(len(cells)):
         for col_index in range(len(cells[row_index])):
-            cell = cells[row_index][col_index]
             cell_address = get_cell_address(row_index, col_index)
-            yield cell, cell_address
+            cell = cells[row_index][col_index]
+            yield cell_address, cell
 
 
 def get_cell_address(row_index: int, col_index: int) -> str:
