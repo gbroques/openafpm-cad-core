@@ -8,5 +8,6 @@ channels:
   - conda-forge
 dependencies:
   - freecad==0.19.2
+  - freecad-to-obj==0.1.0
   - sphinx==4.1.1
   - sphinx_rtd_theme==0.5.2
