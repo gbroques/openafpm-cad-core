@@ -19,7 +19,7 @@ __all__ = [
 class Style(Enum):
     """Enumeration of cell styles.
 
-    `See also, FreeCAD source code`__.
+    See also, `FreeCAD source code`__.
 
     __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/Gui/PropertiesDialog.cpp#L161-L181
     """
@@ -31,7 +31,7 @@ class Style(Enum):
     def encode(cls, styles: List[Style]) -> str:
         """Encode a set of styles as a string.
 
-        `See also, FreeCAD source code`__.
+        See also, `FreeCAD source code`__.
 
         __ https://github.com/FreeCAD/FreeCAD/blob/0.19.2/src/Mod/Spreadsheet/App/Cell.cpp#L960-L983
         """
@@ -78,6 +78,7 @@ class Color(Enum):
     """
     WHITE = (1.0, 1.0, 1.0, 1.0)
     BLACK = (0.0, 0.0, 0.0, 1.0)
+    LIGHT_GRAY = (0.752941, 0.752941, 0.752941, 1.0)
 
 
 class Cell:
@@ -109,4 +110,23 @@ class Cell:
         return Alignment.encode((self.horizontal_alignment, self.vertical_alignment))
 
     def __repr__(self) -> str:
+        kwargs = ''
+        if self.alias:
+            kwargs += f"alias='{self.alias}'"
+        if len(self.styles) > 0:
+            kwargs += f', styles={self.styles}'
+        if self.horizontal_alignment != Alignment.LEFT:
+            kwargs += f', horizontal_alignment=Alignment.{self.horizontal_alignment.name}'
+        if self.vertical_alignment != Alignment.VERTICAL_CENTER:
+            kwargs += f', vertical_alignment=Alignment.{self.vertical_alignment.name}'
+        if self.background != Color.WHITE.value:
+            kwargs += f', background={self.background}'
+        if self.foreground != Color.BLACK.value:
+            kwargs += f', foreground={self.foreground}'
+        if kwargs:
+            return f"Cell('{self.content}', {kwargs})"
+        else:
+            return f"Cell('{self.content}')"
+
+    def __str__(self) -> str:
         return self.content

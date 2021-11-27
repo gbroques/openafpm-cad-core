@@ -45,11 +45,9 @@ For lack of better names, this is where the names "frame-side pad", "middle pad"
 
 from typing import List
 
-from .cell import Cell, Style
+from .cell import Cell, Color, Style
 
 __all__ = ['hub_cells']
-
-light_gray = (0.752941, 0.752941, 0.752941, 1.0)
 
 hub_cells: List[List[Cell]] = [
     [
@@ -81,7 +79,7 @@ hub_cells: List[List[Cell]] = [
     ],
     [
         # Dimensions Table Header
-        Cell(background=light_gray),
+        Cell(background=Color.LIGHT_GRAY),
         Cell('MiddlePadRadiusMargin', styles=[Style.UNDERLINE]),
         # Both FrameSidePad and RotorSidePad "protrude" from the MiddlePad.
         # ProtrudingPadThickness controls the thickness for Frame and Rotor Side Pads.
