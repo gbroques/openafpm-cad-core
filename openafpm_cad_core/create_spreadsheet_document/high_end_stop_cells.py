@@ -57,6 +57,29 @@ def create_placement_cells(name: str,
 
 def concatenate_cells(a: List[List[Cell]],
                       b: List[List[Cell]]) -> List[List[Cell]]:
+    """Concatenates two 2-dimensional list of Cell objects into one.
+
+    Assumes ``a`` and ``b`` are equal length.
+
+    >>> a = [
+    >>>     [
+    >>>         Cell('1a') 
+    >>>     ],
+    >>>     [
+    >>>         Cell('2a')
+    >>>     ]
+    >>> ]
+    >>> b = [
+    >>>     [
+    >>>         Cell('1b')
+    >>>     ],
+    >>>     [
+    >>>         Cell('2b')
+    >>>     ]
+    >>> ]
+    >>> concatenate_cells(a, b)
+    [[Cell('1a'), Cell('1b')], [Cell('2a'), Cell('2b')]]
+    """
     cells = []
     for i in range(len(a)):
         row = a[i] + b[i]
