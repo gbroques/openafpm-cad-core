@@ -1,6 +1,6 @@
 from typing import List
 
-from .cell import Alignment, Cell, Style
+from .cell import Alignment, Cell, Color, Style
 
 __all__ = ['tail_cells']
 
@@ -55,14 +55,16 @@ tail_cells: List[List[Cell]] = [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('TailHingeJunctionChamfer'), Cell('15',
-                                               alias='TailHingeJunctionChamfer')
+        Cell('TailHingeJunctionChamfer'),
+        Cell('15',
+             alias='TailHingeJunctionChamfer')
     ],
     # Calculated
     # ----------
     [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
+    # TODO: Move to yaw_bearing_cells ===================================================
     [
         Cell('YawPipeScaleFactor'), Cell('=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
                                          alias='YawPipeScaleFactor')
@@ -75,34 +77,82 @@ tail_cells: List[List[Cell]] = [
         Cell('YawBearingTopPlateHoleRadius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
                                                    alias='YawBearingTopPlateHoleRadius')
     ],
+    # ===================================================================================
     [
-        Cell('HingeInnerBodyOuterRadius'), Cell('=RotorDiskRadius < 187.5 ? 24.15 : (RotorDiskRadius < 275 ? 38 : 44.5)',
-                                                alias='HingeInnerBodyOuterRadius')
+        Cell('Hinge', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('HingeInnerBodyLength'), Cell('=0.8 * 2 * RotorDiskRadius',
-                                           alias='HingeInnerBodyLength')
+        Cell('InnerPipe', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('TailHingeJunctionHeight'), Cell('=HingeInnerBodyLength / 3',
-                                              alias='TailHingeJunctionHeight')
-    ],
-    # TODO: Why - 10 - 10?
-    [
-        Cell('HingeOuterBodyLength'), Cell('=HingeInnerBodyLength - TailHingeJunctionHeight - 10 - 10',
-                                           alias='HingeOuterBodyLength')
+        # Hinge Inner Pipe Table Header
+        Cell(background=Color.LIGHT_GRAY.value),
+        Cell('Radius', styles=[Style.UNDERLINE]),
+        Cell('Length', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('hypotenuse'), Cell('=(TailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
-                                 alias='hypotenuse')
+        # TShape row
+        Cell('TShape'),
+        Cell('24.15',
+             alias='TShapeHingeInnerPipeRadius'),
+        Cell(background=Color.LIGHT_GRAY.value)
     ],
     [
-        Cell('TailHingeJunctionInnerWidth'), Cell('=sqrt(hypotenuse ^ 2 - (TailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
-                                                  alias='TailHingeJunctionInnerWidth')
+        # HShape row
+        Cell('HShape'),
+        Cell('38',
+             alias='HShapeHingeInnerPipeRadius'),
+        Cell(background=Color.LIGHT_GRAY.value)
     ],
     [
-        Cell('TailHingeJunctionFullWidth'), Cell('=YawPipeRadius + HingeInnerBodyOuterRadius + TailHingeJunctionInnerWidth',
-                                                 alias='TailHingeJunctionFullWidth')
+        # StarShape row
+        Cell('StarShape'),
+        Cell('44.5',
+             alias='StarShapeHingeInnerPipeRadius'),
+        Cell(background=Color.LIGHT_GRAY.value)
+    ],
+    [
+        Cell('Value'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeHingeInnerPipeRadius : (RotorDiskRadius < 275 ? HShapeHingeInnerPipeRadius : StarShapeHingeInnerPipeRadius)',
+             alias='HingeInnerPipeRadius'),
+        Cell('=0.8 * 2 * RotorDiskRadius', alias='HingeInnerPipeLength')
+    ],
+    [
+        Cell('Junction', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('Height'),
+        Cell('=HingeInnerPipeLength / 3',
+             alias='TailHingeJunctionHeight')
+    ],
+    [
+        Cell('hypotenuse'),
+        Cell('=(TailHingeJunctionHeight - FlatMetalThickness) / cos(VerticalPlaneAngle)',
+             alias='hypotenuse')
+    ],
+    [
+        Cell('InnerWidth'),
+        Cell('=sqrt(hypotenuse ^ 2 - (TailHingeJunctionHeight - FlatMetalThickness) ^ 2)',
+             alias='TailHingeJunctionInnerWidth')
+    ],
+    [
+        Cell('FullWidth'),
+        Cell('=YawPipeRadius + HingeInnerPipeRadius + TailHingeJunctionInnerWidth',
+             alias='TailHingeJunctionFullWidth')
+    ],
+    [
+        Cell('OuterPipe', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('Radius'),
+        Cell('=YawPipeRadius',
+             alias='HingeOuterPipeRadius')
+    ],
+    [
+        Cell('Length'),
+        # TODO: Why - 10 - 10?
+        Cell('=HingeInnerPipeLength - TailHingeJunctionHeight - 10 - 10',
+             alias='HingeOuterPipeLength')
     ],
     # Vane
     # ----
@@ -121,13 +171,13 @@ tail_cells: List[List[Cell]] = [
         Cell('VaneBracketAngle'), Cell('45',
                                        alias='VaneBracketAngle')
     ],
-    # Tail Hinge Pipe X Z
-    # -------------------
+    # Tail Hinge Pipe X Z (Tail_Hinge_Inner Pipe)
+    # -------------------------------------------
     [
         Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('XRotationOffset'), Cell('=HingeInnerBodyOuterRadius - cos(VerticalPlaneAngle) * HingeInnerBodyOuterRadius',
+        Cell('XRotationOffset'), Cell('=HingeInnerPipeRadius - cos(VerticalPlaneAngle) * HingeInnerPipeRadius',
                                       alias='XRotationOffset')
     ],
     [
@@ -135,11 +185,11 @@ tail_cells: List[List[Cell]] = [
                                  alias='TrigOffset')
     ],
     [
-        Cell('TailHingePipeX'), Cell('=HingeInnerBodyOuterRadius + YawPipeRadius - TailHingeJunctionChamfer + TailHingeJunctionInnerWidth - TrigOffset',
+        Cell('TailHingePipeX'), Cell('=HingeInnerPipeRadius + YawPipeRadius - TailHingeJunctionChamfer + TailHingeJunctionInnerWidth - TrigOffset',
                                      alias='TailHingePipeX')
     ],
     [
-        Cell('TailHingePipeZ'), Cell('=-HingeInnerBodyOuterRadius * sin(VerticalPlaneAngle)',
+        Cell('TailHingePipeZ'), Cell('=-HingeInnerPipeRadius * sin(VerticalPlaneAngle)',
                                      alias='TailHingePipeZ')
     ],
     # Outer Tail Hinge X Z
@@ -148,7 +198,7 @@ tail_cells: List[List[Cell]] = [
         Cell('Outer Tail Hinge X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('PipeHeightOffset'), Cell('=HingeInnerBodyLength - HingeOuterBodyLength',
+        Cell('PipeHeightOffset'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength',
                                        alias='PipeHeightOffset')
     ],
     [
@@ -170,7 +220,8 @@ tail_cells: List[List[Cell]] = [
     # Tail Boom Triangular Brace
     # --------------------------
     [
-        Cell('Tail Boom Triangular Brace', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Tail Boom Triangular Brace',
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('BoomPipeHeight'), Cell('=BoomPipeRadius * 2',
@@ -185,7 +236,7 @@ tail_cells: List[List[Cell]] = [
                                                             alias='DistanceOfBoomFromTopOfOuterTailHinge')
     ],
     [
-        Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterBodyLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
+        Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterPipeLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
                                                    alias='TailBoomTriangularBraceWidth')
     ],
     [
@@ -203,7 +254,8 @@ tail_cells: List[List[Cell]] = [
     # Outer Tail Hinge Low End Stop
     # -----------------------------
     [
-        Cell('Outer Tail Hinge Low End Stop', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Outer Tail Hinge Low End Stop',
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('h1'), Cell('=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
@@ -214,7 +266,7 @@ tail_cells: List[List[Cell]] = [
                          alias='h2')
     ],
     [
-        Cell('OuterHingeJunctionVerticalGap'), Cell('=HingeInnerBodyLength - HingeOuterBodyLength - h2 - h1',
+        Cell('OuterHingeJunctionVerticalGap'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength - h2 - h1',
                                                     alias='OuterHingeJunctionVerticalGap')
     ],
     [
@@ -226,7 +278,7 @@ tail_cells: List[List[Cell]] = [
                                          alias='HorizontalEstimate')
     ],
     [
-        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=TailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerBodyOuterRadius',
+        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=TailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerPipeRadius',
                                                              alias='HorizontalDistanceBetweenOuterYawPipes')
     ],
     [
@@ -234,7 +286,7 @@ tail_cells: List[List[Cell]] = [
                                                     alias='OuterTailHingeLowEndStopAngle')
     ],
     [
-        Cell('LowEndStopLengthToYawPipe'), Cell('=sin(VerticalPlaneAngle) * HingeOuterBodyLength + YawPipeRadius * 2',
+        Cell('LowEndStopLengthToYawPipe'), Cell('=sin(VerticalPlaneAngle) * HingeOuterPipeLength + YawPipeRadius * 2',
                                                 alias='LowEndStopLengthToYawPipe')
     ],
     [
@@ -268,7 +320,7 @@ tail_cells: List[List[Cell]] = [
                                       alias='NonRotatedTailX')
     ],
     [
-        Cell('OuterTailHingeTruncatedHypotenuse'), Cell('=HingeOuterBodyLength - DistanceOfBoomFromTopOfOuterTailHinge',
+        Cell('OuterTailHingeTruncatedHypotenuse'), Cell('=HingeOuterPipeLength - DistanceOfBoomFromTopOfOuterTailHinge',
                                                         alias='OuterTailHingeTruncatedHypotenuse')
     ],
     [
