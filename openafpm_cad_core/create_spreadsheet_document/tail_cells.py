@@ -179,17 +179,22 @@ tail_cells: List[List[Cell]] = [
         # /_     /  Rotated by VerticalPlaneAngle
         #    - _/
         #
-        # |\
-        # | \
-        # |  \
-        # |   \ HingeInnerPipeRadius
-        # |    \
-        # |     \
-        # |_     \
-        # |_|___(_+ VerticalPlaneAngle
-        #
-        # <------->
-        # Adjacent
+        #    ^
+        #    |
+        #    |  |\
+        #    |  | \
+        #    |  |  \
+        #    |  |   \ HingeInnerPipeRadius
+        #    |  |    \
+        #  z |  |     \
+        #    |  |_     \
+        #    |  |_|___(_+ VerticalPlaneAngle
+        #    |
+        #    |  <------->
+        #    |  Adjacent
+        #    |
+        #    +-------------------------------->
+        #                  x
         #
         # cos(VerticalPlaneAngle) = Adjacent / HingeInnerPipeRadius
         #
@@ -203,7 +208,34 @@ tail_cells: List[List[Cell]] = [
                                       alias='XRotationOffset')
     ],
     [
-        Cell('TrigOffset'), Cell('=tan(VerticalPlaneAngle) * (TailHingeJunctionHeight - FlatMetalThickness) + XRotationOffset',
+        Cell('JunctionBottom'), Cell('=TailHingeJunctionHeight - FlatMetalThickness',
+                                     alias='JunctionBottom')
+    ],
+    [
+        #     ^
+        #     |
+        #     |                  Opposite
+        #     |                 __________
+        #     |                 |_|      /
+        #     |                 |       /
+        #     |                 |      /
+        #   z |  JunctionBottom |     /
+        #     |                 |    /
+        #     |                 |   /
+        #     |                 |  /
+        #     |                 |⌒/
+        #     |                 |/  VerticalPlaneAngle
+        #     |
+        #     +---------------------------------------------->
+        #                           x
+        #
+        # tan(VerticalPlaneAngle) = Opposite / JunctionBottom
+        #
+        Cell('Opposite'), Cell('=tan(VerticalPlaneAngle) * JunctionBottom',
+                               alias='Opposite')
+    ],
+    [
+        Cell('TrigOffset'), Cell('=Opposite + XRotationOffset',
                                  alias='TrigOffset')
     ],
     [
