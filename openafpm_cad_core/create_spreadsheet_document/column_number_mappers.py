@@ -1,10 +1,14 @@
+"""Module containing functions to map a number to a column and vise-versa."""
 import string
 
 __all__ = ['map_number_to_column', 'map_column_to_number']
 
 
 def map_number_to_column(number: int) -> str:
-    """
+    """Maps a number representing a column to a number.
+
+    The first column corresponds to 1, instead of 0.
+
     >>> map_number_to_column(1)
     'A'
 
@@ -37,7 +41,8 @@ def map_number_to_column(number: int) -> str:
 
 
 def map_column_to_number(column: str) -> int:
-    """
+    """Maps a letter representing a column to a number.
+
     >>> map_column_to_number('A')
     1
 
