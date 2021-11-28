@@ -52,6 +52,8 @@ tail_cells: List[List[Cell]] = [
     # Hinge
     # -----
     [
+        # Inner and Outer Pipe dimensions for Hinge are described
+        # in a table on page 31 of "A Wind Turbine Recipe Book (2014)".
         Cell('Hinge', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
@@ -165,7 +167,39 @@ tail_cells: List[List[Cell]] = [
         Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('XRotationOffset'), Cell('=HingeInnerPipeRadius - cos(VerticalPlaneAngle) * HingeInnerPipeRadius',
+        # |       |
+        # |       | Tail Hinge Inner Pipe
+        # |       |
+        # ----+----
+        #
+        # + denotes the center of rotation.
+        #
+        #   /
+        #  /      /
+        # /_     /  Rotated by VerticalPlaneAngle
+        #    - _/
+        #
+        # |\
+        # | \
+        # |  \
+        # |   \ HingeInnerPipeRadius
+        # |    \
+        # |     \
+        # |_     \
+        # |_|___(_+ VerticalPlaneAngle
+        #
+        # <------->
+        # Adjacent
+        #
+        # cos(VerticalPlaneAngle) = Adjacent / HingeInnerPipeRadius
+        #
+        Cell('Adjacent'), Cell('=cos(VerticalPlaneAngle) * HingeInnerPipeRadius',
+                               alias='Adjacent')
+    ],
+    [
+        # XRotationOffset is the X distance the inner tail hinge pipe moves
+        # by X when it's rotated by VerticalPlaneAngle about it's center.
+        Cell('XRotationOffset'), Cell('=HingeInnerPipeRadius - Adjacent',
                                       alias='XRotationOffset')
     ],
     [
