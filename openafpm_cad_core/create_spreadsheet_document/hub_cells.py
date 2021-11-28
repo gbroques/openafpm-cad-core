@@ -51,22 +51,26 @@ __all__ = ['hub_cells']
 
 hub_cells: List[List[Cell]] = [
     [
-        Cell('Inputs', styles=[Style.UNDERLINE])
+        Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('HubHolesPlacement'), Cell('=Spreadsheet.HubHolesPlacement',
-                                        alias='HubHolesPlacement')
+        Cell('Spreadsheet', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HubHoles'), Cell('=Spreadsheet.HubHoles',
-                               alias='HubHoles')
+        Cell('RotorDiskRadius'),
+        Cell('HubHolesPlacement'),
+        Cell('HubHoles')
     ],
     [
-        Cell('RotorDiskRadius'), Cell('=Spreadsheet.RotorDiskRadius',
-                                      alias='RotorDiskRadius')
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius'),
+        Cell('=Spreadsheet.HubHolesPlacement',
+             alias='HubHolesPlacement'),
+        Cell('=Spreadsheet.HubHoles',
+             alias='HubHoles')
     ],
     [
-        Cell('Dimensions', styles=[Style.UNDERLINE])
+        Cell('Dimensions', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # Row to group FrameSidePad and RotorSidePad columns together.
@@ -148,18 +152,19 @@ hub_cells: List[List[Cell]] = [
              alias='StubAxleShaftRadius')
     ],
     [
-        Cell('Common', styles=[Style.UNDERLINE])
+        Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('MiddlePadRadius'), Cell('=HubHolesPlacement + HubHoles + MiddlePadRadiusMargin',
-                                      alias='MiddlePadRadius')
+        Cell('MiddlePadRadius'),
+        Cell('MiddlePadThickness'),
+        Cell('CoverThickness')
     ],
     [
-        Cell('MiddlePadThickness'), Cell('16',
-                                         alias='MiddlePadThickness')
-    ],
-    [
-        Cell('CoverThickness'), Cell('10',
-                                     alias='CoverThickness')
+        Cell('=HubHolesPlacement + HubHoles + MiddlePadRadiusMargin',
+             alias='MiddlePadRadius'),
+        Cell('16',
+             alias='MiddlePadThickness'),
+        Cell('10',
+             alias='CoverThickness')
     ]
 ]

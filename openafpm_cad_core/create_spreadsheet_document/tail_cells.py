@@ -8,44 +8,51 @@ tail_cells: List[List[Cell]] = [
     # Inputs
     # ------
     [
-        Cell('Inputs', styles=[Style.UNDERLINE])
+        Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('RotorDiskRadius'), Cell('=Spreadsheet.RotorDiskRadius',
-                                      alias='RotorDiskRadius')
+        Cell('Spreadsheet', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('BracketLength'), Cell('=Spreadsheet.BracketLength',
-                                    alias='BracketLength')
+        Cell('RotorDiskRadius'),
+        Cell('BracketLength'),
+        Cell('FlatMetalThickness')
     ],
     [
-        Cell('VerticalPlaneAngle'), Cell('=Spreadsheet.VerticalPlaneAngle',
-                                         alias='VerticalPlaneAngle')
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius'),
+        Cell('=Spreadsheet.BracketLength',
+             alias='BracketLength'),
+        Cell('=Spreadsheet.FlatMetalThickness',
+             alias='FlatMetalThickness')
     ],
     [
-        Cell('YawPipeRadius'), Cell('=Spreadsheet.YawPipeRadius',
-                                    alias='YawPipeRadius')
+        Cell('YawPipeRadius'),
+        Cell('VerticalPlaneAngle'),
+        Cell('HorizontalPlaneAngle')
     ],
     [
-        Cell('HorizontalPlaneAngle'), Cell('=Spreadsheet.HorizontalPlaneAngle',
-                                           alias='HorizontalPlaneAngle')
+        Cell('=Spreadsheet.YawPipeRadius',
+             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.VerticalPlaneAngle',
+             alias='VerticalPlaneAngle'),
+        Cell('=Spreadsheet.HorizontalPlaneAngle',
+             alias='HorizontalPlaneAngle')
     ],
     [
-        Cell('FlatMetalThickness'), Cell('=Spreadsheet.FlatMetalThickness',
-                                         alias='FlatMetalThickness')
+        Cell('BoomPipeRadius'),
+        Cell('BoomLength')
     ],
     [
-        Cell('BoomPipeRadius'), Cell('=Spreadsheet.BoomPipeRadius',
-                                     alias='BoomPipeRadius')
-    ],
-    [
-        Cell('BoomLength'), Cell('=Spreadsheet.BoomLength',
-                                 alias='BoomLength')
+        Cell('=Spreadsheet.BoomLength',
+             alias='BoomLength'),
+        Cell('=Spreadsheet.BoomPipeRadius',
+             alias='BoomPipeRadius')
     ],
     # Static
     # ------
     [
-        Cell('Static', styles=[Style.UNDERLINE])
+        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('TailHingeJunctionChamfer'), Cell('15',
@@ -54,7 +61,7 @@ tail_cells: List[List[Cell]] = [
     # Calculated
     # ----------
     [
-        Cell('Calculated', styles=[Style.UNDERLINE])
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('YawPipeScaleFactor'), Cell('=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
@@ -100,7 +107,7 @@ tail_cells: List[List[Cell]] = [
     # Vane
     # ----
     [
-        Cell('Vane', styles=[Style.UNDERLINE])
+        Cell('Vane', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('DistanceToFirstHole'), Cell('=BracketLength / 10',
@@ -117,7 +124,7 @@ tail_cells: List[List[Cell]] = [
     # Tail Hinge Pipe X Z
     # -------------------
     [
-        Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE])
+        Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('XRotationOffset'), Cell('=HingeInnerBodyOuterRadius - cos(VerticalPlaneAngle) * HingeInnerBodyOuterRadius',
@@ -138,7 +145,7 @@ tail_cells: List[List[Cell]] = [
     # Outer Tail Hinge X Z
     # --------------------
     [
-        Cell('Outer Tail Hinge X Z', styles=[Style.UNDERLINE])
+        Cell('Outer Tail Hinge X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('PipeHeightOffset'), Cell('=HingeInnerBodyLength - HingeOuterBodyLength',
@@ -163,7 +170,7 @@ tail_cells: List[List[Cell]] = [
     # Tail Boom Triangular Brace
     # --------------------------
     [
-        Cell('Tail Boom Triangular Brace', styles=[Style.UNDERLINE])
+        Cell('Tail Boom Triangular Brace', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('BoomPipeHeight'), Cell('=BoomPipeRadius * 2',
@@ -196,7 +203,7 @@ tail_cells: List[List[Cell]] = [
     # Outer Tail Hinge Low End Stop
     # -----------------------------
     [
-        Cell('Outer Tail Hinge Low End Stop', styles=[Style.UNDERLINE])
+        Cell('Outer Tail Hinge Low End Stop', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('h1'), Cell('=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
@@ -237,7 +244,7 @@ tail_cells: List[List[Cell]] = [
     # Tail Angle
     # ----------
     [
-        Cell('Tail Angle', styles=[Style.UNDERLINE])
+        Cell('Tail Angle', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('DefaultTailAngle'), Cell('110',
@@ -246,7 +253,7 @@ tail_cells: List[List[Cell]] = [
     # Tail
     # ----
     [
-        Cell('Tail', styles=[Style.UNDERLINE])
+        Cell('Tail', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('TailXInitial'), Cell('=cos(VerticalPlaneAngle) * YawPipeRadius',
@@ -283,7 +290,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         # Tail Position Before Rotation
-        Cell('Point', styles=[Style.ITALIC])
+        Cell('Point', styles=[Style.UNDERLINE])
     ],
     [
         Cell('x',
@@ -306,7 +313,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         # Center of Rotation
-        Cell('Center', styles=[Style.ITALIC])
+        Cell('Center', styles=[Style.UNDERLINE])
     ],
     [
         Cell('x',
@@ -329,7 +336,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         # Axis of Rotation
-        Cell('TailAxis', styles=[Style.ITALIC])
+        Cell('TailAxis', styles=[Style.UNDERLINE])
     ],
     [
         Cell('x',
@@ -363,7 +370,7 @@ tail_cells: List[List[Cell]] = [
         Cell('=Center + TailRotation * (Point - Center)', alias='RotatedPoint')
     ],
     [
-        Cell('Tail', styles=[Style.ITALIC])
+        Cell('Tail', styles=[Style.UNDERLINE])
     ],
     [
         Cell('x',
