@@ -132,10 +132,20 @@ tail_cells: List[List[Cell]] = [
         Cell('=HingeInnerPipeLength - TailHingeJunctionHeight - 10 - 10',
              alias='HingeOuterPipeLength')
     ],
-    # Vane
-    # ----
+    # Vane Bracket
+    # ------------
+    #
+    #      DistanceBetweenHoles
+    #      <---->
+    # +-----------------+
+    # |   o      o       \ 45° VaneBracketAngle
+    # +-------------------+
+    #
+    # <-->
+    # DistanceToFirstHole
+    #
     [
-        Cell('Vane', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Vane Bracket', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('DistanceToFirstHole'), Cell('=BracketLength / 10',
