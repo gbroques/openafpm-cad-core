@@ -152,7 +152,26 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='AlternatorTiltAngle')
     ],
     [
-        Cell('Extended Yaw Bearing (H & Star Shape)', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Pipe', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('ScaleFactor'), Cell('=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
+                                  alias='YawPipeScaleFactor')
+    ],
+    [
+        Cell('Length'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
+                             alias='YawPipeLength')
+    ],
+    [
+        Cell('TopPlateHole', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('Radius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
+                             alias='YawBearingTopPlateHoleRadius')
+    ],
+    [
+        Cell('Extended Yaw Bearing (H & Star Shape)',
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".

@@ -59,25 +59,6 @@ tail_cells: List[List[Cell]] = [
         Cell('15',
              alias='TailHingeJunctionChamfer')
     ],
-    # Calculated
-    # ----------
-    [
-        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    # TODO: Move to yaw_bearing_cells ===================================================
-    [
-        Cell('YawPipeScaleFactor'), Cell('=RotorDiskRadius < 187.5 ? 0.95 : 0.9',
-                                         alias='YawPipeScaleFactor')
-    ],
-    [
-        Cell('YawPipeLength'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
-                                    alias='YawPipeLength')
-    ],
-    [
-        Cell('YawBearingTopPlateHoleRadius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
-                                                   alias='YawBearingTopPlateHoleRadius')
-    ],
-    # ===================================================================================
     [
         Cell('Hinge', styles=[Style.UNDERLINE, Style.BOLD])
     ],

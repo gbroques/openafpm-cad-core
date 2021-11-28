@@ -206,18 +206,22 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='LargeYawBearingXOffset'),
     ],
     [
+        Cell('YawPipeLength')
+    ],
+    [
+        Cell('=YawBearing.YawPipeLength',
+             alias='YawPipeLength')
+    ],
+    [
         Cell('Tail', styles=[Style.UNDERLINE])
         # ------------------------------------
     ],
     [
         Cell('Chamfer'),
-        Cell('YawPipeLength'),
     ],
     [
         Cell('=Tail.TailHingeJunctionChamfer',
-             alias='Chamfer'),
-        Cell('=Tail.YawPipeLength',
-             alias='YawPipeLength')
+             alias='Chamfer')
     ],
     # Static
     # ------
