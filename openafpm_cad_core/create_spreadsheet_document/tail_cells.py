@@ -49,16 +49,8 @@ tail_cells: List[List[Cell]] = [
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius')
     ],
-    # Static
-    # ------
-    [
-        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('TailHingeJunctionChamfer'),
-        Cell('15',
-             alias='TailHingeJunctionChamfer')
-    ],
+    # Hinge
+    # -----
     [
         Cell('Hinge', styles=[Style.UNDERLINE, Style.BOLD])
     ],
@@ -120,6 +112,11 @@ tail_cells: List[List[Cell]] = [
         Cell('FullWidth'),
         Cell('=YawPipeRadius + HingeInnerPipeRadius + TailHingeJunctionInnerWidth',
              alias='TailHingeJunctionFullWidth')
+    ],
+    [
+        Cell('Chamfer'),
+        Cell('15',
+             alias='TailHingeJunctionChamfer')
     ],
     [
         Cell('OuterPipe', styles=[Style.UNDERLINE])
