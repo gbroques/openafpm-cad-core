@@ -161,8 +161,10 @@ tail_cells: List[List[Cell]] = [
         Cell('VaneBracketAngle'), Cell('45',
                                        alias='VaneBracketAngle')
     ],
-    # Tail Hinge Pipe X Z (Tail_Hinge_Inner Pipe)
-    # -------------------------------------------
+    # Tail Hinge Pipe X Z
+    # -------------------
+    # Document: Tail_Hinge_Inner
+    # Part: Pipe
     [
         Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD]),
         Cell('The following calculations are in the local coordinate space of Tail_Hinge_Inner.')
@@ -285,14 +287,48 @@ tail_cells: List[List[Cell]] = [
     ],
     # Outer Tail Hinge X Z
     # --------------------
+    # Document: Tail
+    # Part: Hinge_Outer
     [
         Cell('Outer Tail Hinge X Z', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        # ASCII diagram showing the outer and inner pipes of the tail hinge before rotation.
+        #                           ______
+        #                        ^ |      | ^
+        #                        | |      | |
+        #  HingeOuterPipeLength  | |      | |
+        #                        | |      | |
+        #                        V |______| |
+        #                         ^ |    |  |
+        #       PipeHeightOffset  | |    |  |  HingeInnerPipeLength
+        #                         | |    |  |
+        #                         v |____|  V
         Cell('PipeHeightOffset'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength',
                                        alias='PipeHeightOffset')
     ],
     [
+        #     ^
+        #     |
+        #     |           XXX
+        #     |        __________
+        #     |        |_|      /
+        #     |        |       /
+        #     |        |      /
+        #   z |   ZZZ  |     /   PipeHeightOffset
+        #     |        |    /
+        #     |        |   /
+        #     |        |  /
+        #     |        |⌒/
+        #     |        |/  VerticalPlaneAngle
+        #     |
+        #     +---------------------------------------------->
+        #                           x
+        #
+        # sin(VerticalPlaneAngle) = XXX / PipeHeightOffset
+        #
+        # cos(VerticalPlaneAngle) = ZZZ / PipeHeightOffset
+        #
         Cell('XXX'), Cell('=sin(VerticalPlaneAngle) * PipeHeightOffset',
                           alias='XXX')
     ],
