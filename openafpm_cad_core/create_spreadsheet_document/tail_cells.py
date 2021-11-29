@@ -164,7 +164,8 @@ tail_cells: List[List[Cell]] = [
     # Tail Hinge Pipe X Z (Tail_Hinge_Inner Pipe)
     # -------------------------------------------
     [
-        Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Tail Hinge Pipe X Z', styles=[Style.UNDERLINE, Style.BOLD]),
+        Cell('The following calculations are in the local coordinate space of Tail_Hinge_Inner.')
     ],
     [
         # |       |
@@ -198,18 +199,21 @@ tail_cells: List[List[Cell]] = [
         #
         # cos(VerticalPlaneAngle) = Adjacent / HingeInnerPipeRadius
         #
-        Cell('Adjacent'), Cell('=cos(VerticalPlaneAngle) * HingeInnerPipeRadius',
-                               alias='Adjacent')
+        Cell('Adjacent'),
+        Cell('=cos(VerticalPlaneAngle) * HingeInnerPipeRadius',
+             alias='Adjacent')
     ],
     [
         # XRotationOffset is the X distance the inner tail hinge pipe moves
         # by X when it's rotated by VerticalPlaneAngle about it's center.
-        Cell('XRotationOffset'), Cell('=HingeInnerPipeRadius - Adjacent',
-                                      alias='XRotationOffset')
+        Cell('XRotationOffset'),
+        Cell('=HingeInnerPipeRadius - Adjacent',
+             alias='XRotationOffset')
     ],
     [
-        Cell('JunctionBottom'), Cell('=TailHingeJunctionHeight - FlatMetalThickness',
-                                     alias='JunctionBottom')
+        Cell('JunctionBottom'),
+        Cell('=TailHingeJunctionHeight - FlatMetalThickness',
+             alias='JunctionBottom')
     ],
     [
         #     ^
@@ -231,20 +235,53 @@ tail_cells: List[List[Cell]] = [
         #
         # tan(VerticalPlaneAngle) = Opposite / JunctionBottom
         #
-        Cell('Opposite'), Cell('=tan(VerticalPlaneAngle) * JunctionBottom',
-                               alias='Opposite')
+        Cell('Opposite'),
+        Cell('=tan(VerticalPlaneAngle) * JunctionBottom',
+             alias='Opposite')
     ],
     [
-        Cell('TrigOffset'), Cell('=Opposite + XRotationOffset',
-                                 alias='TrigOffset')
+        # Adjust the X position of the inner tail hinge pipe for VerticalPlaneAngle rotation.
+        Cell('TrigOffset'),
+        Cell('=Opposite + XRotationOffset',
+             alias='TrigOffset')
     ],
     [
-        Cell('TailHingePipeX'), Cell('=HingeInnerPipeRadius + YawPipeRadius - TailHingeJunctionChamfer + TailHingeJunctionInnerWidth - TrigOffset',
-                                     alias='TailHingePipeX')
+        Cell('TailHingePipeX'),
+        Cell('=YawPipeRadius - TailHingeJunctionChamfer + TailHingeJunctionInnerWidth + HingeInnerPipeRadius - TrigOffset',
+             alias='TailHingePipeX')
     ],
     [
-        Cell('TailHingePipeZ'), Cell('=-HingeInnerPipeRadius * sin(VerticalPlaneAngle)',
-                                     alias='TailHingePipeZ')
+        # |       |
+        # |       | Tail Hinge Inner Pipe
+        # |       |
+        # ----+----
+        #
+        # + denotes the center of rotation.
+        #
+        #   /
+        #  /      /
+        # /_     /  Rotated by VerticalPlaneAngle
+        #    - _/
+        #
+        #    ^
+        #    |
+        #    |                 |\
+        #    |                 | \
+        #    |                 |  \
+        #    |  TailHingePipeZ |   \ HingeInnerPipeRadius
+        #    |                 |    \
+        #  z |                 |     \
+        #    |                 |_     \
+        #    |                 |_|___(_+ VerticalPlaneAngle
+        #    |
+        #    +---------------------------------------------->
+        #                          x
+        #
+        # sin(VerticalPlaneAngle) = TailHingePipeZ / HingeInnerPipeRadius
+        #
+        Cell('TailHingePipeZ'),
+        Cell('=-HingeInnerPipeRadius * sin(VerticalPlaneAngle)',
+             alias='TailHingePipeZ')
     ],
     # Outer Tail Hinge X Z
     # --------------------
