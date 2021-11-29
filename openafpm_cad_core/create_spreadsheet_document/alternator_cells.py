@@ -1,7 +1,6 @@
 from typing import List
 
 from .cell import Alignment, Cell, Style
-from .create_euler_to_axis_angle_cells import create_euler_to_axis_angle_cells
 
 __all__ = ['alternator_cells']
 
@@ -370,12 +369,33 @@ alternator_cells: List[List[Cell]] = [
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameZ')
     ],
-    *create_euler_to_axis_angle_cells(
-        'Alternator',
-        (
-            '=RotorDiskRadius < 187.5 ? 90 : 0',
-            '=RotorDiskRadius < 187.5 ? 0 : 90',
-            '=RotorDiskRadius < 187.5 ? -90 : -180'
-        )
-    )
+    [
+        Cell('Alternator', styles=[Style.UNDERLINE, Style.BOLD]),
+    ],
+    # Euler Angles
+    [
+        Cell('Euler Angles', styles=[Style.UNDERLINE]),
+        Cell('Rotation order is Z, Y, X')
+    ],
+    [
+        Cell('Z'), Cell('Y'), Cell('X')
+    ],
+    [
+        Cell('=RotorDiskRadius < 187.5 ? -90 : -180', alias='AlternatorZ'),
+        Cell('=RotorDiskRadius < 187.5 ? 0 : 90', alias='AlternatorY'),
+        Cell('=RotorDiskRadius < 187.5 ? 90 : 0', alias='AlternatorX')
+    ],
+    [
+        Cell('AlternatorRotation'),
+        Cell('AlternatorBase'),
+        Cell('AlternatorPlacement')
+    ],
+    [
+        Cell('=create(<<rotation>>; AlternatorX; AlternatorY; AlternatorZ)',
+             alias='AlternatorRotation'),
+        Cell('=create(<<vector>>; 0; 0; 0)',
+             alias='AlternatorBase'),
+        Cell('=create(<<placement>>; AlternatorBase; AlternatorRotation)',
+             alias='AlternatorPlacement')
+    ]
 ]
