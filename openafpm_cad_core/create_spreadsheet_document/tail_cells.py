@@ -170,6 +170,7 @@ tail_cells: List[List[Cell]] = [
         Cell('The following calculations are in the local coordinate space of Tail_Hinge_Inner.')
     ],
     [
+        #
         # |       |
         # |       | Tail Hinge Inner Pipe
         # |       |
@@ -253,6 +254,7 @@ tail_cells: List[List[Cell]] = [
              alias='TailHingePipeX')
     ],
     [
+        #
         # |       |
         # |       | Tail Hinge Inner Pipe
         # |       |
@@ -304,6 +306,7 @@ tail_cells: List[List[Cell]] = [
         #       PipeHeightOffset  | |    |  |  HingeInnerPipeLength
         #                         | |    |  |
         #                         v |____|  V
+        #
         Cell('PipeHeightOffset'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength',
                                        alias='PipeHeightOffset')
     ],
@@ -346,6 +349,8 @@ tail_cells: List[List[Cell]] = [
     ],
     # Tail Boom Triangular Brace
     # --------------------------
+    # Document: Tail_Boom_Support
+    # Part: Tail_Boom_Support
     [
         Cell('Tail Boom Triangular Brace',
              styles=[Style.UNDERLINE, Style.BOLD])
@@ -363,6 +368,7 @@ tail_cells: List[List[Cell]] = [
                                                             alias='DistanceOfBoomFromTopOfOuterTailHinge')
     ],
     [
+        # Distance or length of tail boom support along the slant of the tail hinge.
         Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterPipeLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
                                                    alias='TailBoomTriangularBraceWidth')
     ],
@@ -370,42 +376,111 @@ tail_cells: List[List[Cell]] = [
         Cell('TailBoomTriangularBraceLength'), Cell('=BoomLength / 3',
                                                     alias='TailBoomTriangularBraceLength')
     ],
-    [
-        Cell('TailBoomTriangularBraceXOffset'), Cell('=sin(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
-                                                     alias='TailBoomTriangularBraceXOffset')
-    ],
-    [
-        Cell('TailBoomTriangularBraceZOffset'), Cell('=cos(VerticalPlaneAngle) * TailBoomTriangularBraceWidth',
-                                                     alias='TailBoomTriangularBraceZOffset')
-    ],
     # Outer Tail Hinge Low End Stop
     # -----------------------------
+    # Document: Tail_Hinge_Outer, Part: Stop_LowEnd
+    # Document: Tail_Stop_LowEnd, Part: Tail_Stop_LowEnd
     [
         Cell('Outer Tail Hinge Low End Stop',
              styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        #
+        #     ^
+        #     |
+        #     |  VerticalPlaneAngle  /|
+        #     |                     /◡|
+        #     |                    /  |
+        #     |                   /   |  TailHingePipeZ
+        #   z |              h1  /    |
+        #     |                 /     |
+        #     |                /     _|
+        #     |               /_____|_|
+        #     |
+        #     +---------------------------------------------->
+        #                          x
+        #
+        # cos(VerticalPlaneAngle) = TailHingePipeZ / h1
+        #
         Cell('h1'), Cell('=-(TailHingePipeZ / cos(VerticalPlaneAngle))',
                          alias='h1')
     ],
     [
+        #
+        #     ^
+        #     |
+        #     |  VerticalPlaneAngle  /|
+        #     |                     /◡|
+        #     |                    /  |
+        #     |                   /   |  TailHingeJunctionHeight
+        #   z |              h2  /    |
+        #     |                 /     |
+        #     |                /     _|
+        #     |               /_____|_|
+        #     |
+        #     +---------------------------------------------->
+        #                          x
+        #
+        # cos(VerticalPlaneAngle) = TailHingeJunctionHeight / h2
+        #
         Cell('h2'), Cell('=TailHingeJunctionHeight / cos(VerticalPlaneAngle)',
                          alias='h2')
     ],
     [
+        # Along the slant, in the center of the tail hinge pipes.
+        # Distance between top of junction and bottom of outer tail hinge pipe.
         Cell('OuterHingeJunctionVerticalGap'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength - h2 - h1',
                                                     alias='OuterHingeJunctionVerticalGap')
     ],
     [
+        #    ^
+        #    |
+        #    |      |\  90 - VerticalPlaneAngle
+        #    |      |◡\
+        #    |      |  \
+        #    |      |   \  YawPipeRadius
+        #    |      |    \
+        #  z |      |     \
+        #    |      |_     \
+        #    |      |_|_____\
+        #    |
+        #    |  HorizontalPipeLength
+        #    |
+        #    +---------------------------------->
+        #                     x
+        #
+        # sin(90 - VerticalPlaneAngle) = HorizontalPipeLength / YawPipeRadius
+        #
         Cell('HorizontalPipeLength'), Cell('=sin(90 - VerticalPlaneAngle) * YawPipeRadius',
                                            alias='HorizontalPipeLength')
     ],
     [
+        #
+        #     ^
+        #     |
+        #     |                                    /|
+        #     |                                   /◡|
+        #     |                                  /  |
+        #     | TailBoomTriangularBraceWidth +  /   |
+        #   z | OuterHingeJunctionVerticalGap  /    |
+        #     |                               /     |
+        #     |                              /     _|
+        #     |  90 - VerticalPlaneAngle    /_)___|_|
+        #     |
+        #     |                         HorizontalEstimate
+        #     |
+        #     +---------------------------------------------->
+        #                          x
+        #
+        # cos(90 - VerticalPlaneAngle) = HorizontalEstimate / (TailBoomTriangularBraceWidth + OuterHingeJunctionVerticalGap)
+        #
         Cell('HorizontalEstimate'), Cell('=cos(90 - VerticalPlaneAngle) * (TailBoomTriangularBraceWidth + OuterHingeJunctionVerticalGap)',
                                          alias='HorizontalEstimate')
     ],
     [
-        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=TailHingeJunctionFullWidth + HorizontalEstimate + HorizontalPipeLength - HingeInnerPipeRadius',
+        # (TailHingeJunctionFullWidth - HingeInnerPipeRadius) is distance from center of yaw bearing pipe,
+        # to the top of the junction where it curves and meets the inner tail hinge pipe.
+        Cell('HorizontalDistanceBetweenOuterYawPipes'), Cell('=(TailHingeJunctionFullWidth - HingeInnerPipeRadius) + HorizontalPipeLength + HorizontalEstimate',
                                                              alias='HorizontalDistanceBetweenOuterYawPipes')
     ],
     [
@@ -417,6 +492,7 @@ tail_cells: List[List[Cell]] = [
                                                 alias='LowEndStopLengthToYawPipe')
     ],
     [
+        # * 1.2 to make low end stop extend past yaw bearing point of contact by a centimeter or two.
         Cell('OuterTailHingeLowEndStopLength'), Cell('=LowEndStopLengthToYawPipe * 1.2',
                                                      alias='OuterTailHingeLowEndStopLength')
     ],
