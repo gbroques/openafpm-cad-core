@@ -484,6 +484,7 @@ tail_cells: List[List[Cell]] = [
                                                              alias='HorizontalDistanceBetweenOuterYawPipes')
     ],
     [
+        # Triangle formed with yaw bearing pipe and opposite side of outer tail hinge pipe.
         Cell('OuterTailHingeLowEndStopAngle'), Cell('=-(90deg - atan(YawPipeRadius / HorizontalDistanceBetweenOuterYawPipes))',
                                                     alias='OuterTailHingeLowEndStopAngle')
     ],
