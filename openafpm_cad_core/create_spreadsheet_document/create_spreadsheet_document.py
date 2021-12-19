@@ -29,8 +29,8 @@ def create_spreadsheet_document(name: str,
     })
     cells_by_spreadsheet_name = {
         'Spreadsheet': cells,
-        'Hub': hub_cells,
         'Fastener': get_fastener_cells(),
+        'Hub': hub_cells,
         'Alternator': alternator_cells,
         'YawBearing': yaw_bearing_cells,
         'Tail': tail_cells,

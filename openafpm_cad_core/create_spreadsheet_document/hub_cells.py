@@ -70,6 +70,23 @@ hub_cells: List[List[Cell]] = [
              alias='HubHoles')
     ],
     [
+        Cell('MetalLengthL')
+    ],
+    [
+        Cell('=Spreadsheet.MetalLengthL',
+             alias='MetalLengthL')
+    ],
+    [
+        Cell('Fastener', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('HexNutThickness')
+    ],
+    [
+        Cell('=Fastener.HexNutThickness',
+             alias='HexNutThickness')
+    ],
+    [
         Cell('Dimensions', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
@@ -125,7 +142,7 @@ hub_cells: List[List[Cell]] = [
         Cell('20', alias='StarShapeMiddlePadRadiusMargin'),
         Cell('10', alias='StarShapeProtrudingPadThickness'),
         Cell('52.5', alias='StarShapeFrameSidePadRadius'),
-        Cell('85', alias='StarShapeFrameSidePadWidth'),
+        Cell('55', alias='StarShapeFrameSidePadWidth'),
         Cell('47.5', alias='StarShapeRotorSidePadRadius'),
         Cell('75', alias='StarShapeRotorSidePadWidth'),
         Cell('6', alias='StarShapeNumberOfHoles'),
@@ -155,16 +172,42 @@ hub_cells: List[List[Cell]] = [
         Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('MiddlePadRadius'),
-        Cell('MiddlePadThickness'),
         Cell('CoverThickness')
+    ],
+    [
+        Cell('10',
+             alias='CoverThickness')
+    ],
+    [
+        Cell('MiddlePad', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('Radius'),
+        Cell('Thickness')
     ],
     [
         Cell('=HubHolesPlacement + HubHoles + MiddlePadRadiusMargin',
              alias='MiddlePadRadius'),
         Cell('16',
-             alias='MiddlePadThickness'),
-        Cell('10',
-             alias='CoverThickness')
+             alias='MiddlePadThickness')
+    ],
+    [
+        Cell('StubAxleShaft', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('LengthOfTwoNuts'),
+        Cell('DistanceStubAxleShaftExtendsBeyondTheFrame'),
+        Cell('DistanceBetweenFrameAndBackRotor', styles=[Style.BOLD]),
+        Cell('Length', styles=[Style.BOLD])
+    ],
+    [
+        Cell('20',
+             alias='DistanceStubAxleShaftExtendsBeyondTheFrame'),
+        Cell('=HexNutThickness * 2',
+             alias='LengthOfTwoNuts'),
+        Cell('=MiddlePadThickness + LengthOfTwoNuts',
+             alias='DistanceBetweenFrameAndBackRotor'),
+        Cell('=DistanceBetweenFrameAndBackRotor + MetalLengthL + DistanceStubAxleShaftExtendsBeyondTheFrame',
+             alias='StubAxleShaftLength')
     ]
 ]

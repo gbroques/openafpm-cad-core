@@ -69,14 +69,11 @@ alternator_cells: List[List[Cell]] = [
         # -----------------------------------
     ],
     [
-        Cell('MiddlePadThickness'),
-        Cell('FrameSidePadWidth')
+        Cell('DistanceBetweenFrameAndBackRotor')
     ],
     [
-        Cell('=Hub.MiddlePadThickness',
-             alias='MiddlePadThickness'),
-        Cell('=Hub.FrameSidePadWidth',
-             alias='FrameSidePadWidth')
+        Cell('=Hub.DistanceBetweenFrameAndBackRotor',
+             alias='DistanceBetweenFrameAndBackRotor')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -93,7 +90,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('=Fastener.DistanceThreadsExtendFromNuts',
              alias='DistanceThreadsExtendFromNuts'),
         Cell('=Fastener.WasherThickness',
-             alias='WasherThickness'),
+             alias='WasherThickness')
     ],
     [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD]),
@@ -141,34 +138,12 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorDiskThickness'),
-        Cell('LengthOfTwoNuts'),
         Cell('StatorMountingStudsLength')
     ],
     [
         Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness'),
-        Cell('=HexNutThickness * 2', alias='LengthOfTwoNuts'),
-        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 4 + MiddlePadThickness + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness + FrameHubZOffset',
+        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness',
              alias='StatorMountingStudsLength')
-    ],
-    [
-        Cell('HubFrameOverlap'),
-        Cell('FrameHubPadding'),
-        Cell('FrameHubZOffset')
-    ],
-    [
-        Cell('=FrameSidePadWidth - (MetalLengthL - MetalThicknessL + LengthOfTwoNuts)',
-             alias='HubFrameOverlap'),
-        Cell('20',
-             alias='FrameHubPadding'),
-        Cell('=HubFrameOverlap > 0 ? HubFrameOverlap + FrameHubPadding : 0',
-             alias='FrameHubZOffset')
-    ],
-    [
-        Cell('DistanceBetweenFrameAndBackRotor')
-    ],
-    [
-        Cell('=MiddlePadThickness + LengthOfTwoNuts + FrameHubZOffset',
-             alias='DistanceBetweenFrameAndBackRotor')
     ],
     [
         Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE, Style.BOLD])
@@ -365,7 +340,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('0',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameY'),
-        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + MiddlePadThickness + MetalLengthL + LengthOfTwoNuts + FrameHubZOffset',
+        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + DistanceBetweenFrameAndBackRotor + MetalLengthL',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameZ')
     ],

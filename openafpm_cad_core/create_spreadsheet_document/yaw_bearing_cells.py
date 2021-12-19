@@ -181,7 +181,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('TopAngle')
     ],
     [
-        Cell('=RotorDiskRadius < 275 ? 100 : 115',
+        Cell('=RotorDiskRadius < 275 ? 100 : 130',
              alias='MM'),
         Cell('=45deg',
              alias='TopAngle')
