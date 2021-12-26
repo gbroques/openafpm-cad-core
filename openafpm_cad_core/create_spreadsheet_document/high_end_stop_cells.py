@@ -675,7 +675,7 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('SafetyCatchYPadding'),
-        Cell('15', alias='SafetyCatchYPadding')
+        Cell('12', alias='SafetyCatchYPadding')
     ],
     [
         # Y position of the safety catch
