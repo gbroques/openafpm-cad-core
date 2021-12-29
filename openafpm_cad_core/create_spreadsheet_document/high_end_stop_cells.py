@@ -88,12 +88,17 @@ def concatenate_cells(a: List[List[Cell]],
 
 
 def calculate_y_of_ellipse(point_on_plane: Tuple[str, str, str],
+                           normal_vector_to_plane: Tuple[str, str, str],
+                           center_of_cylinder: Tuple[str, str],
+                           radius_of_cylinder: str,
                            angle: str,
                            alias: str) -> Cell:
     Px, Py, Pz = point_on_plane
+    Nx, Ny, Nz = normal_vector_to_plane
+    Cx, Cz = center_of_cylinder
+    r = radius_of_cylinder
     v = angle
-    # Assumes Vn, Cx, Cz, and r are already declared.
-    return Cell(f'=({Px} * .Vn.x + {Py} * .Vn.y + {Pz} * .Vn.z - Cx * .Vn.x - Cz * .Vn.z - .Vn.x * r * cos({v}) - .Vn.z * r * sin({v})) / .Vn.y',
+    return Cell(f'=({Px} * {Nx} + {Py} * {Ny} + {Pz} * {Nz} - {Cx} * {Nx} - {Cz} * {Nz} - {Nx} * {r} * cos({v}) - {Nz} * {r} * sin({v})) / {Ny}',
                 alias=alias)
 
 
@@ -218,10 +223,16 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('Chamfer'),
+        Cell('LowEndStopPlacement'),
+        Cell('LowEndStopLengthToYawPipe')
     ],
     [
         Cell('=Tail.TailHingeJunctionChamfer',
-             alias='Chamfer')
+             alias='Chamfer'),
+        Cell('=Tail.LowEndStopPlacement',
+             alias='LowEndStopPlacement'),
+        Cell('=Tail.LowEndStopLengthToYawPipe',
+             alias='LowEndStopLengthToYawPipe')
     ],
     # Static
     # ------
@@ -799,8 +810,20 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Yl (lower)')
     ],
     [
-        calculate_y_of_ellipse(('.Pu.x', '.Pu.y', '.Pu.z'), '90', 'Yu'),
-        calculate_y_of_ellipse(('.Pl.x', '.Pl.y', '.Pl.z'), '-90', 'Yl')
+        calculate_y_of_ellipse(
+            ('.Pu.x', '.Pu.y', '.Pu.z'),
+            ('.Vn.x', '.Vn.y', '.Vn.z'),
+            ('Cx', 'Cz'),
+            'r',
+            '90',
+            'Yu'),
+        calculate_y_of_ellipse(
+            ('.Pl.x', '.Pl.y', '.Pl.z'),
+            ('.Vn.x', '.Vn.y', '.Vn.z'),
+            ('Cx', 'Cz'),
+            'r',
+            '-90',
+            'Yl')
     ],
     [
         Cell('3 Points of Ellipse', styles=[Style.ITALIC])
@@ -857,5 +880,194 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='EllipseLowerVertexLocal'),
         Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerCoVertexGlobal - OuterTailHingeHighEndStopBase',
              alias='EllipseLowerCoVertexLocal')
+    ],
+    # Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
+    # ------------------------------------------------------------------
+    # Calculate an ellipse to make the Low End Stop fit the outer pipe of the Yaw Bearing.
+    [
+        Cell('Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
+             styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('OuterLowEndStopWidth'),
+        Cell('LowEndStopWidth')
+    ],
+    [
+        Cell('=YawPipeRadius * 0.5',
+             alias='OuterLowEndStopWidth'),
+        Cell('=YawPipeRadius + OuterLowEndStopWidth',
+             alias='LowEndStopWidth')
+    ],
+    [
+        Cell('LowEndStopGlobalPlacement'),
+        Cell('LowEndStopGlobalBase')
+    ],
+    [
+        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * OuterTailHingePlacement * LowEndStopPlacement',
+             alias='LowEndStopGlobalPlacement'),
+        Cell('=.LowEndStopGlobalPlacement.Base',
+             alias='LowEndStopGlobalBase')
+    ],
+    [
+        # Front, Bottom, Left correspond to X, Y, and Z
+        # Relative to Tail_Stop_LowEnd
+        Cell('FrontBottomLeftLowEndStopPlanePoint'),
+        Cell('FrontBottomLeftLowEndStopPlanePointGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; 0; -LowEndStopLengthToYawPipe; 0)',
+             alias='FrontBottomLeftLowEndStopPlanePoint'),
+        Cell('=LowEndStopGlobalPlacement * FrontBottomLeftLowEndStopPlanePoint',
+             alias='FrontBottomLeftLowEndStopPlanePointGlobal')
+    ],
+    [
+        # Back, Bottom, Right correspond to X, Y, and Z
+        # Relative to Tail_Stop_LowEnd
+        Cell('BackBottomRightLowEndStopPlanePoint'),
+        Cell('BackBottomRightLowEndStopPlanePointGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; LowEndStopWidth; 0; 0)',
+             alias='BackBottomRightLowEndStopPlanePoint'),
+        Cell('=LowEndStopGlobalPlacement * BackBottomRightLowEndStopPlanePoint',
+             alias='BackBottomRightLowEndStopPlanePointGlobal')
+    ],
+    [
+        # Calculate two vectors, Vd and Ve, on the Low End Stop plane.
+        Cell('Vd'), Cell('Ve')
+    ],
+    [
+        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+             alias='Vd'),
+        Cell('=BackBottomRightLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+             alias='Ve')
+    ],
+    [
+        # Cross product Vd and Ve to find vector perpendicular to the Low End Stop plane, Vf.
+        # https://en.wikipedia.org/wiki/Cross_product
+        Cell('Vf'),
+        Cell('Vd × Ve')
+    ],
+    [
+        Cell('=create(<<vector>>; .Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
+             alias='Vf'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        # Normalize Vf from step above.
+        Cell('Vo'),
+        Cell('Normalize Vf')
+    ],
+    [
+        Cell('=Vf / .Vf.Length', alias='Vo')
+    ],
+    [
+        Cell('Point on Yaw Bearing cylinder where Low End Stop touches it')
+    ],
+    [
+        Cell('=Cx - FrontBottomLeftLowEndStopPlanePointGlobal.x',
+             alias='x'),
+        Cell('=Cz - FrontBottomLeftLowEndStopPlanePointGlobal.z',
+             alias='y')
+    ],
+    [
+        Cell('Theta'),
+        Cell('Alpha'),
+        Cell('Beta')
+    ],
+    [
+        Cell('=atan2(y; x)',
+             alias='Theta'),
+        Cell('=Theta + 90deg',
+             alias='Alpha'),
+        Cell('=Theta - 90deg',
+             alias='Beta')
+    ],
+    [
+        # Y-value for Upper vertex of ellipse.
+        Cell('Uy (Upper y)'),
+        # Y-value for Lower vertex of ellipse.
+        Cell('Ly (Lower y)')
+    ],
+    [
+        calculate_y_of_ellipse(
+            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
+             '.LowEndStopGlobalBase.z'),
+            ('.Vo.x', '.Vo.y', '.Vo.z'),
+            ('Cx', 'Cz'),
+            'r',
+            'Alpha',
+            'Uy'),
+        calculate_y_of_ellipse(
+            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
+             '.LowEndStopGlobalBase.z'),
+            ('.Vo.x', '.Vo.y', '.Vo.z'),
+            ('Cx', 'Cz'),
+            'r',
+            'Beta',
+            'Ly')
+    ],
+    [
+        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('LowEndStopEllipseUpperVertexGlobal'),
+        Cell('LowEndStopEllipseLowerVertexGlobal'),
+        Cell('LowEndStopEllipseLowerCoVertexGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; Cx + r * cos(Alpha); Uy; Cz + r * sin(Alpha))',
+             alias='LowEndStopEllipseUpperVertexGlobal'),
+        Cell('=create(<<vector>>; Cx + r * cos(Beta); Ly; Cz + r * sin(Beta))',
+             alias='LowEndStopEllipseLowerVertexGlobal'),
+        # Point where Low End Stop touches Yaw Bearing.
+        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal',
+             alias='LowEndStopEllipseLowerCoVertexGlobal')
+    ],
+    [
+        Cell('InverseLowEndStopGlobalPlacement')
+    ],
+    [
+        Cell('=minvert(LowEndStopGlobalPlacement)',
+             alias='InverseLowEndStopGlobalPlacement')
+    ],
+    [
+        # Convert to "local" Tail_Stop_LowEnd coordinate system.
+        # For use in Sketcher constraints.
+        # The lower and upper vertexes (1 and 2) form the major axis.
+        # The lower co-vertex (3) forms the minor axis.
+        # 1, 2, and 3 numbering correspond to the following description:
+        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
+        #
+        # Vertexes denoted by "x".
+        #
+        #          ^                         , - ~ ~~~ ~ - ,
+        #          |                     , '                 ' ,
+        #          |                   ,                         ,
+        #          |                  ,                           ,
+        #          |    Lower Vertex ,                             , Upper Vertex
+        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
+        #          |                 ,         Major Axis          ,
+        #          |                  ,                           ,
+        #          |                   ,                         ,
+        #          |                     ,                    , '
+        #          |                       ' - , _ _x_ _ ,  '
+        #          |
+        #          |                          Lower Co-vertex
+        #          |
+        #          +-------------------------------------------------------------->
+        #                                        X-axis
+        #
+        Cell('LowEndStopEllipseUpperVertexLocal'),
+        Cell('LowEndStopEllipseLowerVertexLocal'),
+        Cell('LowEndStopEllipseLowerCoVertexLocal')
+    ],
+    [
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseUpperVertexGlobal',
+             alias='LowEndStopEllipseUpperVertexLocal'),
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerVertexGlobal',
+             alias='LowEndStopEllipseLowerVertexLocal'),
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerCoVertexGlobal',
+             alias='LowEndStopEllipseLowerCoVertexLocal')
     ]
 ]

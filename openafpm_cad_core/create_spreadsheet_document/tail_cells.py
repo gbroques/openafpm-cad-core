@@ -489,6 +489,16 @@ tail_cells: List[List[Cell]] = [
                                                     alias='OuterTailHingeLowEndStopAngle')
     ],
     [
+        # Relative to Tail_Hinge_Outer
+        Cell('OuterTailHingeLowEndStopZ'), Cell('=TailBoomTriangularBraceWidth - FlatMetalThickness',
+                                                alias='OuterTailHingeLowEndStopZ')
+    ],
+    [
+        Cell('LowEndStopPlacement'),
+        Cell('=create(<<placement>>; create(<<vector>>; 0; 0; OuterTailHingeLowEndStopZ); create(<<rotation>>; create(<<vector>>; 0; 0; 1); OuterTailHingeLowEndStopAngle))',
+             alias='LowEndStopPlacement')
+    ],
+    [
         Cell('LowEndStopLengthToYawPipe'), Cell('=sin(VerticalPlaneAngle) * HingeOuterPipeLength + YawPipeRadius * 2',
                                                 alias='LowEndStopLengthToYawPipe')
     ],
