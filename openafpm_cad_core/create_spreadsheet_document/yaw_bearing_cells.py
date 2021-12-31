@@ -170,8 +170,42 @@ yaw_bearing_cells: List[List[Cell]] = [
                              alias='YawBearingTopPlateHoleRadius')
     ],
     [
+        # Ensure Side piece (undeneath Top flat bar to stiffen it),
+        # reaches the Channel Section of the Alternator due to Alternator tilt angle.
         Cell('Extended Yaw Bearing (H & Star Shape)',
              styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('SideWidth'),
+        Cell('100',
+             alias='SideWidth')
+    ],
+    [
+        # Distance of triangle formed from Side piece and channel section of Frame
+        # due to tilt of Alternator.
+        Cell('Gamma'),
+        Cell('=tan(AlternatorTiltAngle) * SideWidth',
+             alias='Gamma')
+    ],
+    [
+        Cell('Delta'),
+        Cell('=cos(TopAngle) * FlatMetalThickness',
+             alias='Delta')
+    ],
+    [
+        Cell('Epsilon'),
+        Cell('=Delta * 2',
+             alias='Epsilon')
+    ],
+    [
+        Cell('Zeta'),
+        Cell('=Epsilon + Gamma',
+             alias='Zeta')
+    ],
+    [
+        Cell('Mhypotenuse'),
+        Cell('=MetalLengthL * 2 + Zeta',
+             alias='Mhypotenuse')
     ],
     [
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
@@ -181,26 +215,23 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('TopAngle')
     ],
     [
-        Cell('=RotorDiskRadius < 275 ? 100 : 130',
+        Cell('=cos(TopAngle) * Mhypotenuse',
              alias='MM'),
         Cell('=45deg',
              alias='TopAngle')
     ],
     [
-        Cell('LOffset'),
+        Cell('AlternatorCenterRatio'),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         Cell('L'),
-        Cell('LargeYawBearingXOffset'),
+        Cell('LargeYawBearingXOffset'), # desired -239.59 X pos of yaw bearing, 10.41 offset + -250 offset in X
     ],
     [
-        # Ensure Side piece (undeneath Top flat bar to stiffen it),
-        # reaches the Channel Section of the Alternator due to Alternator tilt angle.
-        # This shortens L, and we adjust the Yaw Bearing in the X direction to compensate for it.
-        Cell('=tan(AlternatorTiltAngle) * MM + cos(TopAngle) * FlatMetalThickness',
-             alias='LOffset'),
-        Cell('=YawPipeRadius + Offset / cos(TopAngle) + 0.5 * MM - LOffset',
+        Cell('=(MetalLengthL * 2 - Zeta) / 2 / Mhypotenuse',
+             alias='AlternatorCenterRatio'),
+        Cell('=YawPipeRadius + (Offset / cos(TopAngle)) + (AlternatorCenterRatio * MM)',
              alias='L'),
-        Cell('=LOffset * cos(TopAngle)',
+        Cell('=Zeta / 2',
              alias='LargeYawBearingXOffset')
     ],
     [
@@ -235,7 +266,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('=sqrt(YawPipeRadius ^ 2 - VO ^ 2)',
              alias='SideX',
              horizontal_alignment=Alignment.RIGHT),
-        Cell('=-MM',
+        Cell('=-SideWidth',
              alias='SideY',
              horizontal_alignment=Alignment.RIGHT),
         Cell('=-HalfWidth',
@@ -246,33 +277,13 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('AdjacentSide'),
-        Cell('=MM / tan(TopAngle)',
-             alias='AdjacentSide')
-    ],
-    [
-        Cell('HypotenuseTopTriangle'),
-        Cell('=AdjacentSide / sin(TopAngle)',
-             alias='HypotenuseTopTriangle')
-    ],
-    [
-        Cell('SideChannelSectionOverhangDistance'),
-        Cell('=HypotenuseTopTriangle - MetalLengthL * 2',
-             alias='SideChannelSectionOverhangDistance')
-    ],
-    [
-        Cell('HalfSideChannelSectionOverhangDistance'),
-        Cell('=SideChannelSectionOverhangDistance / 2',
-             alias='HalfSideChannelSectionOverhangDistance')
-    ],
-    [
-        Cell('SideDistanceToReachAlternatorChannel'),
-        Cell('=HalfSideChannelSectionOverhangDistance / sin(TopAngle)',
-             alias='SideDistanceToReachAlternatorChannel')
+        Cell('Eta'),
+        Cell('=hypot(Epsilon; Epsilon)',
+             alias='Eta')
     ],
     [
         Cell('SideLength'),
-        Cell('=L - AdjacentSide - YawPipeRadius - SideX + SideDistanceToReachAlternatorChannel - FlatMetalThickness + LOffset',
+        Cell('=L - MM - YawPipeRadius - SideX + Eta',
              alias='SideLength')
     ]
 ]
