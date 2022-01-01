@@ -71,7 +71,7 @@ from docutils.nodes import Element, Inline, TextElement
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
-from .create_spreadsheet_document.cell import Cell, Style
+from .spreadsheet import Cell, Style
 
 logger = logging.getLogger(__name__)
 

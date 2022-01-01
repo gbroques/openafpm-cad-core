@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from .cell import Cell, Style
+from .spreadsheet import Cell, Style
 
 __all__ = ['parameters_by_key_to_cells']
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from .cell import Cell, Style
+from .spreadsheet import Cell, Style
 
 __all__ = ['get_fastener_cells']
 

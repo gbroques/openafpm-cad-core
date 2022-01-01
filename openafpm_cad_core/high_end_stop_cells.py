@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-from .cell import Alignment, Cell, Style
+from .spreadsheet import Alignment, Cell, Style
 
 __all__ = ['high_end_stop_cells']
 

@@ -45,7 +45,7 @@ For lack of better names, this is where the names "frame-side pad", "middle pad"
 
 from typing import List
 
-from .cell import Cell, Color, Style
+from .spreadsheet import Cell, Color, Style
 
 __all__ = ['hub_cells']
 

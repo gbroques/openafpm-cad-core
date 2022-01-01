@@ -1,6 +1,6 @@
 from typing import List
 
-from .cell import Alignment, Cell, Style
+from .spreadsheet import Alignment, Cell, Style
 
 __all__ = ['alternator_cells']
 

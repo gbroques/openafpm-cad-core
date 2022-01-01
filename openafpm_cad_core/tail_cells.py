@@ -1,6 +1,6 @@
 from typing import List
 
-from .cell import Alignment, Cell, Color, Style
+from .spreadsheet import Alignment, Cell, Color, Style
 
 __all__ = ['tail_cells']
 

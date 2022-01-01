@@ -105,7 +105,7 @@ of the Top piece meeting the Channel Sections of Alternator Frame.
 """
 from typing import List
 
-from .cell import Alignment, Cell, Style
+from .spreadsheet import Alignment, Cell, Style
 
 __all__ = ['yaw_bearing_cells']
 
@@ -224,7 +224,8 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('AlternatorCenterRatio'),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         Cell('L'),
-        Cell('LargeYawBearingXOffset'), # desired -239.59 X pos of yaw bearing, 10.41 offset + -250 offset in X
+        # desired -239.59 X pos of yaw bearing, 10.41 offset + -250 offset in X
+        Cell('LargeYawBearingXOffset'),
     ],
     [
         Cell('=(MetalLengthL * 2 - Zeta) / 2 / Mhypotenuse',

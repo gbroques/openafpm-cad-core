@@ -3,15 +3,14 @@ from typing import Dict, List
 import FreeCAD as App
 from FreeCAD import Document
 
-from ..parameter_groups import (FurlingParameters, MagnafpmParameters,
-                                UserParameters)
 from .alternator_cells import alternator_cells
-from .cell import Cell
 from .fastener_cells import get_fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
+from .parameter_groups import (FurlingParameters, MagnafpmParameters,
+                               UserParameters)
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
-from .populate_spreadsheet import populate_spreadsheet
+from .spreadsheet import Cell, populate_spreadsheet
 from .tail_cells import tail_cells
 from .yaw_bearing_cells import yaw_bearing_cells
 
