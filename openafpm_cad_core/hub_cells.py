@@ -201,10 +201,10 @@ hub_cells: List[List[Cell]] = [
         Cell('Length', styles=[Style.BOLD])
     ],
     [
-        Cell('20',
-             alias='DistanceStubAxleShaftExtendsBeyondTheFrame'),
         Cell('=HexNutThickness * 2',
              alias='LengthOfTwoNuts'),
+        Cell('20',
+             alias='DistanceStubAxleShaftExtendsBeyondTheFrame'),
         Cell('=MiddlePadThickness + LengthOfTwoNuts',
              alias='DistanceBetweenFrameAndBackRotor'),
         Cell('=DistanceBetweenFrameAndBackRotor + MetalLengthL + DistanceStubAxleShaftExtendsBeyondTheFrame',
