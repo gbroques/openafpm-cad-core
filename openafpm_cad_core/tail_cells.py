@@ -61,6 +61,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         # Hinge Inner Pipe Table Header
+        # Pipe sizes (outer diameter in mm) 33.4, 42.2, 48.3, 60.3, 73, 88.9, 101.6, 114.3, 127, 141.3
         Cell(background=Color.LIGHT_GRAY.value),
         Cell('Radius', styles=[Style.UNDERLINE]),
         Cell('Length', styles=[Style.UNDERLINE])
@@ -68,21 +69,21 @@ tail_cells: List[List[Cell]] = [
     [
         # TShape row
         Cell('TShape'),
-        Cell('24.15',
+        Cell('24.15', # 48.3 diameter
              alias='TShapeHingeInnerPipeRadius'),
         Cell(background=Color.LIGHT_GRAY.value)
     ],
     [
         # HShape row
         Cell('HShape'),
-        Cell('38',
+        Cell('36.5', # 73 diameter
              alias='HShapeHingeInnerPipeRadius'),
         Cell(background=Color.LIGHT_GRAY.value)
     ],
     [
         # StarShape row
         Cell('StarShape'),
-        Cell('44.5',
+        Cell('50.8', # 101.6 diameter
              alias='StarShapeHingeInnerPipeRadius'),
         Cell(background=Color.LIGHT_GRAY.value)
     ],
