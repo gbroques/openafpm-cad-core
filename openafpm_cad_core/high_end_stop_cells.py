@@ -199,14 +199,14 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('TopAngle'),
-        Cell('Width'),
+        Cell('SideWidth'),
         Cell('LargeYawBearingXOffset')
     ],
     [
         Cell('=YawBearing.TopAngle',
              alias='TopAngle'),
-        Cell('=YawBearing.MM',
-             alias='Width'),
+        Cell('=YawBearing.SideWidth',
+             alias='SideWidth'),
         Cell('=YawBearing.LargeYawBearingXOffset',
              alias='LargeYawBearingXOffset'),
     ],
@@ -293,10 +293,23 @@ high_end_stop_cells: List[List[Cell]] = [
              styles=[Style.UNDERLINE, Style.BOLD]),
     ],
     [
+        Cell('SpaceBetweenMiddleBrackentAndTopEndBracket'),
+        Cell('LargeYawBearingYAdjustment'),
+        Cell('LargeYawBearingYPreAlternatorTilt')
+    ],
+    [
+        Cell('=StarShapeChannelSectionHeight / 2 - MetalLengthL * 0.5',
+             alias='SpaceBetweenMiddleBrackentAndTopEndBracket'),
+        Cell('=(SpaceBetweenMiddleBrackentAndTopEndBracket - (SideWidth + FlatMetalThickness)) / 2',
+             alias='LargeYawBearingYAdjustment'),
+        Cell('=MetalLengthL * 0.5 + SideWidth + LargeYawBearingYAdjustment',
+             alias='LargeYawBearingYPreAlternatorTilt')
+    ],
+    [
         Cell('LargeYawBearingZPosition'),
         Cell('LargeYawBearingXPosition'),
         Cell('YawBearingXOffset'),
-        Cell('AlternatorLinkYOffset'),
+        Cell('AlternatorLinkYOffset')
     ],
     [
         Cell('=-Offset',
@@ -318,7 +331,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='ChannelSectionHeight'),
         Cell('=ChannelSectionHeight * 0.25',
              alias='HShapeYawBearingY'),
-        Cell('=MetalLengthL * 0.5 + FlatMetalThickness + Width + AlternatorLinkYOffset',
+        Cell('=LargeYawBearingYPreAlternatorTilt',
              alias='StarShapeYawBearingY')
     ],
     [

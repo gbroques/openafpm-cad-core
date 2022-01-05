@@ -177,7 +177,7 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('SideWidth'),
-        Cell('100',
+        Cell('=YawPipeLength * 0.25',
              alias='SideWidth')
     ],
     [
@@ -279,12 +279,17 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('Eta'),
-        Cell('=hypot(Epsilon; Epsilon)',
+        Cell('=hypot(Zeta; Zeta)',
              alias='Eta')
     ],
     [
+        Cell('Theta'),
+        Cell('=Eta - FlatMetalThickness',
+             alias='Theta')
+    ],
+    [
         Cell('SideLength'),
-        Cell('=L - MM - YawPipeRadius - SideX + Eta',
+        Cell('=L - MM - YawPipeRadius - SideX + Theta',
              alias='SideLength')
     ]
 ]
