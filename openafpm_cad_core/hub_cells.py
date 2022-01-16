@@ -80,11 +80,11 @@ hub_cells: List[List[Cell]] = [
         Cell('Fastener', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HexNutThickness')
+        Cell('HubHexNutThickness')
     ],
     [
-        Cell('=Fastener.HexNutThickness',
-             alias='HexNutThickness')
+        Cell('=Fastener.HubHexNutThickness',
+             alias='HubHexNutThickness')
     ],
     [
         Cell('Dimensions', styles=[Style.UNDERLINE, Style.BOLD])
@@ -201,7 +201,7 @@ hub_cells: List[List[Cell]] = [
         Cell('Length', styles=[Style.BOLD])
     ],
     [
-        Cell('=HexNutThickness * 2',
+        Cell('=HubHexNutThickness * 2',
              alias='LengthOfTwoNuts'),
         Cell('20',
              alias='DistanceStubAxleShaftExtendsBeyondTheFrame'),

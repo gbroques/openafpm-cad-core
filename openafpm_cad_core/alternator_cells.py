@@ -81,12 +81,15 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('HexNutThickness'),
+        Cell('HubHexNutThickness'),
         Cell('DistanceThreadsExtendFromNuts'),
         Cell('WasherThickness')
     ],
     [
         Cell('=Fastener.HexNutThickness',
-             alias='HexNutThickness'),
+            alias='HexNutThickness'),
+        Cell('=Fastener.HubHexNutThickness',
+             alias='HubHexNutThickness'),
         Cell('=Fastener.DistanceThreadsExtendFromNuts',
              alias='DistanceThreadsExtendFromNuts'),
         Cell('=Fastener.WasherThickness',
@@ -156,9 +159,9 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=MagnetThickness * 2 + MechanicalClearance * 2 + StatorThickness',
              alias='DistanceBetweenRotorDisks'),
-        Cell('=floor(DistanceBetweenRotorDisks / HexNutThickness)',
+        Cell('=floor(DistanceBetweenRotorDisks / HubHexNutThickness)',
              alias='NumberOfNutsBetweenRotorDisks'),
-        Cell('=floor(DistanceBetweenRotorDisks % HexNutThickness / WasherThickness)',
+        Cell('=floor(DistanceBetweenRotorDisks % HubHexNutThickness / WasherThickness)',
              alias='NumberOfWashersBetweenRotorDisks')
     ],
     # Yaw Bearing to Frame Junction (T Shape)

@@ -31,12 +31,32 @@ def get_fastener_cells() -> List[List[Cell]]:
                  alias='FlatMetalThickness')
         ],
         [
-            Cell('Static', styles=[Style.UNDERLINE])
+            Cell('Holes'),
+            Cell('=Spreadsheet.Holes',
+                 alias='Holes')
         ],
         [
+            Cell('HubHoles'),
+            Cell('=Spreadsheet.HubHoles',
+                 alias='HubHoles')
+        ],
+        [
+            Cell('Static', styles=[Style.UNDERLINE])
+        ],
+        # Hex nut thickness equations are derived from
+        # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
+        # linear equation function finder.
+        # http://www.worldfastener.com/bs-4190-metric-hexagon-nuts/
+        # https://www.dcode.fr/function-equation-finder
+        [
             Cell('HexNutThickness'),
-            Cell('10',
+            Cell('=1.64 * Holes + 0.35',
                  alias='HexNutThickness')
+        ],
+        [
+            Cell('HubHexNutThickness'),
+            Cell('=1.64 * HubHoles + 0.35',
+                 alias='HubHexNutThickness')
         ],
         [
             Cell('WasherThickness'),
