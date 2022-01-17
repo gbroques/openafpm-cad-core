@@ -181,6 +181,11 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='SideWidth')
     ],
     [
+        Cell('TopAngle'),
+        Cell('=45deg',
+             alias='TopAngle')
+    ],
+    [
         # Distance of triangle formed from Side piece and channel section of Frame
         # due to tilt of Alternator.
         Cell('Gamma'),
@@ -208,31 +213,46 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='Mhypotenuse')
     ],
     [
+        Cell('YawPipeDiameter'),
+        Cell('Madjacent'),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         # M is a reserved alias in FreeCAD.
         # TODO: Use standard prefix for this. Such as dimM for "dimension M"?
-        Cell('MM (M)'),
-        Cell('TopAngle')
+        Cell('MM (M)')
     ],
     [
+        Cell('=YawPipeRadius * 2',
+             alias='YawPipeDiameter'),
         Cell('=cos(TopAngle) * Mhypotenuse',
-             alias='MM'),
-        Cell('=45deg',
-             alias='TopAngle')
+             alias='Madjacent'),
+        # If M is less than the diameter of the Yaw Pipe, then set it to the diameter of the Yap Pipe.
+        Cell('=Madjacent < YawPipeDiameter ? YawPipeDiameter : Madjacent',
+             alias='MM')
+    ],
+    [
+        Cell('MMhypotenuse'),
+        # Distance Top piece of Yaw Bearing is greater than where it meets the Frame of the Alternator.
+        Cell('TopFrameJunctionOverhangeDistance')
+    ],
+    [
+        Cell('=hypot(MM; MM)',
+             alias='MMhypotenuse'),
+        Cell('=MMhypotenuse - MetalLengthL * 2',
+             alias='TopFrameJunctionOverhangeDistance')
+
     ],
     [
         Cell('AlternatorCenterRatio'),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         Cell('L'),
-        # desired -239.59 X pos of yaw bearing, 10.41 offset + -250 offset in X
-        Cell('LargeYawBearingXOffset'),
+        Cell('LargeYawBearingXOffset')
     ],
     [
-        Cell('=(MetalLengthL * 2 - Zeta) / 2 / Mhypotenuse',
+        Cell('=(MetalLengthL * 2 - TopFrameJunctionOverhangeDistance) / 2 / MMhypotenuse',
              alias='AlternatorCenterRatio'),
         Cell('=YawPipeRadius + (Offset / cos(TopAngle)) + (AlternatorCenterRatio * MM)',
              alias='L'),
-        Cell('=Zeta / 2',
+        Cell('=TopFrameJunctionOverhangeDistance / 2',
              alias='LargeYawBearingXOffset')
     ],
     [
@@ -279,7 +299,7 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('Eta'),
-        Cell('=hypot(Zeta; Zeta)',
+        Cell('=hypot(TopFrameJunctionOverhangeDistance; TopFrameJunctionOverhangeDistance)',
              alias='Eta')
     ],
     [

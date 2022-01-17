@@ -118,7 +118,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('Chamfer'),
-        Cell('15',
+        Cell('=YawPipeRadius / 2',
              alias='TailHingeJunctionChamfer')
     ],
     [
