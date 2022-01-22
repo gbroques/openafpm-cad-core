@@ -65,6 +65,10 @@ def create_point(document: Document,
     document.recompute()
 
 
+def round_vector(vector: Vector, precision=2) -> Vector:
+    return Vector([round(e, ndigits=precision) for e in vector])
+
+
 class TaskPanel:
     def __init__(self,
                  default_document: Document,
@@ -82,7 +86,7 @@ class TaskPanel:
 
         vector, name = selected_point
         label = QtGui.QLabel(f'<strong>{name}:</strong>', self.form)
-        vector = QtGui.QLabel(str(vector), self.form)
+        vector = QtGui.QLabel(str(round_vector(vector)), self.form)
 
         row1.addWidget(label)
         row1.addWidget(vector)
@@ -131,14 +135,16 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
         table = sheet.findChild(QtGui.QTableView)
         indexes = table.selectedIndexes()
         if len(indexes) > 0:
-            Console.PrintMessage(f'{len(indexes)} indexes selected, picking 1st.\n')
+            Console.PrintMessage(
+                f'{len(indexes)} indexes selected, picking 1st.\n')
             first = indexes[0]
             row = str(first.row() + 1)
             column = map_number_to_column(first.column() + 1)
             cell_address = column + row
             selection = Gui.Selection.getSelection()
             if len(selection) > 0:
-                Console.PrintMessage(f'{len(selection)} objects selected, picking 1st.\n')
+                Console.PrintMessage(
+                    f'{len(selection)} objects selected, picking 1st.\n')
                 selected_sheet = selection[0]
                 if selected_sheet.TypeId == 'Spreadsheet::Sheet':
                     vector = selected_sheet.get(cell_address)
