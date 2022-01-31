@@ -9,7 +9,7 @@ from typing import Optional, Tuple
 
 import FreeCAD as App
 import FreeCADGui as Gui
-from FreeCAD import Console, Document, Vector
+from FreeCAD import Console, Document, Placement, Vector
 from PySide import QtGui
 
 
@@ -147,10 +147,12 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
                     f'{len(selection)} objects selected, picking 1st.\n')
                 selected_sheet = selection[0]
                 if selected_sheet.TypeId == 'Spreadsheet::Sheet':
-                    vector = selected_sheet.get(cell_address)
-                    if isinstance(vector, Vector):
-                        label = selected_sheet.getAlias(cell_address)
-                        return vector, label
+                    obj = selected_sheet.get(cell_address)
+                    label = selected_sheet.getAlias(cell_address)
+                    if isinstance(obj, Placement):
+                        return obj.Base, label
+                    elif isinstance(obj, Vector):
+                        return obj, label
                     else:
                         Console.PrintWarning(
                             f'Selected cell {cell_address} does not contain vector.\n')
