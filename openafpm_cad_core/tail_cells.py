@@ -1,6 +1,8 @@
 from typing import List
+from xml.etree.ElementTree import PI
 
 from .spreadsheet import Alignment, Cell, Color, Style
+from .pipe_size import PipeSize
 
 __all__ = ['tail_cells']
 
@@ -69,41 +71,68 @@ tail_cells: List[List[Cell]] = [
         Cell('Hinge', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('InnerPipe', styles=[Style.UNDERLINE])
+        Cell('InnerPipeRadius', styles=[Style.UNDERLINE]),
+        Cell('Select one size small for inner hinge than outer hinge based on pipe size list.')
     ],
     [
-        # Hinge Inner Pipe Table Header
-        # Pipe sizes (outer diameter in mm) 33.4, 42.2, 48.3, 60.3, 73, 88.9, 101.6, 114.3, 127, 141.3
-        Cell(background=Color.LIGHT_GRAY.value),
-        Cell('Radius', styles=[Style.UNDERLINE]),
-        Cell('Length', styles=[Style.UNDERLINE])
+        Cell('LargestPipeDiameter'),
+        Cell(f'{PipeSize.OD_141_3}',
+             alias='LargestPipeDiameter')
     ],
     [
-        # TShape row
-        Cell('TShape'),
-        Cell('24.15', # 48.3 diameter
-             alias='TShapeHingeInnerPipeRadius'),
-        Cell(background=Color.LIGHT_GRAY.value)
+        Cell('Range8'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_141_3} ? {PipeSize.OD_127_0} : LargestPipeDiameter',
+             alias='Range8')
     ],
     [
-        # HShape row
-        Cell('HShape'),
-        Cell('36.5', # 73 diameter
-             alias='HShapeHingeInnerPipeRadius'),
-        Cell(background=Color.LIGHT_GRAY.value)
+        Cell('Range7'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_127_0} ? {PipeSize.OD_114_3} : Range8',
+             alias='Range7')
     ],
     [
-        # StarShape row
-        Cell('StarShape'),
-        Cell('50.8', # 101.6 diameter
-             alias='StarShapeHingeInnerPipeRadius'),
-        Cell(background=Color.LIGHT_GRAY.value)
+        Cell('Range6'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_114_3} ? {PipeSize.OD_101_6} : Range7',
+             alias='Range6')
     ],
     [
-        Cell('Value'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeHingeInnerPipeRadius : (RotorDiskRadius < 275 ? HShapeHingeInnerPipeRadius : StarShapeHingeInnerPipeRadius)',
-             alias='HingeInnerPipeRadius'),
-        Cell('=0.8 * 2 * RotorDiskRadius', alias='HingeInnerPipeLength')
+        Cell('Range5'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_101_6} ? {PipeSize.OD_88_9} : Range6',
+             alias='Range5')
+    ],
+    [
+        Cell('Range4'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_88_9} ? {PipeSize.OD_73_0} : Range5',
+             alias='Range4')
+    ],
+    [
+        Cell('Range3'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_73_0} ? {PipeSize.OD_60_3} : Range4',
+             alias='Range3')
+    ],
+    [
+        Cell('Range2'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_60_3} ? {PipeSize.OD_48_3} : Range3',
+             alias='Range2')
+    ],
+    [
+        Cell('Range1'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_48_3} ? {PipeSize.OD_42_2} : Range2',
+             alias='Range1')
+    ],
+    [
+        Cell('InnerPipeDiameter'),
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_42_2} ? {PipeSize.OD_33_4} : Range1',
+             alias='HingeInnerPipeDiameter')
+    ],
+    [
+        Cell('InnerPipeRadius'),
+        Cell('=HingeInnerPipeDiameter / 2',
+             alias='HingeInnerPipeRadius')
+    ],
+    [
+        Cell('InnerPipeLength'),
+        Cell('=0.8 * 2 * RotorDiskRadius',
+             alias='HingeInnerPipeLength')
     ],
     [
         Cell('Junction', styles=[Style.UNDERLINE])
