@@ -27,13 +27,13 @@ tail_cells: List[List[Cell]] = [
              alias='FlatMetalThickness')
     ],
     [
-        Cell('YawPipeRadius'),
+        Cell('YawPipeDiameter'),
         Cell('VerticalPlaneAngle'),
         Cell('HorizontalPlaneAngle')
     ],
     [
-        Cell('=Spreadsheet.YawPipeRadius',
-             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.YawPipeDiameter',
+             alias='YawPipeDiameter'),
         Cell('=Spreadsheet.VerticalPlaneAngle',
              alias='VerticalPlaneAngle'),
         Cell('=Spreadsheet.HorizontalPlaneAngle',
@@ -48,6 +48,18 @@ tail_cells: List[List[Cell]] = [
              alias='BoomLength'),
         Cell('=Spreadsheet.BoomPipeRadius',
              alias='BoomPipeRadius')
+    ],
+    # Calculated
+    # ----------
+    [
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('YawPipeRadius')
+    ],
+    [
+        Cell('=YawPipeDiameter / 2',
+             alias='YawPipeRadius'),
     ],
     # Hinge
     # -----

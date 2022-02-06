@@ -54,15 +54,15 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('Offset'),
         Cell('Holes'),
-        Cell('YawPipeRadius')
+        Cell('YawPipeDiameter')
     ],
     [
         Cell('=Spreadsheet.Offset',
              alias='Offset'),
         Cell('=Spreadsheet.Holes',
              alias='Holes'),
-        Cell('=Spreadsheet.YawPipeRadius',
-             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.YawPipeDiameter',
+             alias='YawPipeDiameter'),
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -237,6 +237,13 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('20',
              alias='HoleMargin')
+    ],
+    [
+        Cell('YawPipeRadius')
+    ],
+    [
+        Cell('=YawPipeDiameter / 2',
+             alias='YawPipeRadius')
     ],
     [
         Cell('T Shape', styles=[Style.UNDERLINE])

@@ -118,13 +118,13 @@ yaw_bearing_cells: List[List[Cell]] = [
         # -------------------------------------------
     ],
     [
-        Cell('YawPipeRadius'),
+        Cell('YawPipeDiameter'),
         Cell('FlatMetalThickness'),
         Cell('MetalLengthL'),
     ],
     [
-        Cell('=Spreadsheet.YawPipeRadius',
-             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.YawPipeDiameter',
+             alias='YawPipeDiameter'),
         Cell('=Spreadsheet.FlatMetalThickness',
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.MetalLengthL',
@@ -213,7 +213,7 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='Mhypotenuse')
     ],
     [
-        Cell('YawPipeDiameter'),
+        Cell('YawPipeRadius'),
         Cell('Madjacent'),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         # M is a reserved alias in FreeCAD.
@@ -221,8 +221,8 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('MM (M)')
     ],
     [
-        Cell('=YawPipeRadius * 2',
-             alias='YawPipeDiameter'),
+        Cell('=YawPipeDiameter / 2',
+             alias='YawPipeRadius'),
         Cell('=cos(TopAngle) * Mhypotenuse',
              alias='Madjacent'),
         # If M is less than the diameter of the Yaw Pipe, then set it to the diameter of the Yap Pipe.

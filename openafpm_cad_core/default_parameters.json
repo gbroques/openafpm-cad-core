@@ -34,7 +34,7 @@
             "MetalLengthL": 50,
             "MetalThicknessL": 6,
             "FlatMetalThickness": 10,
-            "YawPipeRadius": 30.15,
+            "YawPipeDiameter": 60.3,
             "PipeThickness": 5,
             "ResineRotorMargin": 5,
             "HubHoles": 6
@@ -75,7 +75,7 @@
             "MetalLengthL": 60,
             "MetalThicknessL": 6,
             "FlatMetalThickness": 10,
-            "YawPipeRadius": 44.5,
+            "YawPipeDiameter": 88.9,
             "PipeThickness": 5,
             "ResineRotorMargin": 5,
             "HubHoles": 7
@@ -116,7 +116,7 @@
             "MetalLengthL": 80,
             "MetalThicknessL": 8,
             "FlatMetalThickness": 12,
-            "YawPipeRadius": 57.15,
+            "YawPipeDiameter": 114.3,
             "PipeThickness": 6,
             "ResineRotorMargin": 5,
             "HubHoles": 10

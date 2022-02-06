@@ -189,8 +189,8 @@ class UserParameters(TypedDict):
     FlatMetalThickness: float
     """Thickness of various flat metal pieces which can be cut by a 2D CNC laser cutter."""
 
-    YawPipeRadius: float
-    """Radius of yaw bearing pipe including thickness."""
+    YawPipeDiameter: float
+    """Diameter of yaw bearing pipe including thickness."""
 
     PipeThickness: float
     """Thickness of yaw bearing and tail hinge pipes."""

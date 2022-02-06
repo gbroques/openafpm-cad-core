@@ -139,13 +139,13 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='Offset')
     ],
     [
-        Cell('YawPipeRadius'),
+        Cell('YawPipeDiameter'),
         Cell('MetalLengthL'),
         Cell('MetalThicknessL')
     ],
     [
-        Cell('=Spreadsheet.YawPipeRadius',
-             alias='YawPipeRadius'),
+        Cell('=Spreadsheet.YawPipeDiameter',
+             alias='YawPipeDiameter'),
         Cell('=Spreadsheet.MetalLengthL',
              alias='MetalLengthL'),
         Cell('=Spreadsheet.MetalThicknessL',
@@ -261,6 +261,18 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=create(<<rotation>>; FurlAxis; FurlAngle)',
              alias='FurlRotation')
     ],
+    # Calculated
+    # ----------
+    [
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('YawPipeRadius')
+    ],
+    [
+        Cell('=YawPipeDiameter / 2',
+             alias='YawPipeRadius'),
+    ],
     # SmallYawBearing
     # ---------------
     [
@@ -283,7 +295,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='SmallYawBearingX'),
         Cell('=(-TShapeTwoHoleEndBracketLength / 2 + FlatMetalThickness + Margin * 2) * -1',
              alias='SmallYawBearingY'),
-        Cell('=-X - YawPipeRadius * 2',
+        Cell('=-X - YawPipeDiameter',
              alias='SmallYawBearingZ'),
     ],
     # LargeYawBearing
