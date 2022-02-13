@@ -65,6 +65,16 @@ alternator_cells: List[List[Cell]] = [
              alias='YawPipeDiameter'),
     ],
     [
+        Cell('HubHolesPlacement'),
+        Cell('HubHoles')
+    ],
+    [
+        Cell('=Spreadsheet.HubHolesPlacement',
+             alias='HubHolesPlacement'),
+        Cell('=Spreadsheet.HubHoles',
+             alias='HubHoles')
+    ],
+    [
         Cell('Hub', styles=[Style.UNDERLINE])
         # -----------------------------------
     ],
@@ -87,7 +97,7 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('=Fastener.HexNutThickness',
-            alias='HexNutThickness'),
+             alias='HexNutThickness'),
         Cell('=Fastener.HubHexNutThickness',
              alias='HubHexNutThickness'),
         Cell('=Fastener.DistanceThreadsExtendFromNuts',
@@ -96,7 +106,7 @@ alternator_cells: List[List[Cell]] = [
              alias='WasherThickness')
     ],
     [
-        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD]),
+        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('AlternatorTiltAngle'),
@@ -137,14 +147,61 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorHolesCircumradius')
     ],
     [
-        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('RotorDiskThickness'),
+        Cell('JackingHoleDiameter')
+    ],
+    [
+        Cell('=MagnetThickness + DiskThickness',
+             alias='RotorDiskThickness'),
+        Cell('10',
+             alias='JackingHoleDiameter')
+    ],
+    [
+        Cell('Reduced Weight', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('InnerCircleResineRotor'),
+        Cell('PaddingBetweenEdgeOfOuterPocketAndResin')
+    ],
+    [
+        Cell('=RotorDiskRadius - MagnetLength - 25',
+             alias='InnerCircleResineRotor'),
+        Cell('12',
+             alias='PaddingBetweenEdgeOfOuterPocketAndResin'),
+    ],
+    [
+        Cell('PocketInnerRadius'),
+        Cell('PocketOuterRadius')
+    ],
+    [
+        Cell('=HubHolesPlacement + 3 * HubHoles',
+             alias='PocketInnerRadius'),
+        Cell('=InnerCircleResineRotor - PaddingBetweenEdgeOfOuterPocketAndResin',
+             alias='PocketOuterRadius')
+    ],
+    [
+        Cell('NumberOfPockets'),
+        Cell('WidthInnerPocket'),
+        Cell('WidthOuterPocket')
+    ],
+    [
+        Cell('6',
+             alias='NumberOfPockets'),
+        Cell('=2 * pi * PocketInnerRadius / (NumberOfPockets * 2)',
+             alias='WidthInnerPocket'),
+        Cell('=2 * pi * PocketOuterRadius / (NumberOfPockets * 2)',
+             alias='WidthOuterPocket')
+    ],
+    [
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
         Cell('StatorMountingStudsLength')
     ],
     [
-        Cell('=MagnetThickness + DiskThickness', alias='RotorDiskThickness'),
         Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness',
              alias='StatorMountingStudsLength')
     ],
