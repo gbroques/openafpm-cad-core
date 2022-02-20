@@ -160,6 +160,22 @@ alternator_cells: List[List[Cell]] = [
              alias='JackingHoleDiameter')
     ],
     [
+        # Radius of the wooden island when casting the magnets of the rotor in resin
+        # Effectively the radius of the inner hole of the rotor resin cast.
+        # See "The magnet rotor mould" section on page 41 of "A Wind Turbine Recipe Book (2014)".
+        Cell('SmallIslandRadius'),
+        Cell('LargeIslandRadius'),
+        Cell('IslandRadius')
+    ],
+    [
+        Cell('=HubHolesPlacement + 0.5 * (RotorDiskRadius - MagnetLength - HubHolesPlacement)',
+             alias='SmallIslandRadius'),
+        Cell('=RotorDiskRadius - MagnetLength - 25',
+             alias='LargeIslandRadius'),
+        Cell('=RotorDiskRadius < 187.5 ? SmallIslandRadius : LargeIslandRadius',
+             alias='IslandRadius')
+    ],
+    [
         Cell('Reduced Weight', styles=[Style.UNDERLINE])
     ],
     [
