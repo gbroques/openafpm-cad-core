@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable, Tuple
 
 import FreeCAD as App
 from FreeCAD import Document
@@ -6,14 +7,14 @@ from FreeCAD import Document
 from .create_spreadsheet_document import create_spreadsheet_document
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .wind_turbine_model import WindTurbineModel
 
-__all__ = ['load_turbine']
+__all__ = ['load_root_document']
 
 
-def load_turbine(magnafpm_parameters: MagnafpmParameters,
-                 furling_parameters: FurlingParameters,
-                 user_parameters: UserParameters) -> WindTurbineModel:
+def load_root_document(get_root_document_path: Callable[[Path], Path],
+                       magnafpm_parameters: MagnafpmParameters,
+                       furling_parameters: FurlingParameters,
+                       user_parameters: UserParameters) -> Tuple[Document, Document]:
     spreadsheet_document_name = 'Master_of_Puppets'
     spreadsheet_document = create_spreadsheet_document(spreadsheet_document_name,
                                                        magnafpm_parameters,
@@ -25,23 +26,18 @@ def load_turbine(magnafpm_parameters: MagnafpmParameters,
                   documents_path,
                   spreadsheet_document_name)
 
-    root_document_name = 'WindTurbine'
-    root_document = open_document(documents_path, root_document_name)
+    root_document = App.openDocument(
+        str(get_root_document_path(documents_path)))
     recompute_document(spreadsheet_document)
 
     recompute_all_documents()
 
-    return WindTurbineModel(root_document, spreadsheet_document)
+    return root_document, spreadsheet_document
 
 
 def get_documents_path() -> Path:
     package_path = Path(__file__).parent.absolute()
     return package_path.joinpath('documents')
-
-
-def open_document(path: Path, document_name: str) -> Document:
-    document_path = path.joinpath(f'{document_name}.FCStd')
-    return App.openDocument(str(document_path))
 
 
 def save_document(document: Document, path: Path, document_name: str) -> None:

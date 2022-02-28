@@ -147,6 +147,94 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorHolesCircumradius')
     ],
     [
+        Cell('TShapeNumberOfStatorHoles'),
+        Cell('HShapeNumberOfStatorHoles'),
+        Cell('NumberOfStatorHoles')
+    ],
+    [
+        Cell('3',
+             alias='TShapeNumberOfStatorHoles'),
+        Cell('4',
+             alias='HShapeNumberOfStatorHoles'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeNumberOfStatorHoles : HShapeNumberOfStatorHoles',
+             alias='NumberOfStatorHoles')
+    ],
+    [
+        Cell('TShapeEarSize'),
+        Cell('HShapeEarSize'),
+        Cell('EarSize')
+    ],
+    [
+        Cell('25',
+             alias='TShapeEarSize'),
+        Cell('35',
+             alias='HShapeEarSize'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : HShapeEarSize',
+             alias='EarSize')
+    ],
+    [
+        Cell('Mold', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('StatorMoldBoltWidthAcrossFlats'),
+        Cell('ScrewHoleRadius')
+    ],
+    [
+        Cell('20',
+             alias='StatorMoldBoltWidthAcrossFlats'),
+        Cell('2',
+             alias='ScrewHoleRadius')
+    ],
+    [
+        Cell('TShapeStatorMoldAngle'),
+        Cell('HShapeStatorMoldAngle'),
+        Cell('StatorMoldAngle')
+    ],
+    [
+        Cell('0',
+             alias='TShapeStatorMoldAngle'),
+        Cell('45',
+             alias='HShapeStatorMoldAngle'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorMoldAngle : HShapeStatorMoldAngle',
+             alias='StatorMoldAngle')
+    ],
+    [
+        Cell('TShapeSketchY'),
+        Cell('HShapeSketchY'),
+        Cell('SketchY')
+    ],
+    [
+        Cell('=-EarSize / 2',
+             alias='TShapeSketchY'),
+        Cell('0',
+             alias='HShapeSketchY'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeSketchY : HShapeSketchY',
+             alias='SketchY')
+    ],
+    [
+        Cell('IslandInnerRadius'),
+        Cell('EarAngle'),
+        Cell('BaseDimension')
+    ],
+    [
+        Cell('=0.78 * StatorInnerHoleRadius',
+             alias='IslandInnerRadius'),
+        Cell('=360 / NumberOfStatorHoles',
+             alias='EarAngle'),
+        Cell('=1.55 * 2 * StatorHolesCircumradius',
+             alias='BaseDimension')
+    ],
+    [
+        Cell('LargeHoleAngle'),
+        Cell('LengthMiddleHoles')
+    ],
+    [
+        Cell('=EarAngle / 4',
+             alias='LargeHoleAngle'),
+        Cell('=StatorHolesCircumradius + EarSize',
+             alias='LengthMiddleHoles')
+    ],
+    [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [

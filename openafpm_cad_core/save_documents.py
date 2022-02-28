@@ -22,14 +22,12 @@ def save_documents(root_document_name: str,
         spreadsheet_document_name, destination)
 
     documents = get_part_documents(spreadsheet_document_name)
+    source_paths = get_paths(documents)
 
     destination_by_source = save_document_copies_and_close(
         source, destination, documents)
 
     reopen_and_save_documents(root_document_name, destination)
-
-    source_paths = get_part_document_paths(
-        source, spreadsheet_document_name)
 
     gui_document_by_source = get_gui_document_by_path(source_paths)
 
@@ -37,6 +35,10 @@ def save_documents(root_document_name: str,
         gui_document_by_source, destination_by_source)
 
     write_gui_documents(gui_document_by_destination)
+
+
+def get_paths(documents: List[Document]) -> List[Path]:
+    return [Path(d.FileName) for d in documents]
 
 
 def save_document_copies_and_close(source: Path,
@@ -69,9 +71,7 @@ def save_and_reopen_spreadsheet_document(spreadsheet_document_name: str, destina
 def reopen_and_save_documents(root_document_name: str, destination: Path) -> List[Document]:
     root_document = str(destination.joinpath(f'{root_document_name}.FCStd'))
     App.openDocument(root_document)
-    sort_in_dependency_order = True
-    document_by_name = App.listDocuments(sort_in_dependency_order)
-    documents = document_by_name.values()
+    documents = get_open_documents()
     for document in documents:
         document.save()
     return documents
@@ -87,19 +87,14 @@ def get_destination_path(document_source: str,
 
 def get_part_documents(spreadsheet_document_name: str) -> List[Document]:
     """Part documents are any document containing parts (i.e. not the main spreadsheet document)."""
-    sort_in_dependency_order = True
-    document_by_name = App.listDocuments(sort_in_dependency_order)
-    documents = document_by_name.values()
+    documents = get_open_documents()
     return [
         d for d in documents
         if d.Name != spreadsheet_document_name
     ]
 
 
-def get_part_document_paths(base_path: Path,
-                            spreadsheet_document_name: str) -> List[Path]:
-    """Part documents are any document containing parts (i.e. not the main spreadsheet document)."""
-    return [
-        p for p in list(base_path.glob('**/*.FCStd'))
-        if p.stem != spreadsheet_document_name
-    ]
+def get_open_documents() -> List[Document]:
+    sort_in_dependency_order = True
+    document_by_name = App.listDocuments(sort_in_dependency_order)
+    return document_by_name.values()
