@@ -186,19 +186,6 @@ alternator_cells: List[List[Cell]] = [
              alias='ScrewHoleRadius')
     ],
     [
-        Cell('TShapeStatorMoldAngle'),
-        Cell('HShapeStatorMoldAngle'),
-        Cell('StatorMoldAngle')
-    ],
-    [
-        Cell('0',
-             alias='TShapeStatorMoldAngle'),
-        Cell('45',
-             alias='HShapeStatorMoldAngle'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorMoldAngle : HShapeStatorMoldAngle',
-             alias='StatorMoldAngle')
-    ],
-    [
         Cell('TShapeSketchY'),
         Cell('HShapeSketchY'),
         Cell('SketchY')

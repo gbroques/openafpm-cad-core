@@ -21,8 +21,7 @@ def make_archive(source: str, destination: str) -> bytes:
     :returns: Binary content of ZIP archive file.
     """
     base = os.path.basename(destination)
-    name = base.split('.')[0]
-    format = base.split('.')[1]
+    name, format = base.split('.')
     archive_from = os.path.dirname(source)
     archive_to = os.path.basename(source.strip(os.sep))
     shutil.make_archive(name, format, archive_from, archive_to)
