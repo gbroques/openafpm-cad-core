@@ -5,12 +5,15 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .wind_turbine import WindTurbine
 from .wind_turbine_model import WindTurbineModel
+from .hash_parameters import hash_parameters, unhash_parameters
 
 __all__ = [
     'create_spreadsheet_document',
     'get_default_parameters',
     'visualize',
-    'WindTurbine'
+    'WindTurbine',
+    'hash_parameters',
+    'unhash_parameters'
 ]
 
 
