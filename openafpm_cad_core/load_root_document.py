@@ -15,11 +15,12 @@ def load_root_document(get_root_document_path: Callable[[Path], Path],
                        magnafpm_parameters: MagnafpmParameters,
                        furling_parameters: FurlingParameters,
                        user_parameters: UserParameters) -> Tuple[List[Document], Document]:
-    return load_root_documents(
+    root_documents, spreadsheet_document = load_root_documents(
         [get_root_document_path],
         magnafpm_parameters,
         furling_parameters,
         user_parameters)
+    return root_documents[0], spreadsheet_document
 
 
 def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],

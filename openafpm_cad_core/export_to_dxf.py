@@ -6,11 +6,10 @@ from typing import List
 from uuid import uuid1
 
 import importDXF
-from FreeCAD import Document
+from FreeCAD import Document, Placement
 
 from .find_object_by_label import find_object_by_label
 from .load import load_all
-from .make_archive import make_archive
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 
@@ -53,6 +52,10 @@ def export_list_to_dxf(export_list: List[object]) -> bytes:
     for object in export_list:
         export_to = str(dxf_directory.joinpath(
             f'{object.Label}.dxf'))
+        # Reset Placement of object,
+        # as objects not aligned with the XY plane are exported to DXF incorrectly.
+        # See Also: https://forum.freecadweb.org/viewtopic.php?p=539543
+        object.Placement = Placement()
         importDXF.export([object], export_to)
 
     dxf_files = []

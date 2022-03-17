@@ -27,13 +27,12 @@ def load_turbine(magnafpm_parameters: MagnafpmParameters,
 def load_stator_mold(magnafpm_parameters: MagnafpmParameters,
                      furling_parameters: FurlingParameters,
                      user_parameters: UserParameters) -> Tuple[Document, Document]:
-    root_document, spreadsheet_document = load_root_document(
+    return load_root_document(
         get_stator_mold_assembly_document_path,
         magnafpm_parameters,
         furling_parameters,
         user_parameters
     )
-    return root_document, spreadsheet_document
 
 
 def load_all(magnafpm_parameters: MagnafpmParameters,

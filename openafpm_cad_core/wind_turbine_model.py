@@ -59,7 +59,6 @@ def to_obj(root_document: Document) -> str:
 
 def object_name_getter(obj: object, path: List[object]) -> str:
     rotor_disk_labels = {
-        'Rotor_Disk',
         'Rotor_ResinCast',
         'Rotor_Magnets'
     }
