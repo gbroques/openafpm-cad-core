@@ -5,8 +5,10 @@ from tempfile import gettempdir
 from typing import List
 from uuid import uuid1
 
+import Draft
+import FreeCAD as App
 import importDXF
-from FreeCAD import Document, Placement
+from FreeCAD import Document, Placement, Vector
 
 from .find_object_by_label import find_object_by_label
 from .load import load_all
@@ -52,11 +54,12 @@ def export_list_to_dxf(export_list: List[object]) -> bytes:
     for object in export_list:
         export_to = str(dxf_directory.joinpath(
             f'{object.Label}.dxf'))
+        object_to_export = get_object_to_export(object)
         # Reset Placement of object,
         # as objects not aligned with the XY plane are exported to DXF incorrectly.
         # See Also: https://forum.freecadweb.org/viewtopic.php?p=539543
-        object.Placement = Placement()
-        importDXF.export([object], export_to)
+        object_to_export.Placement = Placement()
+        importDXF.export([object_to_export], export_to)
 
     dxf_files = []
     for dxf in dxf_directory.glob('*.dxf'):
@@ -72,3 +75,34 @@ def export_list_to_dxf(export_list: List[object]) -> bytes:
     # Delete the directory the archive was created from.
     shutil.rmtree(dxf_directory)
     return bytes_content
+
+
+def get_object_to_export(object):
+    if object.Label == 'Tail_Stop_HighEnd':
+        return get_high_end_stop_shape(object)
+    else:
+        return object
+
+
+def get_high_end_stop_shape(object):
+    """The High End Stop requires special care when exporting to DXF.
+    Create a 2D projection of the second to largest face via the Draft workbench.
+
+    See Also:
+        https://wiki.freecadweb.org/Draft_Shape2DView
+    """
+    document = object.Document
+    faces = object.Shape.Faces
+    App.setActiveDocument(document.Name)
+    second_to_largest_face = sorted(
+        faces, key=lambda f: f.Area, reverse=True)[1]
+    index = None
+    for i, face in enumerate(faces, start=1):
+        if face.isEqual(second_to_largest_face):
+            index = i
+            break
+    shape = Draft.makeShape2DView(
+        object, Vector(1, 0, 0), facenumbers=[index - 1])
+    shape.ProjectionMode = 'Individual Faces'
+    document.recompute()
+    return shape
