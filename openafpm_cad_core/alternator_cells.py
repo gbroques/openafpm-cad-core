@@ -162,6 +162,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('TShapeEarSize'),
         Cell('HShapeEarSize'),
+        Cell('StarShapeEarSize'),
         Cell('EarSize')
     ],
     [
@@ -169,7 +170,9 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeEarSize'),
         Cell('35',
              alias='HShapeEarSize'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : HShapeEarSize',
+        Cell('55',
+             alias='StarShapeEarSize'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : (RotorDiskRadius < 275 ? HShapeEarSize : StarShapeEarSize)',
              alias='EarSize')
     ],
     [
