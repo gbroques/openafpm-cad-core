@@ -179,6 +179,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('Mold', styles=[Style.UNDERLINE])
     ],
     [
+        # TODO: Do these apply to both stator and rotor molds?
         Cell('StatorMoldBoltWidthAcrossFlats'),
         Cell('ScrewHoleRadius')
     ],
@@ -204,6 +205,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('IslandInnerRadius'),
         Cell('EarAngle'),
+        # TODO: Rename from BaseDimension to StatorMoldSideLength
         Cell('BaseDimension')
     ],
     [
@@ -288,6 +290,32 @@ alternator_cells: List[List[Cell]] = [
              alias='WidthInnerPocket'),
         Cell('=2 * pi * PocketOuterRadius / (NumberOfPockets * 2)',
              alias='WidthOuterPocket')
+    ],
+    [
+        Cell('Mold', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('RotorMoldSideLength'),
+        # TODO: Rename to NumberOfRotorMoldScrews
+        # to match NumberOfRotorMoldBolts.
+        Cell('NumberOfRotorMoldScrewHoles'),
+        # TODO: Preface with RotorMoldScrewHoleRadius?
+        Cell('ScrewHoleCircumradius')
+    ],
+    [
+        Cell('=RotorDiskRadius * 2 * 1.3333',
+             alias='RotorMoldSideLength'),
+        Cell('16',
+             alias='NumberOfRotorMoldScrewHoles'),
+        Cell('=1.18 * RotorDiskRadius',
+             alias='ScrewHoleCircumradius')
+    ],
+    [
+        Cell('NumberOfRotorMoldBolts'),
+    ],
+    [
+        Cell('=RotorDiskRadius <= 187.5 ? 2 : (RotorDiskRadius <= 275 ? 5 : 6)',
+             alias='NumberOfRotorMoldBolts')
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])

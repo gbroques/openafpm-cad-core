@@ -23,8 +23,8 @@ def export(turbine: WindTurbine) -> str:
 if __name__ == '__main__':
     turbines = (
         WindTurbine.T_SHAPE,
-        WindTurbine.H_SHAPE)
-        # WindTurbine.STAR_SHAPE)
+        WindTurbine.H_SHAPE,
+        WindTurbine.STAR_SHAPE)
     with Pool(3) as p:
         filepaths = p.map(export, turbines)
         print('Created')

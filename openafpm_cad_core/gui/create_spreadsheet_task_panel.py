@@ -2,26 +2,12 @@
 FreeCAD macro to create wind turbine document
 with spreadsheet containing input parameters.
 """
-from enum import Enum, unique
-
 import FreeCADGui as Gui
 from PySide import QtGui
 
 from ..get_default_parameters import get_default_parameters
-from ..load import load_stator_mold, load_turbine
+from ..load import Assembly, load_assembly
 from ..wind_turbine import WindTurbine
-
-
-@unique
-class RootObject(Enum):
-    Turbine = 'Wind Turbine'
-    StatorMold = 'Stator Mold'
-
-
-load_function_by_label = {
-    RootObject.Turbine.value: load_turbine,
-    RootObject.StatorMold.value: load_stator_mold
-}
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 
@@ -30,7 +16,7 @@ class CreateSpreadsheetTaskPanel:
     def __init__(self, title: str):
         self.form = QtGui.QWidget()
         self.form.setWindowTitle(title)
-        self.selected_function = load_turbine
+        self.selected_assembly = Assembly.WindTurbine
 
         layout = QtGui.QVBoxLayout(self.form)
 
@@ -89,13 +75,9 @@ class CreateSpreadsheetTaskPanel:
 
     def create_load_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
-        items = [variant.value for variant in list(RootObject)]
+        items = [variant.value for variant in list(Assembly)]
         combo_box.addItems(items)
-        combo_box.activated[str].connect(self.handle_load_combo_box_activated)
         return combo_box
-
-    def handle_load_combo_box_activated(self, selected_root_object_label: str):
-        self.selected_function = load_function_by_label[selected_root_object_label]
 
     def accept(self):
         """
@@ -103,9 +85,11 @@ class CreateSpreadsheetTaskPanel:
         """
         variant = WindTurbine(self.variant_combo_box.currentText())
         parameters = get_default_parameters(variant)
-        self.selected_function(parameters['magnafpm'],
-                               parameters['furling'],
-                               parameters['user'])
+        assembly = Assembly(self.load_combo_box.currentText())
+        load_assembly(assembly,
+                      parameters['magnafpm'],
+                      parameters['furling'],
+                      parameters['user'])
         Gui.Control.closeDialog()
 
 
