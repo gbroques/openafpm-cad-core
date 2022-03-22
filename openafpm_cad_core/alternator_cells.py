@@ -205,8 +205,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('IslandInnerRadius'),
         Cell('EarAngle'),
-        # TODO: Rename from BaseDimension to StatorMoldSideLength
-        Cell('BaseDimension')
+        Cell('StatorMoldSideLength')
     ],
     [
         Cell('=0.78 * StatorInnerHoleRadius',
@@ -214,7 +213,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('=360 / NumberOfStatorHoles',
              alias='EarAngle'),
         Cell('=1.55 * 2 * StatorHolesCircumradius',
-             alias='BaseDimension')
+             alias='StatorMoldSideLength')
     ],
     [
         Cell('LargeHoleAngle'),
