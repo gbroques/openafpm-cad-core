@@ -23,9 +23,6 @@ class Assembly(Enum):
     StatorMold = 'Stator Mold'
     RotorMold = 'Rotor Mold'
 
-    def __str__(self) -> str:
-        return self.value
-
 
 def load_assembly(assembly: Assembly,
                   magnafpm_parameters: MagnafpmParameters,
