@@ -295,19 +295,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorMoldSideLength'),
-        # TODO: Rename to NumberOfRotorMoldScrews
-        # to match NumberOfRotorMoldBolts.
-        Cell('NumberOfRotorMoldScrewHoles'),
-        # TODO: Preface with RotorMoldScrewHoleRadius?
-        Cell('ScrewHoleCircumradius')
+        Cell('NumberOfRotorMoldScrews'),
+        Cell('RotorMoldScrewHolesCircumradius')
     ],
     [
         Cell('=RotorDiskRadius * 2 * 1.3333',
              alias='RotorMoldSideLength'),
         Cell('16',
-             alias='NumberOfRotorMoldScrewHoles'),
+             alias='NumberOfRotorMoldScrews'),
         Cell('=1.18 * RotorDiskRadius',
-             alias='ScrewHoleCircumradius')
+             alias='RotorMoldScrewHolesCircumradius')
     ],
     [
         Cell('NumberOfRotorMoldBolts'),
