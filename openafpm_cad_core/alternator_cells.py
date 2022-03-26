@@ -178,20 +178,37 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('Mold', styles=[Style.UNDERLINE])
     ],
+    # For metric hex bolt dimensions, see:
+    # https://www.atlrod.com/metric-hex-bolt-dimensions/
     [
-        Cell('StatorMoldBoltWidthAcrossFlats'),
-        Cell('RotorMoldBoltWidthAcrossFlats'),
+        Cell('StatorMoldBoltDiameter'),
+        Cell('StatorMoldBoltWidthAcrossFlats')
+    ],
+    [
+        # M12 Bolt
+        Cell('12',
+             alias='StatorMoldBoltDiameter'),
+        Cell('19',
+             alias='StatorMoldBoltWidthAcrossFlats')
+    ],
+    [
+        Cell('RotorMoldBoltDiameter'),
+        Cell('RotorMoldBoltWidthAcrossFlats')
+    ],
+    [
+        # M14 Bolt
+        Cell('14',
+             alias='RotorMoldBoltDiameter'),
+        # Max width across the flats for a M14 bolt.
+        Cell('22',
+             alias='RotorMoldBoltWidthAcrossFlats')
+    ],
+    [
+        # Controls radius of screw holes for both Stator & Rotor molds.
+        # These appear to be pilot holes for a 5mm diameter screw.
         Cell('ScrewHoleRadius')
     ],
     [
-        # Based on a M12 bolt.
-        # A bit larger than the maximum size of an M12 bolt.
-        Cell('20',
-             alias='StatorMoldBoltWidthAcrossFlats'),
-        # Based on a M14 bolt.
-        # A bit larger than the maximum size of an M14 bolt.
-        Cell('23.3827',
-             alias='RotorMoldBoltWidthAcrossFlats'),
         Cell('2',
              alias='ScrewHoleRadius')
     ],
