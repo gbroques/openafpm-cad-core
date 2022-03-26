@@ -179,13 +179,19 @@ alternator_cells: List[List[Cell]] = [
         Cell('Mold', styles=[Style.UNDERLINE])
     ],
     [
-        # TODO: Do these apply to both stator and rotor molds?
         Cell('StatorMoldBoltWidthAcrossFlats'),
+        Cell('RotorMoldBoltWidthAcrossFlats'),
         Cell('ScrewHoleRadius')
     ],
     [
+        # Based on a M12 bolt.
+        # A bit larger than the maximum size of an M12 bolt.
         Cell('20',
              alias='StatorMoldBoltWidthAcrossFlats'),
+        # Based on a M14 bolt.
+        # A bit larger than the maximum size of an M14 bolt.
+        Cell('23.3827',
+             alias='RotorMoldBoltWidthAcrossFlats'),
         Cell('2',
              alias='ScrewHoleRadius')
     ],
