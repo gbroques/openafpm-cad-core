@@ -10,8 +10,8 @@ def export(turbine: WindTurbine) -> str:
 
     zip_bytes = export_to_dxf(
         parameters['magnafpm'],
-        parameters['user'],
-        parameters['furling'])
+        parameters['furling'],
+        parameters['user'])
 
     name = turbine.value.lower().replace(' ', '-')
     filename = f'{name}-dxf.zip'
