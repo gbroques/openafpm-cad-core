@@ -162,7 +162,6 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('TShapeEarSize'),
         Cell('HShapeEarSize'),
-        Cell('StarShapeEarSize'),
         Cell('EarSize')
     ],
     [
@@ -170,9 +169,7 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeEarSize'),
         Cell('35',
              alias='HShapeEarSize'),
-        Cell('55',
-             alias='StarShapeEarSize'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : (RotorDiskRadius < 275 ? HShapeEarSize : StarShapeEarSize)',
+        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : HShapeEarSize',
              alias='EarSize')
     ],
     [
@@ -206,11 +203,19 @@ alternator_cells: List[List[Cell]] = [
     [
         # Controls radius of screw holes for both Stator & Rotor molds.
         # These appear to be pilot holes for a 5mm diameter screw.
-        Cell('ScrewHoleRadius')
+        Cell('ScrewHoleRadius'),
+        Cell('DistanceBetweenOuterHolesAndStatorMold'),
+        Cell('DistanceBetweenInnerHolesAndStatorMold')
     ],
     [
         Cell('2',
-             alias='ScrewHoleRadius')
+             alias='ScrewHoleRadius'),
+        # Ensure holes are close enough to create
+        # pressure for the resin not to flow out.
+        Cell('=StatorMoldBoltDiameter * 2',
+             alias='DistanceBetweenOuterHolesAndStatorMold'),
+        Cell('=StatorMoldBoltDiameter * 1.5',
+             alias='DistanceBetweenInnerHolesAndStatorMold')
     ],
     [
         Cell('TShapeSketchY'),
@@ -226,12 +231,13 @@ alternator_cells: List[List[Cell]] = [
              alias='SketchY')
     ],
     [
+        # TODO: Rename to IslandHolesCircumradius?
         Cell('IslandInnerRadius'),
         Cell('EarAngle'),
         Cell('StatorMoldSideLength')
     ],
     [
-        Cell('=0.78 * StatorInnerHoleRadius',
+        Cell('=StatorInnerHoleRadius - DistanceBetweenInnerHolesAndStatorMold',
              alias='IslandInnerRadius'),
         Cell('=360 / NumberOfStatorHoles',
              alias='EarAngle'),
@@ -245,7 +251,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=EarAngle / 4',
              alias='LargeHoleAngle'),
-        Cell('=StatorHolesCircumradius + EarSize',
+        Cell('=StatorHolesCircumradius + DistanceBetweenOuterHolesAndStatorMold',
              alias='LengthMiddleHoles')
     ],
     [
