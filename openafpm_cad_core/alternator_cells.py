@@ -251,7 +251,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=EarAngle / 4',
              alias='LargeHoleAngle'),
-        Cell('=StatorHolesCircumradius + DistanceBetweenOuterHolesAndStatorMold',
+        Cell('=(RotorDiskRadius < 275 ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius) + DistanceBetweenOuterHolesAndStatorMold',
              alias='LengthMiddleHoles')
     ],
     [
