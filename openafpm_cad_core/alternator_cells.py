@@ -66,13 +66,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('HubHolesPlacement'),
-        Cell('HubHoles')
+        Cell('HubHoles'),
+        Cell('ResineRotorMargin')
     ],
     [
         Cell('=Spreadsheet.HubHolesPlacement',
              alias='HubHolesPlacement'),
         Cell('=Spreadsheet.HubHoles',
-             alias='HubHoles')
+             alias='HubHoles'),
+        Cell('=Spreadsheet.ResineRotorMargin',
+             alias='ResineRotorMargin')
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -324,21 +327,23 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorMoldSideLength'),
-        Cell('NumberOfRotorMoldScrews'),
-        Cell('RotorMoldScrewHolesCircumradius')
+        Cell('NumberOfRotorMoldScrews')
     ],
     [
         Cell('=RotorDiskRadius * 2 * 1.3333',
              alias='RotorMoldSideLength'),
         Cell('16',
-             alias='NumberOfRotorMoldScrews'),
-        Cell('=1.18 * RotorDiskRadius',
-             alias='RotorMoldScrewHolesCircumradius')
+             alias='NumberOfRotorMoldScrews')
     ],
     [
+        Cell('DistanceBetweenRotorMoldScrewsAndResin'),
         Cell('NumberOfRotorMoldBolts'),
     ],
     [
+        Cell('22',
+             alias='DistanceBetweenRotorMoldScrewsAndResin'),
+        Cell('=RotorDiskRadius + ResineRotorMargin + DistanceBetweenRotorMoldScrewsAndResin',
+             alias='RotorMoldScrewHolesCircumradius'),
         Cell('=RotorDiskRadius <= 187.5 ? 2 : (RotorDiskRadius <= 275 ? 5 : 6)',
              alias='NumberOfRotorMoldBolts')
     ],
