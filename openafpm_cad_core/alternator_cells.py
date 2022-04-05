@@ -344,7 +344,7 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenRotorMoldScrewsAndResin'),
         Cell('=RotorDiskRadius + ResineRotorMargin + DistanceBetweenRotorMoldScrewsAndResin',
              alias='RotorMoldScrewHolesCircumradius'),
-        Cell('=RotorDiskRadius <= 187.5 ? 2 : (RotorDiskRadius <= 275 ? 5 : 6)',
+        Cell('=RotorDiskRadius < 187.5 ? 2 : (RotorDiskRadius < 275 ? 5 : 6)',
              alias='NumberOfRotorMoldBolts')
     ],
     [
