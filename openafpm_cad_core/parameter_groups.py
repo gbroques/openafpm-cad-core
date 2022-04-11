@@ -15,9 +15,9 @@ __all__ = [
 
 class MagnafpmParameters(TypedDict):
     """Parameters from the MagnAFPM tool.
-    
+
     These mainly relate to:
-    
+
     * the alternator (a.k.a generator)
     * how electricity is generated
     * and (**magn**)etism.
@@ -51,6 +51,17 @@ class MagnafpmParameters(TypedDict):
 
     StatorThickness: float
     """Thickness of stator."""
+
+    CoilType: int
+    """Denotes the type of coil:
+    
+    * rectangular when CoilType = 1
+    * keyhole when CoilType = 2
+    * and Triangular when CoilType = 3
+
+    See Winding Type section at:
+        https://openafpm.net/design-tips
+    """
 
     CoilLegWidth: float
     """Distance from the inner-most edge, surrounding the hole, to the outer-most edge of the coil.
@@ -94,7 +105,7 @@ class MagnafpmParameters(TypedDict):
 
 class FurlingParameters(TypedDict):
     """Furling Parameters.
-    
+
     These mainly relate to the tail, hinge, and "furling".
 
     "*Furling*" is defined as:
