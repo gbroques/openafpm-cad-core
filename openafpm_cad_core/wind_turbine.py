@@ -17,4 +17,4 @@ class WindTurbine(Enum):
     """Medium-sized wind turbine with a frame shaped like an "H"."""
 
     STAR_SHAPE = 'Star Shape'
-    """Largest wind turbine with a frame shaped like a star."""
+    """Largest wind turbine with a frame shaped like a six-pointed star."""
