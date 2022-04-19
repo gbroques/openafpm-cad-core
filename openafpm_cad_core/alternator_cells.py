@@ -258,17 +258,17 @@ alternator_cells: List[List[Cell]] = [
              alias='LengthMiddleHoles')
     ],
     [
-        Cell('StatorMoldIslandScrewAngle'),
         Cell('StatorMoldIslandNumberOfBolts'),
-        Cell('StatorMoldIslandNumberOfScrews')
+        Cell('StatorMoldIslandNumberOfScrews'),
+        Cell('StatorMoldIslandScrewAngle')
     ],
     [
-        Cell('=360 / (RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 16 : 36))',
-             alias='StatorMoldIslandScrewAngle'),
-        Cell('=RotorDiskRadius < 187.5 ? 4 : (RotorDiskRadius < 275 ? 8 : 12)',
+        Cell('=RotorDiskRadius < 187.5 ? 4 : (RotorDiskRadius < 275 ? 6 : 12)',
              alias='StatorMoldIslandNumberOfBolts'),
-        Cell('=RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 8 : 36)',
-             alias='StatorMoldIslandNumberOfScrews')
+        Cell('=RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 18 : 36)',
+             alias='StatorMoldIslandNumberOfScrews'),
+        Cell('=360 / StatorMoldIslandNumberOfScrews',
+             alias='StatorMoldIslandScrewAngle'),
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
