@@ -82,11 +82,14 @@ alternator_cells: List[List[Cell]] = [
         # -----------------------------------
     ],
     [
-        Cell('DistanceBetweenFrameAndBackRotor')
+        Cell('DistanceBetweenFrameAndBackRotor'),
+        Cell('NumberOfHoles')
     ],
     [
         Cell('=Hub.DistanceBetweenFrameAndBackRotor',
-             alias='DistanceBetweenFrameAndBackRotor')
+             alias='DistanceBetweenFrameAndBackRotor'),
+        Cell('=Hub.NumberOfHoles',
+             alias='NumberOfHoles')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -190,18 +193,6 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldBoltDiameter'),
         Cell('19',
              alias='StatorMoldBoltWidthAcrossFlats')
-    ],
-    [
-        Cell('RotorMoldBoltDiameter'),
-        Cell('RotorMoldBoltWidthAcrossFlats')
-    ],
-    [
-        # M14 Bolt
-        Cell('14',
-             alias='RotorMoldBoltDiameter'),
-        # Max width across the flats for a M14 bolt.
-        Cell('22',
-             alias='RotorMoldBoltWidthAcrossFlats')
     ],
     [
         # Controls radius of screw holes for both Stator & Rotor molds.
@@ -349,6 +340,27 @@ alternator_cells: List[List[Cell]] = [
              alias='NumberOfRotorMoldScrews')
     ],
     [
+        # Select F (MAX) based on HubHoles.
+        # https://www.atlrod.com/metric-hex-bolt-dimensions/
+        Cell('RotorMoldBoltWidthAcrossFlats')
+    ],
+    [
+        Cell('46',
+             alias='RMBWAFmax'),
+        Cell('=HubHoles <= 12 ? 36 : RMBWAFmax',
+             alias='RMBWAFrange5'),
+        Cell('=HubHoles <= 10 ? 30 : RMBWAFrange5',
+             alias='RMBWAFrange4'),
+        Cell('=HubHoles <= 8 ? 24 : RMBWAFrange4',
+             alias='RMBWAFrange3'),
+        Cell('=HubHoles <= 7 ? 22 : RMBWAFrange3',
+             alias='RMBWAFrange2'),
+        Cell('=HubHoles <= 6 ? 19 : RMBWAFrange2',
+             alias='RMBWAFrange1'),
+        Cell('=HubHoles <= 5 ? 17 : RMBWAFrange1',
+             alias='RotorMoldBoltWidthAcrossFlats'),
+    ],
+    [
         Cell('DistanceBetweenRotorMoldScrewsAndResin'),
         Cell('NumberOfRotorMoldBolts'),
     ],
@@ -357,7 +369,7 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenRotorMoldScrewsAndResin'),
         Cell('=RotorDiskRadius + ResineRotorMargin + DistanceBetweenRotorMoldScrewsAndResin',
              alias='RotorMoldScrewHolesCircumradius'),
-        Cell('=RotorDiskRadius < 187.5 ? 2 : (RotorDiskRadius < 275 ? 5 : 6)',
+        Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
              alias='NumberOfRotorMoldBolts')
     ],
     [
