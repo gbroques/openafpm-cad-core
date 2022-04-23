@@ -345,8 +345,12 @@ alternator_cells: List[List[Cell]] = [
         Cell('RotorMoldBoltWidthAcrossFlats')
     ],
     [
-        Cell('46',
+        Cell('65',
              alias='RMBWAFmax'),
+        Cell('=HubHoles <= 18 ? 55 : RMBWAFmax',
+             alias='RMBWAFrange5'),
+        Cell('=HubHoles <= 15 ? 46 : RMBWAFmax',
+             alias='RMBWAFrange5'),
         Cell('=HubHoles <= 12 ? 36 : RMBWAFmax',
              alias='RMBWAFrange5'),
         Cell('=HubHoles <= 10 ? 30 : RMBWAFrange5',
