@@ -78,6 +78,16 @@ alternator_cells: List[List[Cell]] = [
              alias='ResineRotorMargin')
     ],
     [
+        Cell('CoilInnerWidth2'),
+        Cell('CoilType')
+    ],
+    [
+        Cell('=Spreadsheet.CoilInnerWidth2',
+             alias='CoilInnerWidth2'),
+        Cell('=Spreadsheet.CoilType',
+             alias='CoilType')
+    ],
+    [
         Cell('Hub', styles=[Style.UNDERLINE])
         # -----------------------------------
     ],
@@ -260,6 +270,42 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldIslandNumberOfScrews'),
         Cell('=360 / StatorMoldIslandNumberOfScrews',
              alias='StatorMoldIslandScrewAngle'),
+    ],
+    [
+        Cell('CoilWinder', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('CoilWinderDiskRadius'),
+        Cell('CoilWinderDiskCenterHoleRadius'),
+        Cell('CoilWinderDiskSmallHoleRadius')
+    ],
+    [
+        Cell('60',
+             alias='CoilWinderDiskRadius'),
+        Cell('5',
+             alias='CoilWinderDiskCenterHoleRadius'),
+        Cell('2.5',
+             alias='CoilWinderDiskSmallHoleRadius')
+    ],
+    [
+        Cell('CoilWinderDiskTapeNotchWidth'),
+        Cell('CoilWinderDiskFillet')
+    ],
+    [
+        Cell('23',
+             alias='CoilWinderDiskTapeNotchWidth'),
+        Cell('8',
+             alias='CoilWinderDiskFillet')
+    ],
+    [
+        Cell('CoilWinderDiskBottomHoleRadius'),
+        Cell('RectangularVerticalDistanceOfHolesFromCenter')
+    ],
+    [
+        Cell('=CoilType != 3 ? 4 : CoilInnerWidth2 / 2',
+             alias='CoilWinderDiskBottomHoleRadius'),
+        Cell('=MagnetLength / 2 - CoilWinderDiskSmallHoleRadius',
+             alias='RectangularVerticalDistanceOfHolesFromCenter')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
