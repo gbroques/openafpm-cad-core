@@ -102,6 +102,12 @@ class MagnafpmParameters(TypedDict):
     MechanicalClearance: float
     """Air gap distance between stator and one rotor disk."""
 
+    InnerDistanceBetweenMagnets: float
+    """The distance between two consecutive magnets at the inner radius.
+
+    For determining which kind of Magnet Jig to use: inner or outer.
+    """
+
 
 class FurlingParameters(TypedDict):
     """Furling Parameters.
