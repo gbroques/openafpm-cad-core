@@ -386,29 +386,29 @@ alternator_cells: List[List[Cell]] = [
              alias='NumberOfRotorMoldScrews')
     ],
     [
-        # Select F (MAX) based on HubHoles.
+        # Select C (MAX) based on HubHoles.
         # https://www.atlrod.com/metric-hex-bolt-dimensions/
-        Cell('RotorMoldBoltWidthAcrossFlats')
+        Cell('RotorMoldBoltWidthAcrossCorners')
     ],
     [
-        Cell('65',
+        Cell('75.05',
              alias='RMBWAFmax'),
-        Cell('=HubHoles <= 18 ? 55 : RMBWAFmax',
+        Cell('=HubHoles <= 18 ? 63.51 : RMBWAFmax',
              alias='RMBWAFrange7'),
-        Cell('=HubHoles <= 15 ? 46 : RMBWAFrange7',
+        Cell('=HubHoles <= 15 ? 53.12 : RMBWAFrange7',
              alias='RMBWAFrange6'),
-        Cell('=HubHoles <= 12 ? 36 : RMBWAFrange6',
+        Cell('=HubHoles <= 12 ? 41.57 : RMBWAFrange6',
              alias='RMBWAFrange5'),
-        Cell('=HubHoles <= 10 ? 30 : RMBWAFrange5',
+        Cell('=HubHoles <= 10 ? 34.64 : RMBWAFrange5',
              alias='RMBWAFrange4'),
-        Cell('=HubHoles <= 8 ? 24 : RMBWAFrange4',
+        Cell('=HubHoles <= 8 ? 27.71 : RMBWAFrange4',
              alias='RMBWAFrange3'),
-        Cell('=HubHoles <= 7 ? 22 : RMBWAFrange3',
+        Cell('=HubHoles <= 7 ? 24.25 : RMBWAFrange3',
              alias='RMBWAFrange2'),
-        Cell('=HubHoles <= 6 ? 19 : RMBWAFrange2',
+        Cell('=HubHoles <= 6 ? 20.78 : RMBWAFrange2',
              alias='RMBWAFrange1'),
-        Cell('=HubHoles <= 5 ? 17 : RMBWAFrange1',
-             alias='RotorMoldBoltWidthAcrossFlats'),
+        Cell('=HubHoles <= 5 ? 18.48 : RMBWAFrange1',
+             alias='RotorMoldBoltWidthAcrossCorners'),
     ],
     [
         Cell('DistanceBetweenRotorMoldScrewsAndResin'),
