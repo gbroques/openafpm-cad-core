@@ -155,11 +155,19 @@ def get_unit() -> str:
 
 
 def get_material(obj: object) -> str:
-    wooden_objects = {'Tail_Vane'}
-    if 'Mold' in obj.Label or obj.Label in wooden_objects:
+    if is_wooden(obj.Label):
         return 'Plywood'
     else:
         return 'Steel'
+
+
+def is_wooden(label: str) -> bool:
+    wooden_labels = ['Tail_Vane']
+    wooden_label_fragments = ['Mold', 'CoilWinder']
+    return (
+        any([wooden_label == label for wooden_label in wooden_labels]) or
+        any([fragment in label for fragment in wooden_label_fragments])
+    )
 
 
 def get_bound_box(obj: object) -> Optional[BoundBox]:

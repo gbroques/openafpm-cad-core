@@ -46,7 +46,8 @@ def load_all(magnafpm_parameters: MagnafpmParameters,
         [
             get_wind_turbine_document_path,
             get_stator_mold_assembly_document_path,
-            get_rotor_mold_assembly_document_path
+            get_rotor_mold_assembly_document_path,
+            get_coil_winder_assembly_document_path
         ],
         magnafpm_parameters,
         furling_parameters,
