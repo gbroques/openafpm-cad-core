@@ -7,12 +7,12 @@ from uuid import uuid1
 
 import importDXF
 
+from .export_set_to_svg import export_set_to_svg, get_svg_style_options
 from .get_2d_projection import get_2d_projection
 from .get_dxf_export_set import get_dxf_export_set
 from .load import load_all
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .preview_dxf_as_svg import preview_dxf_as_svg
 
 
 def export_to_dxf(magnafpm_parameters: MagnafpmParameters,
@@ -21,16 +21,8 @@ def export_to_dxf(magnafpm_parameters: MagnafpmParameters,
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters, furling_parameters, user_parameters)
     export_set = get_dxf_export_set(root_documents)
-    # 0.48 comes from 150 (the default RotorDiskRadius for T shape)
-    # divided by a desired 72 px which happens to look good.
-    font_size = round(magnafpm_parameters['RotorDiskRadius'] * 0.48)
-    padding = round(font_size * 0.222)  # 16 / 72 = 0.222 repeating
-    row_gap = round(font_size * 0.889)  # 64 / 72 = 0.889 repeating
-    column_gap = row_gap / 2  # 32 is half of 64
-    text_margin_bottom = round(font_size * 0.667)  # 48 / 72 = 0.667 repeating
-    svg = preview_dxf_as_svg(export_set, font_size=font_size, padding=padding,
-                             row_gap=row_gap, column_gap=column_gap,
-                             text_margin_bottom=text_margin_bottom)
+    options = get_svg_style_options(magnafpm_parameters['RotorDiskRadius'])
+    svg = export_set_to_svg(export_set, **options)
     return export_dxf_as_zip(export_set, svg)
 
 
