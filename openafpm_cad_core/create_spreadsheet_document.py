@@ -12,6 +12,7 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
 from .spreadsheet import Cell, populate_spreadsheet
 from .tail_cells import tail_cells
+from .wind_turbine_cells import wind_turbine_cells
 from .yaw_bearing_cells import yaw_bearing_cells
 
 __all__ = ['create_spreadsheet_document']
@@ -33,6 +34,7 @@ def create_spreadsheet_document(name: str,
         'Alternator': alternator_cells,
         'YawBearing': yaw_bearing_cells,
         'Tail': tail_cells,
+        'WindTurbine': wind_turbine_cells,
         'HighEndStop': high_end_stop_cells
     }
     return create_document(name, cells_by_spreadsheet_name)
