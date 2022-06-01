@@ -250,13 +250,18 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('LargeHoleAngle'),
-        Cell('LengthMiddleHoles')
+        Cell('LengthMiddleHoles'),
+        Cell('StatorMoldHolesSketchAngle')
     ],
     [
+        # Divide by 4 because there are 3 bolts and 4 spaces between each "ear"
+        # for the T and H Shape Stator Mold.
         Cell('=EarAngle / 4',
              alias='LargeHoleAngle'),
         Cell('=(RotorDiskRadius < 275 ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius) + DistanceBetweenOuterHolesAndStatorMold',
-             alias='LengthMiddleHoles')
+             alias='LengthMiddleHoles'),
+        Cell('=RotorDiskRadius < 187.5 ? 0 : (RotorDiskRadius < 275 ? 45 : 0)',
+             alias='StatorMoldHolesSketchAngle')
     ],
     [
         Cell('StatorMoldIslandNumberOfBolts'),
