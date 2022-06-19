@@ -420,7 +420,8 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('DistanceBetweenRotorMoldScrewsAndResin'),
-        Cell('NumberOfRotorMoldBolts'),
+        Cell('RotorMoldScrewHolesCircumradius'),
+        Cell('NumberOfRotorMoldBolts')
     ],
     [
         Cell('22',
@@ -429,6 +430,16 @@ alternator_cells: List[List[Cell]] = [
              alias='RotorMoldScrewHolesCircumradius'),
         Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
              alias='NumberOfRotorMoldBolts')
+    ],
+    [
+        Cell('MagnetJig', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('MagnetJigThickness')
+    ],
+    [
+        Cell('6',
+             alias='MagnetJigThickness')
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
