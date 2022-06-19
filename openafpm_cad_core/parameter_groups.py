@@ -108,6 +108,21 @@ class MagnafpmParameters(TypedDict):
     For determining which kind of Magnet Jig to use: inner or outer.
     """
 
+    NumberOfCoilsPerPhase: int
+    """Number of coils in a phase.
+
+    **Phase** is defined as:
+
+        The timing of the cyclical aternation of voltage in a circuit.
+        Different phases will peak at different times.
+
+        A group of coils with the same timing is known as a 'phase'.
+
+    — page 61, Glossary section of "A Wind Turbine Recipe Book (2014)".
+
+    See "Connecting the coils" section on page 38 of "A Wind Turbine Recipe Book (2014)".
+    """
+
 
 class FurlingParameters(TypedDict):
     """Furling Parameters.
