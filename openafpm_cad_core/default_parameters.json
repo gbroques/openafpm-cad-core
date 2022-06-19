@@ -110,7 +110,7 @@
             "BoomLength": 2600,
             "BoomPipeRadius": 36.5,
             "BoomPipeThickness": 5,
-            "VaneThickness": 9,
+            "VaneThickness": 12,
             "VaneLength": 3000,
             "VaneWidth": 1260,
             "Offset": 348
