@@ -294,13 +294,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderDiskTapeNotchWidth'),
-        Cell('CoilWinderDiskFillet')
+        Cell('CoilWinderDiskFillet'),
+        Cell('CoilWinderCheekThickness')
     ],
     [
         Cell('23',
              alias='CoilWinderDiskTapeNotchWidth'),
         Cell('8',
-             alias='CoilWinderDiskFillet')
+             alias='CoilWinderDiskFillet'),
+        Cell('12',
+             alias='CoilWinderCheekThickness')
     ],
     [
         Cell('CoilWinderDiskBottomHoleRadius'),
