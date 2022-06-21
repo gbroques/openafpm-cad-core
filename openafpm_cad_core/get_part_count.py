@@ -16,13 +16,24 @@ def get_part_count(magnafpm_parameters: MagnafpmParameters,
         magnafpm_parameters, furling_parameters, user_parameters)
     count_by_label_and_type_id = defaultdict(int)
 
+    delimiter = ';'
     def visit(obj: object) -> None:
         if obj.TypeId not in ASSEMBLY_TYPE_IDS:
-            label_and_type_id = obj.Label + ':' + obj.TypeId
+            label_and_type_id = obj.Label + delimiter + obj.TypeId
             count_by_label_and_type_id[label_and_type_id] += 1
     for root_document in root_documents:
         root_object = find_object_by_label(root_document, root_document.Name)
         traverse([root_object], visit)
+
+    number_of_coils_per_phase = magnafpm_parameters['NumberOfCoilsPerPhase']
+    for label_and_type_id in count_by_label_and_type_id.keys():
+        label, type_id = label_and_type_id.split(delimiter)
+        if label.startswith('Stator_CoilWinder'):
+            count_by_label_and_type_id[label_and_type_id] *= number_of_coils_per_phase
+        if label.startswith('Rotor_Mold'):
+            # Assume user wants 2 rotor molds since it's generally
+            # easier to cast both rotors at the same time.
+            count_by_label_and_type_id[label_and_type_id] *= 2
     return count_by_label_and_type_id
 
 
