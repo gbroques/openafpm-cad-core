@@ -1,6 +1,6 @@
 import math
 from itertools import groupby
-from typing import Iterator, List, Optional, Set, Tuple, TypedDict
+from typing import Callable, Iterator, List, Optional, Set, Tuple, TypedDict
 
 import Draft
 from FreeCAD import BoundBox, Console, Units
@@ -12,6 +12,7 @@ __all__ = ['export_set_to_svg', 'get_svg_style_options']
 
 class FlatObject(TypedDict):
     label: str
+    count: int
     svg: str
     bound_box: BoundBox
     material: str
@@ -19,6 +20,7 @@ class FlatObject(TypedDict):
 
 
 def export_set_to_svg(export_set: Set[object],
+                      get_part_count: Callable[[object], int],
                       precision: int = 2,
                       font_size: int = 72,
                       font_family: str = 'sans-serif',
@@ -37,7 +39,7 @@ def export_set_to_svg(export_set: Set[object],
     https://github.com/FreeCAD/FreeCAD/blob/0.19.4/src/Mod/Draft/importSVG.py#L1772-L1883
     """
     flat_objects = [
-        get_flat_object(o, precision, stroke_width, foreground)
+        get_flat_object(o, get_part_count, precision, stroke_width, foreground)
         for o in export_set
     ]
     svg_elements = []
@@ -50,8 +52,9 @@ def export_set_to_svg(export_set: Set[object],
         group_x += padding
         group_y += font_size
         formatted_thickness = '{:.2f}'.format(thickness)
+        unit = get_unit()
         text_element = get_text_element(
-            group_x, group_y, material, formatted_thickness, font_size, font_family, foreground)
+            group_x, group_y, f'{material} {thickness} {unit}', font_size, font_family, foreground)
         svg_elements.append(text_element)
         group_y += text_margin_bottom
         # first object is the tallest object in each row.
@@ -67,12 +70,21 @@ def export_set_to_svg(export_set: Set[object],
             group_element = get_group_element(
                 x, y, flat_object['label'], flat_object['svg'])
             svg_elements.append(group_element)
+
+            # text
+            txt_y = group_y + y_max + font_size
+            txt_size = font_size * 0.75  # 12 / 16
+            text_element = get_text_element(
+                group_x, txt_y, str(flat_object['count']), txt_size, font_family, foreground)
+            svg_elements.append(text_element)
+
             group_x += bound_box.XLength
             group_x += padding
             if group_x > width:
                 width = group_x
             group_x += column_gap
         group_y += y_max
+        group_y += text_margin_bottom
         group_y += row_gap
         group_y += padding
     return (
@@ -100,11 +112,10 @@ def get_svg_style_options(rotor_disk_radius: float) -> dict:
     }
 
 
-def get_text_element(x, y, material, thickness, font_size, font_family, fill) -> str:
-    unit = get_unit()
+def get_text_element(x, y, text, font_size, font_family, fill) -> str:
     return (
         f'<text x="{x}" y="{y}" font-size="{font_size}" font-family="{font_family}" fill="{fill}">'
-        f'{material} {thickness} {unit}' +
+        f'{text}' +
         f'</text>'
     )
 
@@ -145,6 +156,7 @@ def group_by_material_and_thickness(objects: List[FlatObject]) -> dict:
 
 
 def get_flat_object(obj: object,
+                    get_part_count: Callable[[object], int],
                     precision: int = 2,
                     stroke_width: float = 2.5,
                     foreground: str = '#FFFFFF') -> FlatObject:
@@ -154,6 +166,7 @@ def get_flat_object(obj: object,
     bound_box = get_bound_box(two_dimensional_projection)
     return {
         'label': obj.Label,
+        'count': get_part_count(obj),
         'svg': svg,
         'bound_box': bound_box,
         'material': get_material(obj),
