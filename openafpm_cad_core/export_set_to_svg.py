@@ -1,3 +1,4 @@
+import math
 from itertools import groupby
 from typing import Iterator, List, Optional, Set, Tuple, TypedDict
 
@@ -53,11 +54,16 @@ def export_set_to_svg(export_set: Set[object],
             group_x, group_y, material, formatted_thickness, font_size, font_family, foreground)
         svg_elements.append(text_element)
         group_y += text_margin_bottom
-        y_max = 0  # Keep track of the tallest object in each row.
+        # first object is the tallest object in each row.
+        y_max = flat_objects[0]['bound_box'].YLength
         for flat_object in flat_objects:
             bound_box = flat_object['bound_box']
             x = group_x + -bound_box.XMin
             y = group_y + bound_box.YMax
+            if bound_box.YLength < y_max:  # align pieces to bottom of row
+                y_offset = 0 if is_close_to_zero(bound_box.YMin) \
+                    else max(bound_box.YMax, -bound_box.YMin)
+                y = group_y + y_max - y_offset
             group_element = get_group_element(
                 x, y, flat_object['label'], flat_object['svg'])
             svg_elements.append(group_element)
@@ -66,8 +72,6 @@ def export_set_to_svg(export_set: Set[object],
             if group_x > width:
                 width = group_x
             group_x += column_gap
-            if bound_box.YLength > y_max:
-                y_max = bound_box.YLength
         group_y += y_max
         group_y += row_gap
         group_y += padding
@@ -119,16 +123,16 @@ def get_group_element(x, y, title, children) -> str:
 
 def iterate_by_material_and_thickness(flat_objects: List[FlatObject]) -> Iterator[Tuple[List[object], str, float]]:
     for key, grouped_objects in group_by_material_and_thickness(flat_objects).items():
-        sorted_objects = sort_by_bound_box_then_label_descending(
+        sorted_objects = sort_by_y_length_then_label_descending(
             grouped_objects)
         material, thickness = key
         yield sorted_objects, material, thickness
 
 
-def sort_by_bound_box_then_label_descending(flat_objects: List[FlatObject]) -> List[FlatObject]:
+def sort_by_y_length_then_label_descending(flat_objects: List[FlatObject]) -> List[FlatObject]:
     return sorted(
         flat_objects,
-        key=lambda o: (o['bound_box'].DiagonalLength, o['label']),
+        key=lambda o: (o['bound_box'].YLength, o['label']),
         reverse=True)
 
 
@@ -205,3 +209,7 @@ def get_bound_box(obj: object) -> Optional[BoundBox]:
             f'{obj.Label} does not have a a valid bounding box.')
         return None
     return bound_box
+
+
+def is_close_to_zero(value: float) -> bool:
+    return math.isclose(value, 0, abs_tol=1.0e-7)
