@@ -240,18 +240,19 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('Zgiven'),
-        Cell('T'),
+        # T is a reserved alias since FreeCAD 20.
+        Cell('TT'),
         Cell('HighEndStopPointWhereZEqualsZgiven'),
-        Cell('HighEndStopWidth', styles=[Style.BOLD, Style.UNDERLINE]),
+        Cell('HighEndStopWidth', styles=[Style.BOLD, Style.UNDERLINE])
     ],
     [
         # Center of Yaw Bearing
         Cell('=YawBearingPlacement.Base.z', alias='Zgiven'),
-        # T = Zgiven - Az / (Bz - Az)
+        # TT = Zgiven - Az / (Bz - Az)
         # See above "Finding a point on a 3d line" answer.
         Cell('=(Zgiven - .OuterTailHingeHighEndStopFurledBase.z) / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
-             alias='T'),
-        Cell('=.OuterTailHingeHighEndStopFurledBase + T * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
+             alias='TT'),
+        Cell('=.OuterTailHingeHighEndStopFurledBase + TT * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
              alias='HighEndStopPointWhereZEqualsZgiven'),
         Cell('=abs(.HighEndStopPointWhereZEqualsZgiven.x) - YawPipeRadius + YawBearingPlacement.Base.x',
              alias='HighEndStopWidth')  # 57.12 desired for T Shape

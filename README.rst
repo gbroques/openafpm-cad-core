@@ -77,4 +77,4 @@ Run ``./make_docs.sh`` from ``docs/`` with ``openafpm-cad-core`` conda environme
 
 Supported FreeCAD Versions
 --------------------------
-Currently tested with FreeCAD ``19.2``.
+Currently tested with FreeCAD ``20.0``.

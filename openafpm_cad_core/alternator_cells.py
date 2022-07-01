@@ -635,7 +635,7 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('IsoscelesRightTriangleHypotenuseRatio'),
-        Cell('HorizontalDistanceBetweenHoles'),
+        Cell('HorizontalDistanceBetweenHoles')
     ],
     [
         Cell('=1 / cos(Theta)',
@@ -644,14 +644,15 @@ alternator_cells: List[List[Cell]] = [
              alias='HorizontalDistanceBetweenHoles')
     ],
     [
-        Cell('G'), Cell('H')
+        # G and H are reserved aliases since FreeCAD 20.
+        Cell('GG'), Cell('HH')
     ],
     [
         Cell('=HorizontalDistanceBetweenHoles + HoleMargin * 2',
-             alias='G'),
+             alias='GG'),
         # To make the frame square.
         Cell('=Inradius * 2 - MetalLengthL',
-             alias='H')
+             alias='HH')
     ],
     [
         Cell('Star Shape', styles=[Style.UNDERLINE])
@@ -659,7 +660,8 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('StarShapeTwoHoleEndBracketLength (A)'),
         Cell('B'),
-        Cell('C'),
+        # C is a reserved alias since FreeCAD 20.
+        Cell('CC')
     ],
     [
         # 25 is the margin from the holes to the edge of the metal.
@@ -668,7 +670,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('=2 * StatorHolesCircumradius * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
              alias='B'),
         Cell('=StatorHolesCircumradius - MetalLengthL + Holes + 25',
-             alias='C')
+             alias='CC')
     ],
     [
         Cell('FrameLink', styles=[Style.UNDERLINE])
@@ -693,7 +695,7 @@ alternator_cells: List[List[Cell]] = [
              alias='FrameZ')
     ],
     [
-        Cell('Alternator', styles=[Style.UNDERLINE, Style.BOLD]),
+        Cell('Alternator', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     # Euler Angles
     [

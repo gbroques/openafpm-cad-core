@@ -67,7 +67,7 @@ wind_turbine_cells: List[List[Cell]] = [
     [
         Cell('=Alternator.FrameZ',
              alias='FrameZ'),
-        Cell('=Alternator.H',
+        Cell('=Alternator.HH',
              alias='HShapeChannelSectionHeight'),
         Cell('=Alternator.B',
              alias='StarShapeChannelSectionHeight')

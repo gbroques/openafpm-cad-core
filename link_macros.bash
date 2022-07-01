@@ -11,8 +11,8 @@ for macro in $macros
 do
     filename=`basename $macro`
     echo "Creating symlink to $filename:"
-    echo "    ln --symbolic --force "$(pwd)/$macro" ~/.FreeCAD/Macro/$filename"
-    ln --symbolic --force "$(pwd)/$macro" ~/.FreeCAD/Macro/$filename
+    echo "    ln --symbolic --force "$(pwd)/$macro" ~/.local/share/FreeCAD/Macro/$filename"
+    ln --symbolic --force "$(pwd)/$macro" ~/.local/share/FreeCAD/Macro/$filename
     printf "\n"
 done
 IFS=$SAVEIFS
