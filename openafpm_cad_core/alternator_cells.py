@@ -79,13 +79,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilInnerWidth2'),
-        Cell('CoilType')
+        Cell('CoilType'),
+        Cell('MagnetWidth')
     ],
     [
         Cell('=Spreadsheet.CoilInnerWidth2',
              alias='CoilInnerWidth2'),
         Cell('=Spreadsheet.CoilType',
-             alias='CoilType')
+             alias='CoilType'),
+        Cell('=Spreadsheet.MagnetWidth',
+             alias='MagnetWidth')
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -280,13 +283,35 @@ alternator_cells: List[List[Cell]] = [
         Cell('CoilWinder', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('CoilWinderDiskRadius'),
+        # All 3 of these are for below CoilWinderDiskRadius calculation
+        Cell('LargestMagnetDimension'),
+        Cell('CoilWinderDiskRadiusPadding'),
+        Cell('MinimumCoilWinderDiskRadius')
+    ],
+    [
+        # TODO: Should MagnetLength always be greater than MagnetWidth by definition?
+        Cell('=MagnetLength > MagnetWidth ? MagnetLength : MagnetWidth',
+             alias='LargestMagnetDimension'),
+        Cell('5',
+             alias='CoilWinderDiskRadiusPadding'),
+        Cell('60',
+             alias='MinimumCoilWinderDiskRadius')
+    ],
+    [
+        Cell('ProjectedCoilWinderDiskRadius'),
+        Cell('CoilWinderDiskRadius')
+    ],
+    [
+        Cell('=(LargestMagnetDimension / 2) + CoilLegWidth + CoilWinderDiskRadiusPadding',
+             alias='ProjectedCoilWinderDiskRadius'),
+        Cell('=ProjectedCoilWinderDiskRadius <= MinimumCoilWinderDiskRadius ? MinimumCoilWinderDiskRadius : ProjectedCoilWinderDiskRadius',
+             alias='CoilWinderDiskRadius')
+    ],
+    [
         Cell('CoilWinderDiskCenterHoleRadius'),
         Cell('CoilWinderDiskSmallHoleRadius')
     ],
     [
-        Cell('60',
-             alias='CoilWinderDiskRadius'),
         Cell('5',
              alias='CoilWinderDiskCenterHoleRadius'),
         Cell('2.5',
