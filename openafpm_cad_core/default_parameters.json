@@ -130,5 +130,49 @@
             "ResineRotorMargin": 5,
             "HubHoles": 10
         }
+    },
+    "T Shape 2F": {
+        "magnafpm": {
+            "RotorDiskRadius": 150,
+            "DiskThickness": 10,
+            "MagnetLength": 50,
+            "MagnetWidth": 50,
+            "MagnetThickness": 20,
+            "NumberMagnet": 12,
+            "StatorThickness": 13,
+            "CoilType": 3,
+            "CoilLegWidth": 21.5,
+            "CoilInnerWidth1": 48,
+            "CoilInnerWidth2": 8,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 4,
+            "NumberOfCoilsPerPhase": 3
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 300,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 1000,
+            "BoomPipeRadius": 24.15,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 6,
+            "VaneLength": 1200,
+            "VaneWidth": 500,
+            "Offset": 125
+        },
+        "user": {
+            "HubHolesPlacement": 50,
+            "RotorInnerCircle": 32.5,
+            "Holes": 6,
+            "MetalLengthL": 50,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 60.3,
+            "PipeThickness": 5,
+            "ResineRotorMargin": 5,
+            "HubHoles": 6
+        }
     }
 }

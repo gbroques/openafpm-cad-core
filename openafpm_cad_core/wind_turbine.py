@@ -18,3 +18,9 @@ class WindTurbine(Enum):
 
     STAR_SHAPE = 'Star Shape'
     """Largest wind turbine with a frame shaped like a six-pointed star."""
+
+    T_SHAPE_2F = 'T Shape 2F'
+    """2 meter diameter wind turbine with a T-shape frame and (F)errite magnets.
+
+    It's useful for testing triangular coils and the outer magnet jig.
+    """
