@@ -33,11 +33,12 @@ stator_mold_assembly_document = App.getDocument('Stator_Mold_Assembly')
 stator_mold_lid_document = App.getDocument('Stator_Mold_Lid')
 
 stator_mold_assembly_path = Path(stator_mold_assembly_document.FileName)
-rotor_resin_cast_path = str(stator_mold_assembly_path.joinpath(
-    '../../../Rotor/Rotor_ResinCast.FCStd').resolve())
+rotor_resin_cast_path = str(stator_mold_assembly_path.parents[2]
+                            .joinpath('Rotor/Rotor_ResinCast.FCStd'))
 rotor_resin_cast_document = App.open(rotor_resin_cast_path)
 recompute_document(rotor_resin_cast_document)
 App.setActiveDocument(stator_mold_assembly_document.Name)
+stator_mold_assembly_document.openTransaction('conduit_for_wires')
 
 rotor_resin_cast = find_object_by_label(
     rotor_resin_cast_document, 'Rotor_ResinCast')
@@ -64,8 +65,9 @@ tube.ViewObject.ShapeColor = (1.0, 1.0, 1.0, 0.0)
 
 stator_mold_lid = find_object_by_label(
     stator_mold_assembly_document, 'Stator_Mold_Lid')
-stator_mold_lid.ViewObject.Transparency = 70
+stator_mold_lid.ViewObject.Transparency = 100
 
 stator_mold_assembly_document.recompute()
 
 Gui.ActiveDocument.ActiveView.viewTop()
+stator_mold_assembly_document.commitTransaction()
