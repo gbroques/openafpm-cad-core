@@ -16,7 +16,7 @@ class CreateSpreadsheetTaskPanel:
     def __init__(self, title: str):
         self.form = QtGui.QWidget()
         self.form.setWindowTitle(title)
-        self.selected_assembly = Assembly.WindTurbine
+        self.selected_assembly = Assembly.WIND_TURBINE
 
         layout = QtGui.QVBoxLayout(self.form)
 

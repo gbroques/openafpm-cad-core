@@ -2,31 +2,34 @@
 FreeCAD macro to visualize wind turbines using default values.
 """
 from argparse import ArgumentParser
-from itertools import repeat
 from multiprocessing import Pool
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Union
 
-from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
-                                   visualize)
+from openafpm_cad_core.app import (Assembly, WindTurbine, assembly_to_obj,
+                                   get_default_parameters)
 
 
-def write_obj_file(path_turbine_pair: Tuple[Path, WindTurbine]) -> str:
-    path, turbine = path_turbine_pair
+def write_obj_file(turbine_assembly_path_triple: Tuple[WindTurbine, Assembly, Path]) -> str:
+    turbine, assembly, path = turbine_assembly_path_triple
     parameters = get_default_parameters(turbine)
 
-    wind_turbine_model = visualize(
+    turbine_dir = path.joinpath(slugify_enum(turbine))
+    turbine_dir.mkdir(exist_ok=True)
+
+    obj_file_contents = assembly_to_obj(
+        assembly,
         parameters['magnafpm'],
         parameters['user'],
         parameters['furling'])
-
-    obj_file_contents = wind_turbine_model.to_obj()
-
-    filename = turbine.value.lower().replace(' ', '-')
-    filepath = path.joinpath(f'{filename}.obj')
+    filepath = turbine_dir.joinpath(f'{slugify_enum(assembly)}.obj')
     with open(filepath, 'w') as f:
         f.write(obj_file_contents)
         return str(filepath.resolve())
+
+
+def slugify_enum(enum: Union[Assembly, WindTurbine]) -> str:
+    return enum.value.lower().replace(' ', '-')
 
 
 if __name__ == '__main__':
@@ -43,10 +46,16 @@ if __name__ == '__main__':
         WindTurbine.T_SHAPE,
         WindTurbine.H_SHAPE,
         WindTurbine.STAR_SHAPE)
+    assemblies = (
+        Assembly.WIND_TURBINE,
+        Assembly.STATOR_MOLD,
+        Assembly.ROTOR_MOLD,
+        Assembly.COIL_WINDER)
+    path = Path(args.path)
+    triples = [(turbine, assembly, path)
+                for turbine in turbines for assembly in assemblies]
 
-    paths = repeat(Path(args.path), len(turbines))
-    pairs = tuple(zip(paths, turbines))
-    with Pool(3) as p:
-        filepaths = p.map(write_obj_file, pairs)
+    with Pool(len(triples)) as p:
+        filepaths = p.map(write_obj_file, triples)
         print('Created')
         print('\n'.join(filepaths))

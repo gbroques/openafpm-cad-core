@@ -7,7 +7,6 @@ from FreeCAD import Document
 from .load_root_document import load_root_document, load_root_documents
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .wind_turbine_model import WindTurbineModel
 
 __all__ = [
     'load_all',
@@ -19,10 +18,10 @@ __all__ = [
 
 @unique
 class Assembly(Enum):
-    WindTurbine = 'Wind Turbine'
-    StatorMold = 'Stator Mold'
-    RotorMold = 'Rotor Mold'
-    CoilWinder = 'Coil Winder'
+    WIND_TURBINE = 'Wind Turbine'
+    STATOR_MOLD = 'Stator Mold'
+    ROTOR_MOLD = 'Rotor Mold'
+    COIL_WINDER = 'Coil Winder'
 
 
 def load_assembly(assembly: Assembly,
@@ -30,10 +29,10 @@ def load_assembly(assembly: Assembly,
                   furling_parameters: FurlingParameters,
                   user_parameters: UserParameters):
     load_function_by_assembly = {
-        Assembly.WindTurbine: load_turbine,
-        Assembly.StatorMold: load_stator_mold,
-        Assembly.RotorMold: load_rotor_mold,
-        Assembly.CoilWinder: load_coil_winder_mold
+        Assembly.WIND_TURBINE: load_turbine,
+        Assembly.STATOR_MOLD: load_stator_mold,
+        Assembly.ROTOR_MOLD: load_rotor_mold,
+        Assembly.COIL_WINDER: load_coil_winder_mold
     }
     load_function = load_function_by_assembly[assembly]
     return load_function(magnafpm_parameters, furling_parameters, user_parameters)
@@ -57,15 +56,13 @@ def load_all(magnafpm_parameters: MagnafpmParameters,
 
 def load_turbine(magnafpm_parameters: MagnafpmParameters,
                  furling_parameters: FurlingParameters,
-                 user_parameters: UserParameters) -> WindTurbineModel:
-    root_document, spreadsheet_document = load_root_document(
+                 user_parameters: UserParameters) -> Tuple[Document, Document]:
+    return load_root_document(
         get_wind_turbine_document_path,
         magnafpm_parameters,
         furling_parameters,
         user_parameters
     )
-
-    return WindTurbineModel(root_document, spreadsheet_document)
 
 
 def get_wind_turbine_document_path(documents_path: Path) -> Path:

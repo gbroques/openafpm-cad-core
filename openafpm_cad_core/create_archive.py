@@ -1,33 +1,71 @@
 import os
+import shutil
 from pathlib import Path
+from tempfile import gettempdir
 from typing import Dict, List
+from uuid import uuid1
 
 import FreeCAD as App
 from FreeCAD import Document
 
 from .gui_document import (get_gui_document_by_path,
                            rekey_gui_document_by_path, write_gui_documents)
+from .load import load_all
+from .make_archive import make_archive
+from .parameter_groups import (FurlingParameters, MagnafpmParameters,
+                               UserParameters)
 
-__all__ = ['save_documents']
+__all__ = ['create_archive']
 
 
-def save_documents(root_document_name: str,
+def create_archive(magnafpm_parameters: MagnafpmParameters,
+                   furling_parameters: FurlingParameters,
+                   user_parameters: UserParameters) -> bytes:
+    root_documents, spreadsheet_document = load_all(
+        magnafpm_parameters,
+        furling_parameters,
+        user_parameters)
+    wind_turbine_document = root_documents[0]
+    document_source = Path(wind_turbine_document.FileName).parent
+    archive_source = Path(gettempdir()).joinpath(
+        str(uuid1())).joinpath('WindTurbine')
+    archive_source.mkdir(parents=True)
+
+    # Save documents to where the archive will be created from first.
+    save_documents(
+        root_documents,
+        spreadsheet_document.Name,
+        source=document_source,
+        destination=archive_source)
+
+    archive_destination = Path(archive_source).joinpath('WindTurbine.zip')
+    bytes_content = make_archive(
+        str(archive_source), str(archive_destination))
+    # Delete the directory the archive was created from.
+    shutil.rmtree(archive_source)
+    return bytes_content
+
+
+def save_documents(root_documents: List[Document],
                    spreadsheet_document_name: str,
                    source: Path,
                    destination: Path) -> None:
     if not destination.exists():
         destination.mkdir(parents=True, exist_ok=True)
 
-    save_and_reopen_spreadsheet_document(
+    spreadsheet_document_path = save_and_close_spreadsheet_document(
         spreadsheet_document_name, destination)
 
-    documents = get_part_documents(spreadsheet_document_name)
-    source_paths = get_paths(documents)
+    part_documents = get_part_documents(spreadsheet_document_name)
+    source_paths = get_paths(part_documents)
 
+    root_document_filenames = [d.FileName for d in root_documents]
     destination_by_source = save_document_copies_and_close(
-        source, destination, documents)
+        source, destination, part_documents)
 
-    reopen_and_save_documents(root_document_name, destination)
+    App.openDocument(spreadsheet_document_path)
+    reopen_and_save_documents(
+        source, destination, root_document_filenames)
 
     gui_document_by_source = get_gui_document_by_path(source_paths)
 
@@ -57,20 +95,21 @@ def save_document_copies_and_close(source: Path,
     return destination_by_source
 
 
-def save_and_reopen_spreadsheet_document(spreadsheet_document_name: str, destination: Path) -> Document:
+def save_and_close_spreadsheet_document(spreadsheet_document_name: str, destination: Path) -> str:
     spreadsheet_document = App.listDocuments()[spreadsheet_document_name]
     spreadsheet_document_filename = f'{spreadsheet_document_name}.FCStd'
     spreadsheet_document_path = destination.joinpath(
         spreadsheet_document_filename)
     spreadsheet_document.saveAs(str(spreadsheet_document_path))
     App.closeDocument(spreadsheet_document_name)
-    spreadsheet_document = App.openDocument(str(spreadsheet_document_path))
-    return spreadsheet_document
+    return str(spreadsheet_document_path)
 
 
-def reopen_and_save_documents(root_document_name: str, destination: Path) -> List[Document]:
-    root_document = str(destination.joinpath(f'{root_document_name}.FCStd'))
-    App.openDocument(root_document)
+def reopen_and_save_documents(source: Path, destination: Path, root_document_filenames: List[str]) -> List[Document]:
+    for root_document_filename in root_document_filenames:
+        root_document_path = get_destination_path(
+            root_document_filename, source, destination)
+        App.openDocument(str(root_document_path))
     documents = get_open_documents()
     for document in documents:
         document.save()

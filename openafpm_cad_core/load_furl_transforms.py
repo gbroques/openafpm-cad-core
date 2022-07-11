@@ -5,8 +5,11 @@ import FreeCAD as App
 from FreeCAD import Console, Document, Placement
 
 from .find_object_by_label import find_object_by_label
+from .load import load_turbine
+from .parameter_groups import (FurlingParameters, MagnafpmParameters,
+                               UserParameters)
 
-__all__ = ['get_furl_transforms']
+__all__ = ['load_furl_transforms']
 
 
 class Transform(TypedDict):
@@ -23,6 +26,15 @@ class Transform(TypedDict):
 
     angle: float
     """Angle of rotation (in radians)."""
+
+
+def load_furl_transforms(magnafpm_parameters: MagnafpmParameters,
+                         furling_parameters: FurlingParameters,
+                         user_parameters: UserParameters) -> List[Transform]:
+    root_document, spreadsheet_document = load_turbine(magnafpm_parameters,
+                                                       furling_parameters,
+                                                       user_parameters)
+    return get_furl_transforms(root_document)
 
 
 def get_furl_transforms(root_document: Document) -> List[Transform]:
