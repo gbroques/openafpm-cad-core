@@ -2,6 +2,7 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import List, Tuple
 
+import FreeCAD as App
 from FreeCAD import Document
 
 from .load_root_document import load_root_document, load_root_documents
@@ -43,6 +44,10 @@ def load_assembly(assembly: Assembly,
 def load_all(magnafpm_parameters: MagnafpmParameters,
              furling_parameters: FurlingParameters,
              user_parameters: UserParameters) -> Tuple[List[Document], Document]:
+    # fix error with stator coil not being properly linked to by coil winder
+    # because it's opened earlier in a partial state.
+    document_preferences = App.ParamGet('User parameter:BaseApp/Preferences/Document')
+    document_preferences.SetBool('NoPartialLoading', True)
     return load_root_documents(
         [
             get_wind_turbine_document_path,
@@ -121,8 +126,8 @@ def get_magnet_jig_assembly_document_path(documents_path: Path) -> Path:
 
 
 def load_coil_winder(magnafpm_parameters: MagnafpmParameters,
-                          furling_parameters: FurlingParameters,
-                          user_parameters: UserParameters) -> Tuple[Document, Document]:
+                     furling_parameters: FurlingParameters,
+                     user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_coil_winder_assembly_document_path,
         magnafpm_parameters,
