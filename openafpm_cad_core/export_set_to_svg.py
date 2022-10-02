@@ -199,7 +199,7 @@ def get_material(obj: object) -> str:
 
 def is_wooden(label: str) -> bool:
     wooden_labels = ['Tail_Vane']
-    wooden_label_fragments = ['Mold', 'CoilWinder']
+    wooden_label_fragments = ['Mold', 'CoilWinder', 'MagnetJig']
     return (
         any([wooden_label == label for wooden_label in wooden_labels]) or
         any([fragment in label for fragment in wooden_label_fragments])

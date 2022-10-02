@@ -50,6 +50,7 @@ if __name__ == '__main__':
         Assembly.WIND_TURBINE,
         Assembly.STATOR_MOLD,
         Assembly.ROTOR_MOLD,
+        Assembly.MAGNET_JIG,
         Assembly.COIL_WINDER)
     path = Path(args.path)
     triples = [(turbine, assembly, path)
