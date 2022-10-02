@@ -6,10 +6,12 @@ import FreeCADGui as Gui
 from PySide import QtGui
 
 from ..get_default_parameters import get_default_parameters
-from ..load import Assembly, load_assembly
+from ..load import Assembly, load_all, load_assembly
 from ..wind_turbine import WindTurbine
 
 __all__ = ['CreateSpreadsheetTaskPanel']
+
+ALL = 'All'
 
 
 class CreateSpreadsheetTaskPanel:
@@ -76,6 +78,7 @@ class CreateSpreadsheetTaskPanel:
     def create_load_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
         items = [variant.value for variant in list(Assembly)]
+        items.append(ALL)
         combo_box.addItems(items)
         return combo_box
 
@@ -85,11 +88,17 @@ class CreateSpreadsheetTaskPanel:
         """
         variant = WindTurbine(self.variant_combo_box.currentText())
         parameters = get_default_parameters(variant)
-        assembly = Assembly(self.load_combo_box.currentText())
-        load_assembly(assembly,
-                      parameters['magnafpm'],
-                      parameters['furling'],
-                      parameters['user'])
+        assembly_text = self.load_combo_box.currentText()
+        if assembly_text == ALL:
+            load_all(parameters['magnafpm'],
+                     parameters['furling'],
+                     parameters['user'])
+        else:
+            assembly = Assembly(assembly_text)
+            load_assembly(assembly,
+                          parameters['magnafpm'],
+                          parameters['furling'],
+                          parameters['user'])
         Gui.Control.closeDialog()
 
 
