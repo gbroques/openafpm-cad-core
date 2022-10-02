@@ -1,5 +1,8 @@
+import logging
 from collections import defaultdict
 from typing import Any, Callable, List
+
+import FreeCAD as App
 from FreeCAD import Document
 
 from .find_object_by_label import find_object_by_label
@@ -41,6 +44,11 @@ def traverse(objects: List[object],
         visit(obj)
         if obj.TypeId in ASSEMBLY_TYPE_IDS:
             children = _get_children(obj)
+            if any([child is None for child in children]):
+                logging.warn(f'child of {obj.Label} ({obj.TypeId}) is None.')
+                documents = list(App.listDocuments().keys())
+                document_list = '\n'.join(documents)
+                logging.warn('Document List:\n%s', document_list)
             traverse(children, visit)
 
 
