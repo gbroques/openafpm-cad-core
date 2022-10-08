@@ -32,6 +32,9 @@ def make_get_part_count(root_documents: List[Document],
             # Assume user wants 2 rotor molds since it's generally
             # easier to cast both rotors at the same time.
             count_by_label_and_type_id[label_and_type_id] *= 2
+        # Subtract 1 from count of back rotor disk to account for Magnet Jig Assembly.
+        if label.startswith('Rotor_Disk_Back'):
+            count_by_label_and_type_id[label_and_type_id] -= 1
 
     def get_part_count(obj: object) -> int:
         return count_by_label_and_type_id[obj.Label + delimiter + obj.TypeId]
