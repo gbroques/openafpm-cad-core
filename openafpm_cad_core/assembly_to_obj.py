@@ -30,7 +30,11 @@ def get_export_kwargs(assembly: Assembly):
     if assembly == Assembly.WIND_TURBINE:
         return {
             'object_name_getter': object_name_getter,
-            'keep_unresolved': keep_unresolved
+            'keep_unresolved': keep_unresolved_for_wind_turbine
+        }
+    elif assembly == Assembly.STATOR_MOLD:
+        return {
+            'keep_unresolved': keep_unresolved_for_stator_mold
         }
     else:
         return {}
@@ -48,7 +52,7 @@ def object_name_getter(obj: object, path: List[object]) -> str:
     return obj.Label
 
 
-def keep_unresolved(obj: object, path: List[object]) -> bool:
+def keep_unresolved_for_wind_turbine(obj: object, path: List[object]) -> bool:
     return obj.Label in {
         'Frame',
         'YawBearing',
@@ -56,4 +60,10 @@ def keep_unresolved(obj: object, path: List[object]) -> bool:
         'Tail_Hinge_Inner',
         'Vane_Bracket_Top',
         'Tail_Stop_HighEnd'
+    }
+
+
+def keep_unresolved_for_stator_mold(obj: object, path: List[object]) -> bool:
+    return obj.Label in {
+        'Bolts'
     }

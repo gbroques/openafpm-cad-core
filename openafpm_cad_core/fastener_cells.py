@@ -1,5 +1,7 @@
 from typing import List
 
+from .generate_width_across_corners_cells import \
+    generate_width_across_corners_cells
 from .spreadsheet import Cell, Style
 
 __all__ = ['get_fastener_cells']
@@ -75,5 +77,15 @@ def get_fastener_cells() -> List[List[Cell]]:
             Cell('TailVaneBracketBoltLength'),
             Cell('=BracketThickness + VaneThickness + FlatMetalThickness + DistanceThreadsExtendFromNuts + WasherThickness',
                  alias='TailVaneBracketBoltLength')
-        ]
+        ],
+        *generate_width_across_corners_cells(
+            'HolesWidthAcrossCorners',
+            'HWAC',
+            'Holes'
+        ),
+        *generate_width_across_corners_cells(
+            'HubHolesWidthAcrossCorners',
+            'HHWAC',
+            'HubHoles'
+        )
     ]
