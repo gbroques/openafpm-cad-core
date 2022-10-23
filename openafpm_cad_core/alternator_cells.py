@@ -277,7 +277,7 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldIslandNumberOfBolts'),
         Cell('=RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 18 : 36)',
              alias='StatorMoldIslandNumberOfScrews'),
-        Cell('=360 / StatorMoldIslandNumberOfScrews',
+        Cell('=360deg / StatorMoldIslandNumberOfScrews',
              alias='StatorMoldIslandScrewAngle'),
     ],
     [
