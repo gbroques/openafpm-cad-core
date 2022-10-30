@@ -109,7 +109,7 @@ class TaskPanel:
         documents = list(App.listDocuments().keys())
         combo_box.addItems(documents)
         combo_box.activated[str].connect(self.handle_combo_box_activated)
-        index = documents.index(self.document)
+        index = documents.index(self.document.Name)
         combo_box.setCurrentIndex(index)
         return combo_box
 
@@ -130,6 +130,9 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
     mdi_area = main_window.findChild(QtGui.QMdiArea)
 
     active_sub_window = mdi_area.activeSubWindow()
+    if active_sub_window is None:
+        Console.PrintWarning(f'No active sub-window.\n')
+        return
     if active_sub_window.widget().metaObject().className() == 'SpreadsheetGui::SheetView':
         sheet = active_sub_window.widget()
         table = sheet.findChild(QtGui.QTableView)
@@ -169,6 +172,6 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
 
 selected_point = find_selected_point()
 if selected_point:
-    default_document = App.ActiveDocument.Name
+    default_document = App.ActiveDocument
     panel = TaskPanel(default_document, selected_point)
     Gui.Control.showDialog(panel)
