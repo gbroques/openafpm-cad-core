@@ -269,16 +269,53 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('StatorMoldIslandNumberOfBolts'),
-        Cell('StatorMoldIslandNumberOfScrews'),
+        Cell('StatorMoldIslandNumberOfScrewSectors'),
         Cell('StatorMoldIslandScrewAngle')
     ],
     [
         Cell('=RotorDiskRadius < 187.5 ? 4 : (RotorDiskRadius < 275 ? 6 : 12)',
              alias='StatorMoldIslandNumberOfBolts'),
         Cell('=RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 18 : 36)',
-             alias='StatorMoldIslandNumberOfScrews'),
-        Cell('=360deg / StatorMoldIslandNumberOfScrews',
+             alias='StatorMoldIslandNumberOfScrewSectors'),
+        Cell('=360deg / StatorMoldIslandNumberOfScrewSectors',
              alias='StatorMoldIslandScrewAngle'),
+    ],
+    [
+        Cell('StatorMoldIslandNumberOfScrews')
+    ],
+    [
+        Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
+             alias='StatorMoldIslandNumberOfScrews')
+    ],
+    [
+        Cell('Hexagonal Mold', styles=[Style.UNDERLINE])
+    ],
+    #
+    #    ____ TopRightCorner
+    #   /    \
+    #  /      \ MiddleRightCorner
+    #  \      /
+    #   \____/
+    #
+    [
+        Cell('TopRightCornerX'),
+        Cell('TopRightCornerY')
+    ],
+    [
+        Cell('=LengthMiddleHoles * cos(60)',
+             alias='TopRightCornerX'),
+        Cell('=LengthMiddleHoles * sin(60)',
+             alias='TopRightCornerY')
+    ],
+    [
+        Cell('LineFromMiddleRightToTopRightCornerSlope'),
+        Cell('LineFromMiddleRightToTopRightCornerYIntercept')
+    ],
+    [
+        Cell('=TopRightCornerY / (TopRightCornerX - LengthMiddleHoles)',
+             alias='LineFromMiddleRightToTopRightCornerSlope'),
+        Cell('=TopRightCornerY - LineFromMiddleRightToTopRightCornerSlope * TopRightCornerX',
+             alias='LineFromMiddleRightToTopRightCornerYIntercept')
     ],
     [
         Cell('CoilWinder', styles=[Style.UNDERLINE])
