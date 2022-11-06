@@ -65,6 +65,7 @@ def keep_unresolved_for_wind_turbine(obj: object, path: List[object]) -> bool:
 
 def keep_unresolved_for_stator_mold(obj: object, path: List[object]) -> bool:
     return obj.Label in {
+        'LocatingBolts',
         'Bolts',
         'Nuts',
         'Screws'
