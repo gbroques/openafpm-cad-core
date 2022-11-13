@@ -45,7 +45,8 @@ if __name__ == '__main__':
     turbines = (
         WindTurbine.T_SHAPE,
         WindTurbine.H_SHAPE,
-        WindTurbine.STAR_SHAPE)
+        WindTurbine.STAR_SHAPE,
+        WindTurbine.T_SHAPE_2F)
     assemblies = (
         Assembly.WIND_TURBINE,
         Assembly.STATOR_MOLD,

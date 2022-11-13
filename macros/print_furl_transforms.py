@@ -2,22 +2,21 @@
 FreeCAD macro to print furl tranforms using default values.
 """
 import json
+from collections import OrderedDict
 from multiprocessing import Pool
 from typing import List, Union
 
 from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
-                                   visualize)
+                                   load_furl_transforms)
 
 
 def get_furl_transforms(turbine: WindTurbine) -> List[dict]:
     parameters = get_default_parameters(turbine)
 
-    wind_turbine_model = visualize(
+    return load_furl_transforms(
         parameters['magnafpm'],
         parameters['user'],
         parameters['furling'])
-
-    return wind_turbine_model.get_furl_transforms()
 
 
 class CompactJSONEncoder(json.JSONEncoder):
@@ -94,17 +93,20 @@ class CompactJSONEncoder(json.JSONEncoder):
         return self.INDENTATION_CHAR*(self.indentation_level*self.indent)
 
 
+def slugify_enum(enum: WindTurbine) -> str:
+    return enum.value.lower().replace(' ', '-')
+
+
 if __name__ == '__main__':
     turbines = [
         WindTurbine.T_SHAPE,
         WindTurbine.H_SHAPE,
-        WindTurbine.STAR_SHAPE]
-    with Pool(3) as p:
-        t, h, star = p.map(get_furl_transforms, turbines)
-
-        furl_transforms = {
-            WindTurbine.T_SHAPE.value: t,
-            WindTurbine.H_SHAPE.value: h,
-            WindTurbine.STAR_SHAPE.value: star
-        }
+        WindTurbine.STAR_SHAPE,
+        WindTurbine.T_SHAPE_2F]
+    with Pool(len(turbines)) as p:
+        results = p.map(get_furl_transforms, turbines)
+        furl_transforms = OrderedDict()
+        for result, turbine in zip(results, turbines):
+            key = slugify_enum(turbine)
+            furl_transforms[key] = result
         print(json.dumps(furl_transforms, cls=CompactJSONEncoder, indent=2))
