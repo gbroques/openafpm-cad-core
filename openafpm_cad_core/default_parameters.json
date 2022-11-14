@@ -171,7 +171,7 @@
             "FlatMetalThickness": 10,
             "YawPipeDiameter": 60.3,
             "PipeThickness": 5,
-            "ResineRotorMargin": 5,
+            "ResineRotorMargin": 10,
             "HubHoles": 6
         }
     }
