@@ -46,6 +46,16 @@ class MagnafpmParameters(TypedDict):
         https://openafpm.net/design-tips
     """
 
+    MagnetMaterial: str
+    """Material of magnet: 'Neodymium' or 'Ferrite'.
+
+    Ferrite magnets are not subject to corrosion like Neodymium magnets.
+    Thus, one may choose to not cover them completely in resin.
+
+    See "Number of Poles" and "Winding Type" sections at:
+        https://openafpm.net/design-tips
+    """
+
     NumberMagnet: int  # NumberOfMagnets, MagnetCount?
     """Number of magnets."""
 
@@ -57,7 +67,7 @@ class MagnafpmParameters(TypedDict):
     
     * rectangular when CoilType = 1
     * keyhole when CoilType = 2
-    * and Triangular when CoilType = 3
+    * and triangular when CoilType = 3
 
     See Winding Type section at:
         https://openafpm.net/design-tips
