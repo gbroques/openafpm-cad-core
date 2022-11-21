@@ -92,6 +92,13 @@ alternator_cells: List[List[Cell]] = [
              alias='MagnetWidth')
     ],
     [
+        Cell('MagnetMaterial')
+    ],
+    [
+        Cell('=Spreadsheet.MagnetMaterial',
+             alias='MagnetMaterial')
+    ],
+    [
         Cell('Hub', styles=[Style.UNDERLINE])
         # -----------------------------------
     ],
@@ -448,23 +455,36 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorMoldSideLength'),
-        Cell('NumberOfRotorMoldScrews')
+        Cell('NumberOfRotorMoldScrews'),
+        Cell('PercentageOfMagnetThicknessCoveredByResin')
     ],
     [
         Cell('=RotorDiskRadius * 2 * 1.3333',
              alias='RotorMoldSideLength'),
         Cell('16',
-             alias='NumberOfRotorMoldScrews')
+             alias='NumberOfRotorMoldScrews'),
+        Cell('=MagnetMaterial == <<Ferrite>> ? 0.7 : 1.0',
+             alias='PercentageOfMagnetThicknessCoveredByResin')
     ],
     [
         Cell('RotorMoldBaseThickness'),
-        Cell('RotorMoldLidThickness')
+        Cell('RotorMoldLidThickness'),
+        Cell('RotorMoldSurroundThickness')
     ],
     [
         Cell('15',
              alias='RotorMoldBaseThickness'),
         Cell('6',
-             alias='RotorMoldLidThickness')
+             alias='RotorMoldLidThickness'),
+        Cell('=DiskThickness + ceil(MagnetThickness * PercentageOfMagnetThicknessCoveredByResin)',
+             alias='RotorMoldSurroundThickness')
+    ],
+    [
+        Cell('RotorMoldIslandThickness')
+    ],
+    [
+        Cell('=RotorMoldSurroundThickness - DiskThickness',
+             alias='RotorMoldIslandThickness')
     ],
     [
         Cell('DistanceBetweenRotorMoldScrewsAndResin'),

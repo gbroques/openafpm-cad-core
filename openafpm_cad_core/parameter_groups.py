@@ -49,8 +49,9 @@ class MagnafpmParameters(TypedDict):
     MagnetMaterial: str
     """Material of magnet: 'Neodymium' or 'Ferrite'.
 
-    Ferrite magnets are not subject to corrosion like Neodymium magnets.
-    Thus, one may choose to not cover them completely in resin.
+    Neodymium magnets are more powerful than Ferrite magnets.
+
+    However, Ferrite magnets are immune to corrosion and cheaper than Neodymium magnets.
 
     See "Number of Poles" and "Winding Type" sections at:
         https://openafpm.net/design-tips
