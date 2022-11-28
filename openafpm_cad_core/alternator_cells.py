@@ -288,11 +288,44 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldIslandScrewAngle'),
     ],
     [
-        Cell('StatorMoldIslandNumberOfScrews')
+        Cell('StatorMoldIslandNumberOfScrews'),
+        Cell('DistanceOfLocatingHoleFromCenter')
     ],
     [
         Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
-             alias='StatorMoldIslandNumberOfScrews')
+             alias='StatorMoldIslandNumberOfScrews'),
+        Cell('=0.63559 * StatorMoldSideLength',
+             alias='DistanceOfLocatingHoleFromCenter')
+    ],
+    [
+        Cell('LocatingBolt1X'),
+        Cell('LocatingBolt1Y')
+    ],
+    [
+        Cell('=-DistanceOfLocatingHoleFromCenter * cos(45)',
+             alias='LocatingBolt1X'),
+        Cell('=-LocatingBolt1X + SketchY',
+             alias='LocatingBolt1Y')
+    ],
+    [
+        Cell('LocatingBolt2X'),
+        Cell('LocatingBolt2Y')
+    ],
+    [
+        Cell('=-LocatingBolt1X',
+             alias='LocatingBolt2X'),
+        Cell('=LocatingBolt1Y',
+             alias='LocatingBolt2Y')
+    ],
+    [
+        Cell('LocatingBolt3X'),
+        Cell('LocatingBolt3Y')
+    ],
+    [
+        Cell('=LocatingBolt2X',
+             alias='LocatingBolt3X'),
+        Cell('=LocatingBolt1X + SketchY',
+             alias='LocatingBolt3Y')
     ],
     [
         Cell('Hexagonal Mold', styles=[Style.UNDERLINE])
