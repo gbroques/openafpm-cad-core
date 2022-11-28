@@ -18,13 +18,16 @@ class MagnafpmParameters(TypedDict):
 
     These mainly relate to:
 
-    * the alternator (a.k.a generator)
+    * the alternator (a.k.a. generator)
     * how electricity is generated
     * and (**magn**)etism.
     """
 
     RotorDiskRadius: float
-    """Radius of rotor disk."""
+    """The outer radius of the rotor disk(s) of the generator."""
+
+    RotorDiskInnerRadius: float
+    """The inner radius of the effective length of the generator."""
 
     DiskThickness: float  # RotorDiskThickness
     """Thickness of rotor disk.
