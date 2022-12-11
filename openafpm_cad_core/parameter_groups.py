@@ -134,7 +134,8 @@ class MagnafpmParameters(TypedDict):
 
     — page 61, Glossary section of "A Wind Turbine Recipe Book (2014)".
 
-    See "Connecting the coils" section on page 38 of "A Wind Turbine Recipe Book (2014)".
+    See "Three-phase stators" section on page 35 and
+    "Connecting the coils" section on page 38 of "A Wind Turbine Recipe Book (2014)".
     """
 
 

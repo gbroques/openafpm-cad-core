@@ -92,11 +92,14 @@ alternator_cells: List[List[Cell]] = [
              alias='MagnetWidth')
     ],
     [
-        Cell('MagnetMaterial')
+        Cell('MagnetMaterial'),
+        Cell('NumberOfCoilsPerPhase')
     ],
     [
         Cell('=Spreadsheet.MagnetMaterial',
-             alias='MagnetMaterial')
+             alias='MagnetMaterial'),
+        Cell('=Spreadsheet.NumberOfCoilsPerPhase',
+             alias='NumberOfCoilsPerPhase')
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -413,13 +416,49 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderDiskBottomHoleRadius'),
-        Cell('RectangularVerticalDistanceOfHolesFromCenter')
+        Cell('RectangularVerticalDistanceOfHolesFromCenter'),
+        Cell('CoilWinderNumberOfSpacingNuts')
     ],
     [
         Cell('=CoilType != 3 ? 4 : CoilInnerWidth2 / 2',
              alias='CoilWinderDiskBottomHoleRadius'),
         Cell('=MagnetLength / 2 - CoilWinderDiskSmallHoleRadius',
-             alias='RectangularVerticalDistanceOfHolesFromCenter')
+             alias='RectangularVerticalDistanceOfHolesFromCenter'),
+        Cell('4',
+             alias='CoilWinderNumberOfSpacingNuts')
+    ],
+    [
+        Cell('CoilWinderNutStackThickness'),
+        Cell('CoilWinderAssemblyThickness'),
+        Cell('CoilWinderSpaceBetweenLayer')
+    ],
+    [
+        Cell('=HexNutThickness * CoilWinderNumberOfSpacingNuts',
+             alias='CoilWinderNutStackThickness'),
+        Cell('=CoilWinderCheekThickness * 2 + StatorThickness',
+             alias='CoilWinderAssemblyThickness'),
+        Cell('=CoilWinderNutStackThickness + CoilWinderAssemblyThickness',
+             alias='CoilWinderSpaceBetweenLayer')
+    ],
+    [
+        Cell('CoilWinderNumberOfNutStacks'),
+        Cell('CoilWinderAssemblyThicknessTotal'),
+        Cell('CoilWinderCenterRodLength')
+    ],
+    [
+        Cell('=NumberOfCoilsPerPhase - 1',
+             alias='CoilWinderNumberOfNutStacks'),
+        Cell('=CoilWinderAssemblyThickness * NumberOfCoilsPerPhase + CoilWinderNutStackThickness * CoilWinderNumberOfNutStacks',
+             alias='CoilWinderAssemblyThicknessTotal'),
+        Cell('=CoilWinderAssemblyThicknessTotal + HexNutThickness * 2 + DistanceThreadsExtendFromNuts * 2',
+             alias='CoilWinderCenterRodLength')
+    ],
+    [
+        Cell('CoilWinderPinLength')
+    ],
+    [
+        Cell('=CoilWinderAssemblyThicknessTotal + DistanceThreadsExtendFromNuts * 2',
+             alias='CoilWinderPinLength')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])

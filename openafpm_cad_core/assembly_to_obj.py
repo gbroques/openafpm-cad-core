@@ -29,18 +29,24 @@ def assembly_to_obj(assembly: Assembly,
 def get_export_kwargs(assembly: Assembly):
     if assembly == Assembly.WIND_TURBINE:
         return {
-            'object_name_getter': object_name_getter,
+            'object_name_getter': object_name_getter_for_wind_turbine,
             'keep_unresolved': keep_unresolved_for_wind_turbine
         }
     elif assembly == Assembly.STATOR_MOLD:
         return {
             'keep_unresolved': keep_unresolved_for_stator_mold
         }
+    elif assembly == Assembly.COIL_WINDER:
+        return {
+            'object_name_getter': object_name_getter_for_coil_winder,
+            'keep_unresolved': keep_unresolved_for_coil_winder,
+            'export_link_array_elements': True
+        }
     else:
         return {}
 
 
-def object_name_getter(obj: object, path: List[object]) -> str:
+def object_name_getter_for_wind_turbine(obj: object, path: List[object], shape_index: int) -> str:
     rotor_disk_labels = {
         'Rotor_ResinCast',
         'Rotor_Magnets'
@@ -65,6 +71,27 @@ def keep_unresolved_for_wind_turbine(obj: object, path: List[object]) -> bool:
 
 def keep_unresolved_for_stator_mold(obj: object, path: List[object]) -> bool:
     return any([
-        obj.Label.endswith(pattern) \
-            for pattern in ['Bolts', 'Nuts', 'Screws']
+        obj.Label.endswith(pattern)
+        for pattern in ['Bolts', 'Nuts', 'Screws']
     ])
+
+
+def keep_unresolved_for_coil_winder(obj: object, path: List[object]) -> bool:
+    return any([
+        obj.Label.startswith(pattern)
+        for pattern in ['Rods', 'Outer_Nut']
+    ])
+
+
+def object_name_getter_for_coil_winder(
+        obj: object, path: List[object], shape_index: int) -> str:
+    if is_link_array(obj):
+        return obj.Label + str(shape_index)
+    return obj.Label
+
+
+def is_link_array(obj: object) -> bool:
+    return (
+        obj.TypeId == 'Part::FeaturePython' and
+        hasattr(obj, 'ArrayType')
+    )

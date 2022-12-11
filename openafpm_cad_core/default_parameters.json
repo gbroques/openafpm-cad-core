@@ -62,7 +62,7 @@
             "CoilInnerWidth2": 30,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 36,
-            "NumberOfCoilsPerPhase": 3
+            "NumberOfCoilsPerPhase": 4
         },
         "furling": {
             "VerticalPlaneAngle": 15,
@@ -108,7 +108,7 @@
             "CoilInnerWidth2": 27,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 44,
-            "NumberOfCoilsPerPhase": 3
+            "NumberOfCoilsPerPhase": 8
         },
         "furling": {
             "VerticalPlaneAngle": 15,
