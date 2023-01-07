@@ -112,7 +112,8 @@ def reopen_and_save_documents(source: Path, destination: Path, root_document_fil
         App.openDocument(str(root_document_path))
     documents = get_open_documents()
     for document in documents:
-        document.save()
+        if not document.Temporary:
+            document.save()
     return documents
 
 
@@ -129,7 +130,7 @@ def get_part_documents(spreadsheet_document_name: str) -> List[Document]:
     documents = get_open_documents()
     return [
         d for d in documents
-        if d.Name != spreadsheet_document_name
+        if d.Name != spreadsheet_document_name and not d.Temporary
     ]
 
 

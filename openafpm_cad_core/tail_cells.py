@@ -1,8 +1,7 @@
 from typing import List
-from xml.etree.ElementTree import PI
 
-from .spreadsheet import Alignment, Cell, Color, Style
 from .pipe_size import PipeSize
+from .spreadsheet import Alignment, Cell, Style
 
 __all__ = ['tail_cells']
 
