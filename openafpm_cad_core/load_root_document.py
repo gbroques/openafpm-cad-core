@@ -27,6 +27,7 @@ def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],
                         magnafpm_parameters: MagnafpmParameters,
                         furling_parameters: FurlingParameters,
                         user_parameters: UserParameters) -> Tuple[List[Document], Document]:
+    set_preferences()
     spreadsheet_document_name = 'Master_of_Puppets'
     spreadsheet_document = create_spreadsheet_document(spreadsheet_document_name,
                                                        magnafpm_parameters,
@@ -75,3 +76,13 @@ def recompute_document(document: Document) -> None:
     for obj in document.Objects:
         obj.recompute()
     document.recompute(None, True, True)
+
+
+def set_preferences():
+    # fix error with stator coil not being properly linked to by coil winder
+    # because it's opened eaÓrlier in a partial state.
+    document_preferences = App.ParamGet(
+        'User parameter:BaseApp/Preferences/Document')
+    document_preferences.SetBool('NoPartialLoading', True)
+    # Avoid creating redundant .FCStd1 backup files.
+    document_preferences.SetInt('CountBackupFiles', 0)
