@@ -24,10 +24,10 @@ class MagnafpmParameters(TypedDict):
     """
 
     RotorDiskRadius: float
-    """The outer radius of the rotor disk(s) of the generator."""
+    """Outer radius of rotor disk(s) for the generator."""
 
     RotorDiskInnerRadius: float
-    """The inner radius of the effective length of the generator."""
+    """Inner radius of the effective length of the generator."""
 
     DiskThickness: float  # RotorDiskThickness
     """Thickness of rotor disk.
@@ -67,11 +67,7 @@ class MagnafpmParameters(TypedDict):
     """Thickness of stator."""
 
     CoilType: int
-    """Denotes the type of coil:
-    
-    * rectangular when CoilType = 1
-    * keyhole when CoilType = 2
-    * and triangular when CoilType = 3
+    """Type of coil: (1) rectangular, (2) keyhole, or (3) triangular.
 
     See Winding Type section at:
         https://openafpm.net/design-tips
@@ -207,9 +203,9 @@ class FurlingParameters(TypedDict):
     """Distance from center of alternator to yaw-bearing for furling action.
 
     For T shape, ``Offset`` is used in calculation of ``X``.
-    
+
     Where ``X`` is described on the right-hand side of page 26 of "A Wind Turbine Recipe Book (2014)".
-    
+
     For H Shape, see "Mounting the alternator to the yaw bearing" section on page 27 of "A Wind Turbine Recipe Book (2014)".
 
     Notably, the diagram on the left-hand side of page 29.
