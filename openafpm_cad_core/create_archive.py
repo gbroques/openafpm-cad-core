@@ -26,7 +26,7 @@ def create_archive(magnafpm_parameters: MagnafpmParameters,
         furling_parameters,
         user_parameters)
     wind_turbine_document = root_documents[0]
-    document_source = Path(wind_turbine_document.FileName).parent
+    document_source = Path(get_filename(wind_turbine_document)).parent
     archive_source = Path(gettempdir()).joinpath(
         str(uuid1())).joinpath('WindTurbine')
     archive_source.mkdir(parents=True)
@@ -59,7 +59,7 @@ def save_documents(root_documents: List[Document],
     part_documents = get_part_documents(spreadsheet_document_name)
     source_paths = get_paths(part_documents)
 
-    root_document_filenames = [d.FileName for d in root_documents]
+    root_document_filenames = [get_filename(d) for d in root_documents]
     destination_by_source = save_document_copies_and_close(
         source, destination, part_documents)
 
@@ -76,7 +76,7 @@ def save_documents(root_documents: List[Document],
 
 
 def get_paths(documents: List[Document]) -> List[Path]:
-    return [Path(d.FileName) for d in documents]
+    return [Path(get_filename(d)) for d in documents]
 
 
 def save_document_copies_and_close(source: Path,
@@ -84,7 +84,7 @@ def save_document_copies_and_close(source: Path,
                                    documents: List[Document]) -> Dict[str, str]:
     destination_by_source = {}
     for document in documents:
-        document_source = document.FileName
+        document_source = get_filename(document)
         document_destination = get_destination_path(
             document_source, source, destination)
         if not document_destination.parent.exists():
@@ -138,3 +138,12 @@ def get_open_documents() -> List[Document]:
     sort_in_dependency_order = True
     document_by_name = App.listDocuments(sort_in_dependency_order)
     return document_by_name.values()
+
+
+def get_filename(document: Document) -> str:
+    r"""Get the filename of the document.
+
+    On Windows, it converts forward slashes to backward slashes.
+    For example, C:/path/to/document -> C:\path\to\document.
+    """
+    return os.path.normpath(document.FileName)
