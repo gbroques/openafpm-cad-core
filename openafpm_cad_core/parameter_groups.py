@@ -155,13 +155,13 @@ class FurlingParameters(TypedDict):
     """
 
     VerticalPlaneAngle: float  # TailHingeAngle?
-    """Angle between outer pipe of yaw-bearing and inner pipe of tail hinge.
+    """Angle between outer pipe of yaw-bearing and inner pipe of tail hinge (in degrees).
     
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
     HorizontalPlaneAngle: float
-    """Angle of the alternator frame from a horizontal plane when welding the tail hinge.
+    """Angle of the alternator frame from a horizontal plane when welding the tail hinge (in degrees).
     
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
