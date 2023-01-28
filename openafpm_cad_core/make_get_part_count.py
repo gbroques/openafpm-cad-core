@@ -48,10 +48,8 @@ def traverse(objects: List[object],
         if obj.TypeId in ASSEMBLY_TYPE_IDS:
             children = _get_children(obj)
             if any([child is None for child in children]):
-                logging.warn(f'child of {obj.Label} ({obj.TypeId}) is None.')
-                documents = list(App.listDocuments().keys())
-                document_list = '\n'.join(documents)
-                logging.warn('Document List:\n%s', document_list)
+                logging.warn(
+                    f'child of {obj.Label} ({obj.TypeId}) is None in document {obj.Document.Name}')
             traverse(children, visit)
 
 
