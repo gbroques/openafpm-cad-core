@@ -92,13 +92,15 @@ class CreateSpreadsheetTaskPanel:
         if assembly_text == ALL:
             load_all(parameters['magnafpm'],
                      parameters['furling'],
-                     parameters['user'])
+                     parameters['user'],
+                     save_spreadsheet_document=True)
         else:
             assembly = Assembly(assembly_text)
             load_assembly(assembly,
                           parameters['magnafpm'],
                           parameters['furling'],
-                          parameters['user'])
+                          parameters['user'],
+                          save_spreadsheet_document=True)
         Gui.Control.closeDialog()
 
 

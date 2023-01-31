@@ -14,19 +14,22 @@ __all__ = ['load_root_document', 'load_root_documents']
 def load_root_document(get_root_document_path: Callable[[Path], Path],
                        magnafpm_parameters: MagnafpmParameters,
                        furling_parameters: FurlingParameters,
-                       user_parameters: UserParameters) -> Tuple[List[Document], Document]:
+                       user_parameters: UserParameters,
+                       save_spreadsheet_document: bool = False) -> Tuple[List[Document], Document]:
     root_documents, spreadsheet_document = load_root_documents(
         [get_root_document_path],
         magnafpm_parameters,
         furling_parameters,
-        user_parameters)
+        user_parameters,
+        save_spreadsheet_document)
     return root_documents[0], spreadsheet_document
 
 
 def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],
                         magnafpm_parameters: MagnafpmParameters,
                         furling_parameters: FurlingParameters,
-                        user_parameters: UserParameters) -> Tuple[List[Document], Document]:
+                        user_parameters: UserParameters,
+                        save_spreadsheet_document: bool = False) -> Tuple[List[Document], Document]:
     set_preferences()
     spreadsheet_document_name = 'Master_of_Puppets'
     spreadsheet_document = create_spreadsheet_document(spreadsheet_document_name,
@@ -35,9 +38,10 @@ def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],
                                                        user_parameters)
     documents_path = get_documents_path()
 
-    save_document(spreadsheet_document,
-                  documents_path,
-                  spreadsheet_document_name)
+    if save_spreadsheet_document:
+        save_document(spreadsheet_document,
+                      documents_path,
+                      spreadsheet_document_name)
     root_documents = []
     for get_root_document_path in get_root_document_paths:
         document = load_document(get_root_document_path(documents_path))
