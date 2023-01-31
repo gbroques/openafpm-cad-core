@@ -6,7 +6,7 @@ import shutil
 __all__ = ['make_archive']
 
 
-def make_archive(source: str, destination: str) -> bytes:
+def make_archive(source: str) -> bytes:
     """Recursively "zip up" the contents of source into an archive.
 
     Adapted from:
@@ -14,18 +14,16 @@ def make_archive(source: str, destination: str) -> bytes:
 
     .. code-block:: python
 
-       make_archive('/path/to/folder', '/path/to/folder.zip')
+       make_archive('/path/to/folder')
 
     :param source: Directory from where to create the archive from.
-    :param destination: Name and location of where to create the archive.
     :returns: Binary content of ZIP archive file.
     """
-    base = os.path.basename(destination)
-    name, format = base.split('.')
+    format = 'zip'
     archive_from = os.path.dirname(source)
     archive_to = os.path.basename(source.strip(os.sep))
-    shutil.make_archive(name, format, archive_from, archive_to)
-    shutil.move('%s.%s' % (name, format), destination)
+    shutil.make_archive(source, format, archive_from, archive_to)
+    destination = source + '.' + format
     with open(destination, 'rb') as zip:
         bytes_content = zip.read()
     return bytes_content

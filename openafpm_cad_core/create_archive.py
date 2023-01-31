@@ -27,8 +27,8 @@ def create_archive(magnafpm_parameters: MagnafpmParameters,
         user_parameters)
     wind_turbine_document = root_documents[0]
     document_source = Path(get_filename(wind_turbine_document)).parent
-    archive_source = Path(gettempdir()).joinpath(
-        str(uuid1())).joinpath('WindTurbine')
+    temporary_unique_directory = Path(gettempdir()).joinpath(str(uuid1()))
+    archive_source = temporary_unique_directory.joinpath('WindTurbine')
     archive_source.mkdir(parents=True)
 
     # Save documents to where the archive will be created from first.
@@ -38,11 +38,9 @@ def create_archive(magnafpm_parameters: MagnafpmParameters,
         source=document_source,
         destination=archive_source)
 
-    archive_destination = Path(archive_source).joinpath('WindTurbine.zip')
-    bytes_content = make_archive(
-        str(archive_source), str(archive_destination))
+    bytes_content = make_archive(str(archive_source))
     # Delete the directory the archive was created from.
-    shutil.rmtree(archive_source)
+    shutil.rmtree(temporary_unique_directory)
     return bytes_content
 
 
