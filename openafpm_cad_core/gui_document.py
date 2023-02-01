@@ -13,9 +13,16 @@ def get_gui_document_by_path(document_paths: List[Path]) -> Dict[str, bytes]:
     gui_document_by_path = {}
     for path in document_paths:
         with ZipFile(path, 'r') as fcstd:
-            with fcstd.open('GuiDocument.xml') as gui_document:
-                gui_document_contents = gui_document.read()
-                gui_document_by_path[str(path)] = gui_document_contents
+            try:
+                with fcstd.open('GuiDocument.xml') as gui_document:
+                    gui_document_contents = gui_document.read()
+                    gui_document_by_path[str(path)] = gui_document_contents
+            except KeyError as key_error:
+                print(f'No GuiDocument.xml in Document ${path}')
+                # TODO: Replace print statement with add_note feature available in Python 3.11
+                # see https://peps.python.org/pep-0678/
+                # key_error.add_note(f'No GuiDocument.xml in Document ${path}')
+                raise
     return gui_document_by_path
 
 
