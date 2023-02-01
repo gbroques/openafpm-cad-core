@@ -14,11 +14,13 @@ __all__ = ['assembly_to_obj']
 def assembly_to_obj(assembly: Assembly,
                     magnafpm_parameters: MagnafpmParameters,
                     furling_parameters: FurlingParameters,
-                    user_parameters: UserParameters) -> str:
+                    user_parameters: UserParameters,
+                    save_spreadsheet_document: bool = False) -> str:
     root_document, spreadsheet_document = load_assembly(assembly,
                                                         magnafpm_parameters,
                                                         furling_parameters,
-                                                        user_parameters)
+                                                        user_parameters,
+                                                        save_spreadsheet_document)
     obj = find_object_by_label(
         root_document, root_document.Name)
     export_kwargs = get_export_kwargs(assembly)
@@ -72,7 +74,7 @@ def keep_unresolved_for_wind_turbine(obj: object, path: List[object]) -> bool:
 def keep_unresolved_for_stator_mold(obj: object, path: List[object]) -> bool:
     return any([
         obj.Label.endswith(pattern)
-        for pattern in ['Bolts', 'Nuts', 'Screws']
+        for pattern in ['Bolts', 'Nuts', 'Screws', 'Washers']
     ])
 
 
