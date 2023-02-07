@@ -24,6 +24,13 @@ def assembly_to_obj(assembly: Assembly,
     obj = find_object_by_label(
         root_document, root_document.Name)
     export_kwargs = get_export_kwargs(assembly)
+    # https://wiki.freecad.org/Mesh_FromPartShape
+    mesh_settings = {
+        'LinearDeflection': 0.1,
+        'AngularDeflection': 0.1,
+        'Relative': True
+    }
+    export_kwargs.update({'mesh_settings': mesh_settings});
     obj_file_contents = freecad_to_obj.export([obj], **export_kwargs)
     return obj_file_contents
 
