@@ -484,10 +484,21 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=HubHolesPlacement + 0.5 * (RotorDiskRadius - MagnetLength - HubHolesPlacement)',
              alias='SmallIslandRadius'),
+        # TODO: Duplicated with below InnerCircleResineRotor
         Cell('=RotorDiskRadius - MagnetLength - 25',
              alias='LargeIslandRadius'),
         Cell('=RotorDiskRadius < 187.5 ? SmallIslandRadius : LargeIslandRadius',
              alias='IslandRadius')
+    ],
+    [
+        Cell('OffsetToAlignCornersOfMagnetToDisk'),
+        Cell('DistanceOfMagnetFromCenter')
+    ],
+    [
+        Cell('=RotorDiskRadius - sqrt(RotorDiskRadius ^ 2 - (MagnetWidth / 2) ^ 2)',
+             alias='OffsetToAlignCornersOfMagnetToDisk'),
+        Cell('=RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk',
+             alias='DistanceOfMagnetFromCenter')
     ],
     [
         Cell('Reduced Weight', styles=[Style.UNDERLINE])
@@ -497,6 +508,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('PaddingBetweenEdgeOfOuterPocketAndResin')
     ],
     [
+        # TODO: Duplicated with above LargeIslandRadius
         Cell('=RotorDiskRadius - MagnetLength - 25',
              alias='InnerCircleResineRotor'),
         Cell('12',
