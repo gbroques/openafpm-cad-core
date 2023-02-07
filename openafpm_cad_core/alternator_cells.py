@@ -368,15 +368,14 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         # All 3 of these are for below CoilWinderDiskRadius calculation
-        Cell('LargestMagnetDimension'),
+        Cell('MagnetDiagonal'),
         Cell('CoilWinderDiskRadiusPadding'),
         Cell('MinimumCoilWinderDiskRadius')
     ],
     [
-        # TODO: Should MagnetLength always be greater than MagnetWidth by definition?
-        Cell('=MagnetLength > MagnetWidth ? MagnetLength : MagnetWidth',
-             alias='LargestMagnetDimension'),
-        Cell('5',
+        Cell('=sqrt(MagnetWidth^2 + MagnetLength^2)',
+             alias='MagnetDiagonal'),
+        Cell('10',
              alias='CoilWinderDiskRadiusPadding'),
         Cell('60',
              alias='MinimumCoilWinderDiskRadius')
@@ -386,7 +385,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('CoilWinderDiskRadius')
     ],
     [
-        Cell('=(LargestMagnetDimension / 2) + CoilLegWidth + CoilWinderDiskRadiusPadding',
+        Cell('=(MagnetDiagonal / 2) + CoilLegWidth + CoilWinderDiskRadiusPadding',
              alias='ProjectedCoilWinderDiskRadius'),
         Cell('=ProjectedCoilWinderDiskRadius <= MinimumCoilWinderDiskRadius ? MinimumCoilWinderDiskRadius : ProjectedCoilWinderDiskRadius',
              alias='CoilWinderDiskRadius')
