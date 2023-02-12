@@ -35,19 +35,33 @@ def slugify_enum(enum: Union[Assembly, WindTurbine]) -> str:
 
 if __name__ == '__main__':
     parser = ArgumentParser(
-        description='Export wind turbines to .obj using default values.')
+        description='Export wind turbine(s) to .obj using default values.')
     parser.add_argument('path',
                         metavar='<path>',
                         type=str,
                         help='Output path.')
-
+    parser.add_argument('-t',
+                        '--type',
+                        type=str,
+                        choices=['t', 'h', 'star', 't2f', 'all'],
+                        required=False,
+                        default='all',
+                        help='Type of turbine to visualize. Defaults to all.')
     args = parser.parse_args()
-
-    turbines = (
-        WindTurbine.T_SHAPE,
-        WindTurbine.H_SHAPE,
-        WindTurbine.STAR_SHAPE,
-        WindTurbine.T_SHAPE_2F)
+    if args.type == 'all':
+        turbines = (
+            WindTurbine.T_SHAPE,
+            WindTurbine.H_SHAPE,
+            WindTurbine.STAR_SHAPE,
+            WindTurbine.T_SHAPE_2F)
+    else:
+        turbine = {
+            't': WindTurbine.T_SHAPE,
+            'h': WindTurbine.H_SHAPE,
+            'star': WindTurbine.STAR_SHAPE,
+            't2f': WindTurbine.T_SHAPE_2F
+        }[args.type]
+        turbines = (turbine,)
     assemblies = (
         Assembly.WIND_TURBINE,
         Assembly.STATOR_MOLD,
@@ -60,5 +74,4 @@ if __name__ == '__main__':
 
     with Pool(len(triples)) as p:
         filepaths = p.map(write_obj_file, triples)
-        print('Created')
         print('\n'.join(filepaths))
