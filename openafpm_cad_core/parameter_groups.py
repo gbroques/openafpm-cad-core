@@ -173,13 +173,14 @@ class FurlingParameters(TypedDict):
     """
 
     BoomPipeRadius: float
-    """Inner radius of tail boom pipe.
+    """Outer radius of tail boom pipe including thickness.
     
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
     BoomPipeThickness: float
-    """Thickness of tail boom pipe."""
+    """Thickness of tail boom pipe.
+    """
 
     VaneLength: float
     """Length of vane."""
@@ -233,7 +234,7 @@ class UserParameters(TypedDict):
     """Thickness of various flat metal pieces which can be cut by a 2D CNC laser cutter."""
 
     YawPipeDiameter: float
-    """Diameter of yaw bearing pipe including thickness."""
+    """Outer diameter of yaw bearing pipe including thickness."""
 
     PipeThickness: float
     """Thickness of yaw bearing and tail hinge pipes."""
