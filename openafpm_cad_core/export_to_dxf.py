@@ -18,9 +18,10 @@ from .make_get_part_count import make_get_part_count
 
 def export_to_dxf(magnafpm_parameters: MagnafpmParameters,
                   furling_parameters: FurlingParameters,
-                  user_parameters: UserParameters) -> bytes:
+                  user_parameters: UserParameters,
+                  save_spreadsheet_document: bool = False) -> bytes:
     root_documents, spreadsheet_document = load_all(
-        magnafpm_parameters, furling_parameters, user_parameters)
+        magnafpm_parameters, furling_parameters, user_parameters, save_spreadsheet_document)
     get_part_count = make_get_part_count(root_documents, magnafpm_parameters['NumberOfCoilsPerPhase'])
     export_set = get_dxf_export_set(root_documents)
     options = get_svg_style_options(magnafpm_parameters['RotorDiskRadius'])
