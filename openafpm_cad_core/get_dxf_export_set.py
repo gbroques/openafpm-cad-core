@@ -21,10 +21,11 @@ def get_flat_objects(
         objects: List[object],
         flat_objects: List[object] = set()) -> Set[object]:
     for child in objects:
-        if child.TypeId == 'App::Link':
-            get_flat_objects([child.LinkedObject], flat_objects)
-        elif child.TypeId == 'App::Part':
-            get_flat_objects(child.Group, flat_objects)
-        elif hasattr(child, FLAT_ATTRIBUTE) and getattr(child, FLAT_ATTRIBUTE):
-            flat_objects.add(child)
+        if child.Visibility:
+            if child.TypeId == 'App::Link':
+                get_flat_objects([child.LinkedObject], flat_objects)
+            elif child.TypeId == 'App::Part':
+                get_flat_objects(child.Group, flat_objects)
+            elif hasattr(child, FLAT_ATTRIBUTE) and getattr(child, FLAT_ATTRIBUTE):
+                flat_objects.add(child)
     return flat_objects
