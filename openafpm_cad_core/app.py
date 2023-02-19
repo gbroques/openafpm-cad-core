@@ -7,6 +7,7 @@ from .get_default_parameters import get_default_parameters
 from .get_parameters_schema import get_parameters_schema
 from .load import Assembly
 from .load_furl_transforms import load_furl_transforms
+from .parameter_hash import hash_parameters, unhash_parameters
 from .preview_dxf_as_svg import preview_dxf_as_svg
 from .wind_turbine import WindTurbine
 
@@ -20,6 +21,8 @@ __all__ = [
     'get_default_parameters',
     'get_parameters_schema',
     'load_furl_transforms',
+    'hash_parameters',
+    'unhash_parameters',
     'preview_dxf_as_svg',
     'WindTurbine'
 ]
