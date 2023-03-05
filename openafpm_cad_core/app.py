@@ -4,6 +4,7 @@ from .create_archive import create_archive
 from .create_spreadsheet_document import create_spreadsheet_document
 from .export_to_dxf import export_to_dxf
 from .get_default_parameters import get_default_parameters
+from .get_dimension_tables import get_dimension_tables
 from .get_parameters_schema import get_parameters_schema
 from .load import Assembly
 from .load_furl_transforms import load_furl_transforms
@@ -19,6 +20,7 @@ __all__ = [
     'create_spreadsheet_document',
     'export_to_dxf',
     'get_default_parameters',
+    'get_dimension_tables',
     'get_parameters_schema',
     'load_furl_transforms',
     'hash_parameters',
