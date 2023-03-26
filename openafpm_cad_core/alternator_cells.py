@@ -92,10 +92,13 @@ alternator_cells: List[List[Cell]] = [
              alias='MagnetWidth')
     ],
     [
+        Cell('CoilInnerWidth1'),
         Cell('MagnetMaterial'),
         Cell('NumberOfCoilsPerPhase')
     ],
     [
+        Cell('=Spreadsheet.CoilInnerWidth1',
+             alias='CoilInnerWidth1'),
         Cell('=Spreadsheet.MagnetMaterial',
              alias='MagnetMaterial'),
         Cell('=Spreadsheet.NumberOfCoilsPerPhase',
@@ -453,11 +456,17 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderCenterRodLength')
     ],
     [
-        Cell('CoilWinderPinLength')
+        Cell('CoilWinderPinLength'),
+        Cell('VerticalOffset'),
+        Cell('TriangularCoilHoleSideLength')
     ],
     [
         Cell('=CoilWinderAssemblyThicknessTotal + DistanceThreadsExtendFromNuts * 2',
-             alias='CoilWinderPinLength')
+             alias='CoilWinderPinLength'),
+        Cell('=CoilWinderDiskSmallHoleRadius * cos(60)',
+             alias='VerticalOffset'),
+        Cell('=(CoilInnerWidth1 - VerticalOffset) * 2 / sqrt(3)',
+             alias='TriangularCoilHoleSideLength')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
