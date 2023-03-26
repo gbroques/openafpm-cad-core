@@ -139,9 +139,9 @@
     },
     "T Shape 2F": {
         "magnafpm": {
-            "RotorDiskRadius": 150,
-            "RotorDiskInnerRadius": 100,
-            "DiskThickness": 10,
+            "RotorDiskRadius": 151.39,
+            "RotorDiskInnerRadius": 99.32,
+            "DiskThickness": 8,
             "MagnetLength": 50,
             "MagnetWidth": 50,
             "MagnetThickness": 20,
@@ -149,11 +149,11 @@
             "NumberMagnet": 12,
             "StatorThickness": 13,
             "CoilType": 3,
-            "CoilLegWidth": 21.5,
-            "CoilInnerWidth1": 48,
+            "CoilLegWidth": 20.63,
+            "CoilInnerWidth1": 50,
             "CoilInnerWidth2": 8,
             "MechanicalClearance": 3,
-            "InnerDistanceBetweenMagnets": 4,
+            "InnerDistanceBetweenMagnets": 2,
             "NumberOfCoilsPerPhase": 3
         },
         "furling": {
