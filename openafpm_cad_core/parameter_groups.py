@@ -91,7 +91,7 @@ class MagnafpmParameters(TypedDict):
     See Winding Type section at:
         https://openafpm.net/design-tips
 
-    This is "Coil hole at R in" in Winding Type diagram.
+    "Coil hole at R out" in Winding Type diagram.
     """
 
     CoilInnerWidth2: float  # CoilHoleInnerWidth
@@ -106,7 +106,7 @@ class MagnafpmParameters(TypedDict):
     See Winding Type section at:
         https://openafpm.net/design-tips
 
-    This is "Coil hole at R out" in Winding Type diagram.
+    "Coil hole at R in" in Winding Type diagram.
     """
 
     MechanicalClearance: float

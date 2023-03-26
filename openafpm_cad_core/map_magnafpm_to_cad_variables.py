@@ -1,0 +1,45 @@
+"""
+magnafpm
+RotorDiskRadius Rout
+RotorDiskInnerRadius Rin
+DiskThickness hr
+MagnetLength la
+MagnetWidth wm
+MagnetThickness hm
+MagnetMaterial ?
+NumberMagnet magnet_num
+StatorThickness tw
+CoilType coil_type
+CoilLegWidth wc
+CoilInnerWidth1 coil_hole_Rout_constr
+CoilInnerWidth2 coil_hole_Rin_constr
+MechanicalClearance g
+InnerDistanceBetweenMagnets dist_magnet_Rin
+NumberOfCoilsPerPhase q
+
+furling
+VerticalPlaneAngle
+HorizontalPlaneAngle
+BracketLength
+BracketWidth
+BracketThickness
+BoomLength
+BoomPipeRadius
+BoomPipeThickness
+VaneThickness
+VaneLength
+VaneWidth
+Offset
+
+user
+HubHolesPlacement
+RotorInnerCircle
+Holes
+MetalLengthL
+MetalThicknessL
+FlatMetalThickness
+YawPipeDiameter
+PipeThickness
+ResineRotorMargin
+HubHoles
+"""
