@@ -41,14 +41,14 @@ tail_cells: List[List[Cell]] = [
              alias='HorizontalPlaneAngle')
     ],
     [
-        Cell('BoomPipeRadius'),
+        Cell('BoomPipeDiameter'),
         Cell('BoomLength')
     ],
     [
         Cell('=Spreadsheet.BoomLength',
              alias='BoomLength'),
-        Cell('=Spreadsheet.BoomPipeRadius',
-             alias='BoomPipeRadius')
+        Cell('=Spreadsheet.BoomPipeDiameter',
+             alias='BoomPipeDiameter')
     ],
     # Calculated
     # ----------
@@ -56,11 +56,14 @@ tail_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('YawPipeRadius')
+        Cell('YawPipeRadius'),
+        Cell('BoomPipeRadius')
     ],
     [
         Cell('=YawPipeDiameter / 2',
              alias='YawPipeRadius'),
+        Cell('=BoomPipeDiameter / 2',
+             alias='BoomPipeRadius'),
     ],
     # Hinge
     # -----
@@ -397,11 +400,7 @@ tail_cells: List[List[Cell]] = [
              styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('BoomPipeHeight'), Cell('=BoomPipeRadius * 2',
-                                     alias='BoomPipeHeight')
-    ],
-    [
-        Cell('BoomPipeTailHingeHypotenuse'), Cell('=BoomPipeHeight / sin(90 - VerticalPlaneAngle)',
+        Cell('BoomPipeTailHingeHypotenuse'), Cell('=BoomPipeDiameter / sin(90 - VerticalPlaneAngle)',
                                                   alias='BoomPipeTailHingeHypotenuse')
     ],
     [
@@ -584,7 +583,7 @@ tail_cells: List[List[Cell]] = [
              alias='OuterTailHingeXOffset')
     ],
     [
-        Cell('OuterTailHingeNegativeXOffset'), Cell('=BoomPipeHeight / tan(90 - VerticalPlaneAngle)',
+        Cell('OuterTailHingeNegativeXOffset'), Cell('=BoomPipeDiameter / tan(90 - VerticalPlaneAngle)',
                                                     alias='OuterTailHingeNegativeXOffset')
     ],
     [

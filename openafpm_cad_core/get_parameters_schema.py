@@ -168,11 +168,11 @@ def get_parameters_schema() -> dict:
                         "type": get_type("furling", "BoomLength"),
                         "minimum": 0
                     },
-                    "BoomPipeRadius": {
-                        "title": "Boom Pipe Radius",
-                        "description": get_description("furling", "BoomPipeRadius"),
-                        "type": get_type("furling", "BoomPipeRadius"),
-                        "enum": [pipe_size.value / 2 for pipe_size in list(PipeSize)]
+                    "BoomPipeDiameter": {
+                        "title": "Boom Pipe Diameter",
+                        "description": get_description("furling", "BoomPipeDiameter"),
+                        "type": get_type("furling", "BoomPipeDiameter"),
+                        "enum": [pipe_size.value for pipe_size in list(PipeSize)]
                     },
                     "BoomPipeThickness": {
                         "title": "Boom Pipe Thickness",

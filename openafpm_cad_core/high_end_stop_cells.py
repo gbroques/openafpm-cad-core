@@ -33,14 +33,14 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('FlatMetalThickness'),
-        Cell('BoomPipeRadius'),
+        Cell('BoomPipeDiameter'),
         Cell('YawPipeDiameter')
     ],
     [
         Cell('=Spreadsheet.FlatMetalThickness',
              alias='FlatMetalThickness'),
-        Cell('=Spreadsheet.BoomPipeRadius',
-             alias='BoomPipeRadius'),
+        Cell('=Spreadsheet.BoomPipeDiameter',
+             alias='BoomPipeDiameter'),
         Cell('=Spreadsheet.YawPipeDiameter',
              alias='YawPipeDiameter')
     ],
@@ -116,11 +116,14 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('YawPipeRadius')
+        Cell('YawPipeRadius'),
+        Cell('BoomPipeRadius')
     ],
     [
         Cell('=YawPipeDiameter / 2',
              alias='YawPipeRadius'),
+        Cell('=BoomPipeDiameter / 2',
+             alias='BoomPipeRadius'),
     ],
     # Placement
     # ---------

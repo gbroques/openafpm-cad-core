@@ -194,7 +194,7 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
         'Steel Pipe Dimensions for Tail',
         [
             ('Boom Length A', spreadsheet_document.Spreadsheet.BoomLength),
-            ('Diameter B', spreadsheet_document.Spreadsheet.BoomPipeRadius * 2),
+            ('Diameter B', spreadsheet_document.Spreadsheet.BoomPipeDiameter),
             ('Hinge Outer C', spreadsheet_document.Tail.HingeOuterPipeLength),
             ('Diameter D', spreadsheet_document.Tail.HingeOuterPipeRadius * 2),
             ('Hinge Inner E', spreadsheet_document.Tail.HingeInnerPipeLength),

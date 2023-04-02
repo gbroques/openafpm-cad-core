@@ -172,8 +172,8 @@ class FurlingParameters(TypedDict):
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    BoomPipeRadius: float
-    """Outer radius of tail boom pipe including thickness.
+    BoomPipeDiameter: float
+    """Outer diameter of tail boom pipe including thickness.
     
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """

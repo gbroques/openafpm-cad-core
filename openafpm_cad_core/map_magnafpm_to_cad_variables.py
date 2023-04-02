@@ -24,7 +24,7 @@ BracketLength
 BracketWidth
 BracketThickness
 BoomLength
-BoomPipeRadius
+BoomPipeDiameter
 BoomPipeThickness
 VaneThickness
 VaneLength
