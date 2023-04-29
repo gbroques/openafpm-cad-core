@@ -156,7 +156,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
              alias='HexagonalStatorOuterCircumradius'),
-        Cell('=RotorDiskRadius - MagnetLength - CoilLegWidth',
+        Cell('=RotorDiskRadius - MagnetLength - CoilLegWidth - OffsetToAlignCornersOfMagnetToDisk',
              alias='StatorInnerHoleRadius')
     ],
     [
