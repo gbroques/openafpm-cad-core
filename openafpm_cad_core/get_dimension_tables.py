@@ -109,8 +109,8 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Yaw Bearing Pipe Sizes',
         [
-            ('Tower Top Stub', spreadsheet_document.Tail.HingeInnerPipeDiameter),
-            ('Outer Yaw Pipe', spreadsheet_document.Spreadsheet.YawPipeDiameter),
+            ('Tower top stub outer diameter', spreadsheet_document.Tail.HingeInnerPipeDiameter),
+            ('Yaw pipe outer diameter', spreadsheet_document.Spreadsheet.YawPipeDiameter),
         ],
         book_reference_template % 'page 24 left-hand side'
     )
