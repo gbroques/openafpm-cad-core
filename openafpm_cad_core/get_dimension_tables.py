@@ -137,7 +137,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
         [
             ('Diameter', spreadsheet_document.Spreadsheet.RotorDiskRadius * 2),
             ('Thickness', spreadsheet_document.Spreadsheet.DiskThickness),
-            ('Central Hole Diameter', spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter),
+            ('Central hole diameter', spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter),
         ],
         book_reference_template % 'page 25 right-hand side'
     )
@@ -156,7 +156,9 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ),
                 ('Channel pieces B,C', spreadsheet_document.Alternator.BC),
                 ('End bracket D', spreadsheet_document.Alternator.D),
-                ('Position of Shaft X', spreadsheet_document.Alternator.X)
+                ('Position of shaft X', spreadsheet_document.Alternator.X),
+                ('Steel angle section width', spreadsheet_document.Spreadsheet.MetalLengthL),
+                ('Steel angle section thickness', spreadsheet_document.Spreadsheet.MetalThicknessL)
             ],
             book_reference_template % 'page 26 right-hand side'
         )

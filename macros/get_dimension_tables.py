@@ -1,5 +1,10 @@
 """
 FreeCAD macro to get dimensions for wind turbines using default values.
+
+To filter output by table name, you can use jq.
+
+For example:
+jq '.[] | select(.children[0].children[0].children[0].properties.textContent | ascii_downcase | contains("frame dimensions"))'
 """
 import json
 from argparse import ArgumentParser
