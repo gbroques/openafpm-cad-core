@@ -47,6 +47,12 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_frame_dimensions_table(spreadsheet_document)
     )
+    # TODO: Create only for T Shape?
+    #       This information is repeated for H & Star in
+    #       create_frame_dimensions_flat_bar_table
+    tables.append(
+        create_offset_table(spreadsheet_document)
+    )
     if rotor_disk_radius < 187.5:
         tables.append(
             create_alternator_frame_to_yaw_tube_sizes_table(
@@ -192,6 +198,16 @@ def create_alternator_frame_to_yaw_tube_sizes_table(spreadsheet_document: Docume
             ('K', spreadsheet_document.Alternator.k)
         ],
         book_reference_template % 'page 28 right-hand side'
+    )
+
+
+def create_offset_table(spreadsheet_document: Document) -> Element:
+    return create_table(
+        'Offset distance laterally from alternator center to yaw center',
+        [
+            ('Offset', spreadsheet_document.Spreadsheet.Offset)
+        ],
+        book_reference_template % 'page 27 right-hand side'
     )
 
 
