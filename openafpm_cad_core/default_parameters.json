@@ -34,7 +34,7 @@
         },
         "user": {
             "HubHolesPlacement": 50,
-            "RotorInnerCircle": 32.5,
+            "RotorDiskCentralHoleDiameter": 65,
             "Holes": 6,
             "MetalLengthL": 50,
             "MetalThicknessL": 6,
@@ -80,7 +80,7 @@
         },
         "user": {
             "HubHolesPlacement": 65,
-            "RotorInnerCircle": 47.5,
+            "RotorDiskCentralHoleDiameter": 95,
             "Holes": 7,
             "MetalLengthL": 60,
             "MetalThicknessL": 6,
@@ -126,7 +126,7 @@
         },
         "user": {
             "HubHolesPlacement": 102.5,
-            "RotorInnerCircle": 81.5,
+            "RotorDiskCentralHoleDiameter": 163,
             "Holes": 7,
             "MetalLengthL": 80,
             "MetalThicknessL": 8,
@@ -172,7 +172,7 @@
         },
         "user": {
             "HubHolesPlacement": 50,
-            "RotorInnerCircle": 32.5,
+            "RotorDiskCentralHoleDiameter": 65,
             "Holes": 6,
             "MetalLengthL": 50,
             "MetalThicknessL": 6,

@@ -218,8 +218,8 @@ class FurlingParameters(TypedDict):
 class UserParameters(TypedDict):
     """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
 
-    RotorInnerCircle: float  # RotorDiskInnerHoleRadius
-    """Inner hole radius of the rotor disk."""
+    RotorDiskCentralHoleDiameter: float
+    """Diameter of central hole for rotor disk."""
 
     Holes: float  # HoleRadius
     """Radius of various holes like stator mounting holes and vane bracket holes."""

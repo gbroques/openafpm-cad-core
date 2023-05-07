@@ -217,10 +217,10 @@ def get_parameters_schema() -> dict:
                         "type": get_type("user", "HubHolesPlacement"),
                         "minimum": 0
                     },
-                    "RotorInnerCircle": {
-                        "title": "Rotor Inner Circle",
-                        "description": get_description("user", "RotorInnerCircle"),
-                        "type": get_type("user", "RotorInnerCircle"),
+                    "RotorDiskCentralHoleDiameter": {
+                        "title": "Rotor Disk Central Hole Diameter",
+                        "description": get_description("user", "RotorDiskCentralHoleDiameter"),
+                        "type": get_type("user", "RotorDiskCentralHoleDiameter"),
                         "minimum": 0
                     },
                     "Holes": {
