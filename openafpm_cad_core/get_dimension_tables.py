@@ -215,9 +215,11 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
     return create_table(
         'Frame Dimensions, Flat Bar',
         [
-            ('L', spreadsheet_document.YawBearing.L),
-            ('M', spreadsheet_document.YawBearing.MM),
-            ('Offset', spreadsheet_document.Spreadsheet.Offset)
+            ('Offset', spreadsheet_document.Spreadsheet.Offset),
+            ('L length of flat bar', spreadsheet_document.YawBearing.L),
+            ('M width of flat bar', spreadsheet_document.YawBearing.MM),
+            ('Flat bar thickness', spreadsheet_document.Spreadsheet.FlatMetalThickness),
+            ('Length of yaw bearing pipe', spreadsheet_document.YawBearing.YawPipeLength)
         ],
         book_reference_template % 'page 29 left-hand side'
     )
