@@ -292,11 +292,10 @@ def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
             ('Magnet width', spreadsheet_document.Spreadsheet.MagnetWidth),
             ('Magnet thickness', spreadsheet_document.Spreadsheet.MagnetThickness),
             ('Number of coils', spreadsheet_document.Spreadsheet.NumberOfCoilsPerPhase * 3),
-            # TODO: How to get these?
-            ('Weight of wire', 0),
-            ('Wire diameter', 0),
-            ('Number of wires in hand', 0),
-            ('Turns per coil', 0)
+            ('Weight of wire', spreadsheet_document.Spreadsheet.WireWeight),
+            ('Wire diameter', spreadsheet_document.Spreadsheet.WireDiameter),
+            ('Number of wires in hand', spreadsheet_document.Spreadsheet.NumberOfWiresInHand),
+            ('Turns per coil', spreadsheet_document.Spreadsheet.TurnsPerCoil)
         ]
     )
 

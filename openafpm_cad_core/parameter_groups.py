@@ -134,6 +134,22 @@ class MagnafpmParameters(TypedDict):
     "Connecting the coils" section on page 38 of "A Wind Turbine Recipe Book (2014)".
     """
 
+    WireWeight: float
+    """Total copper mass for coils in kilograms including two extra coils for contingency.
+    """
+
+    WireDiameter: float
+    """Diameter of copper wire in coils.
+    """
+
+    NumberOfWiresInHand: int
+    """Number of wires in hand when winding a coil.
+    """
+
+    TurnsPerCoil: int
+    """Number of turns per coil.
+    """
+
 
 class FurlingParameters(TypedDict):
     """Furling Parameters.

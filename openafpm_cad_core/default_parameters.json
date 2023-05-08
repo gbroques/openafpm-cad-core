@@ -16,7 +16,11 @@
             "CoilInnerWidth2": 30,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 20,
-            "NumberOfCoilsPerPhase": 3
+            "NumberOfCoilsPerPhase": 3,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
         },
         "furling": {
             "VerticalPlaneAngle": 20,
@@ -62,7 +66,11 @@
             "CoilInnerWidth2": 30,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 36,
-            "NumberOfCoilsPerPhase": 4
+            "NumberOfCoilsPerPhase": 4,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
         },
         "furling": {
             "VerticalPlaneAngle": 15,
@@ -108,7 +116,11 @@
             "CoilInnerWidth2": 27,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 44,
-            "NumberOfCoilsPerPhase": 8
+            "NumberOfCoilsPerPhase": 8,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
         },
         "furling": {
             "VerticalPlaneAngle": 15,
@@ -154,7 +166,11 @@
             "CoilInnerWidth2": 8,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 2,
-            "NumberOfCoilsPerPhase": 3
+            "NumberOfCoilsPerPhase": 3,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
         },
         "furling": {
             "VerticalPlaneAngle": 20,
