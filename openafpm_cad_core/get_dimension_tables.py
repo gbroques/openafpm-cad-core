@@ -264,15 +264,16 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
 
 def create_tail_junction_dimensions_table(spreadsheet_document: Document) -> Element:
     return create_table(
-        'Tail Junction Dimensions',
+        'Tail Junction Cross Piece Dimensions',
         [
             (
-                'D', (
+                'Width of cross piece D', (
                     spreadsheet_document.Tail.TailHingeJunctionFullWidth -
                     (spreadsheet_document.Spreadsheet.YawPipeDiameter / 2) -
                     spreadsheet_document.Tail.HingeInnerPipeRadius
                 )
-            )
+            ),
+            ('Position from end of yaw bearing pipe', spreadsheet_document.Tail.TailHingeJunctionHeight)
         ]
     )
 
