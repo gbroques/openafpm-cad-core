@@ -72,6 +72,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         create_tail_vane_dimensions_table(spreadsheet_document)
     )
     tables.append(
+        create_magnets_and_coils_table(spreadsheet_document)
+    )
+    tables.append(
         create_coil_winder_dimensions_table(spreadsheet_document)
     )
     tables.append(
@@ -118,8 +121,10 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Yaw Bearing Pipe Sizes',
         [
-            ('Tower top stub outer diameter', spreadsheet_document.Tail.HingeInnerPipeDiameter),
-            ('Yaw pipe outer diameter', spreadsheet_document.Spreadsheet.YawPipeDiameter),
+            ('Tower top stub outer diameter',
+             spreadsheet_document.Tail.HingeInnerPipeDiameter),
+            ('Yaw pipe outer diameter',
+             spreadsheet_document.Spreadsheet.YawPipeDiameter),
         ],
         book_reference_template % 'page 24 left-hand side'
     )
@@ -129,7 +134,8 @@ def create_wheel_bearing_hub_table(spreadsheet_document: Document) -> Element:
     return create_table(
         'Wheel Bearing Hub',
         [
-            ('Pitch Circle Diameter (PCD)', spreadsheet_document.Spreadsheet.HubHolesPlacement * 2),
+            ('Pitch Circle Diameter (PCD)',
+             spreadsheet_document.Spreadsheet.HubHolesPlacement * 2),
             ('Number of bolts', spreadsheet_document.Hub.NumberOfHoles),
             ('Bolt diameter', spreadsheet_document.Spreadsheet.HubHoles * 2),
         ],
@@ -143,7 +149,8 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
         [
             ('Diameter', spreadsheet_document.Spreadsheet.RotorDiskRadius * 2),
             ('Thickness', spreadsheet_document.Spreadsheet.DiskThickness),
-            ('Central hole diameter', spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter),
+            ('Central hole diameter',
+             spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter),
         ],
         book_reference_template % 'page 25 right-hand side'
     )
@@ -163,8 +170,10 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('Channel pieces B,C', spreadsheet_document.Alternator.BC),
                 ('End bracket D', spreadsheet_document.Alternator.D),
                 ('Position of shaft X', spreadsheet_document.Alternator.X),
-                ('Steel angle section width', spreadsheet_document.Spreadsheet.MetalLengthL),
-                ('Steel angle section thickness', spreadsheet_document.Spreadsheet.MetalThicknessL)
+                ('Steel angle section width',
+                 spreadsheet_document.Spreadsheet.MetalLengthL),
+                ('Steel angle section thickness',
+                 spreadsheet_document.Spreadsheet.MetalThicknessL)
             ],
             book_reference_template % 'page 26 right-hand side'
         )
@@ -192,7 +201,8 @@ def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Docume
     return create_table(
         'Alternator Frame to Yaw Pipe Sizes',
         [
-            ('Length of yaw bearing pipe', spreadsheet_document.YawBearing.YawPipeLength),
+            ('Length of yaw bearing pipe',
+             spreadsheet_document.YawBearing.YawPipeLength),
             ('I', spreadsheet_document.Alternator.I),
             ('J', spreadsheet_document.Alternator.j),
             ('K', spreadsheet_document.Alternator.k)
@@ -219,7 +229,10 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
             ('L length of flat bar', spreadsheet_document.YawBearing.L),
             ('M width of flat bar', spreadsheet_document.YawBearing.MM),
             ('Flat bar thickness', spreadsheet_document.Spreadsheet.FlatMetalThickness),
-            ('Length of yaw bearing pipe', spreadsheet_document.YawBearing.YawPipeLength)
+            (
+                'Length of yaw bearing pipe',
+                spreadsheet_document.YawBearing.YawPipeLength
+            )
         ],
         book_reference_template % 'page 29 left-hand side'
     )
@@ -251,14 +264,40 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
             ('Vane plywood dimension G', spreadsheet_document.Spreadsheet.VaneWidth),
             ('Vane plywood dimension H', spreadsheet_document.Spreadsheet.VaneLength),
             ('Vane plywood thickness', spreadsheet_document.Spreadsheet.VaneThickness),
-            ('Vane bracket flat bar width', spreadsheet_document.Spreadsheet.BracketWidth)
+            (
+                'Vane bracket flat bar width',
+                spreadsheet_document.Spreadsheet.BracketWidth
+            ),
             (
                 'Vane bracket flat bar thickness',
                 spreadsheet_document.Spreadsheet.BracketThickness
             ),
-            ('Vane bracket flat bar length J', spreadsheet_document.Spreadsheet.BracketLength),
+            (
+                'Vane bracket flat bar length J',
+                spreadsheet_document.Spreadsheet.BracketLength
+            )
         ],
         book_reference_template % 'page 32 bottom'
+    )
+
+
+def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
+    return create_table(
+        'Magnets and Coils',
+        [
+            ('Number of rotor disks', 2),
+            ('Magnets per rotor disk', spreadsheet_document.Spreadsheet.NumberMagnet),
+            ('Magnet material', spreadsheet_document.Spreadsheet.MagnetMaterial),
+            ('Magnet length', spreadsheet_document.Spreadsheet.MagnetLength),
+            ('Magnet width', spreadsheet_document.Spreadsheet.MagnetWidth),
+            ('Magnet thickness', spreadsheet_document.Spreadsheet.MagnetThickness),
+            ('Number of coils', spreadsheet_document.Spreadsheet.NumberOfCoilsPerPhase * 3),
+            # TODO: How to get these?
+            ('Weight of wire', 0),
+            ('Wire diameter', 0),
+            ('Number of wires in hand', 0),
+            ('Turns per coil', 0)
+        ]
     )
 
 
@@ -273,7 +312,8 @@ def create_tail_junction_dimensions_table(spreadsheet_document: Document) -> Ele
                     spreadsheet_document.Tail.HingeInnerPipeRadius
                 )
             ),
-            ('Position from end of yaw bearing pipe', spreadsheet_document.Tail.TailHingeJunctionHeight)
+            ('Position from end of yaw bearing pipe',
+             spreadsheet_document.Tail.TailHingeJunctionHeight)
         ]
     )
 
