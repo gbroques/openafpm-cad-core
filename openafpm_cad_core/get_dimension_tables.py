@@ -55,7 +55,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     )
     if rotor_disk_radius < 187.5:
         tables.append(
-            create_alternator_frame_to_yaw_tube_sizes_table(
+            create_alternator_frame_to_yaw_pipe_sizes_table(
                 spreadsheet_document)
         )
     if rotor_disk_radius >= 187.5:
@@ -188,11 +188,11 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
         )
 
 
-def create_alternator_frame_to_yaw_tube_sizes_table(spreadsheet_document: Document) -> Element:
+def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Document) -> Element:
     return create_table(
-        'Alternator Frame to Yaw Tube Sizes',
+        'Alternator Frame to Yaw Pipe Sizes',
         [
-            ('Length of OD yaw tube', spreadsheet_document.YawBearing.YawPipeLength),
+            ('Length of yaw bearing pipe', spreadsheet_document.YawBearing.YawPipeLength),
             ('I', spreadsheet_document.Alternator.I),
             ('J', spreadsheet_document.Alternator.j),
             ('K', spreadsheet_document.Alternator.k)
