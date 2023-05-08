@@ -248,15 +248,15 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
                 'Tail hinge angle for battery charging',
                 spreadsheet_document.Spreadsheet.VerticalPlaneAngle
             ),
-            ('G', spreadsheet_document.Spreadsheet.VaneWidth),
-            ('H', spreadsheet_document.Spreadsheet.VaneLength),
-            ('Vane Thickness', spreadsheet_document.Spreadsheet.VaneThickness),
+            ('Vane plywood dimension G', spreadsheet_document.Spreadsheet.VaneWidth),
+            ('Vane plywood dimension H', spreadsheet_document.Spreadsheet.VaneLength),
+            ('Vane plywood thickness', spreadsheet_document.Spreadsheet.VaneThickness),
+            ('Vane bracket flat bar width', spreadsheet_document.Spreadsheet.BracketWidth)
             (
-                'Vane Bracket Thickness',
+                'Vane bracket flat bar thickness',
                 spreadsheet_document.Spreadsheet.BracketThickness
             ),
-            ('Vane Bracket Length J', spreadsheet_document.Spreadsheet.BracketLength),
-            ('Vane Bracket Width', spreadsheet_document.Spreadsheet.BracketWidth)
+            ('Vane bracket flat bar length J', spreadsheet_document.Spreadsheet.BracketLength),
         ],
         book_reference_template % 'page 32 bottom'
     )
