@@ -79,27 +79,30 @@ alternator_cells: List[List[Cell]] = [
              alias='ResineRotorMargin')
     ],
     [
+        Cell('CoilInnerWidth1'),
         Cell('CoilInnerWidth2'),
         Cell('CoilType'),
-        Cell('MagnetWidth')
     ],
     [
+        Cell('=Spreadsheet.CoilInnerWidth1',
+             alias='CoilInnerWidth1'),
         Cell('=Spreadsheet.CoilInnerWidth2',
              alias='CoilInnerWidth2'),
         Cell('=Spreadsheet.CoilType',
              alias='CoilType'),
-        Cell('=Spreadsheet.MagnetWidth',
-             alias='MagnetWidth')
     ],
     [
         Cell('MagnetMaterial'),
-        Cell('NumberOfCoilsPerPhase')
+        Cell('NumberOfCoilsPerPhase'),
+        Cell('MagnetWidth')
     ],
     [
         Cell('=Spreadsheet.MagnetMaterial',
              alias='MagnetMaterial'),
         Cell('=Spreadsheet.NumberOfCoilsPerPhase',
-             alias='NumberOfCoilsPerPhase')
+             alias='NumberOfCoilsPerPhase'),
+        Cell('=Spreadsheet.MagnetWidth',
+             alias='MagnetWidth')
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -392,13 +395,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderDiskCenterHoleRadius'),
-        Cell('CoilWinderDiskSmallHoleRadius')
+        Cell('CoilWinderDiskSmallHoleRadius'),
+        Cell('CoilWinderDiskSmallHoleDiameter')
     ],
     [
         Cell('5',
              alias='CoilWinderDiskCenterHoleRadius'),
         Cell('2.5',
-             alias='CoilWinderDiskSmallHoleRadius')
+             alias='CoilWinderDiskSmallHoleRadius'),
+        Cell('=CoilWinderDiskSmallHoleRadius * 2',
+             alias='CoilWinderDiskSmallHoleDiameter')
     ],
     [
         Cell('CoilWinderDiskTapeNotchWidth'),
@@ -464,6 +470,16 @@ alternator_cells: List[List[Cell]] = [
              alias='VerticalOffset'),
         Cell('=MagnetLength - VerticalOffset',
              alias='TriangularCoilHoleHeight')
+    ],
+    [
+        Cell('OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
+        Cell('InnerHorizontalDistanceBetweenCenterOfSmallHoles')
+    ],
+    [
+        Cell('=CoilInnerWidth1 - CoilWinderDiskSmallHoleDiameter',
+             alias='OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
+        Cell('=CoilType != 3 ? (CoilInnerWidth2 - CoilWinderDiskSmallHoleDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
+             alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])

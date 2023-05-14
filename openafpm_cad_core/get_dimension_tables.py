@@ -294,7 +294,8 @@ def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
             ('Number of coils', spreadsheet_document.Spreadsheet.NumberOfCoilsPerPhase * 3),
             ('Weight of wire', spreadsheet_document.Spreadsheet.WireWeight),
             ('Wire diameter', spreadsheet_document.Spreadsheet.WireDiameter),
-            ('Number of wires in hand', spreadsheet_document.Spreadsheet.NumberOfWiresInHand),
+            ('Number of wires in hand',
+             spreadsheet_document.Spreadsheet.NumberOfWiresInHand),
             ('Turns per coil', spreadsheet_document.Spreadsheet.TurnsPerCoil)
         ]
     )
@@ -321,10 +322,13 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Coil Winder Dimensions',
         [
-            # Rectangular spacer dimensions
             ('A', spreadsheet_document.Alternator.RectangularVerticalDistanceOfHolesFromCenter * 2),
-            ('B', spreadsheet_document.Spreadsheet.CoilInnerWidth1),
-            ('C', spreadsheet_document.Spreadsheet.CoilInnerWidth2)
+            ('B', spreadsheet_document.Alternator.OuterHorizontalDistanceBetweenCenterOfSmallHoles),
+            ('C', (
+                spreadsheet_document.Alternator.InnerHorizontalDistanceBetweenCenterOfSmallHoles
+                if spreadsheet_document.Spreadsheet.CoilType != 3 else
+                spreadsheet_document.Alternator.CoilWinderDiskBottomHoleRadius * 2
+            ))
         ]
     )
 
