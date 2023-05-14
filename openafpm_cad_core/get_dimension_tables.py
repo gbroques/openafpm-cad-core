@@ -334,15 +334,22 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
 
 
 def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Element:
+    rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     return create_table(
         'Stator Mould Dimensions',
         [
             ('Mould side A', spreadsheet_document.Alternator.StatorMoldSideLength),
             ('Outer radius B', spreadsheet_document.Alternator.StatorHolesCircumradius),
             ('Inner radius C', spreadsheet_document.Alternator.StatorInnerHoleRadius),
-            ('Mould thickness', spreadsheet_document.Spreadsheet.StatorThickness)
+            (
+                'Number of mounts',
+                spreadsheet_document.Alternator.NumberOfStatorHoles
+                if rotor_disk_radius <= 275 else 6
+            ),
+            ('Surround and island thickness',
+             spreadsheet_document.Spreadsheet.StatorThickness)
         ],
-        book_reference_template % 'page 40'
+        book_reference_template % 'page 40 left-hand side'
     )
 
 
