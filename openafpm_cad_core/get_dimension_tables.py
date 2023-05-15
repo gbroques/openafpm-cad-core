@@ -83,6 +83,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_rotor_mold_dimensions_table(spreadsheet_document)
     )
+    tables.append(
+        create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document)
+    )
     return tables
 
 
@@ -357,10 +360,20 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
     return create_table(
         'Rotor Mould Dimensions',
         [
-            ('Approx. mould side A', spreadsheet_document.Alternator.RotorMoldSideLength),
+            ('Mould side A', spreadsheet_document.Alternator.RotorMoldSideLength),
             ('Rotor radius B', spreadsheet_document.Alternator.RotorMoldSurroundRadius),
             ('Island radius C', spreadsheet_document.Alternator.IslandRadius),
+            ('Surround thickness', spreadsheet_document.Alternator.RotorMoldSurroundThickness),
             ('Island thickness', spreadsheet_document.Alternator.RotorMoldIslandThickness),
+        ],
+        book_reference_template % 'page 42 left-hand side'
+    )
+
+
+def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Document) -> Element:
+    return create_table(
+        'Magnet Positioning Jig Dimensions',
+        [
             ('Number of magnets', spreadsheet_document.Spreadsheet.NumberMagnet),
             ('Smaller radius D', (
                 spreadsheet_document.Spreadsheet.RotorDiskRadius -
