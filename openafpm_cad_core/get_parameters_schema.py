@@ -117,12 +117,32 @@ def get_parameters_schema() -> dict:
                         "minimum": 0
                     },
                     "NumberOfCoilsPerPhase": {
-                        "title": "Number Of Coils Per Phase",
+                        "title": "Number of Coils per Phase",
                         "description": get_description("magnafpm", "NumberOfCoilsPerPhase"),
                         "type": get_type("magnafpm", "NumberOfCoilsPerPhase"),
                         "minimum": MIN_NUMBER_MAGNET // 4,
                         # Number of coils (=NumberMagnet * 3/4) divided by 3, for a three-phase stator.
                         "maximum": MAX_NUMBER_MAGNET // 4
+                    },
+                    "WireWeight": {
+                        "title": "Wire Weight",
+                        "description": get_description("magnafpm", "WireWeight"),
+                        "type": get_type("magnafpm", "WireWeight")
+                    },
+                    "WireDiameter": {
+                        "title": "Wire Diameter",
+                        "description": get_description("magnafpm", "WireDiameter"),
+                        "type": get_type("magnafpm", "WireDiameter")
+                    },
+                    "NumberOfWiresInHand": {
+                        "title": "Number of Wires in Hand",
+                        "description": get_description("magnafpm", "NumberOfWiresInHand"),
+                        "type": get_type("magnafpm", "NumberOfWiresInHand")
+                    },
+                    "TurnsPerCoil": {
+                        "title": "Turns per Coil",
+                        "description": get_description("magnafpm", "TurnsPerCoil"),
+                        "type": get_type("magnafpm", "TurnsPerCoil")
                     }
                 }
             },
