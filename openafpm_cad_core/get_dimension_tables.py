@@ -84,7 +84,11 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         create_rotor_mold_dimensions_table(spreadsheet_document)
     )
     tables.append(
-        create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document)
+        create_magnet_positioning_and_jig_dimensions_table(
+            spreadsheet_document)
+    )
+    tables.append(
+        create_various_parts_dimensions_table(spreadsheet_document)
     )
     return tables
 
@@ -363,7 +367,8 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
             ('Mould side A', spreadsheet_document.Alternator.RotorMoldSideLength),
             ('Rotor radius B', spreadsheet_document.Alternator.RotorMoldSurroundRadius),
             ('Island radius C', spreadsheet_document.Alternator.IslandRadius),
-            ('Surround thickness', spreadsheet_document.Alternator.RotorMoldSurroundThickness),
+            ('Surround thickness',
+             spreadsheet_document.Alternator.RotorMoldSurroundThickness),
             ('Island thickness', spreadsheet_document.Alternator.RotorMoldIslandThickness),
         ],
         book_reference_template % 'page 42 left-hand side'
@@ -383,6 +388,39 @@ def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Doc
             ('Circle radius', spreadsheet_document.Spreadsheet.MagnetWidth / 2)
         ],
         book_reference_template % 'page 42 & 43'
+    )
+
+
+def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Element:
+    return create_table(
+        'Various Parts Dimensions',
+        [
+            (
+                'Hub studs length',
+                'TODO: Adjust when blades are added.'
+            ),
+            ('Hub studs diameter', spreadsheet_document.Spreadsheet.HubHoles * 2),
+            (
+                'Stator studs length',
+                spreadsheet_document.Alternator.StatorMountingStudsLength
+            ),
+            (
+                'Stator studs diameter',
+                spreadsheet_document.Spreadsheet.Holes * 2),
+            (
+                'Vane bracket bolts diameter',
+                spreadsheet_document.Spreadsheet.Holes * 2
+            ),
+            (
+                'Thickness of all flat steel pieces',
+                spreadsheet_document.Spreadsheet.FlatMetalThickness
+            ),
+            (
+                'Wall thickness of yaw and tail hinge pipes',
+                spreadsheet_document.Spreadsheet.PipeThickness
+            )
+        ],
+        book_reference_template % 'page 46 left-hand side'
     )
 
 
