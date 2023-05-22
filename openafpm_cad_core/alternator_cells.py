@@ -54,14 +54,14 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('Offset'),
-        Cell('Holes'),
+        Cell('HolesDiameter'),
         Cell('YawPipeDiameter')
     ],
     [
         Cell('=Spreadsheet.Offset',
              alias='Offset'),
-        Cell('=Spreadsheet.Holes',
-             alias='Holes'),
+        Cell('=Spreadsheet.HolesDiameter',
+             alias='HolesDiameter'),
         Cell('=Spreadsheet.YawPipeDiameter',
              alias='YawPipeDiameter'),
     ],
@@ -717,11 +717,14 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         # Distance from hole to outside edge of frame.
-        Cell('HoleMargin')
+        Cell('HoleMargin'),
+        Cell('HolesRadius')
     ],
     [
         Cell('20',
-             alias='HoleMargin')
+             alias='HoleMargin'),
+        Cell('=HolesDiameter / 2',
+             alias='HolesRadius')
     ],
     [
         Cell('YawPipeRadius')
@@ -744,8 +747,8 @@ alternator_cells: List[List[Cell]] = [
         # cos(30) * StatorHolesCircumradius = bottom of right triangle
         # * 2 to get both sides.
         # Add the distance from hole to edge of the metal on each side, + (HoleMargin * 2).
-        # Add the radius for holes on each side, + (Holes * 2).
-        Cell('=cos(30) * StatorHolesCircumradius * 2 + (HoleMargin * 2) + (Holes * 2)',
+        # Add the radius for holes on each side, + HolesDiameter.
+        Cell('=cos(30) * StatorHolesCircumradius * 2 + (HoleMargin * 2) + HolesDiameter',
              alias='TShapeTwoHoleEndBracketLength')
     ],
     [
@@ -812,11 +815,11 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         # 25 is the margin from the holes to the edge of the metal.
-        Cell('=2 * sin(30) * StatorHolesCircumradius + 2 * (25 + Holes)',
+        Cell('=2 * sin(30) * StatorHolesCircumradius + 2 * (25 + HolesRadius)',
              alias='StarShapeTwoHoleEndBracketLength'),
         Cell('=2 * StatorHolesCircumradius * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
              alias='B'),
-        Cell('=StatorHolesCircumradius - MetalLengthL + Holes + 25',
+        Cell('=StatorHolesCircumradius - MetalLengthL + HolesRadius + 25',
              alias='CC')
     ],
     [

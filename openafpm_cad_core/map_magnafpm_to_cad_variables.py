@@ -34,7 +34,7 @@ Offset
 user
 HubHolesPlacement
 RotorDiskCentralHoleDiameter
-Holes
+HolesDiameter
 MetalLengthL
 MetalThicknessL
 FlatMetalThickness

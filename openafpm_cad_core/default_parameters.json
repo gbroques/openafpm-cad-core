@@ -39,7 +39,7 @@
         "user": {
             "HubHolesPlacement": 50,
             "RotorDiskCentralHoleDiameter": 65,
-            "Holes": 6,
+            "HolesDiameter": 12,
             "MetalLengthL": 50,
             "MetalThicknessL": 6,
             "FlatMetalThickness": 10,
@@ -89,7 +89,7 @@
         "user": {
             "HubHolesPlacement": 65,
             "RotorDiskCentralHoleDiameter": 95,
-            "Holes": 7,
+            "HolesDiameter": 14,
             "MetalLengthL": 60,
             "MetalThicknessL": 6,
             "FlatMetalThickness": 10,
@@ -139,7 +139,7 @@
         "user": {
             "HubHolesPlacement": 102.5,
             "RotorDiskCentralHoleDiameter": 163,
-            "Holes": 7,
+            "HolesDiameter": 14,
             "MetalLengthL": 80,
             "MetalThicknessL": 8,
             "FlatMetalThickness": 12,
@@ -189,7 +189,7 @@
         "user": {
             "HubHolesPlacement": 50,
             "RotorDiskCentralHoleDiameter": 65,
-            "Holes": 6,
+            "HolesDiameter": 12,
             "MetalLengthL": 50,
             "MetalThicknessL": 6,
             "FlatMetalThickness": 10,

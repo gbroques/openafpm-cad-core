@@ -237,8 +237,8 @@ class UserParameters(TypedDict):
     RotorDiskCentralHoleDiameter: float
     """Diameter of central hole for rotor disk."""
 
-    Holes: float  # HoleRadius
-    """Radius of various holes like stator mounting holes and vane bracket holes."""
+    HolesDiameter: float
+    """Diameter of various holes like stator mounting holes and vane bracket holes."""
 
     MetalLengthL: float  # AngleBarLength
     """Width of angle bars used in frame."""

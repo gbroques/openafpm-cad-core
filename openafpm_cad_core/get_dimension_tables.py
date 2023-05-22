@@ -406,10 +406,10 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
             ),
             (
                 'Stator studs diameter',
-                spreadsheet_document.Spreadsheet.Holes * 2),
+                spreadsheet_document.Spreadsheet.HolesDiameter),
             (
                 'Vane bracket bolts diameter',
-                spreadsheet_document.Spreadsheet.Holes * 2
+                spreadsheet_document.Spreadsheet.HolesDiameter
             ),
             (
                 'Thickness of all flat steel pieces',

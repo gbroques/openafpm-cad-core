@@ -243,10 +243,10 @@ def get_parameters_schema() -> dict:
                         "type": get_type("user", "RotorDiskCentralHoleDiameter"),
                         "minimum": 0
                     },
-                    "Holes": {
-                        "title": "Holes",
-                        "description": get_description("user", "Holes"),
-                        "type": get_type("user", "Holes"),
+                    "HolesDiameter": {
+                        "title": "Holes Diameter",
+                        "description": get_description("user", "HolesDiameter"),
+                        "type": get_type("user", "HolesDiameter"),
                         "minimum": 0
                     },
                     "MetalLengthL": {
