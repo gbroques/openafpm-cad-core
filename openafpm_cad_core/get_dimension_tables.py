@@ -265,7 +265,7 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
         'Tail Vane Dimensions',
         [
             (
-                'Tail hinge angle for battery charging',
+                'Tail hinge angle',
                 spreadsheet_document.Spreadsheet.VerticalPlaneAngle
             ),
             ('Vane plywood dimension G', spreadsheet_document.Spreadsheet.VaneWidth),
