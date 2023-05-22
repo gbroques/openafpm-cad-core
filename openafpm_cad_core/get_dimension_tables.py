@@ -254,7 +254,7 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
             ('Hinge outer C', spreadsheet_document.Tail.HingeOuterPipeLength),
             ('Diameter D', spreadsheet_document.Tail.HingeOuterPipeRadius * 2),
             ('Hinge inner E', spreadsheet_document.Tail.HingeInnerPipeLength),
-            ('Diameter F', spreadsheet_document.Tail.HingeInnerPipeRadius)
+            ('Diameter F', spreadsheet_document.Tail.HingeInnerPipeRadius * 2)
         ],
         book_reference_template % 'page 31 right-hand side'
     )
