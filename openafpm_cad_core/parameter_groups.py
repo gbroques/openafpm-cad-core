@@ -164,7 +164,7 @@ class FurlingParameters(TypedDict):
         That furling motion is produced by a lateral offset of
         the blade rotor from the center of yaw.
 
-        The tail and it's hinge control the yawing motion,
+        The tail and its hinge control the yawing motion,
         so that it limits power production.
 
     — page 60, Glossary section of "A Wind Turbine Recipe Book (2014)".
