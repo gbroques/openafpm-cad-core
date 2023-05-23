@@ -37,7 +37,7 @@
             "Offset": 125
         },
         "user": {
-            "HubHolesPlacement": 50,
+            "HubPitchCircleDiameter": 100,
             "RotorDiskCentralHoleDiameter": 65,
             "HolesDiameter": 12,
             "MetalLengthL": 50,
@@ -87,7 +87,7 @@
             "Offset": 250
         },
         "user": {
-            "HubHolesPlacement": 65,
+            "HubPitchCircleDiameter": 130,
             "RotorDiskCentralHoleDiameter": 95,
             "HolesDiameter": 14,
             "MetalLengthL": 60,
@@ -137,7 +137,7 @@
             "Offset": 348
         },
         "user": {
-            "HubHolesPlacement": 102.5,
+            "HubPitchCircleDiameter": 205,
             "RotorDiskCentralHoleDiameter": 163,
             "HolesDiameter": 14,
             "MetalLengthL": 80,
@@ -187,7 +187,7 @@
             "Offset": 125
         },
         "user": {
-            "HubHolesPlacement": 50,
+            "HubPitchCircleDiameter": 100,
             "RotorDiskCentralHoleDiameter": 65,
             "HolesDiameter": 12,
             "MetalLengthL": 50,

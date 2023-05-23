@@ -261,8 +261,8 @@ class UserParameters(TypedDict):
     See left-hand side of page 42 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    HubHolesPlacement: float  # HubHolesCircumradius
-    """Distance between center of hub hole and center of hub."""
+    HubPitchCircleDiameter: float
+    """Diameter of circle which passes through center of hub holes."""
 
     HubHolesDiameter: float
     """Diameter of hub holes."""

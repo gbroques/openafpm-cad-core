@@ -66,12 +66,9 @@ alternator_cells: List[List[Cell]] = [
              alias='YawPipeDiameter'),
     ],
     [
-        Cell('HubHolesPlacement'),
         Cell('ResineRotorMargin')
     ],
     [
-        Cell('=Spreadsheet.HubHolesPlacement',
-             alias='HubHolesPlacement'),
         Cell('=Spreadsheet.ResineRotorMargin',
              alias='ResineRotorMargin')
     ],
@@ -117,6 +114,13 @@ alternator_cells: List[List[Cell]] = [
              alias='NumberOfHoles'),
         Cell('=Hub.HubHolesRadius',
              alias='HubHolesRadius')
+    ],
+    [
+        Cell('HubPitchCircleRadius')
+    ],
+    [
+        Cell('=Hub.HubPitchCircleRadius',
+             alias='HubPitchCircleRadius')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -503,7 +507,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('IslandRadius')
     ],
     [
-        Cell('=HubHolesPlacement + 0.5 * (RotorDiskRadius - MagnetLength - HubHolesPlacement)',
+        Cell('=HubPitchCircleRadius + 0.5 * (RotorDiskRadius - MagnetLength - HubPitchCircleRadius)',
              alias='SmallIslandRadius'),
         # TODO: Duplicated with below InnerCircleResineRotor
         Cell('=RotorDiskRadius - MagnetLength - 25',
@@ -540,7 +544,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('PocketOuterRadius')
     ],
     [
-        Cell('=HubHolesPlacement + 3 * HubHolesRadius',
+        Cell('=HubPitchCircleRadius + 3 * HubHolesRadius',
              alias='PocketInnerRadius'),
         Cell('=InnerCircleResineRotor - PaddingBetweenEdgeOfOuterPocketAndResin',
              alias='PocketOuterRadius')

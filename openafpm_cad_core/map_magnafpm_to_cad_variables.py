@@ -32,7 +32,7 @@ VaneWidth
 Offset
 
 user
-HubHolesPlacement
+HubPitchCircleDiameter
 RotorDiskCentralHoleDiameter
 HolesDiameter
 MetalLengthL

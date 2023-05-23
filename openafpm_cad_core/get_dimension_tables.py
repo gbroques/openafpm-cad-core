@@ -142,7 +142,7 @@ def create_wheel_bearing_hub_table(spreadsheet_document: Document) -> Element:
         'Wheel Bearing Hub',
         [
             ('Pitch Circle Diameter (PCD)',
-             spreadsheet_document.Spreadsheet.HubHolesPlacement * 2),
+             spreadsheet_document.Spreadsheet.HubPitchCircleDiameter),
             ('Number of bolts', spreadsheet_document.Hub.NumberOfHoles),
             ('Bolt diameter', spreadsheet_document.Spreadsheet.HubHolesDiameter),
         ],

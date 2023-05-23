@@ -231,10 +231,10 @@ def get_parameters_schema() -> dict:
                 "type": "object",
                 "description": "Parameters with default values that may be overridden by individual users to satisfy unique needs.",
                 "properties": {
-                    "HubHolesPlacement": {
+                    "HubPitchCircleDiameter": {
                         "title": "Hub Holes Placement",
-                        "description": get_description("user", "HubHolesPlacement"),
-                        "type": get_type("user", "HubHolesPlacement"),
+                        "description": get_description("user", "HubPitchCircleDiameter"),
+                        "type": get_type("user", "HubPitchCircleDiameter"),
                         "minimum": 0
                     },
                     "RotorDiskCentralHoleDiameter": {
