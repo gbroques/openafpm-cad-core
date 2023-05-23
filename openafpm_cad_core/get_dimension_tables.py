@@ -155,7 +155,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
         'Steel Disk Sizes',
         [
             ('Diameter', spreadsheet_document.Spreadsheet.RotorDiskRadius * 2),
-            ('Thickness', spreadsheet_document.Spreadsheet.DiskThickness),
+            ('Thickness', spreadsheet_document.Spreadsheet.RotorDiskThickness),
             ('Central hole diameter',
              spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter),
         ],

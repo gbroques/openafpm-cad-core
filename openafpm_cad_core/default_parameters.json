@@ -3,7 +3,7 @@
         "magnafpm": {
             "RotorDiskRadius": 150,
             "RotorDiskInnerRadius": 100,
-            "DiskThickness": 10,
+            "RotorDiskThickness": 10,
             "MagnetLength": 46,
             "MagnetWidth": 30,
             "MagnetThickness": 10,
@@ -53,7 +53,7 @@
         "magnafpm": {
             "RotorDiskRadius": 225,
             "RotorDiskInnerRadius": 100,
-            "DiskThickness": 10,
+            "RotorDiskThickness": 10,
             "MagnetLength": 46,
             "MagnetWidth": 30,
             "MagnetThickness": 10,
@@ -103,7 +103,7 @@
         "magnafpm": {
             "RotorDiskRadius": 350,
             "RotorDiskInnerRadius": 100,
-            "DiskThickness": 10,
+            "RotorDiskThickness": 10,
             "MagnetLength": 58,
             "MagnetWidth": 27,
             "MagnetThickness": 10,
@@ -153,7 +153,7 @@
         "magnafpm": {
             "RotorDiskRadius": 151.39,
             "RotorDiskInnerRadius": 99.32,
-            "DiskThickness": 8,
+            "RotorDiskThickness": 8,
             "MagnetLength": 50,
             "MagnetWidth": 50,
             "MagnetThickness": 20,

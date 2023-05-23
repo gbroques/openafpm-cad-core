@@ -2,7 +2,7 @@
 magnafpm
 RotorDiskRadius Rout
 RotorDiskInnerRadius Rin
-DiskThickness hr
+RotorDiskThickness hr
 MagnetLength la
 MagnetWidth wm
 MagnetThickness hm

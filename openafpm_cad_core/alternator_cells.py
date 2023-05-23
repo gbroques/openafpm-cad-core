@@ -27,13 +27,13 @@ alternator_cells: List[List[Cell]] = [
              alias='MechanicalClearance')
     ],
     [
-        Cell('DiskThickness'),
+        Cell('RotorDiskThickness'),
         Cell('MagnetThickness'),
         Cell('MagnetLength')
     ],
     [
-        Cell('=Spreadsheet.DiskThickness',
-             alias='DiskThickness'),
+        Cell('=Spreadsheet.RotorDiskThickness',
+             alias='RotorDiskThickness'),
         Cell('=Spreadsheet.MagnetThickness',
              alias='MagnetThickness'),
         Cell('=Spreadsheet.MagnetLength',
@@ -489,12 +489,12 @@ alternator_cells: List[List[Cell]] = [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('RotorDiskThickness'),
+        Cell('RotorThickness'),
         Cell('JackingHoleDiameter')
     ],
     [
-        Cell('=MagnetThickness + DiskThickness',
-             alias='RotorDiskThickness'),
+        Cell('=MagnetThickness + RotorDiskThickness',
+             alias='RotorThickness'),
         Cell('10',
              alias='JackingHoleDiameter')
     ],
@@ -581,24 +581,25 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('RotorMoldBaseThickness'),
         Cell('RotorMoldLidThickness'),
-        Cell('RotorMoldSurroundThickness')
+        Cell('RotorMoldIslandThickness'),
+
     ],
     [
         Cell('15',
              alias='RotorMoldBaseThickness'),
         Cell('6',
              alias='RotorMoldLidThickness'),
-        Cell('=DiskThickness + ceil(MagnetThickness * PercentageOfMagnetThicknessCoveredByResin)',
-             alias='RotorMoldSurroundThickness')
+        Cell('=ceil(MagnetThickness * PercentageOfMagnetThicknessCoveredByResin)',
+             alias='RotorMoldIslandThickness'),
     ],
     [
-        Cell('RotorMoldIslandThickness'),
+        Cell('RotorMoldSurroundThickness'),
         Cell('RotorMoldScrewLength'),
         Cell('RotorMoldSurroundRadius')
     ],
     [
-        Cell('=RotorMoldSurroundThickness - DiskThickness',
-             alias='RotorMoldIslandThickness'),
+        Cell('=RotorDiskThickness + RotorMoldIslandThickness',
+             alias='RotorMoldSurroundThickness'),
         Cell('=RotorMoldSurroundThickness + RotorMoldBaseThickness',
              alias='RotorMoldScrewLength'),
         Cell('=RotorDiskRadius + RotorResinMargin',
@@ -634,7 +635,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('StatorMountingStudsLength')
     ],
     [
-        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorDiskThickness + MechanicalClearance + StatorThickness + WasherThickness',
+        Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorThickness + MechanicalClearance + StatorThickness + WasherThickness',
              alias='StatorMountingStudsLength')
     ],
     [
@@ -844,7 +845,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('0',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameY'),
-        Cell('=StatorThickness / 2 + MechanicalClearance + RotorDiskThickness + DistanceBetweenFrameAndBackRotor + MetalLengthL',
+        Cell('=StatorThickness / 2 + MechanicalClearance + RotorThickness + DistanceBetweenFrameAndBackRotor + MetalLengthL',
              horizontal_alignment=Alignment.RIGHT,
              alias='FrameZ')
     ],

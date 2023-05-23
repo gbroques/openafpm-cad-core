@@ -38,10 +38,10 @@ def get_parameters_schema() -> dict:
                         "type": get_type("magnafpm", "RotorDiskInnerRadius"),
                         "minimum": 0
                     },
-                    "DiskThickness": {
-                        "title": "Disk Thickness",
-                        "description": get_description("magnafpm", "DiskThickness"),
-                        "type": get_type("magnafpm", "DiskThickness"),
+                    "RotorDiskThickness": {
+                        "title": "Rotor Disk Thickness",
+                        "description": get_description("magnafpm", "RotorDiskThickness"),
+                        "type": get_type("magnafpm", "RotorDiskThickness"),
                         "minimum": 0
                     },
                     "MagnetLength": {

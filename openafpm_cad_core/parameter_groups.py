@@ -29,7 +29,7 @@ class MagnafpmParameters(TypedDict):
     RotorDiskInnerRadius: float
     """Inner radius of the effective length of the generator."""
 
-    DiskThickness: float  # RotorDiskThickness
+    RotorDiskThickness: float
     """Thickness of rotor disk.
     
     See "Rotor Disk Thickness" section at:
