@@ -264,5 +264,5 @@ class UserParameters(TypedDict):
     HubHolesPlacement: float  # HubHolesCircumradius
     """Distance between center of hub hole and center of hub."""
 
-    HubHoles: float  # HubHoleRadius
-    """Radius of hub holes."""
+    HubHolesDiameter: float
+    """Diameter of hub holes."""

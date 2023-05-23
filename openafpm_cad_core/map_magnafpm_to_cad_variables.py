@@ -41,5 +41,5 @@ FlatMetalThickness
 YawPipeDiameter
 PipeThickness
 ResineRotorMargin
-HubHoles
+HubHolesDiameter
 """

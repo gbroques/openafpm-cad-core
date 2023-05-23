@@ -38,9 +38,9 @@ def get_fastener_cells() -> List[List[Cell]]:
                  alias='HolesDiameter')
         ],
         [
-            Cell('HubHoles'),
-            Cell('=Spreadsheet.HubHoles',
-                 alias='HubHoles')
+            Cell('HubHolesDiameter'),
+            Cell('=Spreadsheet.HubHolesDiameter',
+                 alias='HubHolesDiameter')
         ],
         [
             Cell('Static', styles=[Style.UNDERLINE])
@@ -49,6 +49,11 @@ def get_fastener_cells() -> List[List[Cell]]:
             Cell('HolesRadius'),
             Cell('=HolesDiameter / 2',
                  alias='HolesRadius')
+        ],
+        [
+            Cell('HubHolesRadius'),
+            Cell('=HubHolesDiameter / 2',
+                 alias='HubHolesRadius')
         ],
         # Hex nut thickness equations are derived from
         # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
@@ -62,7 +67,7 @@ def get_fastener_cells() -> List[List[Cell]]:
         ],
         [
             Cell('HubHexNutThickness'),
-            Cell('=1.64 * HubHoles + 0.35',
+            Cell('=1.64 * HubHolesRadius + 0.35',
                  alias='HubHexNutThickness')
         ],
         [
@@ -91,6 +96,6 @@ def get_fastener_cells() -> List[List[Cell]]:
         *generate_width_across_corners_cells(
             'HubHolesWidthAcrossCorners',
             'HHWAC',
-            'HubHoles'
+            'HubHolesRadius'
         )
     ]

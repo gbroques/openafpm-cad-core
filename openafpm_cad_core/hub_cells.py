@@ -59,15 +59,15 @@ hub_cells: List[List[Cell]] = [
     [
         Cell('RotorDiskRadius'),
         Cell('HubHolesPlacement'),
-        Cell('HubHoles')
+        Cell('HubHolesDiameter')
     ],
     [
         Cell('=Spreadsheet.RotorDiskRadius',
              alias='RotorDiskRadius'),
         Cell('=Spreadsheet.HubHolesPlacement',
              alias='HubHolesPlacement'),
-        Cell('=Spreadsheet.HubHoles',
-             alias='HubHoles')
+        Cell('=Spreadsheet.HubHolesDiameter',
+             alias='HubHolesDiameter')
     ],
     [
         Cell('MetalLengthL')
@@ -172,11 +172,14 @@ hub_cells: List[List[Cell]] = [
         Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('CoverThickness')
+        Cell('CoverThickness'),
+        Cell('HubHolesRadius')
     ],
     [
         Cell('10',
-             alias='CoverThickness')
+             alias='CoverThickness'),
+        Cell('=HubHolesDiameter / 2',
+             alias='HubHolesRadius')
     ],
     [
         Cell('MiddlePad', styles=[Style.UNDERLINE, Style.BOLD])
@@ -186,7 +189,7 @@ hub_cells: List[List[Cell]] = [
         Cell('Thickness')
     ],
     [
-        Cell('=HubHolesPlacement + HubHoles + MiddlePadRadiusMargin',
+        Cell('=HubHolesPlacement + HubHolesRadius + MiddlePadRadiusMargin',
              alias='MiddlePadRadius'),
         Cell('16',
              alias='MiddlePadThickness')

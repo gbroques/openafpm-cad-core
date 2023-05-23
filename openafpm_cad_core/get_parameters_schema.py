@@ -286,10 +286,10 @@ def get_parameters_schema() -> dict:
                         "type": get_type("user", "ResineRotorMargin"),
                         "minimum": 0
                     },
-                    "HubHoles": {
-                        "title": "Hub Holes",
-                        "description": get_description("user", "HubHoles"),
-                        "type": get_type("user", "HubHoles"),
+                    "HubHolesDiameter": {
+                        "title": "Hub Holes Diameter",
+                        "description": get_description("user", "HubHolesDiameter"),
+                        "type": get_type("user", "HubHolesDiameter"),
                         "minimum": 0
                     }
                 }

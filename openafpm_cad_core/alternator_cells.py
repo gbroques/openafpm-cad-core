@@ -67,14 +67,11 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('HubHolesPlacement'),
-        Cell('HubHoles'),
         Cell('ResineRotorMargin')
     ],
     [
         Cell('=Spreadsheet.HubHolesPlacement',
              alias='HubHolesPlacement'),
-        Cell('=Spreadsheet.HubHoles',
-             alias='HubHoles'),
         Cell('=Spreadsheet.ResineRotorMargin',
              alias='ResineRotorMargin')
     ],
@@ -110,13 +107,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('DistanceBetweenFrameAndBackRotor'),
-        Cell('NumberOfHoles')
+        Cell('NumberOfHoles'),
+        Cell('HubHolesRadius')
     ],
     [
         Cell('=Hub.DistanceBetweenFrameAndBackRotor',
              alias='DistanceBetweenFrameAndBackRotor'),
         Cell('=Hub.NumberOfHoles',
-             alias='NumberOfHoles')
+             alias='NumberOfHoles'),
+        Cell('=Hub.HubHolesRadius',
+             alias='HubHolesRadius')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -540,7 +540,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('PocketOuterRadius')
     ],
     [
-        Cell('=HubHolesPlacement + 3 * HubHoles',
+        Cell('=HubHolesPlacement + 3 * HubHolesRadius',
              alias='PocketInnerRadius'),
         Cell('=InnerCircleResineRotor - PaddingBetweenEdgeOfOuterPocketAndResin',
              alias='PocketOuterRadius')

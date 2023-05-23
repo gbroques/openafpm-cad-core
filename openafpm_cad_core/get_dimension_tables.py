@@ -144,7 +144,7 @@ def create_wheel_bearing_hub_table(spreadsheet_document: Document) -> Element:
             ('Pitch Circle Diameter (PCD)',
              spreadsheet_document.Spreadsheet.HubHolesPlacement * 2),
             ('Number of bolts', spreadsheet_document.Hub.NumberOfHoles),
-            ('Bolt diameter', spreadsheet_document.Spreadsheet.HubHoles * 2),
+            ('Bolt diameter', spreadsheet_document.Spreadsheet.HubHolesDiameter),
         ],
         book_reference_template % 'page 25 left-hand side'
     )
@@ -399,7 +399,7 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                 'Hub studs length',
                 'TODO: Adjust when blades are added.'
             ),
-            ('Hub studs diameter', spreadsheet_document.Spreadsheet.HubHoles * 2),
+            ('Hub studs diameter', spreadsheet_document.Spreadsheet.HubHolesDiameter),
             (
                 'Stator studs length',
                 spreadsheet_document.Alternator.StatorMountingStudsLength

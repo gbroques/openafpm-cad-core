@@ -46,7 +46,7 @@
             "YawPipeDiameter": 60.3,
             "PipeThickness": 5,
             "ResineRotorMargin": 5,
-            "HubHoles": 6
+            "HubHolesDiameter": 12
         }
     },
     "H Shape": {
@@ -96,7 +96,7 @@
             "YawPipeDiameter": 88.9,
             "PipeThickness": 5,
             "ResineRotorMargin": 5,
-            "HubHoles": 7
+            "HubHolesDiameter": 14
         }
     },
     "Star Shape": {
@@ -146,7 +146,7 @@
             "YawPipeDiameter": 114.3,
             "PipeThickness": 6,
             "ResineRotorMargin": 5,
-            "HubHoles": 10
+            "HubHolesDiameter": 20
         }
     },
     "T Shape 2F": {
@@ -196,7 +196,7 @@
             "YawPipeDiameter": 60.3,
             "PipeThickness": 5,
             "ResineRotorMargin": 10,
-            "HubHoles": 6
+            "HubHolesDiameter": 12
         }
     }
 }
