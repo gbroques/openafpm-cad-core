@@ -255,7 +255,7 @@ class UserParameters(TypedDict):
     PipeThickness: float
     """Thickness of yaw bearing and tail hinge pipes."""
 
-    ResineRotorMargin: float  # RotorResinCastMargin
+    RotorResinMargin: float
     """Margin of resin to surround and protect the outer edge of the magnets.
     
     See left-hand side of page 42 of "A Wind Turbine Recipe Book (2014)".

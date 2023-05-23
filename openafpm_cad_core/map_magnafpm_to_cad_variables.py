@@ -40,6 +40,6 @@ MetalThicknessL
 FlatMetalThickness
 YawPipeDiameter
 PipeThickness
-ResineRotorMargin
+RotorResinMargin
 HubHolesDiameter
 """

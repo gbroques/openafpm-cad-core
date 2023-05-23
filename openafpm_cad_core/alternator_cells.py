@@ -66,11 +66,11 @@ alternator_cells: List[List[Cell]] = [
              alias='YawPipeDiameter'),
     ],
     [
-        Cell('ResineRotorMargin')
+        Cell('RotorResinMargin')
     ],
     [
-        Cell('=Spreadsheet.ResineRotorMargin',
-             alias='ResineRotorMargin')
+        Cell('=Spreadsheet.RotorResinMargin',
+             alias='RotorResinMargin')
     ],
     [
         Cell('CoilInnerWidth1'),
@@ -601,7 +601,7 @@ alternator_cells: List[List[Cell]] = [
              alias='RotorMoldIslandThickness'),
         Cell('=RotorMoldSurroundThickness + RotorMoldBaseThickness',
              alias='RotorMoldScrewLength'),
-        Cell('=RotorDiskRadius + ResineRotorMargin',
+        Cell('=RotorDiskRadius + RotorResinMargin',
              alias='RotorMoldSurroundRadius')
     ],
     [
@@ -612,7 +612,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('22',
              alias='DistanceBetweenRotorMoldScrewsAndResin'),
-        Cell('=RotorDiskRadius + ResineRotorMargin + DistanceBetweenRotorMoldScrewsAndResin',
+        Cell('=RotorMoldSurroundRadius + DistanceBetweenRotorMoldScrewsAndResin',
              alias='RotorMoldScrewHolesCircumradius'),
         Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
              alias='NumberOfRotorMoldBolts')
