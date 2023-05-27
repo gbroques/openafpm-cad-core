@@ -70,11 +70,14 @@ hub_cells: List[List[Cell]] = [
              alias='HubHolesDiameter')
     ],
     [
-        Cell('MetalLengthL')
+        Cell('MetalLengthL'),
+        Cell('RotorDiskCentralHoleDiameter')
     ],
     [
         Cell('=Spreadsheet.MetalLengthL',
-             alias='MetalLengthL')
+             alias='MetalLengthL'),
+        Cell('=Spreadsheet.RotorDiskCentralHoleDiameter',
+             alias='RotorDiskCentralHoleDiameter')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -85,6 +88,32 @@ hub_cells: List[List[Cell]] = [
     [
         Cell('=Fastener.HubHexNutThickness',
              alias='HubHexNutThickness')
+    ],
+    [
+        Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('CoverThickness')
+    ],
+    [
+        Cell('10',
+             alias='CoverThickness')
+    ],
+    [
+        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('RotorDiskCentralHoleRadius'),
+        Cell('HubHolesRadius'),
+        Cell('HubPitchCircleRadius')
+    ],
+    [
+        Cell('=RotorDiskCentralHoleDiameter / 2',
+             alias='RotorDiskCentralHoleRadius'),
+        Cell('=HubHolesDiameter / 2',
+             alias='HubHolesRadius'),
+        Cell('=HubPitchCircleDiameter / 2',
+             alias='HubPitchCircleRadius')
     ],
     [
         Cell('Dimensions', styles=[Style.UNDERLINE, Style.BOLD])
@@ -149,8 +178,8 @@ hub_cells: List[List[Cell]] = [
         Cell('30', alias='StarShapeStubAxleShaftRadius')
     ],
     [
-        # Value Row
-        Cell('Value'),
+        # Default Value Row
+        Cell('Default Value'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeMiddlePadRadiusMargin : (RotorDiskRadius < 275 ? HShapeMiddlePadRadiusMargin : StarShapeMiddlePadRadiusMargin)',
              alias='MiddlePadRadiusMargin'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeProtrudingPadThickness : (RotorDiskRadius < 275 ? HShapeProtrudingPadThickness : StarShapeProtrudingPadThickness)',
@@ -160,7 +189,7 @@ hub_cells: List[List[Cell]] = [
         Cell('=RotorDiskRadius < 187.5 ? TShapeFrameSidePadWidth : (RotorDiskRadius < 275 ? HShapeFrameSidePadWidth : StarShapeFrameSidePadWidth)',
              alias='FrameSidePadWidth'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeRotorSidePadRadius : (RotorDiskRadius < 275 ? HShapeRotorSidePadRadius : StarShapeRotorSidePadRadius)',
-             alias='RotorSidePadRadius'),
+             alias='DefaultRotorSidePadRadius'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeRotorSidePadWidth : (RotorDiskRadius < 275 ? HShapeRotorSidePadWidth : StarShapeRotorSidePadWidth)',
              alias='RotorSidePadWidth'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeNumberOfHoles : (RotorDiskRadius < 275 ? HShapeNumberOfHoles : StarShapeNumberOfHoles)',
@@ -169,20 +198,16 @@ hub_cells: List[List[Cell]] = [
              alias='StubAxleShaftRadius')
     ],
     [
-        Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('CoverThickness'),
-        Cell('HubHolesRadius'),
-        Cell('HubPitchCircleRadius')
-    ],
-    [
-        Cell('10',
-             alias='CoverThickness'),
-        Cell('=HubHolesDiameter / 2',
-             alias='HubHolesRadius'),
-        Cell('=HubPitchCircleDiameter / 2',
-             alias='HubPitchCircleRadius')
+        # Value Row
+        Cell('Value'),
+        Cell(),
+        Cell(),
+        Cell(),
+        Cell(),
+        # Ensure rotor side pad of hub is smaller than central hole of rotor disk.
+        # 3 mm is arbitrarily chosen to make it a "few" mm less than central hole of rotor disk.
+        Cell('=DefaultRotorSidePadRadius >= RotorDiskCentralHoleRadius ? RotorDiskCentralHoleRadius - 3 : DefaultRotorSidePadRadius',
+             alias='RotorSidePadRadius')
     ],
     [
         Cell('MiddlePad', styles=[Style.UNDERLINE, Style.BOLD])
