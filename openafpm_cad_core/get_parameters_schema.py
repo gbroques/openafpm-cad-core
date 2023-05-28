@@ -396,7 +396,7 @@ def get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter: float) -> List[float]:
     """Get default diameter and one size up."""
     pipe_sizes = get_pipe_sizes()
     index = pipe_sizes.index(default_yaw_pipe_diameter)
-    return pipe_sizes[index-1:index+1]
+    return pipe_sizes[index:index+2]
 
 
 def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> List[float]:
