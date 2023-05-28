@@ -30,16 +30,4 @@ VaneThickness
 VaneLength
 VaneWidth
 Offset
-
-user
-HubPitchCircleDiameter
-RotorDiskCentralHoleDiameter
-HolesDiameter
-MetalLengthL
-MetalThicknessL
-FlatMetalThickness
-YawPipeDiameter
-PipeThickness
-RotorResinMargin
-HubHolesDiameter
 """
