@@ -234,35 +234,35 @@ class FurlingParameters(TypedDict):
 class UserParameters(TypedDict):
     """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
 
-    RotorDiskCentralHoleDiameter: float
+    RotorDiskCentralHoleDiameter: int
     """Diameter of central hole for rotor disk."""
 
-    HolesDiameter: float
+    HolesDiameter: int
     """Diameter of various holes like stator mounting holes and vane bracket holes."""
 
-    MetalLengthL: float  # AngleBarLength
+    MetalLengthL: int  # AngleBarLength
     """Width of angle bars used in frame."""
 
-    MetalThicknessL: float  # AngleBarThickness
+    MetalThicknessL: int  # AngleBarThickness
     """Thickness of angle bars used in frame."""
 
-    FlatMetalThickness: float
+    FlatMetalThickness: int
     """Thickness of various flat metal pieces which can be cut by a 2D CNC laser cutter."""
 
     YawPipeDiameter: float
     """Outer diameter of yaw bearing pipe including thickness."""
 
-    PipeThickness: float
+    PipeThickness: int
     """Thickness of yaw bearing and tail hinge pipes."""
 
-    RotorResinMargin: float
+    RotorResinMargin: int
     """Margin of resin to surround and protect the outer edge of the magnets.
     
     See left-hand side of page 42 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    HubPitchCircleDiameter: float
+    HubPitchCircleDiameter: int
     """Diameter of circle which passes through center of hub holes."""
 
-    HubHolesDiameter: float
+    HubHolesDiameter: int
     """Diameter of hub holes."""

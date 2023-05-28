@@ -7,16 +7,31 @@ https://json-schema.org/understanding-json-schema/
 """
 from typing import List, get_type_hints
 
+from .get_default_parameters import get_default_parameters
 from .get_docstring_by_key import get_docstring_by_key
+from .map_rotor_disk_radius_to_wind_turbine import \
+    map_rotor_disk_radius_to_wind_turbine
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .pipe_size import PipeSize
+from .wind_turbine import WindTurbine
 
 MIN_NUMBER_MAGNET = 8
 MAX_NUMBER_MAGNET = 32
 
 
-def get_parameters_schema() -> dict:
+def get_parameters_schema(rotor_disk_radius: float) -> dict:
+    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
+    default_parameters = get_default_parameters(wind_turbine)
+    default_yaw_pipe_diameter = default_parameters['user']['YawPipeDiameter']
+    default_flat_metal_thickness = default_parameters['user']['FlatMetalThickness']
+    default_rotor_disk_central_hole_diameter = default_parameters[
+        'user']['RotorDiskCentralHoleDiameter']
+    default_hub_holes_diameter = default_parameters['user']['HubHolesDiameter']
+    default_hub_pitch_circle_diameter = default_parameters['user']['HubPitchCircleDiameter']
+    default_holes_diameter = default_parameters['user']['HolesDiameter']
+    default_rotor_resin_margin = default_parameters['user']['RotorResinMargin']
+
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
@@ -29,38 +44,38 @@ def get_parameters_schema() -> dict:
                     "RotorDiskRadius": {
                         "title": "Rotor Disk Radius",
                         "description": get_description("magnafpm", "RotorDiskRadius"),
-                        "type": get_type("magnafpm", "RotorDiskRadius"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "RotorDiskRadius")
                     },
                     "RotorDiskInnerRadius": {
                         "title": "Rotor Disk Inner Radius",
                         "description": get_description("magnafpm", "RotorDiskInnerRadius"),
-                        "type": get_type("magnafpm", "RotorDiskInnerRadius"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "RotorDiskInnerRadius")
                     },
                     "RotorDiskThickness": {
                         "title": "Rotor Disk Thickness",
                         "description": get_description("magnafpm", "RotorDiskThickness"),
-                        "type": get_type("magnafpm", "RotorDiskThickness"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "RotorDiskThickness")
                     },
                     "MagnetLength": {
                         "title": "Magnet Length",
                         "description": get_description("magnafpm", "MagnetLength"),
-                        "type": get_type("magnafpm", "MagnetLength"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "MagnetLength")
                     },
                     "MagnetWidth": {
                         "title": "Magnet Width",
                         "description": get_description("magnafpm", "MagnetWidth"),
-                        "type": get_type("magnafpm", "MagnetWidth"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "MagnetWidth")
                     },
                     "MagnetThickness": {
                         "title": "Magnet Thickness",
                         "description": get_description("magnafpm", "MagnetThickness"),
-                        "type": get_type("magnafpm", "MagnetThickness"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "MagnetThickness")
                     },
                     "MagnetMaterial": {
                         "title": "Magnet Material",
@@ -77,8 +92,8 @@ def get_parameters_schema() -> dict:
                     "StatorThickness": {
                         "title": "Stator Thickness",
                         "description": get_description("magnafpm", "StatorThickness"),
-                        "type": get_type("magnafpm", "StatorThickness"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "StatorThickness")
                     },
                     "CoilType": {
                         "title": "Coil Type",
@@ -89,60 +104,61 @@ def get_parameters_schema() -> dict:
                     "CoilLegWidth": {
                         "title": "Coil Leg Width",
                         "description": get_description("magnafpm", "CoilLegWidth"),
-                        "type": get_type("magnafpm", "CoilLegWidth"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "CoilLegWidth")
                     },
                     "CoilInnerWidth1": {
                         "title": "Coil Inner Width 1",
                         "description": get_description("magnafpm", "CoilInnerWidth1"),
-                        "type": get_type("magnafpm", "CoilInnerWidth1"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "CoilInnerWidth1")
+
                     },
                     "CoilInnerWidth2": {
                         "title": "Coil Inner Width 2",
                         "description": get_description("magnafpm", "CoilInnerWidth2"),
-                        "type": get_type("magnafpm", "CoilInnerWidth2"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "CoilInnerWidth2")
                     },
                     "MechanicalClearance": {
                         "title": "Mechanical Clearance",
                         "description": get_description("magnafpm", "MechanicalClearance"),
-                        "type": get_type("magnafpm", "MechanicalClearance"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "MechanicalClearance")
                     },
                     "InnerDistanceBetweenMagnets": {
                         "title": "Inner Distance Between Magnets",
                         "description": get_description("magnafpm", "InnerDistanceBetweenMagnets"),
-                        "type": get_type("magnafpm", "InnerDistanceBetweenMagnets"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "InnerDistanceBetweenMagnets")
                     },
                     "NumberOfCoilsPerPhase": {
                         "title": "Number of Coils per Phase",
                         "description": get_description("magnafpm", "NumberOfCoilsPerPhase"),
-                        "type": get_type("magnafpm", "NumberOfCoilsPerPhase"),
                         "minimum": MIN_NUMBER_MAGNET // 4,
                         # Number of coils (=NumberMagnet * 3/4) divided by 3, for a three-phase stator.
-                        "maximum": MAX_NUMBER_MAGNET // 4
+                        "maximum": MAX_NUMBER_MAGNET // 4,
+                        **get_numeric_type_and_multiple_of("magnafpm", "NumberOfCoilsPerPhase")
                     },
                     "WireWeight": {
                         "title": "Wire Weight",
                         "description": get_description("magnafpm", "WireWeight"),
-                        "type": get_type("magnafpm", "WireWeight")
+                        **get_numeric_type_and_multiple_of("magnafpm", "WireWeight")
                     },
                     "WireDiameter": {
                         "title": "Wire Diameter",
                         "description": get_description("magnafpm", "WireDiameter"),
-                        "type": get_type("magnafpm", "WireDiameter")
+                        **get_numeric_type_and_multiple_of("magnafpm", "WireDiameter")
                     },
                     "NumberOfWiresInHand": {
                         "title": "Number of Wires in Hand",
                         "description": get_description("magnafpm", "NumberOfWiresInHand"),
-                        "type": get_type("magnafpm", "NumberOfWiresInHand")
+                        **get_numeric_type_and_multiple_of("magnafpm", "NumberOfWiresInHand")
                     },
                     "TurnsPerCoil": {
                         "title": "Turns per Coil",
                         "description": get_description("magnafpm", "TurnsPerCoil"),
-                        "type": get_type("magnafpm", "TurnsPerCoil")
+                        **get_numeric_type_and_multiple_of("magnafpm", "TurnsPerCoil")
                     }
                 }
             },
@@ -153,40 +169,40 @@ def get_parameters_schema() -> dict:
                     "VerticalPlaneAngle": {
                         "title": "Vertical Plane Angle",
                         "description": get_description("furling", "VerticalPlaneAngle"),
-                        "type": get_type("furling", "VerticalPlaneAngle"),
                         "minimum": 0,
-                        "maximum": 360
+                        "maximum": 360,
+                        **get_numeric_type_and_multiple_of("furling", "VerticalPlaneAngle")
                     },
                     "HorizontalPlaneAngle": {
                         "title": "Horizontal Plane Angle",
                         "description": get_description("furling", "HorizontalPlaneAngle"),
-                        "type": get_type("furling", "HorizontalPlaneAngle"),
                         "minimum": 0,
-                        "maximum": 360
+                        "maximum": 360,
+                        **get_numeric_type_and_multiple_of("furling", "HorizontalPlaneAngle")
                     },
                     "BracketLength": {
                         "title": "Bracket Length",
                         "description": get_description("furling", "BracketLength"),
-                        "type": get_type("furling", "BracketLength"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "BracketLength")
                     },
                     "BracketWidth": {
                         "title": "Bracket Width",
                         "description": get_description("furling", "BracketWidth"),
-                        "type": get_type("furling", "BracketWidth"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "BracketWidth")
                     },
                     "BracketThickness": {
                         "title": "Bracket Thickness",
                         "description": get_description("furling", "BracketThickness"),
-                        "type": get_type("furling", "BracketThickness"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "BracketThickness")
                     },
                     "BoomLength": {
                         "title": "Boom Length",
                         "description": get_description("furling", "BoomLength"),
-                        "type": get_type("furling", "BoomLength"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "BoomLength")
                     },
                     "BoomPipeDiameter": {
                         "title": "Boom Pipe Diameter",
@@ -197,33 +213,33 @@ def get_parameters_schema() -> dict:
                     "BoomPipeThickness": {
                         "title": "Boom Pipe Thickness",
                         "description": get_description("furling", "BoomPipeThickness"),
-                        "type": get_type("furling", "BoomPipeThickness"),
                         "minimum": 0,
-                        "maximum": 6
+                        "maximum": 6,
+                        **get_numeric_type_and_multiple_of("furling", "BoomPipeThickness")
                     },
                     "VaneThickness": {
                         "title": "Vane Thickness",
                         "description": get_description("furling", "VaneThickness"),
-                        "type": get_type("furling", "VaneThickness"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "VaneThickness")
                     },
                     "VaneLength": {
                         "title": "Vane Length",
                         "description": get_description("furling", "VaneLength"),
-                        "type": get_type("furling", "VaneLength"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "VaneLength")
                     },
                     "VaneWidth": {
                         "title": "Vane Width",
                         "description": get_description("furling", "VaneWidth"),
-                        "type": get_type("furling", "VaneWidth"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "VaneWidth")
                     },
                     "Offset": {
                         "title": "Offset",
                         "description": get_description("furling", "Offset"),
-                        "type": get_type("furling", "Offset"),
-                        "minimum": 0
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("furling", "Offset")
                     }
                 }
             },
@@ -234,68 +250,92 @@ def get_parameters_schema() -> dict:
                     "HubPitchCircleDiameter": {
                         "title": "Hub Holes Placement",
                         "description": get_description("user", "HubPitchCircleDiameter"),
-                        "type": get_type("user", "HubPitchCircleDiameter"),
-                        "minimum": 0
+                        "minimum": default_hub_pitch_circle_diameter - 10,
+                        "maximum": default_hub_pitch_circle_diameter + 40,
+                        **get_numeric_type_and_multiple_of("user", "HubPitchCircleDiameter")
                     },
                     "RotorDiskCentralHoleDiameter": {
                         "title": "Rotor Disk Central Hole Diameter",
                         "description": get_description("user", "RotorDiskCentralHoleDiameter"),
-                        "type": get_type("user", "RotorDiskCentralHoleDiameter"),
-                        "minimum": 0
+                        "minimum": default_rotor_disk_central_hole_diameter - 10,
+                        "maximum": default_rotor_disk_central_hole_diameter + 5,
+                        **get_numeric_type_and_multiple_of("user", "RotorDiskCentralHoleDiameter")
                     },
                     "HolesDiameter": {
                         "title": "Holes Diameter",
                         "description": get_description("user", "HolesDiameter"),
-                        "type": get_type("user", "HolesDiameter"),
-                        "minimum": 0
+                        "minimum": default_holes_diameter - 2,
+                        "maximum": default_holes_diameter + 2,
+                        **get_numeric_type_and_multiple_of("user", "HolesDiameter")
                     },
                     "MetalLengthL": {
                         "title": "Metal Length L",
                         "description": get_description("user", "MetalLengthL"),
                         "type": get_type("user", "MetalLengthL"),
-                        "minimum": 0
+                        "minimum": get_metal_length_l_minimum(wind_turbine),
+                        "maximum": get_metal_length_l_maximum(wind_turbine),
+                        "multipleOf": 10
                     },
                     "MetalThicknessL": {
                         "title": "Metal Thickness L",
                         "description": get_description("user", "MetalThicknessL"),
-                        "type": get_type("user", "MetalThicknessL"),
-                        "minimum": 0
+                        "minimum": get_metal_thickness_l_minimum(wind_turbine),
+                        "maximum": get_metal_thickness_l_maximum(wind_turbine),
+                        **get_numeric_type_and_multiple_of("user", "MetalThicknessL")
                     },
                     "FlatMetalThickness": {
                         "title": "Flat Metal Thickness",
-                        "description": get_description("user", "FlatMetalThickness"),
-                        "type": get_type("user", "FlatMetalThickness"),
-                        "minimum": 0
+                        "minimum": default_flat_metal_thickness - 2,
+                        "maximum": default_flat_metal_thickness + 3,
+                        **get_numeric_type_and_multiple_of("user", "FlatMetalThickness")
                     },
                     "YawPipeDiameter": {
                         "title": "Yaw Pipe Diameter",
                         "description": get_description("user", "YawPipeDiameter"),
                         "type": get_type("user", "YawPipeDiameter"),
-                        "enum": [pipe_size.value for pipe_size in list(PipeSize)]
+                        "enum": get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter)
                     },
                     "PipeThickness": {
                         "title": "Pipe Thickness",
                         "description": get_description("user", "PipeThickness"),
-                        "type": get_type("user", "PipeThickness"),
-                        "minimum": 0,
-                        "maximum": 6
+                        "minimum": get_pipe_thickness_minimum(wind_turbine),
+                        "maximum": get_pipe_thickness_maximum(wind_turbine),
+                        **get_numeric_type_and_multiple_of("user", "PipeThickness")
                     },
                     "RotorResinMargin": {
                         "title": "Rotor Resin Margin",
                         "description": get_description("user", "RotorResinMargin"),
-                        "type": get_type("user", "RotorResinMargin"),
-                        "minimum": 0
+                        "minimum": default_rotor_resin_margin,
+                        "maximum": default_rotor_resin_margin + 5,
+                        **get_numeric_type_and_multiple_of("user", "RotorResinMargin")
                     },
                     "HubHolesDiameter": {
                         "title": "Hub Holes Diameter",
                         "description": get_description("user", "HubHolesDiameter"),
-                        "type": get_type("user", "HubHolesDiameter"),
-                        "minimum": 0
+                        "minimum": default_hub_holes_diameter - 2,
+                        "maximum": default_hub_holes_diameter + 2,
+                        **get_numeric_type_and_multiple_of("user", "HubHolesDiameter")
                     }
                 }
             }
         }
     }
+
+
+def get_numeric_type_and_multiple_of(group_name: str, parameter_name: str) -> dict:
+    json_schema_type = get_type(group_name, parameter_name)
+    multiple_of = get_mutliple_of(json_schema_type)
+    return {
+        'type': json_schema_type,
+        'multipleOf': multiple_of
+    }
+
+
+def get_mutliple_of(json_schema_type: str) -> str:
+    if json_schema_type == 'integer':
+        return 1
+    else:  # number
+        return 0.01
 
 
 def get_type(group_name: str, parameter_name: str) -> str:
@@ -346,3 +386,68 @@ def get_parameter_group_by_name() -> dict:
 
 def multiples_of(integer: int, start: int, end: int) -> List[int]:
     return list(range(start, end + 1, integer))
+
+
+def get_pipe_sizes() -> List[float]:
+    return [pipe_size.value for pipe_size in list(PipeSize)]
+
+
+def get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter: float) -> List[float]:
+    """Get default diameter and one size up."""
+    pipe_sizes = get_pipe_sizes()
+    index = pipe_sizes.index(default_yaw_pipe_diameter)
+    return pipe_sizes[index-1:index+1]
+
+
+def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 3
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 4
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 5
+
+
+def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 5
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 6
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 8
+
+
+def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 50
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 50
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 60
+
+
+def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 60
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 70
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 100
+
+
+def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 5
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 5
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 6
+
+
+def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> List[float]:
+    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+        return 6
+    elif wind_turbine == WindTurbine.H_SHAPE:
+        return 7
+    elif wind_turbine == WindTurbine.STAR_SHAPE:
+        return 10
