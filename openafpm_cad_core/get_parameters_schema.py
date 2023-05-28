@@ -324,14 +324,14 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
 
 def get_numeric_type_and_multiple_of(group_name: str, parameter_name: str) -> dict:
     json_schema_type = get_type(group_name, parameter_name)
-    multiple_of = get_mutliple_of(json_schema_type)
+    multiple_of = get_multiple_of(json_schema_type)
     return {
         'type': json_schema_type,
         'multipleOf': multiple_of
     }
 
 
-def get_mutliple_of(json_schema_type: str) -> str:
+def get_multiple_of(json_schema_type: str) -> str:
     if json_schema_type == 'integer':
         return 1
     else:  # number
