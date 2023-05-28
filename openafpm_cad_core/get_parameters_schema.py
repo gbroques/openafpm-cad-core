@@ -248,7 +248,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                 "description": "Parameters with default values that may be overridden by individual users to satisfy unique needs.",
                 "properties": {
                     "HubPitchCircleDiameter": {
-                        "title": "Hub Holes Placement",
+                        "title": "Hub Pitch Circle Diameter",
                         "description": get_description("user", "HubPitchCircleDiameter"),
                         "minimum": default_hub_pitch_circle_diameter - 10,
                         "maximum": default_hub_pitch_circle_diameter + 40,
