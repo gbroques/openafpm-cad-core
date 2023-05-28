@@ -258,15 +258,16 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
             ('Boom length A', format_length(
                 spreadsheet_document.Spreadsheet.BoomLength)),
             ('Diameter B', format_length(
-                spreadsheet_document.Spreadsheet.BoomPipeDiameter)),
+                spreadsheet_document.Spreadsheet.BoomPipeDiameter, ndigits=1)),
             ('Hinge outer C', format_length(
                 spreadsheet_document.Tail.HingeOuterPipeLength)),
+            # See Also: Tail.HingeOuterPipeRadius in tail_cells.py
             ('Diameter D', format_length(
-                spreadsheet_document.Tail.HingeOuterPipeRadius * 2, ndigits=1)),
+                spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
             ('Hinge inner E', format_length(
                 spreadsheet_document.Tail.HingeInnerPipeLength)),
             ('Diameter F', format_length(
-                spreadsheet_document.Tail.HingeInnerPipeRadius * 2, ndigits=1))
+                spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1))
         ],
         book_reference_template % 'page 31 right-hand side'
     )
