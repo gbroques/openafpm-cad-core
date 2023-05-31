@@ -163,11 +163,15 @@ yaw_bearing_cells: List[List[Cell]] = [
                              alias='YawPipeLength')
     ],
     [
-        Cell('TopPlateHole', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Plate', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('Radius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
-                             alias='YawBearingTopPlateHoleRadius')
+        Cell('CornerChamferLength'),
+        Cell('10', alias='YawBearingPlateCornerChamferLength')
+    ],
+    [
+        Cell('TopHoleRadius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
+                                    alias='YawBearingPlateTopHoleRadius')
     ],
     [
         # Ensure Side piece (undeneath Top flat bar to stiffen it),
