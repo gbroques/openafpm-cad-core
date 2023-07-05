@@ -1,11 +1,14 @@
 """
-FreeCAD macro that creates a point from a vector in a spreadsheet.
+FreeCAD macro that creates point(s) from placement(s) or vector(s) in a spreadsheet.
 
 To aid in visualizing how certain vectors are calculated.
+
+Usage:
+Select Placement or Vector in a spreadsheet, then activate macro.
 """
 import random
 import string
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -55,14 +58,18 @@ def map_number_to_column(number: int) -> str:
     return string.ascii_uppercase[number - 1]
 
 
-def create_point(document: Document,
-                 selected_point: Tuple[Vector, str]) -> None:
-    vector, label = selected_point
-    point = document.addObject("Part::Sphere", label)
-    point.Placement.Base = vector
-    point.Label = label
-    point.ViewObject.ShapeColor = get_random_color()
+def create_points(document: Document,
+                  selected_points: List[Tuple[Vector, str]]) -> None:
+    color = get_random_color()
+    document.openTransaction('create_points')
+    for selected_point in selected_points:
+        vector, label = selected_point
+        point = document.addObject("Part::Sphere", label)
+        point.Placement.Base = vector
+        point.Label = label
+        point.ViewObject.ShapeColor = color
     document.recompute()
+    document.commitTransaction()
 
 
 def round_vector(vector: Vector, precision=2) -> Vector:
@@ -72,37 +79,37 @@ def round_vector(vector: Vector, precision=2) -> Vector:
 class TaskPanel:
     def __init__(self,
                  default_document: Document,
-                 selected_point: Tuple[Vector, str]):
+                 selected_points: List[Tuple[Vector, str]]):
         self.document = default_document
-        self.selected_point = selected_point
+        self.selected_points = selected_points
 
         self.form = QtGui.QWidget()
-        self.form.setWindowTitle('Create Point')
+        self.form.setWindowTitle('Create Point(s)')
 
         layout = QtGui.QVBoxLayout(self.form)
 
-        # Row 1
+        # Row
         row1 = QtGui.QHBoxLayout()
-
-        vector, name = selected_point
-        label = QtGui.QLabel(f'<strong>{name}:</strong>', self.form)
-        vector = QtGui.QLabel(str(round_vector(vector)), self.form)
-
-        row1.addWidget(label)
-        row1.addWidget(vector)
-
-        layout.addLayout(row1)
-
-        # Row 2
-        row2 = QtGui.QHBoxLayout()
 
         label = QtGui.QLabel('<strong>Document:</strong>', self.form)
         self.combo_box = self.create_combo_box()
 
-        row2.addWidget(label)
-        row2.addWidget(self.combo_box)
+        row1.addWidget(label)
+        row1.addWidget(self.combo_box)
 
-        layout.addLayout(row2)
+        layout.addLayout(row1)
+
+        # Row for each point
+        for selected_point in selected_points:
+            row = QtGui.QHBoxLayout()
+            vector, name = selected_point
+            label = QtGui.QLabel(f'<strong>{name}:</strong>', self.form)
+            vector = QtGui.QLabel(str(round_vector(vector)), self.form)
+
+            row.addWidget(label)
+            row.addWidget(vector)
+
+            layout.addLayout(row)
 
     def create_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
@@ -120,11 +127,11 @@ class TaskPanel:
         """
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
         """
-        create_point(self.document, self.selected_point)
+        create_points(self.document, self.selected_points)
         Gui.Control.closeDialog()
 
 
-def find_selected_point() -> Optional[Tuple[Vector, str]]:
+def find_selected_points() -> Optional[List[Tuple[Vector, str]]]:
     main_window = Gui.getMainWindow()
     # MDI (Multiple Document Interface)
     mdi_area = main_window.findChild(QtGui.QMdiArea)
@@ -137,25 +144,26 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
         sheet = active_sub_window.widget()
         table = sheet.findChild(QtGui.QTableView)
         indexes = table.selectedIndexes()
-        if len(indexes) > 0:
-            Console.PrintMessage(
-                f'{len(indexes)} indexes selected, picking 1st.\n')
-            first = indexes[0]
-            row = str(first.row() + 1)
-            column = map_number_to_column(first.column() + 1)
+        if len(indexes) == 0:
+            Console.PrintWarning('No selected cell in spreasheet.\n')
+        selected_points = []
+        for index in indexes:
+            row = str(index.row() + 1)
+            column = map_number_to_column(index.column() + 1)
             cell_address = column + row
             selection = Gui.Selection.getSelection()
             if len(selection) > 0:
-                Console.PrintMessage(
-                    f'{len(selection)} objects selected, picking 1st.\n')
+                if len(selection) > 1:
+                    Console.PrintWarning(
+                        f'{len(selection)} objects selected, picking 1st.\n')
                 selected_sheet = selection[0]
                 if selected_sheet.TypeId == 'Spreadsheet::Sheet':
                     obj = selected_sheet.get(cell_address)
                     label = selected_sheet.getAlias(cell_address)
                     if isinstance(obj, Placement):
-                        return obj.Base, label
+                        selected_points.append((obj.Base, label))
                     elif isinstance(obj, Vector):
-                        return obj, label
+                        selected_points.append((obj, label))
                     else:
                         Console.PrintWarning(
                             f'Selected cell {cell_address} does not contain vector.\n')
@@ -164,14 +172,13 @@ def find_selected_point() -> Optional[Tuple[Vector, str]]:
                         f'Selected object must be sheet.\n')
             else:
                 Console.PrintWarning('No selected objects.\n')
-        else:
-            Console.PrintWarning('No selected cell in spreasheet.\n')
+        return selected_points
     else:
         Console.PrintWarning('No active spreadsheet.\n')
 
 
-selected_point = find_selected_point()
-if selected_point:
+selected_points = find_selected_points()
+if selected_points and len(selected_points) > 0:
     default_document = App.ActiveDocument
-    panel = TaskPanel(default_document, selected_point)
+    panel = TaskPanel(default_document, selected_points)
     Gui.Control.showDialog(panel)
