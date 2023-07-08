@@ -46,13 +46,16 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('VerticalPlaneAngle'),
-        Cell('HorizontalPlaneAngle')
+        Cell('HorizontalPlaneAngle'),
+        Cell('BoomLength')
     ],
     [
         Cell('=Spreadsheet.VerticalPlaneAngle',
              alias='VerticalPlaneAngle'),
         Cell('=Spreadsheet.HorizontalPlaneAngle',
-             alias='HorizontalPlaneAngle')
+             alias='HorizontalPlaneAngle'),
+        Cell('=Spreadsheet.BoomLength',
+             alias='BoomLength')
     ],
     [
         Cell('Tail', styles=[Style.UNDERLINE])
@@ -91,25 +94,17 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('HighEndStopPlaneLength')
+        Cell('HighEndStopPlaneLength'),
+        Cell('FurlAxis')
     ],
     [
         Cell('110',  # The exact length of this isn't very important.
-             alias='HighEndStopPlaneLength')
-    ],
-    [
-        Cell('FurlAxis'),
-        Cell('FurlAngle'),
-        Cell('FurlRotation')
-    ],
-    [
+             alias='HighEndStopPlaneLength'),
         Cell('=create(<<vector>>; sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle))',
-             alias='FurlAxis'),
-        Cell('=105deg',
-             alias='FurlAngle'),
-        Cell('=create(<<rotation>>; FurlAxis; FurlAngle)',
-             alias='FurlRotation')
+             alias='FurlAxis')
     ],
+
+    # TODO: Consolidate two "Calculated" sections in spreadsheet.
     # Calculated
     # ----------
     [
@@ -163,6 +158,495 @@ high_end_stop_cells: List[List[Cell]] = [
                                 '0'),
                             axis=('0', '1', '0'),
                             angle='-90'),
+    *create_placement_cells(name='EndOfBoom',
+                            base=(
+                                '=0',
+                                '=0',
+                                '=BoomLength'),
+                            axis=('0', '1', '0'),
+                            angle='-90'),
+    # Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
+    # ------------------------------------------------------------------
+    # Calculate an ellipse to make the Low End Stop fit the outer pipe of the Yaw Bearing.
+    [
+        Cell('Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
+             styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('OuterLowEndStopWidth'),
+        Cell('LowEndStopWidth')
+    ],
+    [
+        Cell('=YawPipeRadius * 0.5',
+             alias='OuterLowEndStopWidth'),
+        Cell('=YawPipeRadius + OuterLowEndStopWidth',
+             alias='LowEndStopWidth')
+    ],
+    [
+        Cell('OuterTailHingeGlobalPlacement'),
+        Cell('LowEndStopGlobalPlacement'),
+        Cell('LowEndStopGlobalBase')
+    ],
+    [
+        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * OuterTailHingePlacement',
+             alias='OuterTailHingeGlobalPlacement'),
+        Cell('=OuterTailHingeGlobalPlacement * LowEndStopPlacement',
+             alias='LowEndStopGlobalPlacement'),
+        Cell('=.LowEndStopGlobalPlacement.Base',
+             alias='LowEndStopGlobalBase')
+    ],
+    [
+        # Front, Bottom, Left correspond to X, Y, and Z
+        # Relative to Tail_Stop_LowEnd
+        Cell('FrontBottomLeftLowEndStopPlanePoint'),
+        Cell('FrontBottomLeftLowEndStopPlanePointGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; 0; -LowEndStopLengthToYawPipe; 0)',
+             alias='FrontBottomLeftLowEndStopPlanePoint'),
+        Cell('=LowEndStopGlobalPlacement * FrontBottomLeftLowEndStopPlanePoint',
+             alias='FrontBottomLeftLowEndStopPlanePointGlobal')
+    ],
+    [
+        # Back, Bottom, Right correspond to X, Y, and Z
+        # Relative to Tail_Stop_LowEnd
+        Cell('BackBottomRightLowEndStopPlanePoint'),
+        Cell('BackBottomRightLowEndStopPlanePointGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; LowEndStopWidth; 0; 0)',
+             alias='BackBottomRightLowEndStopPlanePoint'),
+        Cell('=LowEndStopGlobalPlacement * BackBottomRightLowEndStopPlanePoint',
+             alias='BackBottomRightLowEndStopPlanePointGlobal')
+    ],
+    [
+        # Calculate two vectors, Vd and Ve, on the Low End Stop plane.
+        Cell('Vd'), Cell('Ve')
+    ],
+    [
+        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+             alias='Vd'),
+        Cell('=BackBottomRightLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+             alias='Ve')
+    ],
+    [
+        # Cross product Vd and Ve to find vector perpendicular to the Low End Stop plane, Vf.
+        # https://en.wikipedia.org/wiki/Cross_product
+        Cell('Vf'),
+        Cell('Vd × Ve')
+    ],
+    [
+        Cell('=create(<<vector>>; .Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
+             alias='Vf'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        # Normalize Vf from step above.
+        Cell('Vo'),
+        Cell('Normalize Vf')
+    ],
+    [
+        Cell('=Vf / .Vf.Length', alias='Vo')
+    ],
+    [
+        Cell('Point on Yaw Bearing cylinder where Low End Stop touches it')
+    ],
+    [
+        Cell('=Cx - FrontBottomLeftLowEndStopPlanePointGlobal.x',
+             alias='x'),
+        Cell('=Cz - FrontBottomLeftLowEndStopPlanePointGlobal.z',
+             alias='y')
+    ],
+    [
+        Cell('Theta'),
+        Cell('Alpha'),
+        Cell('Beta')
+    ],
+    [
+        Cell('=atan2(y; x)',
+             alias='Theta'),
+        Cell('=Theta + 90deg',
+             alias='Alpha'),
+        Cell('=Theta - 90deg',
+             alias='Beta')
+    ],
+    [
+        # Y-value for Upper vertex of ellipse.
+        Cell('Uy (Upper y)'),
+        # Y-value for Lower vertex of ellipse.
+        Cell('Ly (Lower y)')
+    ],
+    [
+        calculate_y_of_ellipse(
+            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
+             '.LowEndStopGlobalBase.z'),
+            ('.Vo.x', '.Vo.y', '.Vo.z'),
+            ('Cx', 'Cz'),
+            'r',
+            'Alpha',
+            'Uy'),
+        calculate_y_of_ellipse(
+            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
+             '.LowEndStopGlobalBase.z'),
+            ('.Vo.x', '.Vo.y', '.Vo.z'),
+            ('Cx', 'Cz'),
+            'r',
+            'Beta',
+            'Ly')
+    ],
+    [
+        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
+    ],
+    [
+        Cell('LowEndStopEllipseUpperVertexGlobal'),
+        Cell('LowEndStopEllipseLowerVertexGlobal'),
+        Cell('LowEndStopEllipseLowerCoVertexGlobal')
+    ],
+    [
+        Cell('=create(<<vector>>; Cx + r * cos(Alpha); Uy; Cz + r * sin(Alpha))',
+             alias='LowEndStopEllipseUpperVertexGlobal'),
+        Cell('=create(<<vector>>; Cx + r * cos(Beta); Ly; Cz + r * sin(Beta))',
+             alias='LowEndStopEllipseLowerVertexGlobal'),
+        # Point where Low End Stop touches Yaw Bearing.
+        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal',
+             alias='LowEndStopEllipseLowerCoVertexGlobal')
+    ],
+    [
+        Cell('InverseLowEndStopGlobalPlacement')
+    ],
+    [
+        Cell('=minvert(LowEndStopGlobalPlacement)',
+             alias='InverseLowEndStopGlobalPlacement')
+    ],
+    [
+        # Convert to "local" Tail_Stop_LowEnd coordinate system.
+        # For use in Sketcher constraints.
+        # The lower and upper vertexes (1 and 2) form the major axis.
+        # The lower co-vertex (3) forms the minor axis.
+        # 1, 2, and 3 numbering correspond to the following description:
+        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
+        #
+        # Vertexes denoted by "x".
+        #
+        #          ^                         , - ~ ~~~ ~ - ,
+        #          |                     , '                 ' ,
+        #          |                   ,                         ,
+        #          |                  ,                           ,
+        #          |    Lower Vertex ,                             , Upper Vertex
+        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
+        #          |                 ,         Major Axis          ,
+        #          |                  ,                           ,
+        #          |                   ,                         ,
+        #          |                     ,                    , '
+        #          |                       ' - , _ _x_ _ ,  '
+        #          |
+        #          |                          Lower Co-vertex
+        #          |
+        #          +-------------------------------------------------------------->
+        #                                        X-axis
+        #
+        Cell('LowEndStopEllipseUpperVertexLocal'),
+        Cell('LowEndStopEllipseLowerVertexLocal'),
+        Cell('LowEndStopEllipseLowerCoVertexLocal')
+    ],
+    [
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseUpperVertexGlobal',
+             alias='LowEndStopEllipseUpperVertexLocal'),
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerVertexGlobal',
+             alias='LowEndStopEllipseLowerVertexLocal'),
+        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerCoVertexGlobal',
+             alias='LowEndStopEllipseLowerCoVertexLocal')
+    ],
+    # Maximum Furl Angle
+    # ------------------
+    # Determine the maximum furl angle for tail before getting too close to the blades.
+    # Involves the intersection of two planes, forming a line.
+    # Then the intersection of the line with a sphere.
+    #
+    # The following algorithm is used:
+    # 1. Find maximum furl plane.
+    # 2. Find plane of rotation for boom.
+    # 3. Find sphere containing the plane of rotation for the boom.
+    # 4. Find line formed by the intersection of maximum furl plane and plane of rotation for boom.
+    # 5. Find intersection point on the line and sphere closest to boom starting point.
+    # 6. Calculate angle between boom starting point, center of sphere, and intersection point.
+    #
+    # See the following 3D plot:
+    # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=-0.28x+0.94y-0.20z-468.21~0;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=180;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-319.2702114910493,348.83707947752845,-259.7580452330615);visible=true;color=rgb(0,0,0);size=20&type=point;point=(547.3904216906924,666.5114402311267,24.208124246907573);visible=true;color=rgb(0,0,0);size=20&type=point;point=(9.890373342431474,258.3780018275526,-1163.1543606224416);visible=true;color=rgb(0,0,0);size=20&type=point;point=(-648.43,439.3,643.64);visible=true;color=rgb(0,0,0);size=20&type=point;point=(-1185.93,31.16,-543.72);visible=true;color=rgb(0,0,0);size=20&type=implicit;equation=-11.43x+0y-1z-2442.04~0;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=180;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=spacecurve;spacecurve=curve;x=0+-0.94t;y=-10099/470+1.96t;z=-2442.04+10.47t;visible=true;width=2;view=0;tmin=0;tmax=2000;tsteps=2000;color=rgb(0,0,0);showtrace=false;tval=13925.19;constcol=false;twod=false;arrows=0;showpt=true;trace=true;vel=true;acc=true;veceqs=true;osc=false;k=false;showtorsion=false;repeat=false;bounce=false;dashed=false;tanline=false;dropcurtain=false;showtvector=false;shownvector=false;showbvector=false;showtnbeqs=false;showtnblabels=false;showoscplane=false;showrectplane=false;shownormplane=false;optimizecurve=true;maxjointangle=10&type=implicit;equation=(x+319.27)^2+(y-348.84)^2+(z+259.76)^2~965.74^2;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=80;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=vector;vector=%3C-93.97,196.21,1074.07%3E;visible=true;color=rgb(0,0,0);size=4;initialpt=(-82.42,154.397,-1500)&type=point;point=(-273.41,553.19,683);visible=true;color=rgb(255,0,0);size=20&type=window;hsrmode=1;nomidpts=false;anaglyph=-1;center=-5.0134618587133435,3.1731180273476878,-8.868550692674992,1;focus=0,0,0,1;up=-0.0438260063969223,0.9325279118086831,0.3584284794223724,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=true;showaxes=true;showticks=true;perspective=true;centerxpercent=0.407788099579242;centerypercent=0.5704094973308015;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=true;gridcolor=rgb(128,128,128);xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;xscale=128;yscale=128;zscale=128;zcmin=-512;zcmax=512;xscalefactor=1;yscalefactor=1;zscalefactor=1;tracemode=0;tracepoint=10,10,0,1;keep2d=false;zoom=0.001778#
+    [
+        Cell('Maximum Furl Angle',
+             styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('STEP 1:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Find maximum furl plane')
+    ],
+    [
+        # Keep the tail a certain angle from the vertical parallel to the rotor & blades.
+        Cell('AngleBetweenTailAndRotor')
+    ],
+    [
+        Cell('=5deg',
+             alias='AngleBetweenTailAndRotor'),
+    ],
+    [
+        # Define a point P, on the plane formed by the tail when maximally furled.
+        # In global coordinates, x is on the horizontal axis and z is on the vertical axis
+        # when viewing the wind turbine from the top.
+        #
+        #        ^ z
+        #        |
+        #        |
+        # <------+
+        # x
+        #
+        Cell('Px'),
+        Cell('Pz')
+    ],
+    [
+
+        Cell('=.OuterTailHingeGlobalPlacement.Base.z * cos(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeGlobalPlacement.Base.x',
+             alias='Px'),
+        Cell('=-1 * .OuterTailHingeGlobalPlacement.Base.z * sin(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeGlobalPlacement.Base.z',
+             alias='Pz'),
+    ],
+    [
+        # Calculate slope and z-intercept of line formed by OuterTailHingeGlobalPlacement.Base and P on XZ plane.
+        # This defines the "maximum furl plane".
+        Cell('slope'),
+        Cell('zIntercept'),
+        Cell('NormalVectorOfMaximumFurlPlane')
+    ],
+    [
+        Cell('=(Pz - .OuterTailHingeGlobalPlacement.Base.z) / (Px - .OuterTailHingeGlobalPlacement.Base.x)',
+             alias='slope'),
+        Cell('=Pz - (slope * Px)',
+             alias='zIntercept'),
+        # Get the normal vector of the maximum furl plane,
+        # from the coefficients of the general equation.
+        Cell('=create(<<vector>>; slope; 0; -1)',
+             alias='NormalVectorOfMaximumFurlPlane')
+    ],
+    [
+        Cell('STEP 2:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Find plane of rotation for boom')
+    ],
+    [
+        # Furl tail (end of boom) 0°, 90°, 180°, and 270° to form 4 outer-most points of a circle.
+        Cell('EndOfBoom0Rotation'),
+        Cell('EndOfBoom90Rotation'),
+        Cell('EndOfBoom180Rotation'),
+        Cell('EndOfBoom270Rotation')
+    ],
+    [
+        Cell('=create(<<rotation>>; FurlAxis; 0deg)',
+             alias='EndOfBoom0Rotation'),
+        Cell('=create(<<rotation>>; FurlAxis; 90deg)',
+             alias='EndOfBoom90Rotation'),
+        Cell('=create(<<rotation>>; FurlAxis; 180deg)',
+             alias='EndOfBoom180Rotation'),
+        Cell('=create(<<rotation>>; FurlAxis; 270deg)',
+             alias='EndOfBoom270Rotation')
+    ],
+    [
+        Cell('EndOfBoom0Placement'),
+        Cell('EndOfBoom90Placement'),
+        Cell('EndOfBoom180Placement'),
+        Cell('EndOfBoom270Placement')
+    ],
+    [
+        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom0Rotation * .OuterTailHingeBase; EndOfBoom0Rotation)',
+             alias='EndOfBoom0Placement'),
+        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom90Rotation * .OuterTailHingeBase; EndOfBoom90Rotation)',
+             alias='EndOfBoom90Placement'),
+        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom180Rotation * .OuterTailHingeBase; EndOfBoom180Rotation)',
+             alias='EndOfBoom180Placement'),
+        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom270Rotation * .OuterTailHingeBase; EndOfBoom270Rotation)',
+             alias='EndOfBoom270Placement')
+    ],
+    [
+        Cell('FurledEndOfBoom0Placement'),
+        Cell('FurledEndOfBoom90Placement'),
+        Cell('FurledEndOfBoom180Placement'),
+        Cell('FurledEndOfBoom270Placement')
+    ],
+    [
+        Cell('=TailAssemblyGlobalPlacement * EndOfBoom0Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+             alias='FurledEndOfBoom0Placement'),
+        Cell('=TailAssemblyGlobalPlacement * EndOfBoom90Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+             alias='FurledEndOfBoom90Placement'),
+        Cell('=TailAssemblyGlobalPlacement * EndOfBoom180Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+             alias='FurledEndOfBoom180Placement'),
+        Cell('=TailAssemblyGlobalPlacement * EndOfBoom270Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+             alias='FurledEndOfBoom270Placement')
+    ],
+    [
+        # Create two axes of the circle.
+        Cell('Axis1'),
+        Cell('Axis2')
+    ],
+    [
+        Cell('=FurledEndOfBoom180Placement.Base - FurledEndOfBoom0Placement.Base',
+             alias='Axis1'),
+        Cell('=FurledEndOfBoom270Placement.Base - FurledEndOfBoom90Placement.Base',
+             alias='Axis2')
+    ],
+    [
+        # Cross product Axis1 and Axis2 to find normal vector of the plane of rotation for the boom, Vg.
+        # https://en.wikipedia.org/wiki/Cross_product
+        Cell('Vg'),
+        Cell('Axis1 × Axis2')
+    ],
+    [
+        Cell('=create(<<vector>>; .Axis1.y * .Axis2.z - .Axis1.z * .Axis2.y; .Axis1.z * .Axis2.x - .Axis1.x * .Axis2.z; .Axis1.x * .Axis2.y - .Axis1.y * .Axis2.x)',
+             alias='Vg'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        # Normalize Vg from step above.
+        Cell('Vh'),
+        Cell('Normalize Vg')
+    ],
+    [
+        Cell('=Vg / .Vg.Length', alias='Vh')
+    ],
+    [
+        # Find d (distance from origin) in the general equation of a plane:
+        #
+        #   ax + by + cz + d = 0
+        #
+        # See:
+        # https://en.wikipedia.org/wiki/Euclidean_planes_in_three-dimensional_space#Point%E2%80%93normal_form_and_general_form_of_the_equation_of_a_plane
+        Cell('PlaneOffset (d)'),
+    ],
+    [
+        Cell('=-Vh * .FurledEndOfBoom0Placement.Base',
+             alias='PlaneOffset')
+    ],
+    [
+        Cell('STEP 3:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Find sphere containing the plane of rotation for the boom')
+    ],
+    [
+        Cell('CenterOfSphere'),
+        Cell('Radius')
+    ],
+    [
+        Cell('=.FurledEndOfBoom0Placement.Base + Axis1 / 2',
+             alias='CenterOfSphere'),
+        Cell('=.Axis1.Length / 2',
+             alias='Radius')
+    ],
+    [
+        Cell('STEP 4:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Find line formed by the intersection of maximum furl plane and plane of rotation for boom')
+    ],
+    [
+        # Define the x, y, and z of the origin point for the line.
+        Cell('zLineOrigin'),
+        Cell('xLineOrigin'),
+        Cell('yLineOrigin')
+    ],
+    [
+        Cell('=.CenterOfSphere.z - Radius * 1.1',
+             alias='zLineOrigin'),
+        Cell('=(zLineOrigin - zIntercept) / slope',
+             alias='xLineOrigin'),
+        Cell('=-(PlaneOffset + .Vh.x * xLineOrigin + .Vh.z * zLineOrigin) / .Vh.y',
+             alias='yLineOrigin')
+    ],
+    [
+        Cell('LineOrigin')
+    ],
+    [
+        Cell('=create(<<vector>>; xLineOrigin; yLineOrigin; zLineOrigin)',
+             alias='LineOrigin')
+    ],
+    [
+        # Cross product Vh and NormalVectorOfMaximumFurlPlane to find direction vector of line intersecting the two planes.
+        # https://en.wikipedia.org/wiki/Cross_product
+        # See "Intersection Line of 2 Planes - How to Find It - Step by Step Method & Explanation - Vector Equation" on YouTube:
+        # https://youtu.be/O6O_64zIEYI?t=116
+        Cell('DirectionVector'),
+        Cell('Vh × NormalVectorOfMaximumFurlPlane')
+    ],
+    [
+        Cell('=create(<<vector>>; .Vh.y * .NormalVectorOfMaximumFurlPlane.z - .Vh.z * .NormalVectorOfMaximumFurlPlane.y; .Vh.z * .NormalVectorOfMaximumFurlPlane.x - .Vh.x * .NormalVectorOfMaximumFurlPlane.z; .Vh.x * .NormalVectorOfMaximumFurlPlane.y - .Vh.y * .NormalVectorOfMaximumFurlPlane.x)',
+             alias='DirectionVector'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        # Normalize the direction vector.
+        Cell('NormalizedDirectionVector')
+    ],
+    [
+        Cell('=.DirectionVector / .DirectionVector.Length',
+             alias='NormalizedDirectionVector')
+    ],
+    [
+        Cell('STEP 5:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Find intersection point on the line and sphere closest to boom starting point')
+    ],
+    [
+        Cell('ValueOfTForPointOnLineClosestToCenterOfSphere'),
+        Cell('PointOnLineClosestToCenterOfSphere')
+    ],
+    [
+        # See "Calculating Ray-Sphere Intersections" on YouTube:
+        # https://www.youtube.com/watch?v=HFPlKQGChpE
+        Cell('=(CenterOfSphere - LineOrigin) * NormalizedDirectionVector',
+             alias='ValueOfTForPointOnLineClosestToCenterOfSphere'),
+        Cell('=LineOrigin + ValueOfTForPointOnLineClosestToCenterOfSphere * NormalizedDirectionVector',
+             alias='PointOnLineClosestToCenterOfSphere')
+    ],
+    [
+        Cell('yDistance'),
+        Cell('xDistance')
+    ],
+    [
+        Cell('=(CenterOfSphere - PointOnLineClosestToCenterOfSphere).Length',
+             alias='yDistance'),
+        Cell('=sqrt(Radius^2 - yDistance^2)',
+             alias='xDistance')
+    ],
+    [
+        Cell('ValueOfTForFarthestIntersectionPoint'),
+        Cell('FarthestIntersectionPoint')
+    ],
+    [
+        Cell('=ValueOfTForPointOnLineClosestToCenterOfSphere + xDistance',
+             alias='ValueOfTForFarthestIntersectionPoint'),
+        Cell('=LineOrigin + ValueOfTForFarthestIntersectionPoint * NormalizedDirectionVector',
+             alias='FarthestIntersectionPoint')
+    ],
+    [
+        Cell('STEP 6:',
+             styles=[Style.UNDERLINE, Style.ITALIC]),
+        Cell('Calculate angle between boom starting point, center of sphere, and intersection point')
+    ],
+    [
+        # Use special case of law of cosines for isosceles triangle to calculate maximum furl angle.
+        # https://en.wikipedia.org/wiki/Law_of_cosines#Isosceles_case
+        Cell('dDistance'),
+        Cell('MaximumFurlAngle'),
+        Cell('FurlRotation')
+    ],
+    [
+        Cell('=(.FarthestIntersectionPoint - .FurledEndOfBoom0Placement.Base).Length',
+             alias='dDistance'),
+        Cell('=acos(1 - dDistance ^ 2 / (2 * Radius ^ 2))',
+             alias='MaximumFurlAngle'),
+        Cell('=create(<<rotation>>; FurlAxis; MaximumFurlAngle)',
+             alias='FurlRotation')
+    ],
+    [
+        Cell('-----'), Cell('-----'), Cell('-----')
+    ],
     [
         Cell('OppositeEnd', styles=[Style.ITALIC]),
     ],
@@ -196,16 +680,26 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('TailFurlBase'),
-        Cell('TailFurlPlacement'),
-        Cell('FurledHighEndStopGlobalParentPlacement'),
+        Cell('TailFurlPlacement')
     ],
     [
-        # C - rot.multVec(C)
+        # center - rotation.multVec(center)
         Cell('=.OuterTailHingeBase - FurlRotation * .OuterTailHingeBase',
              alias='TailFurlBase'),
         Cell('=create(<<placement>>; TailFurlBase; FurlRotation)',
-             alias='TailFurlPlacement'),
-        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * TailFurlPlacement * TailPlacement * TailBoomVaneAssemblyPlacement',
+             alias='TailFurlPlacement')
+    ],
+    [
+        Cell('TailAssemblyGlobalPlacement'),
+        Cell('TailBoomVaneAssemblyParentPlacement'),
+        Cell('FurledHighEndStopGlobalParentPlacement')
+    ],
+    [
+        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement',
+             alias='TailAssemblyGlobalPlacement'),
+        Cell('=TailPlacement * TailBoomVaneAssemblyPlacement',
+             alias='TailBoomVaneAssemblyParentPlacement'),
+        Cell('=TailAssemblyGlobalPlacement * TailFurlPlacement * TailBoomVaneAssemblyParentPlacement',
              alias='FurledHighEndStopGlobalParentPlacement')
     ],
     [
@@ -258,7 +752,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=.OuterTailHingeHighEndStopFurledBase + TT * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
              alias='HighEndStopPointWhereZEqualsZgiven'),
         Cell('=abs(.HighEndStopPointWhereZEqualsZgiven.x) - YawPipeRadius + YawBearingPlacement.Base.x',
-             alias='HighEndStopWidth')  # 57.12 desired for T Shape
+             alias='HighEndStopWidth')
     ],
     # SafetyCatch
     # -----------
@@ -578,194 +1072,5 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='EllipseLowerVertexLocal'),
         Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerCoVertexGlobal - OuterTailHingeHighEndStopBase',
              alias='EllipseLowerCoVertexLocal')
-    ],
-    # Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
-    # ------------------------------------------------------------------
-    # Calculate an ellipse to make the Low End Stop fit the outer pipe of the Yaw Bearing.
-    [
-        Cell('Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
-             styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('OuterLowEndStopWidth'),
-        Cell('LowEndStopWidth')
-    ],
-    [
-        Cell('=YawPipeRadius * 0.5',
-             alias='OuterLowEndStopWidth'),
-        Cell('=YawPipeRadius + OuterLowEndStopWidth',
-             alias='LowEndStopWidth')
-    ],
-    [
-        Cell('LowEndStopGlobalPlacement'),
-        Cell('LowEndStopGlobalBase')
-    ],
-    [
-        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * OuterTailHingePlacement * LowEndStopPlacement',
-             alias='LowEndStopGlobalPlacement'),
-        Cell('=.LowEndStopGlobalPlacement.Base',
-             alias='LowEndStopGlobalBase')
-    ],
-    [
-        # Front, Bottom, Left correspond to X, Y, and Z
-        # Relative to Tail_Stop_LowEnd
-        Cell('FrontBottomLeftLowEndStopPlanePoint'),
-        Cell('FrontBottomLeftLowEndStopPlanePointGlobal')
-    ],
-    [
-        Cell('=create(<<vector>>; 0; -LowEndStopLengthToYawPipe; 0)',
-             alias='FrontBottomLeftLowEndStopPlanePoint'),
-        Cell('=LowEndStopGlobalPlacement * FrontBottomLeftLowEndStopPlanePoint',
-             alias='FrontBottomLeftLowEndStopPlanePointGlobal')
-    ],
-    [
-        # Back, Bottom, Right correspond to X, Y, and Z
-        # Relative to Tail_Stop_LowEnd
-        Cell('BackBottomRightLowEndStopPlanePoint'),
-        Cell('BackBottomRightLowEndStopPlanePointGlobal')
-    ],
-    [
-        Cell('=create(<<vector>>; LowEndStopWidth; 0; 0)',
-             alias='BackBottomRightLowEndStopPlanePoint'),
-        Cell('=LowEndStopGlobalPlacement * BackBottomRightLowEndStopPlanePoint',
-             alias='BackBottomRightLowEndStopPlanePointGlobal')
-    ],
-    [
-        # Calculate two vectors, Vd and Ve, on the Low End Stop plane.
-        Cell('Vd'), Cell('Ve')
-    ],
-    [
-        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
-             alias='Vd'),
-        Cell('=BackBottomRightLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
-             alias='Ve')
-    ],
-    [
-        # Cross product Vd and Ve to find vector perpendicular to the Low End Stop plane, Vf.
-        # https://en.wikipedia.org/wiki/Cross_product
-        Cell('Vf'),
-        Cell('Vd × Ve')
-    ],
-    [
-        Cell('=create(<<vector>>; .Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
-             alias='Vf'),
-        Cell('Cross Product', styles=[Style.ITALIC])
-    ],
-    [
-        # Normalize Vf from step above.
-        Cell('Vo'),
-        Cell('Normalize Vf')
-    ],
-    [
-        Cell('=Vf / .Vf.Length', alias='Vo')
-    ],
-    [
-        Cell('Point on Yaw Bearing cylinder where Low End Stop touches it')
-    ],
-    [
-        Cell('=Cx - FrontBottomLeftLowEndStopPlanePointGlobal.x',
-             alias='x'),
-        Cell('=Cz - FrontBottomLeftLowEndStopPlanePointGlobal.z',
-             alias='y')
-    ],
-    [
-        Cell('Theta'),
-        Cell('Alpha'),
-        Cell('Beta')
-    ],
-    [
-        Cell('=atan2(y; x)',
-             alias='Theta'),
-        Cell('=Theta + 90deg',
-             alias='Alpha'),
-        Cell('=Theta - 90deg',
-             alias='Beta')
-    ],
-    [
-        # Y-value for Upper vertex of ellipse.
-        Cell('Uy (Upper y)'),
-        # Y-value for Lower vertex of ellipse.
-        Cell('Ly (Lower y)')
-    ],
-    [
-        calculate_y_of_ellipse(
-            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
-             '.LowEndStopGlobalBase.z'),
-            ('.Vo.x', '.Vo.y', '.Vo.z'),
-            ('Cx', 'Cz'),
-            'r',
-            'Alpha',
-            'Uy'),
-        calculate_y_of_ellipse(
-            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
-             '.LowEndStopGlobalBase.z'),
-            ('.Vo.x', '.Vo.y', '.Vo.z'),
-            ('Cx', 'Cz'),
-            'r',
-            'Beta',
-            'Ly')
-    ],
-    [
-        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
-    ],
-    [
-        Cell('LowEndStopEllipseUpperVertexGlobal'),
-        Cell('LowEndStopEllipseLowerVertexGlobal'),
-        Cell('LowEndStopEllipseLowerCoVertexGlobal')
-    ],
-    [
-        Cell('=create(<<vector>>; Cx + r * cos(Alpha); Uy; Cz + r * sin(Alpha))',
-             alias='LowEndStopEllipseUpperVertexGlobal'),
-        Cell('=create(<<vector>>; Cx + r * cos(Beta); Ly; Cz + r * sin(Beta))',
-             alias='LowEndStopEllipseLowerVertexGlobal'),
-        # Point where Low End Stop touches Yaw Bearing.
-        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal',
-             alias='LowEndStopEllipseLowerCoVertexGlobal')
-    ],
-    [
-        Cell('InverseLowEndStopGlobalPlacement')
-    ],
-    [
-        Cell('=minvert(LowEndStopGlobalPlacement)',
-             alias='InverseLowEndStopGlobalPlacement')
-    ],
-    [
-        # Convert to "local" Tail_Stop_LowEnd coordinate system.
-        # For use in Sketcher constraints.
-        # The lower and upper vertexes (1 and 2) form the major axis.
-        # The lower co-vertex (3) forms the minor axis.
-        # 1, 2, and 3 numbering correspond to the following description:
-        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
-        #
-        # Vertexes denoted by "x".
-        #
-        #          ^                         , - ~ ~~~ ~ - ,
-        #          |                     , '                 ' ,
-        #          |                   ,                         ,
-        #          |                  ,                           ,
-        #          |    Lower Vertex ,                             , Upper Vertex
-        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
-        #          |                 ,         Major Axis          ,
-        #          |                  ,                           ,
-        #          |                   ,                         ,
-        #          |                     ,                    , '
-        #          |                       ' - , _ _x_ _ ,  '
-        #          |
-        #          |                          Lower Co-vertex
-        #          |
-        #          +-------------------------------------------------------------->
-        #                                        X-axis
-        #
-        Cell('LowEndStopEllipseUpperVertexLocal'),
-        Cell('LowEndStopEllipseLowerVertexLocal'),
-        Cell('LowEndStopEllipseLowerCoVertexLocal')
-    ],
-    [
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseUpperVertexGlobal',
-             alias='LowEndStopEllipseUpperVertexLocal'),
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerVertexGlobal',
-             alias='LowEndStopEllipseLowerVertexLocal'),
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerCoVertexGlobal',
-             alias='LowEndStopEllipseLowerCoVertexLocal')
     ]
 ]
