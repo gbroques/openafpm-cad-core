@@ -9,7 +9,7 @@ from .load import load_turbine
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 
-__all__ = ['load_furl_transforms']
+__all__ = ['load_furl_transform']
 
 
 class Transform(TypedDict):
@@ -28,13 +28,34 @@ class Transform(TypedDict):
     """Angle of rotation (in radians)."""
 
 
-def load_furl_transforms(magnafpm_parameters: MagnafpmParameters,
-                         furling_parameters: FurlingParameters,
-                         user_parameters: UserParameters) -> List[Transform]:
+class FurlTransform(TypedDict):
+    """Transformation to furl the tail."""
+
+    maximum_angle: float
+    """The maximum angle (in degrees) the tail can furl
+    before the high end stop hits the yaw bearing pipe.
+    """
+
+    transforms: List[Transform]
+    """Series of 3D transformations needed to furl the tail."""
+
+
+def load_furl_transform(magnafpm_parameters: MagnafpmParameters,
+                        furling_parameters: FurlingParameters,
+                        user_parameters: UserParameters,
+                        save_spreadsheet_document: bool = False) -> FurlTransform:
     root_document, spreadsheet_document = load_turbine(magnafpm_parameters,
                                                        furling_parameters,
-                                                       user_parameters)
-    return get_furl_transforms(root_document)
+                                                       user_parameters,
+                                                       save_spreadsheet_document)
+    return {
+        'maximum_angle': get_maximum_furl_angle(spreadsheet_document),
+        'transforms': get_furl_transforms(root_document)
+    }
+
+
+def get_maximum_furl_angle(spreadsheet_document: Document, ndigits: int = 2) -> float:
+    return round(spreadsheet_document.HighEndStop.MaximumFurlAngle.Value, ndigits=ndigits)
 
 
 def get_furl_transforms(root_document: Document) -> List[Transform]:

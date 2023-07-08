@@ -4,19 +4,20 @@ FreeCAD macro to print furl tranforms using default values.
 import json
 from collections import OrderedDict
 from multiprocessing import Pool
-from typing import List, Union
+from typing import Union
 
 from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
-                                   load_furl_transforms)
+                                   load_furl_transform)
 
 
-def get_furl_transforms(turbine: WindTurbine) -> List[dict]:
+def get_furl_transform(turbine: WindTurbine) -> dict:
     parameters = get_default_parameters(turbine)
 
-    return load_furl_transforms(
+    return load_furl_transform(
         parameters['magnafpm'],
         parameters['user'],
-        parameters['furling'])
+        parameters['furling'],
+        save_spreadsheet_document=True)
 
 
 class CompactJSONEncoder(json.JSONEncoder):
@@ -104,7 +105,7 @@ if __name__ == '__main__':
         WindTurbine.STAR_SHAPE,
         WindTurbine.T_SHAPE_2F]
     with Pool(len(turbines)) as p:
-        results = p.map(get_furl_transforms, turbines)
+        results = p.map(get_furl_transform, turbines)
         furl_transforms = OrderedDict()
         for result, turbine in zip(results, turbines):
             key = slugify_enum(turbine)
