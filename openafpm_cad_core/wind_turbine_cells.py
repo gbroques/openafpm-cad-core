@@ -341,6 +341,7 @@ wind_turbine_cells: List[List[Cell]] = [
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeX : LargeTailHingeX',
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeY : LargeTailHingeY',
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeZ : LargeTailHingeZ'),
+                            # Equivalent to (0°, -90°, 270°) in yaw-pitch-roll.
                             axis=('0.58', '0.58', '0.58'),
                             angle='=240deg')
 ]
