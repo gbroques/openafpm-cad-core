@@ -170,7 +170,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('10', alias='YawBearingPlateCornerChamferLength')
     ],
     [
-        Cell('TopHoleRadius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 15',
+        Cell('TopHoleRadius'), Cell('=RotorDiskRadius < 187.5 ? 10 : 17.5',
                                     alias='YawBearingPlateTopHoleRadius')
     ],
     [
