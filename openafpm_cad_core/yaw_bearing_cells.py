@@ -259,6 +259,13 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('Side', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        Cell('CanSideExtendToMiddleOfYawBearingPipe')
+    ],
+    [
+        Cell('(=MM - YawPipeDiameter) / 2 > FlatMetalThickness ? True : False',
+             alias='CanSideExtendToMiddleOfYawBearingPipe')
+    ],
+    [
         Cell('HalfWidth'), Cell('=MM / 2',
                                 alias='HalfWidth')
     ],
@@ -266,8 +273,8 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('DistanceBetweenTopAndPipe'), Cell('=HalfWidth - YawPipeRadius',
                                                 alias='DistanceBetweenTopAndPipe')
     ],
-    # Protect against negative number for T Shape when Side is not tangent to Yaw Pipe.
     [
+        # Protect against negative number for T Shape when Side is not tangent to Yaw Pipe.
         Cell('AV'), Cell('=FlatMetalThickness - DistanceBetweenTopAndPipe > 0 ? FlatMetalThickness - DistanceBetweenTopAndPipe : FlatMetalThickness',
                          alias='AV')
     ],
@@ -284,7 +291,7 @@ yaw_bearing_cells: List[List[Cell]] = [
              horizontal_alignment=Alignment.RIGHT)
     ],
     [
-        Cell('=sqrt(YawPipeRadius ^ 2 - VO ^ 2)',
+        Cell('=CanSideExtendToMiddleOfYawBearingPipe == False ? sqrt(YawPipeRadius ^ 2 - VO ^ 2) : 0',
              alias='SideX',
              horizontal_alignment=Alignment.RIGHT),
         Cell('=-SideWidth',

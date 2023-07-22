@@ -543,8 +543,10 @@ tail_cells: List[List[Cell]] = [
                                                 alias='LowEndStopLengthToYawPipe')
     ],
     [
-        # * 1.2 to make low end stop extend past yaw bearing point of contact by a centimeter or two.
-        Cell('OuterTailHingeLowEndStopLength'), Cell('=LowEndStopLengthToYawPipe * 1.2',
+        # * 1.15 to make low end stop extend past yaw bearing point of contact by a centimeter or two.
+        # This factor can't be too big otherwise the low end stop may hit the side piece that stiffens
+        # the top piece for H & Star shape instead of making contact with the yaw bearing pipe.
+        Cell('OuterTailHingeLowEndStopLength'), Cell('=LowEndStopLengthToYawPipe * 1.15',
                                                      alias='OuterTailHingeLowEndStopLength')
     ],
     # Tail Angle
