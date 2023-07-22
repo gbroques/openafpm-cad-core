@@ -207,13 +207,14 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='Epsilon')
     ],
     [
-        Cell('Zeta'),
+        # Distance Top piece of Yaw Bearing is greater than where it meets the Frame of the Alternator.
+        Cell('TopFrameJunctionOverhangeDistance'),
         Cell('=Epsilon + Gamma',
-             alias='Zeta')
+             alias='TopFrameJunctionOverhangeDistance')
     ],
     [
         Cell('Mhypotenuse'),
-        Cell('=MetalLengthL * 2 + Zeta',
+        Cell('=MetalLengthL * 2 + TopFrameJunctionOverhangeDistance',
              alias='Mhypotenuse')
     ],
     [
@@ -234,16 +235,11 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='MM')
     ],
     [
-        Cell('MMhypotenuse'),
-        # Distance Top piece of Yaw Bearing is greater than where it meets the Frame of the Alternator.
-        Cell('TopFrameJunctionOverhangeDistance')
+        Cell('MMhypotenuse')
     ],
     [
         Cell('=hypot(MM; MM)',
-             alias='MMhypotenuse'),
-        Cell('=MMhypotenuse - MetalLengthL * 2',
-             alias='TopFrameJunctionOverhangeDistance')
-
+             alias='MMhypotenuse')
     ],
     [
         Cell('AlternatorCenterRatio'),
