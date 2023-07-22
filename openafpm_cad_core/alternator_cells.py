@@ -463,16 +463,23 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderCenterRodLength')
     ],
     [
-        Cell('CoilWinderPinLength'),
+        Cell('CoilWinderPinLength')
+    ],
+    [
+        Cell('=CoilWinderAssemblyThicknessTotal + DistanceThreadsExtendFromNuts * 2',
+             alias='CoilWinderPinLength')
+    ],
+    [
+        Cell('LargestMagnetDimension'),
         Cell('VerticalOffset'),
         Cell('TriangularCoilHoleHeight')
     ],
     [
-        Cell('=CoilWinderAssemblyThicknessTotal + DistanceThreadsExtendFromNuts * 2',
-             alias='CoilWinderPinLength'),
+        Cell('=max(MagnetLength; MagnetWidth)',
+             alias='LargestMagnetDimension'),
         Cell('=CoilWinderDiskSmallHoleRadius * cos(60)',
              alias='VerticalOffset'),
-        Cell('=MagnetLength - VerticalOffset',
+        Cell('=LargestMagnetDimension - VerticalOffset',
              alias='TriangularCoilHoleHeight')
     ],
     [
