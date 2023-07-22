@@ -262,7 +262,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('CanSideExtendToMiddleOfYawBearingPipe')
     ],
     [
-        Cell('(=MM - YawPipeDiameter) / 2 > FlatMetalThickness ? True : False',
+        Cell('=(MM - YawPipeDiameter) / 2 > FlatMetalThickness ? True : False',
              alias='CanSideExtendToMiddleOfYawBearingPipe')
     ],
     [
