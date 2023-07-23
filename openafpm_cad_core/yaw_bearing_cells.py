@@ -145,11 +145,14 @@ yaw_bearing_cells: List[List[Cell]] = [
         # ------------------------------------------
     ],
     [
-        Cell('AlternatorTiltAngle')
+        Cell('AlternatorTiltAngle'),
+        Cell('I')
     ],
     [
         Cell('=Alternator.AlternatorTiltAngle',
-             alias='AlternatorTiltAngle')
+             alias='AlternatorTiltAngle'),
+        Cell('=Master_of_Puppets#Alternator.I',
+             alias='I')
     ],
     [
         Cell('Pipe', styles=[Style.UNDERLINE, Style.BOLD])
@@ -318,5 +321,36 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength'),
         Cell('=L - MM - YawPipeRadius - SideX + Theta',
              alias='SideLength')
+    ],
+    [
+        Cell('ArcWireSupport', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('Thickness'),
+        Cell('Width'),
+        Cell('Hole_y')
+    ],
+    [
+        Cell('5',
+             alias='ArcWireSupportThickness'),
+        Cell('=FlatMetalThickness',
+             alias='ArcWireSupportWidth'),
+        Cell('=YawPipeRadius + I',
+             alias='Hole_y')
+    ],
+    [
+        Cell('SmallLength'),
+        Cell('LargeLength'),
+        Cell('Length')
+    ],
+    [
+        Cell('=Hole_y - YawBearingPlateTopHoleRadius',
+             alias='ArcWireSupportSmallLength'),
+        # Hypotenuse of isosceles right triangle = a * sqrt(2)
+        # https://mathworld.wolfram.com/IsoscelesRightTriangle.html
+        Cell('=HalfWidth * sqrt(2) - YawBearingPlateTopHoleRadius - ArcWireSupportWidth / 2',
+             alias='ArcWireSupportLargeLength'),
+        Cell('=RotorDiskRadius < 187.5 ? ArcWireSupportSmallLength : ArcWireSupportLargeLength',
+             alias='ArcWireSupportLength')
     ]
 ]
