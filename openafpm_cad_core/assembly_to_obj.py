@@ -74,7 +74,8 @@ def keep_unresolved_for_wind_turbine(obj: object, path: List[object]) -> bool:
         'Tail_Hinge_Outer',
         'Tail_Hinge_Inner',
         'Vane_Bracket_Top',
-        'Tail_Stop_HighEnd'
+        'Tail_Stop_HighEnd',
+        'Tail_Stop_LowEnd'
     }
 
 

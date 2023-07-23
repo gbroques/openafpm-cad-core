@@ -162,6 +162,7 @@ yaw_bearing_cells: List[List[Cell]] = [
                                   alias='YawPipeScaleFactor')
     ],
     [
+        # TOOD: Should this be a function of BoomLength, and Vertical / Horizontal Plane Angle?
         Cell('Length'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
                              alias='YawPipeLength')
     ],

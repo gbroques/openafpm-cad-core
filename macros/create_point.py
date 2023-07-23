@@ -129,7 +129,7 @@ def find_selected_points() -> Optional[List[Tuple[Vector, str]]]:
     selected_points = []
     for cell_address in selected_cells:
         obj = sheet.get(cell_address)
-        label = sheet.getAlias(cell_address)
+        label = sheet.getAlias(cell_address) or f'Point{cell_address}'
         if isinstance(obj, Placement):
             selected_points.append((obj.Base, label))
         elif isinstance(obj, Vector):

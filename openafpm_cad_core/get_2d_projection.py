@@ -12,7 +12,7 @@ def get_2d_projection(obj: object) -> object:
     original_placement = obj.Placement
     obj.Placement = Placement()
     projection = None
-    if obj.Label == 'Tail_Stop_HighEnd':
+    if obj.Label == 'Tail_Stop_HighEnd' or obj.Label == 'Tail_Stop_LowEnd':
         projection = get_2d_high_end_stop_projection(obj)
     else:
         projection = get_2d_projection_on_xy_plane(obj)

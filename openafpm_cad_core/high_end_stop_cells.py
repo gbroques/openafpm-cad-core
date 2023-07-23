@@ -63,16 +63,13 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('Chamfer'),
-        Cell('LowEndStopPlacement'),
-        Cell('LowEndStopLengthToYawPipe')
+        Cell('LowEndStopBase')
     ],
     [
         Cell('=Tail.TailHingeJunctionChamfer',
              alias='Chamfer'),
-        Cell('=Tail.LowEndStopPlacement',
-             alias='LowEndStopPlacement'),
-        Cell('=Tail.LowEndStopLengthToYawPipe',
-             alias='LowEndStopLengthToYawPipe')
+        Cell('=Tail.LowEndStopBase',
+             alias='LowEndStopBase')
     ],
     [
         Cell('WindTurbine', styles=[Style.UNDERLINE])
@@ -167,66 +164,107 @@ high_end_stop_cells: List[List[Cell]] = [
                             angle='-90'),
     # Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
     # ------------------------------------------------------------------
-    # Calculate an ellipse to make the Low End Stop fit the outer pipe of the Yaw Bearing.
+    # Find point of tangency for low end stop plane and yaw bearing cylinder
+    # to calculate the length and angle of rotation for low end stop.
     [
         Cell('Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
              styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('OuterLowEndStopWidth'),
+        # Distance low end stop overlaps with yaw bearing pipe.
+        # A cut is performed between these two.
+        Cell('LowEndStopYawBearingOverlap'),
         Cell('LowEndStopWidth')
     ],
     [
         Cell('=YawPipeRadius * 0.5',
              alias='OuterLowEndStopWidth'),
+        Cell('=floor(YawPipeDiameter / 6)',
+             alias='LowEndStopYawBearingOverlap'),
         Cell('=YawPipeRadius + OuterLowEndStopWidth',
              alias='LowEndStopWidth')
     ],
     [
+        Cell('OuterTailHingeParentPlacement'),
         Cell('OuterTailHingeGlobalPlacement'),
         Cell('LowEndStopGlobalPlacement'),
         Cell('LowEndStopGlobalBase')
     ],
     [
-        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement * OuterTailHingePlacement',
+        Cell('=TailAssemblyPlacement * OuterTailHingePlacement',
+             alias='OuterTailHingeParentPlacement'),
+        Cell('=TailAssemblyLinkPlacement * OuterTailHingeParentPlacement',
              alias='OuterTailHingeGlobalPlacement'),
-        Cell('=OuterTailHingeGlobalPlacement * LowEndStopPlacement',
+        # Create LowEndStopGlobalPlacement WITHOUT rotation, and only translation
+        # since the angle of rotation is calculated after determining the low end stop plane.
+        Cell('=OuterTailHingeGlobalPlacement * create(<<placement>>; LowEndStopBase; create(<<rotation>>))',
              alias='LowEndStopGlobalPlacement'),
-        Cell('=.LowEndStopGlobalPlacement.Base',
-             alias='LowEndStopGlobalBase')
+        Cell('=OuterTailHingeGlobalPlacement * LowEndStopBase',
+             alias='LowEndStopGlobalBase'),
     ],
     [
-        # Front, Bottom, Left correspond to X, Y, and Z
+        # General approach:
+        # Define a series of transformations to convert the problem from 3D into 2D
+        # where an external point forms tangent lines to a circle.
+        Cell('TranslateYawBearingToOrigin'),
+        Cell('AlignLowEndStopWithXAxis'),
+        Cell('AxisAlignTransformation')
+    ],
+    [
+        Cell('=create(<<placement>>; create(<<vector>>; -.YawBearingPlacement.Base.x; 0; -.YawBearingPlacement.Base.z); create(<<rotation>>))',
+             alias='TranslateYawBearingToOrigin'),
+        Cell('=create(<<placement>>; create(<<vector>>); create(<<vector>>; 0; 1; 0); 90 - HorizontalPlaneAngle)',
+             alias='AlignLowEndStopWithXAxis'),
+        Cell('=AlignLowEndStopWithXAxis * TranslateYawBearingToOrigin',
+             alias='AxisAlignTransformation'),
+    ],
+    # Define two points on low end stop plane to get two vectors on the plane.
+    [
+        # Front, Bottom, Right correspond to X, Y, and Z
         # Relative to Tail_Stop_LowEnd
-        Cell('FrontBottomLeftLowEndStopPlanePoint'),
-        Cell('FrontBottomLeftLowEndStopPlanePointGlobal')
+        Cell('FrontBottomRightLowEndStopPlanePoint'),
+        Cell('FrontBottomRightLowEndStopPlanePointGlobal'),
+        Cell('FrontBottomRightLowEndStopPlanePointGlobalOffset')
     ],
     [
-        Cell('=create(<<vector>>; 0; -LowEndStopLengthToYawPipe; 0)',
-             alias='FrontBottomLeftLowEndStopPlanePoint'),
-        Cell('=LowEndStopGlobalPlacement * FrontBottomLeftLowEndStopPlanePoint',
-             alias='FrontBottomLeftLowEndStopPlanePointGlobal')
+        Cell('=create(<<vector>>; 0; -YawPipeRadius; 0)',
+             alias='FrontBottomRightLowEndStopPlanePoint'),
+        Cell('=LowEndStopGlobalPlacement * FrontBottomRightLowEndStopPlanePoint',
+             alias='FrontBottomRightLowEndStopPlanePointGlobal'),
+        Cell('=AxisAlignTransformation * FrontBottomRightLowEndStopPlanePointGlobal',
+             alias='FrontBottomRightLowEndStopPlanePointGlobalOffset')
     ],
     [
         # Back, Bottom, Right correspond to X, Y, and Z
         # Relative to Tail_Stop_LowEnd
         Cell('BackBottomRightLowEndStopPlanePoint'),
-        Cell('BackBottomRightLowEndStopPlanePointGlobal')
+        Cell('BackBottomRightLowEndStopPlanePointGlobal'),
+        Cell('BackBottomRightLowEndStopPlanePointGlobalOffset')
     ],
     [
         Cell('=create(<<vector>>; LowEndStopWidth; 0; 0)',
              alias='BackBottomRightLowEndStopPlanePoint'),
         Cell('=LowEndStopGlobalPlacement * BackBottomRightLowEndStopPlanePoint',
-             alias='BackBottomRightLowEndStopPlanePointGlobal')
+             alias='BackBottomRightLowEndStopPlanePointGlobal'),
+        Cell('=AxisAlignTransformation * BackBottomRightLowEndStopPlanePointGlobal',
+             alias='BackBottomRightLowEndStopPlanePointGlobalOffset')
+    ],
+    [
+        Cell('LowEndStopGlobalBaseOffset')
+    ],
+    [
+        Cell('=AxisAlignTransformation * LowEndStopGlobalBase',
+             alias='LowEndStopGlobalBaseOffset')
     ],
     [
         # Calculate two vectors, Vd and Ve, on the Low End Stop plane.
         Cell('Vd'), Cell('Ve')
     ],
     [
-        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+        Cell('=FrontBottomRightLowEndStopPlanePointGlobalOffset - LowEndStopGlobalBaseOffset',
              alias='Vd'),
-        Cell('=BackBottomRightLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+        Cell('=BackBottomRightLowEndStopPlanePointGlobalOffset - LowEndStopGlobalBaseOffset',
              alias='Ve')
     ],
     [
@@ -249,113 +287,181 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=Vf / .Vf.Length', alias='Vo')
     ],
     [
+        #
+        # Find d (distance from origin) in the general equation of a plane:
+        #
+        #   ax + by + cz + d = 0
+        #
+        # See:
+        # https://en.wikipedia.org/wiki/Euclidean_planes_in_three-dimensional_space#Point%E2%80%93normal_form_and_general_form_of_the_equation_of_a_plane
+        #
+        # Normal vector times a point on the plane.
+        #
+        Cell('LowEndStopPlaneDistance (d)')
+    ],
+    [
+        Cell('=Vo * FrontBottomRightLowEndStopPlanePointGlobalOffset',
+             alias='LowEndStopPlaneDistance')
+    ],
+    # Find two points on yaw bearing pipe that intersect with the low end stop plane along the x-axis.
+    #
+    # Equation of yaw bearing pipe cylinder:
+    # x^2 + z^2 = r^2
+    #
+    # Parametric equations for yaw bearing pipe cylinder:
+    # x = r * cos(θ)
+    # z = r * sin(θ)
+    #
+    # Plug in (r *cos(θ)) for x into equation of plane with no z-component:
+    # a * x + b * y = d and solve in terms fo y
+    #
+    # https://www.wolframalpha.com/input?i=a+*+%28r+*+cos%28%CE%B8%29%29+%2B+b+*+y+%3D+d+solve+for+y
+    # y = (d - a * r * cos(θ)) / b
+    #
+    [
+        Cell('ZeroAngleY'),
+        Cell('PiAngleY')
+    ],
+    [
+        Cell('=(LowEndStopPlaneDistance - Vo.x * YawPipeRadius * cos(0)) / Vo.y',
+             alias='ZeroAngleY'),
+        Cell('=(LowEndStopPlaneDistance - Vo.x * YawPipeRadius * cos(180)) / Vo.y',
+             alias='PiAngleY')
+    ],
+    [
+        Cell('ZeroAnglePoint'),
+        Cell('PiAnglePoint')
+    ],
+    [
+        Cell('=create(<<vector>>; YawPipeRadius; ZeroAngleY; 0)',
+             alias='ZeroAnglePoint'),
+        Cell('=create(<<vector>>; -YawPipeRadius; PiAngleY; 0)',
+             alias='PiAnglePoint')
+    ],
+    # Subtract above two vectors to find length of major axis length for the ellipse
+    # formed by the intersection of the yaw bearing pipe and low end stop plane.
+    [
+        Cell('MajorAxisLength'),
+        Cell('XDownScaleFactor')
+    ],
+    [
+        Cell('=(ZeroAnglePoint - PiAnglePoint).Length / 2',
+             alias='MajorAxisLength'),
+        Cell('=YawPipeRadius / MajorAxisLength',
+             alias='XDownScaleFactor')
+    ],
+    # Scale down x from transformed low end stop point.
+    # This forms the external point tangent to a circle in 2d.
+    [
+        Cell('ScaledDownLowEndStopX')
+    ],
+    [
+        Cell('=.LowEndStopGlobalBaseOffset.x * XDownScaleFactor',
+             alias='ScaledDownLowEndStopX')
+    ],
+    # Use equation of tangent line to circle and solve in terms of m (slope):
+    # https://www.wolframalpha.com/input?i=0+%3D+mx+%2B+r+*+sqrt%281+%2B+m%5E2%29+solve+for+m
+    # Pick whichever of the two possible equations yield a negative slope.
+    #
+    #     y = mx + r * sqrt(1 + m^2)
+    #
+    #     Let y = 0 since external point is on the y-axis.
+    #
+    #     m = r / sqrt(-r^2 + x^2)
+    #
+    [
+        Cell('SlopeOfTangentLine')
+    ],
+    [
+        Cell('=-YawPipeRadius / sqrt(-(YawPipeRadius^2) + ScaledDownLowEndStopX^2)',
+             alias='SlopeOfTangentLine')
+    ],
+    # Substitute equation of tangent line into equation of circle to solve for x.
+    # Use equation of tangent line with negative y-intercept:
+    # https://www.wolframalpha.com/input?i=x%5E2+%2B+%28mx+-+r+*+sqrt%281+%2B+m%5E2%29%29%5E2+%3D+r%5E2+solve+for+x
+    #
+    # Then plug in x value into equation of tangent equation to solve for y.
+    #
+    # In 2-dimensions, the y-axis corresponds to the z-axis in 3-dimensions.
+    #
+    [
+        Cell('TangentPointX2d'),
+        Cell('TangentPointY2d')
+    ],
+    [
+        Cell('=(SlopeOfTangentLine * YawPipeRadius) / sqrt(1 + SlopeOfTangentLine^2)',
+             alias='TangentPointX2d'),
+        Cell('=SlopeOfTangentLine * TangentPointX2d - YawPipeRadius * sqrt(1 + SlopeOfTangentLine^2)',
+             alias='TangentPointY2d')
+    ],
+    # Scale x back up before getting 3d tangency point.
+    # Find y-coordinate of 3d tangency point by plugging in x value into equation of plane
+    # with zero z-component:
+    #
+    # https://www.wolframalpha.com/input?i=a+x+%2B+b+y+-+d+%3D+0+in+terms+of+y
+    #
+    # y = (d - a x) / b
+    #
+    [
+        Cell('XUpScaleFactor'),
+        Cell('TangentPointX'),
+        Cell('TangentPointY')
+    ],
+    [
+        Cell('=1 / XDownScaleFactor',
+             alias='XUpScaleFactor'),
+        Cell('=XUpScaleFactor * TangentPointX2d',
+             alias='TangentPointX'),
+        Cell('=(LowEndStopPlaneDistance - Vo.x * TangentPointX) / Vo.y',
+             alias='TangentPointY')
+    ],
+    [
+        Cell('AxisAlignedTangentPoint')
+    ],
+    [
+        Cell('=create(<<vector>>; TangentPointX; TangentPointY; TangentPointY2d)',
+             alias='AxisAlignedTangentPoint')
+    ],
+    [
         Cell('Point on Yaw Bearing cylinder where Low End Stop touches it')
     ],
     [
-        Cell('=Cx - FrontBottomLeftLowEndStopPlanePointGlobal.x',
-             alias='x'),
-        Cell('=Cz - FrontBottomLeftLowEndStopPlanePointGlobal.z',
-             alias='y')
+        Cell('TangentPoint')
     ],
     [
-        Cell('Theta'),
-        Cell('Alpha'),
-        Cell('Beta')
+        Cell('=minvert(AxisAlignTransformation) * AxisAlignedTangentPoint',
+             alias='TangentPoint')
     ],
     [
-        Cell('=atan2(y; x)',
-             alias='Theta'),
-        Cell('=Theta + 90deg',
-             alias='Alpha'),
-        Cell('=Theta - 90deg',
-             alias='Beta')
+        Cell('TangentVector'),
+        Cell('FrontBottomRightVector'),
+        Cell('LowEndStopAngle')
     ],
     [
-        # Y-value for Upper vertex of ellipse.
-        Cell('Uy (Upper y)'),
-        # Y-value for Lower vertex of ellipse.
-        Cell('Ly (Lower y)')
+        Cell('=TangentPoint - LowEndStopGlobalBase',
+             alias='TangentVector'),
+        Cell('=FrontBottomRightLowEndStopPlanePointGlobal - LowEndStopGlobalBase',
+             alias='FrontBottomRightVector'),
+        Cell('=acos(TangentVector * FrontBottomRightVector / (.TangentVector.Length * .FrontBottomRightVector.Length))',
+             alias='LowEndStopAngle')
     ],
     [
-        calculate_y_of_ellipse(
-            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
-             '.LowEndStopGlobalBase.z'),
-            ('.Vo.x', '.Vo.y', '.Vo.z'),
-            ('Cx', 'Cz'),
-            'r',
-            'Alpha',
-            'Uy'),
-        calculate_y_of_ellipse(
-            ('.LowEndStopGlobalBase.x', '.LowEndStopGlobalBase.y',
-             '.LowEndStopGlobalBase.z'),
-            ('.Vo.x', '.Vo.y', '.Vo.z'),
-            ('Cx', 'Cz'),
-            'r',
-            'Beta',
-            'Ly')
+        Cell('LowEndStopPlacement'),
+        Cell('OuterTailHingeLowEndStopLength')
     ],
     [
-        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
+        Cell('=create(<<placement>>; LowEndStopBase; create(<<rotation>>; create(<<vector>>; 0; 0; -1); LowEndStopAngle))',
+             alias='LowEndStopPlacement'),
+        # * 1.15 to make low end stop extend past yaw bearing point of contact by a centimeter or two.
+        # TODO: Should this be based on whether the side piece extends to middle of yaw pipe?
+        # This factor can't be too big otherwise the low end stop may hit the side piece that stiffens
+        # the top piece for H & Star shape instead of making contact with the yaw bearing pipe.
+        # This can be seen with MetalLengthL of 90 and VerticalPlaneAngle of 20 for Star Shape.
+        Cell('=TangentVector.Length * 1.15',
+             alias='OuterTailHingeLowEndStopLength')
     ],
     [
-        Cell('LowEndStopEllipseUpperVertexGlobal'),
-        Cell('LowEndStopEllipseLowerVertexGlobal'),
-        Cell('LowEndStopEllipseLowerCoVertexGlobal')
-    ],
-    [
-        Cell('=create(<<vector>>; Cx + r * cos(Alpha); Uy; Cz + r * sin(Alpha))',
-             alias='LowEndStopEllipseUpperVertexGlobal'),
-        Cell('=create(<<vector>>; Cx + r * cos(Beta); Ly; Cz + r * sin(Beta))',
-             alias='LowEndStopEllipseLowerVertexGlobal'),
-        # Point where Low End Stop touches Yaw Bearing.
-        Cell('=FrontBottomLeftLowEndStopPlanePointGlobal',
-             alias='LowEndStopEllipseLowerCoVertexGlobal')
-    ],
-    [
-        Cell('InverseLowEndStopGlobalPlacement')
-    ],
-    [
-        Cell('=minvert(LowEndStopGlobalPlacement)',
-             alias='InverseLowEndStopGlobalPlacement')
-    ],
-    [
-        # Convert to "local" Tail_Stop_LowEnd coordinate system.
-        # For use in Sketcher constraints.
-        # The lower and upper vertexes (1 and 2) form the major axis.
-        # The lower co-vertex (3) forms the minor axis.
-        # 1, 2, and 3 numbering correspond to the following description:
-        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
-        #
-        # Vertexes denoted by "x".
-        #
-        #          ^                         , - ~ ~~~ ~ - ,
-        #          |                     , '                 ' ,
-        #          |                   ,                         ,
-        #          |                  ,                           ,
-        #          |    Lower Vertex ,                             , Upper Vertex
-        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
-        #          |                 ,         Major Axis          ,
-        #          |                  ,                           ,
-        #          |                   ,                         ,
-        #          |                     ,                    , '
-        #          |                       ' - , _ _x_ _ ,  '
-        #          |
-        #          |                          Lower Co-vertex
-        #          |
-        #          +-------------------------------------------------------------->
-        #                                        X-axis
-        #
-        Cell('LowEndStopEllipseUpperVertexLocal'),
-        Cell('LowEndStopEllipseLowerVertexLocal'),
-        Cell('LowEndStopEllipseLowerCoVertexLocal')
-    ],
-    [
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseUpperVertexGlobal',
-             alias='LowEndStopEllipseUpperVertexLocal'),
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerVertexGlobal',
-             alias='LowEndStopEllipseLowerVertexLocal'),
-        Cell('=InverseLowEndStopGlobalPlacement * LowEndStopEllipseLowerCoVertexGlobal',
-             alias='LowEndStopEllipseLowerCoVertexLocal')
+        Cell('-----'), Cell('-----'), Cell('-----')
     ],
     # Maximum Furl Angle
     # ------------------
@@ -372,7 +478,7 @@ high_end_stop_cells: List[List[Cell]] = [
     # 6. Calculate angle between boom starting point, center of sphere, and intersection point.
     #
     # See the following 3D plot:
-    # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=-0.28x+0.94y-0.20z-468.21~0;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=180;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-319.2702114910493,348.83707947752845,-259.7580452330615);visible=true;color=rgb(0,0,0);size=20&type=point;point=(547.3904216906924,666.5114402311267,24.208124246907573);visible=true;color=rgb(0,0,0);size=20&type=point;point=(9.890373342431474,258.3780018275526,-1163.1543606224416);visible=true;color=rgb(0,0,0);size=20&type=point;point=(-648.43,439.3,643.64);visible=true;color=rgb(0,0,0);size=20&type=point;point=(-1185.93,31.16,-543.72);visible=true;color=rgb(0,0,0);size=20&type=implicit;equation=-11.43x+0y-1z-2442.04~0;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=180;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=spacecurve;spacecurve=curve;x=0+-0.94t;y=-10099/470+1.96t;z=-2442.04+10.47t;visible=true;width=2;view=0;tmin=0;tmax=2000;tsteps=2000;color=rgb(0,0,0);showtrace=false;tval=13925.19;constcol=false;twod=false;arrows=0;showpt=true;trace=true;vel=true;acc=true;veceqs=true;osc=false;k=false;showtorsion=false;repeat=false;bounce=false;dashed=false;tanline=false;dropcurtain=false;showtvector=false;shownvector=false;showbvector=false;showtnbeqs=false;showtnblabels=false;showoscplane=false;showrectplane=false;shownormplane=false;optimizecurve=true;maxjointangle=10&type=implicit;equation=(x+319.27)^2+(y-348.84)^2+(z+259.76)^2~965.74^2;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;alpha=80;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=vector;vector=%3C-93.97,196.21,1074.07%3E;visible=true;color=rgb(0,0,0);size=4;initialpt=(-82.42,154.397,-1500)&type=point;point=(-273.41,553.19,683);visible=true;color=rgb(255,0,0);size=20&type=window;hsrmode=1;nomidpts=false;anaglyph=-1;center=-5.0134618587133435,3.1731180273476878,-8.868550692674992,1;focus=0,0,0,1;up=-0.0438260063969223,0.9325279118086831,0.3584284794223724,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=true;showaxes=true;showticks=true;perspective=true;centerxpercent=0.407788099579242;centerypercent=0.5704094973308015;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=true;gridcolor=rgb(128,128,128);xmin=-1500;xmax=800;ymin=-800;ymax=1500;zmin=-1600;zmax=800;xscale=128;yscale=128;zscale=128;zcmin=-512;zcmax=512;xscalefactor=1;yscalefactor=1;zscalefactor=1;tracemode=0;tracepoint=10,10,0,1;keep2d=false;zoom=0.001778#
+    # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=x%20~%20-11.43y%20-%20914.96;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=150;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=-0.20x%20-0.28y%20+%200.94z%20-%20544.22%20~%200;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=150;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=(x%20+%20135.05)%5E2%20+%20(y%20+%20192.87)%5E2%20+%20(z%20-%20493.45)%5E2%20~%20965.74%5E2;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=100;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-1197.36,24.71,336.55);visible=true;color=rgb(0,0,0);size=10&type=vector;vector=%3C946.52,%20-82.81,%20172.91%3E;visible=true;color=rgb(0,0,0);size=4;initialpt=(-1197.36,24.71,336.55)&type=point;point=(806.81,-150.64,702.67);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-419.02,-1059.53,175.78);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-135.05,-192.87,493.45);visible=true;color=rgb(0,0,0);size=10&type=window;hsrmode=0;nomidpts=true;anaglyph=-1;center=-0.317485775338329,-1.8782080166036121,9.816900601961878,1;focus=0,0,0,1;up=0.9756466580973304,0.20745563415558366,0.07124435697384073,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=false;showaxes=true;showticks=true;perspective=true;centerxpercent=0.31543025039293726;centerypercent=0.4216527150945403;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=true;gridcolor=rgb(128,128,128);xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;xscale=100;yscale=100;zscale=100;zcmin=-4;zcmax=4;xscalefactor=20;yscalefactor=20;zscalefactor=20;tracemode=0;keep2d=false;zoom=0.00008
     [
         Cell('Maximum Furl Angle',
              styles=[Style.UNDERLINE, Style.BOLD])
@@ -392,40 +498,41 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         # Define a point P, on the plane formed by the tail when maximally furled.
-        # In global coordinates, x is on the horizontal axis and z is on the vertical axis
-        # when viewing the wind turbine from the top.
+        # In coordinates local to the Tail_Assembly document.
+        # y is on the horizontal axis and x is on the vertical axis
+        # when viewing from the top.
         #
-        #        ^ z
+        #        ^ x
         #        |
         #        |
         # <------+
-        # x
+        # y
         #
-        Cell('Px'),
-        Cell('Pz')
+        Cell('Py'),
+        Cell('Px')
     ],
     [
 
-        Cell('=.OuterTailHingeGlobalPlacement.Base.z * cos(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeGlobalPlacement.Base.x',
+        Cell('=.OuterTailHingeParentPlacement.Base.x * cos(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeParentPlacement.Base.y',
+             alias='Py'),
+        Cell('=-1 * .OuterTailHingeParentPlacement.Base.x * sin(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeParentPlacement.Base.x',
              alias='Px'),
-        Cell('=-1 * .OuterTailHingeGlobalPlacement.Base.z * sin(90deg - AngleBetweenTailAndRotor) + .OuterTailHingeGlobalPlacement.Base.z',
-             alias='Pz'),
     ],
     [
-        # Calculate slope and z-intercept of line formed by OuterTailHingeGlobalPlacement.Base and P on XZ plane.
+        # Calculate slope and z-intercept of line formed by OuterTailHingeParentPlacement.Base and P on XY plane.
         # This defines the "maximum furl plane".
         Cell('slope'),
-        Cell('zIntercept'),
+        Cell('xIntercept'),
         Cell('NormalVectorOfMaximumFurlPlane')
     ],
     [
-        Cell('=(Pz - .OuterTailHingeGlobalPlacement.Base.z) / (Px - .OuterTailHingeGlobalPlacement.Base.x)',
+        Cell('=(Px - .OuterTailHingeParentPlacement.Base.x) / (Py - .OuterTailHingeParentPlacement.Base.y)',
              alias='slope'),
-        Cell('=Pz - (slope * Px)',
-             alias='zIntercept'),
+        Cell('=Px - (slope * Py)',
+             alias='xIntercept'),
         # Get the normal vector of the maximum furl plane,
         # from the coefficients of the general equation.
-        Cell('=create(<<vector>>; slope; 0; -1)',
+        Cell('=create(<<vector>>; -1; slope; 0)',
              alias='NormalVectorOfMaximumFurlPlane')
     ],
     [
@@ -473,13 +580,13 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('FurledEndOfBoom270Placement')
     ],
     [
-        Cell('=TailAssemblyGlobalPlacement * EndOfBoom0Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+        Cell('=TailAssemblyPlacement * EndOfBoom0Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
              alias='FurledEndOfBoom0Placement'),
-        Cell('=TailAssemblyGlobalPlacement * EndOfBoom90Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+        Cell('=TailAssemblyPlacement * EndOfBoom90Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
              alias='FurledEndOfBoom90Placement'),
-        Cell('=TailAssemblyGlobalPlacement * EndOfBoom180Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+        Cell('=TailAssemblyPlacement * EndOfBoom180Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
              alias='FurledEndOfBoom180Placement'),
-        Cell('=TailAssemblyGlobalPlacement * EndOfBoom270Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
+        Cell('=TailAssemblyPlacement * EndOfBoom270Placement * TailBoomVaneAssemblyParentPlacement * EndOfBoomPlacement',
              alias='FurledEndOfBoom270Placement')
     ],
     [
@@ -513,17 +620,21 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=Vg / .Vg.Length', alias='Vh')
     ],
     [
+        #
         # Find d (distance from origin) in the general equation of a plane:
         #
         #   ax + by + cz + d = 0
         #
         # See:
         # https://en.wikipedia.org/wiki/Euclidean_planes_in_three-dimensional_space#Point%E2%80%93normal_form_and_general_form_of_the_equation_of_a_plane
-        Cell('PlaneOffset (d)'),
+        #
+        # Normal vector times a point on the plane.
+        #
+        Cell('BoomRotationPlaneDistance (d)'),
     ],
     [
         Cell('=-Vh * .FurledEndOfBoom0Placement.Base',
-             alias='PlaneOffset')
+             alias='BoomRotationPlaneDistance')
     ],
     [
         Cell('STEP 3:',
@@ -547,17 +658,17 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         # Define the x, y, and z of the origin point for the line.
-        Cell('zLineOrigin'),
         Cell('xLineOrigin'),
-        Cell('yLineOrigin')
+        Cell('yLineOrigin'),
+        Cell('zLineOrigin')
     ],
     [
-        Cell('=.CenterOfSphere.z - Radius * 1.1',
-             alias='zLineOrigin'),
-        Cell('=(zLineOrigin - zIntercept) / slope',
+        Cell('=.CenterOfSphere.x - Radius * 1.1',
              alias='xLineOrigin'),
-        Cell('=-(PlaneOffset + .Vh.x * xLineOrigin + .Vh.z * zLineOrigin) / .Vh.y',
-             alias='yLineOrigin')
+        Cell('=(xLineOrigin - xIntercept) / slope',
+             alias='yLineOrigin'),
+        Cell('=-(BoomRotationPlaneDistance + .Vh.x * xLineOrigin + .Vh.y * yLineOrigin) / .Vh.z',
+             alias='zLineOrigin')
     ],
     [
         Cell('LineOrigin')

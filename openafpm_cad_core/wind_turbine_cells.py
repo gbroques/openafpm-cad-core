@@ -118,23 +118,6 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('=YawBearing.YawPipeLength',
              alias='YawPipeLength')
     ],
-    [
-        Cell('Tail', styles=[Style.UNDERLINE])
-        # ------------------------------------
-    ],
-    [
-        Cell('Chamfer'),
-        Cell('LowEndStopPlacement'),
-        Cell('LowEndStopLengthToYawPipe')
-    ],
-    [
-        Cell('=Tail.TailHingeJunctionChamfer',
-             alias='Chamfer'),
-        Cell('=Tail.LowEndStopPlacement',
-             alias='LowEndStopPlacement'),
-        Cell('=Tail.LowEndStopLengthToYawPipe',
-             alias='LowEndStopLengthToYawPipe')
-    ],
     # Static
     # ------
     [
