@@ -27,6 +27,9 @@ def get_random_color() -> Tuple[float, float, float, float]:
 
 def create_points(document: Document,
                   selected_points: List[Tuple[Vector, str]]) -> None:
+    # TODO: Provide more options around colors like:
+    #       - Allow user to specify color.
+    #       - Vary colors per points, or have them all be the same color.
     color = get_random_color()
     document.openTransaction('create_points')
     for selected_point in selected_points:
@@ -62,6 +65,11 @@ class TaskPanel:
         # Row
         row1 = QtGui.QHBoxLayout()
 
+        # TODO Improve workflow by:
+        #      - Remember last selected document
+        #      - Sort documents which ones are open as Gui windows
+        #      - Potentially provide separate dropdown for documents with active Gui window
+        #      - Provide text box filter for documents dropdown.
         label = QtGui.QLabel('<strong>Document:</strong>', self.form)
         self.combo_box = self.create_combo_box()
 
