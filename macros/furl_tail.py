@@ -38,6 +38,9 @@ def furl_tail(furl_angle: float):
         axis=axis,
         copy=False)
 
+    # Recompute to prevent switching to Tail document automatically.
+    App.activeDocument().recompute()
+
     tail_document.commitTransaction()
 
 
@@ -85,7 +88,7 @@ class TaskPanel:
 
 documents_by_name = App.listDocuments()
 
-if 'Tail' in documents_by_name and main_document_name in App.listDocuments():
+if 'Tail' in documents_by_name and main_document_name in documents_by_name:
     Gui.Control.showDialog(TaskPanel())
 else:
     Console.PrintWarning(
