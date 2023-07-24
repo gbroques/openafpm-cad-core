@@ -1,17 +1,26 @@
 import Draft
 import FreeCAD as App
 import FreeCADGui as Gui
-from FreeCAD import Console
+from FreeCAD import Console, Document
 from PySide import QtGui
+
+main_document_name = 'Master_of_Puppets'
+
+
+def get_document(name: str) -> Document:
+    documents_by_name = App.listDocuments()
+    return documents_by_name[name]
+
+
+def get_main_document() -> Document:
+    return get_document(main_document_name)
 
 
 def furl_tail(furl_angle: float):
-    documents_by_name = App.listDocuments()
-
-    tail_document = documents_by_name['Tail']
+    tail_document = get_document('Tail')
     tail_document.openTransaction('furl')
 
-    main_document = documents_by_name['Master_of_Puppets']
+    main_document = get_main_document()
 
     # tail
     tail = tail_document.getObjectsByLabel('Tail')[0]
@@ -44,7 +53,8 @@ class TaskPanel:
         # Row 1
         row1 = QtGui.QHBoxLayout()
 
-        label = QtGui.QLabel('<strong>Furl Angle:</strong> (in degrees)', self.form)
+        label = QtGui.QLabel(
+            '<strong>Furl Angle:</strong> (in degrees)', self.form)
         self.double_spin_box = self.create_double_spin_box()
 
         row1.addWidget(label)
@@ -57,6 +67,9 @@ class TaskPanel:
         double_spin_box.setRange(-360, 360)
         double_spin_box.valueChanged.connect(
             self.handle_double_spin_box_value_changed)
+        main_document = get_main_document()
+        double_spin_box.setValue(
+            main_document.HighEndStop.MaximumFurlAngle.Value)
         return double_spin_box
 
     def handle_double_spin_box_value_changed(self, value: float):
@@ -72,7 +85,8 @@ class TaskPanel:
 
 documents_by_name = App.listDocuments()
 
-if 'Tail' in documents_by_name and 'Master_of_Puppets' in App.listDocuments():
+if 'Tail' in documents_by_name and main_document_name in App.listDocuments():
     Gui.Control.showDialog(TaskPanel())
 else:
-    Console.PrintWarning(f'Master_of_Puppets & Tail documents must be open.\n')
+    Console.PrintWarning(
+        f'{main_document_name} & Tail documents must be open.\n')
