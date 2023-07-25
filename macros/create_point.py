@@ -7,7 +7,6 @@ Usage:
 Select Placement or Vector in a spreadsheet, then activate macro.
 """
 import random
-import string
 from typing import List, Optional, Tuple
 
 import FreeCAD as App
