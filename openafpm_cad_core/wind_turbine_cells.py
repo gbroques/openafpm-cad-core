@@ -80,18 +80,12 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('T Shape', styles=[Style.ITALIC])
     ],
     [
-        Cell('X'), Cell('TShapeTwoHoleEndBracketLength (A)')
+        Cell('TShapeTwoHoleEndBracketLength (A)'),
+        Cell('k')
     ],
     [
-        Cell('=Alternator.X', alias='X'),
         Cell('=Alternator.TShapeTwoHoleEndBracketLength',
-             alias='TShapeTwoHoleEndBracketLength')
-    ],
-    [
-        Cell('I'), Cell('k')
-    ],
-    [
-        Cell('=Alternator.I', alias='I'),
+             alias='TShapeTwoHoleEndBracketLength'),
         Cell('=Alternator.k', alias='k')
     ],
     [
@@ -135,11 +129,14 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('YawPipeRadius')
+        Cell('YawPipeRadius'),
+        Cell('YawBearingZPosition')
     ],
     [
         Cell('=YawPipeDiameter / 2',
              alias='YawPipeRadius'),
+        Cell('=-Offset',
+             alias='YawBearingZPosition')
     ],
     # SmallYawBearing
     # ---------------
@@ -163,7 +160,7 @@ wind_turbine_cells: List[List[Cell]] = [
              alias='SmallYawBearingX'),
         Cell('=(-TShapeTwoHoleEndBracketLength / 2 + FlatMetalThickness + Margin * 2) * -1',
              alias='SmallYawBearingY'),
-        Cell('=-X - YawPipeDiameter',
+        Cell('=YawBearingZPosition',
              alias='SmallYawBearingZ'),
     ],
     # LargeYawBearing
@@ -192,7 +189,7 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('AlternatorLinkYOffset')
     ],
     [
-        Cell('=-Offset',
+        Cell('=YawBearingZPosition',
              alias='LargeYawBearingZPosition'),
         Cell('=LargeYawBearingZPosition - FrameZ + LargeYawBearingXOffset',
              alias='LargeYawBearingXPosition'),
