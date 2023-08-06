@@ -689,16 +689,10 @@ alternator_cells: List[List[Cell]] = [
         Cell('T Shape', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('MiddleDistanceOfHoleFromEdge'),
-        Cell('OffsetDistanceOfHoleFromEdge'),
         Cell('HorizontalDistanceOfHoleFromInsideEdge_TwoHoleEndBracket')
     ],
     [
         Cell('=MetalLengthL / 2',
-             alias='MiddleDistanceOfHoleFromEdge'),
-        Cell('=MiddleDistanceOfHoleFromEdge + MetalThicknessL',
-             alias='OffsetDistanceOfHoleFromEdge'),
-        Cell('=RotorDiskRadius < 187.5 ? OffsetDistanceOfHoleFromEdge : MiddleDistanceOfHoleFromEdge',
              alias='HorizontalDistanceOfHoleFromInsideEdge_TwoHoleEndBracket')
     ],
     [
@@ -731,7 +725,7 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeVerticalDistance'),
         # Subtract MetalLengthL as the top holes and bottom hole are centered in the brackets.
         # MetalLengthL is the length of the brackets.
-        Cell('=TShapeVerticalDistance - MetalLengthL - MetalThicknessL',
+        Cell('=TShapeVerticalDistance - MetalLengthL',
              alias='BC'),
         Cell('=MetalLengthL * 2',
              alias='D')
