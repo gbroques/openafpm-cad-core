@@ -32,6 +32,13 @@ high_end_stop_cells: List[List[Cell]] = [
         # -------------------------------------------
     ],
     [
+        Cell('RotorDiskRadius')
+    ],
+    [
+        Cell('=Spreadsheet.RotorDiskRadius',
+             alias='RotorDiskRadius')
+    ],
+    [
         Cell('FlatMetalThickness'),
         Cell('BoomPipeDiameter'),
         Cell('YawPipeDiameter')
@@ -56,6 +63,17 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='HorizontalPlaneAngle'),
         Cell('=Spreadsheet.BoomLength',
              alias='BoomLength')
+    ],
+    [
+        Cell('YawBearing', styles=[Style.UNDERLINE])
+        # ------------------------------------
+    ],
+    [
+        Cell('CanSideExtendToMiddleOfYawBearingPipe')
+    ],
+    [
+        Cell('=YawBearing.CanSideExtendToMiddleOfYawBearingPipe',
+             alias='CanSideExtendToMiddleOfYawBearingPipe'),
     ],
     [
         Cell('Tail', styles=[Style.UNDERLINE])
@@ -447,17 +465,21 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('LowEndStopPlacement'),
+        Cell('LowEndStopLengthScaleFactor'),
         Cell('OuterTailHingeLowEndStopLength')
     ],
     [
         Cell('=create(<<placement>>; LowEndStopBase; create(<<rotation>>; create(<<vector>>; 0; 0; -1); LowEndStopAngle))',
              alias='LowEndStopPlacement'),
-        # * 1.15 to make low end stop extend past yaw bearing point of contact by a centimeter or two.
-        # TODO: Should this be based on whether the side piece extends to middle of yaw pipe?
+        # For T Shape, scale low end stop length by 1.15 for ALWAYS.
+        # For H & Star Shape, scale low end stop length by 1.1 ONLY if side piece doesn't extend to middle of yaw bearing pipe.
         # This factor can't be too big otherwise the low end stop may hit the side piece that stiffens
         # the top piece for H & Star shape instead of making contact with the yaw bearing pipe.
-        # This can be seen with MetalLengthL of 90 and VerticalPlaneAngle of 20 for Star Shape.
-        Cell('=TangentVector.Length * 1.15',
+        # Increasing MetalLengthL to 90 and VerticalPlaneAngle to 20 for Star Shape from default values
+        # results in CanSideExtendToMiddleOfYawBearingPipe evaluating to True.
+        Cell('=RotorDiskRadius < 187.5 ? 1.15 : CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1',
+             alias='LowEndStopLengthScaleFactor'),
+        Cell('=TangentVector.Length * LowEndStopLengthScaleFactor',
              alias='OuterTailHingeLowEndStopLength')
     ],
     [
