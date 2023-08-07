@@ -665,23 +665,15 @@ alternator_cells: List[List[Cell]] = [
         Cell('Frame', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        # Vertical distance of hole from outside edge of frame
-        # when viewing front of wind turbine.
-        Cell('HoleMargin'),
-        Cell('HolesRadius')
-    ],
-    [
-        # For T Shape
-        # H & Star Shape is 25.
-        Cell('20',
-             alias='HoleMargin'),
-        Cell('=HolesDiameter / 2',
-             alias='HolesRadius')
-    ],
-    [
+        Cell('DistanceBetweenCenterOfHoleAndFrameEdge'),
+        Cell('HolesRadius'),
         Cell('YawPipeRadius')
     ],
     [
+        Cell('=MetalLengthL / 2',
+             alias='DistanceBetweenCenterOfHoleAndFrameEdge'),
+        Cell('=HolesDiameter / 2',
+             alias='HolesRadius'),
         Cell('=YawPipeDiameter / 2',
              alias='YawPipeRadius')
     ],
@@ -689,27 +681,19 @@ alternator_cells: List[List[Cell]] = [
         Cell('T Shape', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HorizontalDistanceOfHoleFromInsideEdge_TwoHoleEndBracket')
-    ],
-    [
-        Cell('=MetalLengthL / 2',
-             alias='HorizontalDistanceOfHoleFromInsideEdge_TwoHoleEndBracket')
-    ],
-    [
         Cell('X'),
         Cell('TShapeTwoHoleEndBracketLength (A)')
     ],
     [
         # Based on right triangle forming with center of hub and hole of two hole end bracket.
-        Cell('=cos(60) * StatorHolesCircumradius - HorizontalDistanceOfHoleFromInsideEdge_TwoHoleEndBracket',
+        Cell('=cos(60) * StatorHolesCircumradius - DistanceBetweenCenterOfHoleAndFrameEdge',
              alias='X'),
         # 30 degrees because 360 / 3 = 120 - 90 = 30.
         # Divide by 3 for because the T Shape has 3 holes.
         # cos(30) * StatorHolesCircumradius = bottom of right triangle
         # * 2 to get both sides.
-        # Add the distance from hole to edge of the metal on each side, + (HoleMargin * 2).
-        # Add the radius for holes on each side, + HolesDiameter.
-        Cell('=cos(30) * StatorHolesCircumradius * 2 + (HoleMargin * 2) + HolesDiameter',
+        # Add the distance between hole and edge of the metal on each side, + DistanceBetweenCenterOfHoleAndFrameEdge * 2.
+        Cell('=cos(30) * StatorHolesCircumradius * 2 + DistanceBetweenCenterOfHoleAndFrameEdge * 2',
              alias='TShapeTwoHoleEndBracketLength')
     ],
     [
@@ -762,20 +746,22 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('IsoscelesRightTriangleHypotenuseRatio'),
-        Cell('HorizontalDistanceBetweenHoles')
+        Cell('DistanceBetweenCenterOfHShapeFrameHoles')
     ],
     [
         Cell('=1 / cos(Theta)',
              alias='IsoscelesRightTriangleHypotenuseRatio'),
+        # Since the H Shape frame is square, the distance between frame holes
+        # is the same regardless of horizontal or vertical orientation.
         Cell('=StatorHolesCircumradius * IsoscelesRightTriangleHypotenuseRatio',
-             alias='HorizontalDistanceBetweenHoles')
+             alias='DistanceBetweenCenterOfHShapeFrameHoles')
     ],
     [
         # G and H are reserved aliases since FreeCAD 20.
         Cell('GG'), Cell('HH')
     ],
     [
-        Cell('=HorizontalDistanceBetweenHoles + HoleMargin * 2',
+        Cell('=DistanceBetweenCenterOfHShapeFrameHoles + DistanceBetweenCenterOfHoleAndFrameEdge * 2',
              alias='GG'),
         # To make the frame square.
         Cell('=Inradius * 2 - MetalLengthL',
@@ -791,12 +777,11 @@ alternator_cells: List[List[Cell]] = [
         Cell('CC')
     ],
     [
-        # 25 is the margin from the holes to the edge of the metal.
-        Cell('=2 * sin(30) * StatorHolesCircumradius + 2 * (25 + HolesRadius)',
+        Cell('=2 * sin(30) * StatorHolesCircumradius + DistanceBetweenCenterOfHoleAndFrameEdge * 2',
              alias='StarShapeTwoHoleEndBracketLength'),
         Cell('=2 * StatorHolesCircumradius * ((1 - sin(30) * sin(30))^0.5) - MetalLengthL',
              alias='B'),
-        Cell('=StatorHolesCircumradius - MetalLengthL + HolesRadius + 25',
+        Cell('=StatorHolesCircumradius - MetalLengthL + DistanceBetweenCenterOfHoleAndFrameEdge',
              alias='CC')
     ],
     [

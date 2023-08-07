@@ -80,12 +80,9 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('T Shape', styles=[Style.ITALIC])
     ],
     [
-        Cell('TShapeTwoHoleEndBracketLength (A)'),
         Cell('k')
     ],
     [
-        Cell('=Alternator.TShapeTwoHoleEndBracketLength',
-             alias='TShapeTwoHoleEndBracketLength'),
         Cell('=Alternator.k', alias='k')
     ],
     [
@@ -111,17 +108,6 @@ wind_turbine_cells: List[List[Cell]] = [
     [
         Cell('=YawBearing.YawPipeLength',
              alias='YawPipeLength')
-    ],
-    # Static
-    # ------
-    [
-        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('Margin')
-    ],
-    [
-        Cell('20', alias='Margin')
     ],
     # Calculated
     # ----------
@@ -158,7 +144,8 @@ wind_turbine_cells: List[List[Cell]] = [
     [
         Cell('=-FrameZ - YawPipeRadius - k + MetalLengthL - MetalThicknessL',
              alias='SmallYawBearingX'),
-        Cell('=(-TShapeTwoHoleEndBracketLength / 2 + FlatMetalThickness + Margin * 2) * -1',
+        # Origin of yaw bearing is between yaw pipe and top plate.
+        Cell('=(YawPipeLength - FlatMetalThickness) / 2',
              alias='SmallYawBearingY'),
         Cell('=YawBearingZPosition',
              alias='SmallYawBearingZ'),
@@ -170,16 +157,17 @@ wind_turbine_cells: List[List[Cell]] = [
              styles=[Style.UNDERLINE, Style.BOLD]),
     ],
     [
-        Cell('SpaceBetweenMiddleBrackentAndTopEndBracket'),
+        Cell('SpaceBetweenMiddleBracketAndTopEndBracket'),
         Cell('LargeYawBearingYAdjustment'),
         Cell('LargeYawBearingYPreAlternatorTilt')
     ],
     [
-        Cell('=StarShapeChannelSectionHeight / 2 - MetalLengthL * 0.5',
-             alias='SpaceBetweenMiddleBrackentAndTopEndBracket'),
-        Cell('=(SpaceBetweenMiddleBrackentAndTopEndBracket - (SideWidth + FlatMetalThickness)) / 2',
+        # MetalLengthL / 2 could be replaced by DistanceBetweenCenterOfHoleAndFrameEdge from Alternator.
+        Cell('=StarShapeChannelSectionHeight / 2 - MetalLengthL / 2',
+             alias='SpaceBetweenMiddleBracketAndTopEndBracket'),
+        Cell('=(SpaceBetweenMiddleBracketAndTopEndBracket - (SideWidth + FlatMetalThickness)) / 2',
              alias='LargeYawBearingYAdjustment'),
-        Cell('=MetalLengthL * 0.5 + SideWidth + LargeYawBearingYAdjustment',
+        Cell('=MetalLengthL / 2 + SideWidth + LargeYawBearingYAdjustment',
              alias='LargeYawBearingYPreAlternatorTilt')
     ],
     [
@@ -279,7 +267,8 @@ wind_turbine_cells: List[List[Cell]] = [
     ],
     [
         Cell('SmallVerticalDistanceFromCenter'),
-        Cell('=TShapeTwoHoleEndBracketLength / 2 - Margin * 2',
+        # Referenced from Frame_Shape_T document.
+        Cell('=(YawPipeLength + FlatMetalThickness) / 2',
              alias='SmallVerticalDistanceFromCenter')
     ],
     [
