@@ -184,6 +184,12 @@ high_end_stop_cells: List[List[Cell]] = [
     # ------------------------------------------------------------------
     # Find point of tangency for low end stop plane and yaw bearing cylinder
     # to calculate the length and angle of rotation for low end stop.
+    #
+    # TODO: The following calculations can be relative to Tail_Assembly document
+    #       instead of global coordinates.
+    #       This would avoid needing TranslateYawBearingToOrigin and dependency
+    #       ot YawBearing spreadsheet.
+    #
     [
         Cell('Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
              styles=[Style.UNDERLINE, Style.BOLD])
@@ -1063,6 +1069,11 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=Vc / .Vc.Length', alias='Vn')
     ],
+    #
+    # TODO: The following calculations can be relative to Tail_Assembly document
+    #       instead of global coordinates.
+    #       This would avoid needing (x-h)^2 and (z-k)^2 to describe yaw bearing cylinder.
+    #
     # Relate the equations for a cylinder and plane together,
     # to find the ellipse of intersection.
     #
