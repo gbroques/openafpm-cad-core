@@ -6,21 +6,6 @@ from .spreadsheet import Alignment, Cell, Style
 __all__ = ['high_end_stop_cells']
 
 
-def calculate_y_of_ellipse(point_on_plane: Tuple[str, str, str],
-                           normal_vector_to_plane: Tuple[str, str, str],
-                           center_of_cylinder: Tuple[str, str],
-                           radius_of_cylinder: str,
-                           angle: str,
-                           alias: str) -> Cell:
-    Px, Py, Pz = point_on_plane
-    Nx, Ny, Nz = normal_vector_to_plane
-    Cx, Cz = center_of_cylinder
-    r = radius_of_cylinder
-    v = angle
-    return Cell(f'=({Px} * {Nx} + {Py} * {Ny} + {Pz} * {Nz} - {Cx} * {Nx} - {Cz} * {Nz} - {Nx} * {r} * cos({v}) - {Nz} * {r} * sin({v})) / {Ny}',
-                alias=alias)
-
-
 high_end_stop_cells: List[List[Cell]] = [
     # Inputs
     # ------
@@ -80,28 +65,14 @@ high_end_stop_cells: List[List[Cell]] = [
         # ------------------------------------
     ],
     [
-        Cell('Chamfer'),
+        Cell('TailHingeJunctionChamfer'),
         Cell('LowEndStopBase')
     ],
     [
         Cell('=Tail.TailHingeJunctionChamfer',
-             alias='Chamfer'),
+             alias='TailHingeJunctionChamfer'),
         Cell('=Tail.LowEndStopBase',
              alias='LowEndStopBase')
-    ],
-    [
-        Cell('WindTurbine', styles=[Style.UNDERLINE])
-        # ------------------------------------------
-    ],
-    [
-        Cell('YawBearingPlacement'),
-        Cell('TailAssemblyLinkPlacement'),
-    ],
-    [
-        Cell('=WindTurbine.YawBearingPlacement',
-             alias='YawBearingPlacement'),
-        Cell('=WindTurbine.TailAssemblyLinkPlacement',
-             alias='TailAssemblyLinkPlacement')
     ],
     # Static
     # ------
@@ -109,17 +80,12 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('HighEndStopPlaneLength'),
         Cell('FurlAxis')
     ],
     [
-        Cell('110',  # The exact length of this isn't very important.
-             alias='HighEndStopPlaneLength'),
         Cell('=create(<<vector>>; sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle))',
              alias='FurlAxis')
     ],
-
-    # TODO: Consolidate two "Calculated" sections in spreadsheet.
     # Calculated
     # ----------
     [
@@ -142,8 +108,8 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     *create_placement_cells(name='TailAssembly',
                             base=(
-                                '=Chamfer * cos(180 - HorizontalPlaneAngle)',
-                                '=Chamfer * sin(-(180 - HorizontalPlaneAngle))',
+                                '=TailHingeJunctionChamfer * cos(180 - HorizontalPlaneAngle)',
+                                '=TailHingeJunctionChamfer * sin(-(180 - HorizontalPlaneAngle))',
                                 '0'),
                             axis=('0', '0', '-1'),
                             angle='=180 - HorizontalPlaneAngle'),
@@ -166,7 +132,7 @@ high_end_stop_cells: List[List[Cell]] = [
                             base=('0', '0', '0'),
                             axis=('0', '1', '0'),
                             angle='90'),
-    *create_placement_cells(name='OuterTailHingeHighEndStop',
+    *create_placement_cells(name='HighEndStop',
                             base=(
                                 '=FlatMetalThickness / 2',
                                 '=BoomPipeRadius',
@@ -180,6 +146,14 @@ high_end_stop_cells: List[List[Cell]] = [
                                 '=BoomLength'),
                             axis=('0', '1', '0'),
                             angle='-90'),
+    [
+        Cell('TailBoomVaneAssemblyParentPlacement'),
+    ],
+    [
+        Cell('=TailPlacement * TailBoomVaneAssemblyPlacement',
+             alias='TailBoomVaneAssemblyParentPlacement')
+    ],
+    #
     # Low End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
     # ------------------------------------------------------------------
     # Find point of tangency for low end stop plane and yaw bearing cylinder
@@ -321,6 +295,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=Vo * LowEndStopPlanePoint1TailAssemblyAxisAligned',
              alias='LowEndStopPlaneDistance')
     ],
+    #
     # Find two points on yaw bearing pipe that intersect with the low end stop plane along the x-axis.
     #
     # Equation of yaw bearing pipe cylinder:
@@ -464,7 +439,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('LowEndStopPlacement'),
         Cell('LowEndStopLengthScaleFactor'),
-        Cell('OuterTailHingeLowEndStopLength')
+        Cell('LowEndStopLength')
     ],
     [
         Cell('=create(<<placement>>; LowEndStopBase; create(<<rotation>>; create(<<vector>>; 0; 0; -1); LowEndStopAngle))',
@@ -478,11 +453,12 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=RotorDiskRadius < 187.5 ? 1.15 : CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1',
              alias='LowEndStopLengthScaleFactor'),
         Cell('=TangentVector.Length * LowEndStopLengthScaleFactor',
-             alias='OuterTailHingeLowEndStopLength')
+             alias='LowEndStopLength')
     ],
     [
-        Cell('-----'), Cell('-----'), Cell('-----')
+        Cell('----------'), Cell('----------'), Cell('----------')
     ],
+    #
     # Maximum Furl Angle
     # ------------------
     # Determine the maximum furl angle for tail before getting too close to the blades.
@@ -499,6 +475,7 @@ high_end_stop_cells: List[List[Cell]] = [
     #
     # See the following 3D plot:
     # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=x%20~%20-11.43y%20-%20914.96;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=150;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=-0.20x%20-0.28y%20+%200.94z%20-%20544.22%20~%200;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=150;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=(x%20+%20135.05)%5E2%20+%20(y%20+%20192.87)%5E2%20+%20(z%20-%20493.45)%5E2%20~%20965.74%5E2;cubes=16;visible=true;fixdomain=false;xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;alpha=100;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-1197.36,24.71,336.55);visible=true;color=rgb(0,0,0);size=10&type=vector;vector=%3C946.52,%20-82.81,%20172.91%3E;visible=true;color=rgb(0,0,0);size=4;initialpt=(-1197.36,24.71,336.55)&type=point;point=(806.81,-150.64,702.67);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-419.02,-1059.53,175.78);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-135.05,-192.87,493.45);visible=true;color=rgb(0,0,0);size=10&type=window;hsrmode=0;nomidpts=true;anaglyph=-1;center=-0.317485775338329,-1.8782080166036121,9.816900601961878,1;focus=0,0,0,1;up=0.9756466580973304,0.20745563415558366,0.07124435697384073,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=false;showaxes=true;showticks=true;perspective=true;centerxpercent=0.31543025039293726;centerypercent=0.4216527150945403;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=true;gridcolor=rgb(128,128,128);xmin=-1500;xmax=1000;ymin=-1500;ymax=1000;zmin=-500;zmax=1500;xscale=100;yscale=100;zscale=100;zcmin=-4;zcmax=4;xscalefactor=20;yscalefactor=20;zscalefactor=20;tracemode=0;keep2d=false;zoom=0.00008
+    #
     [
         Cell('Maximum Furl Angle',
              styles=[Style.UNDERLINE, Style.BOLD])
@@ -776,82 +753,169 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='FurlRotation')
     ],
     [
-        Cell('-----'), Cell('-----'), Cell('-----')
+        Cell('----------'), Cell('----------'), Cell('----------')
     ],
+    #
+    # Furled High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
+    # -------------------------------------------------------------------------
+    # Find the high end stop width and length.
+    #
+    # The below calculations are relative to the Tail_Assembly document.
+    #
+    # The following is a 3D plot of the furled high end stop plane and yaw bearing cylinder:
+    # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=x%5E2%20+%20y%5E2%20~%2030.15%5E2;cubes=32;visible=true;fixdomain=false;xmin=-150;xmax=150;ymin=-150;ymax=150;zmin=100;zmax=400;alpha=-1;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=-0.51x%20-%200.19y%20+%200.84z%20-%20193.74%20~%200;cubes=16;visible=true;fixdomain=false;xmin=-150;xmax=150;ymin=-150;ymax=150;zmin=100;zmax=400;alpha=-1;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-47.14,-74.44,185.88);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-1.55,-30.11,223.87);visible=true;color=rgb(0,0,0);size=10&type=point;point=(-1.55,-77.17,213.31);visible=true;color=rgb(0,0,0);size=10&type=window;hsrmode=0;nomidpts=true;anaglyph=-1;center=-8.983761846851909,-0.20469189522930448,4.387496359776474,1;focus=0,0,0,1;up=0.4346730111543097,-0.1849020372518452,0.881402637841618,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=false;showaxes=true;showticks=true;perspective=true;centerxpercent=0.45759597456831236;centerypercent=0.8607261684051503;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=true;gridcolor=rgb(128,128,128);xmin=-150;xmax=150;ymin=-150;ymax=150;zmin=100;zmax=400;xscale=20;yscale=20;zscale=20;zcmin=-4;zcmax=4;xscalefactor=20;yscalefactor=20;zscalefactor=20;tracemode=0;keep2d=false;zoom=0.000667
+    #
+    # Values correspond to default values for a T Shaped wind turbine.
+    #
+    # The three points in the plot are:
+    #   1. HighEndStopFurledTailAssemblyBase
+    #   2. YawBearingHighEndStopTangentPoint
+    #   3. HighEndStopPointWhereXEqualsTangent
+    #
     [
-        Cell('OppositeEnd', styles=[Style.ITALIC]),
-    ],
-    [
-        Cell('x', horizontal_alignment=Alignment.RIGHT),
-        Cell('y', horizontal_alignment=Alignment.RIGHT),
-        Cell('z', horizontal_alignment=Alignment.RIGHT)
-    ],
-    [
-        Cell('=OuterTailHingeHighEndStopX',
-             alias='OuterTailHingeHighEndStopOppositeEndX'),
-        Cell('=OuterTailHingeHighEndStopY',
-             alias='OuterTailHingeHighEndStopOppositeEndY'),
-        Cell('=HighEndStopPlaneLength',
-             alias='OuterTailHingeHighEndStopOppositeEndZ'),
-    ],
-    [
-        Cell('Base'),
-        Cell('Placement')
-    ],
-    [
-        Cell('=create(<<vector>>; OuterTailHingeHighEndStopOppositeEndX; OuterTailHingeHighEndStopOppositeEndY; OuterTailHingeHighEndStopOppositeEndZ)',
-             alias='OuterTailHingeHighEndStopOppositeEndBase'),
-        Cell('=create(<<placement>>; OuterTailHingeHighEndStopOppositeEndBase; OuterTailHingeHighEndStopRotation)',
-             alias='OuterTailHingeHighEndStopOppositeEndPlacement')
-    ],
-    # Calculated
-    # ----------
-    [
-        Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('Furled High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
+             styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         Cell('TailFurlBase'),
-        Cell('TailFurlPlacement')
+        Cell('TailFurlPlacement'),
+        Cell('FurledHighEndStopTailAssemblyPlacement')
     ],
     [
         # center - rotation.multVec(center)
         Cell('=.OuterTailHingeBase - FurlRotation * .OuterTailHingeBase',
              alias='TailFurlBase'),
         Cell('=create(<<placement>>; TailFurlBase; FurlRotation)',
-             alias='TailFurlPlacement')
+             alias='TailFurlPlacement'),
+        Cell('=TailAssemblyPlacement * TailFurlPlacement * TailBoomVaneAssemblyParentPlacement',
+             alias='FurledHighEndStopTailAssemblyPlacement')
     ],
     [
-        Cell('TailAssemblyGlobalPlacement'),
-        Cell('TailBoomVaneAssemblyParentPlacement'),
-        Cell('FurledHighEndStopGlobalParentPlacement')
+        Cell('HighEndStopBoomDirectionVectorBase'),
+        Cell('HighEndStopYawBearingDirectionVector'),
     ],
     [
-        Cell('=TailAssemblyLinkPlacement * TailAssemblyPlacement',
-             alias='TailAssemblyGlobalPlacement'),
-        Cell('=TailPlacement * TailBoomVaneAssemblyPlacement',
-             alias='TailBoomVaneAssemblyParentPlacement'),
-        Cell('=TailAssemblyGlobalPlacement * TailFurlPlacement * TailBoomVaneAssemblyParentPlacement',
-             alias='FurledHighEndStopGlobalParentPlacement')
+        # + 1 in z to create a normalized vector in the direction of the boom.
+        Cell('=HighEndStopBase + create(<<vector>>; 0; 0; 1)',
+             alias='HighEndStopBoomDirectionVectorBase'),
+        # + 1 in y to create a normalized vector in the direction of the yaw bearing.
+        Cell('=HighEndStopBase + create(<<vector>>; 0; 1; 0)',
+             alias='HighEndStopYawBearingDirectionVector')
     ],
     [
-        Cell('OuterTailHingeHighEndStopFurledPlacement'),
-        Cell('OuterTailHingeHighEndStopOppositeEndFurledPlacement')
+        Cell('HighEndStopFurledTailAssemblyBase'),
+        Cell('HighEndStopBoomDirectionVectorFurledTailAssemblyBase'),
+        Cell('HighEndStopYawBearingDirectionVectorTailAssembly')
     ],
     [
-        Cell('=FurledHighEndStopGlobalParentPlacement * OuterTailHingeHighEndStopPlacement',
-             alias='OuterTailHingeHighEndStopFurledPlacement'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * OuterTailHingeHighEndStopOppositeEndPlacement',
-             alias='OuterTailHingeHighEndStopOppositeEndFurledPlacement')
+        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopBase',
+             alias='HighEndStopFurledTailAssemblyBase'),
+        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopBoomDirectionVectorBase',
+             alias='HighEndStopBoomDirectionVectorFurledTailAssemblyBase'),
+        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopYawBearingDirectionVector',
+             alias='HighEndStopYawBearingDirectionVectorTailAssembly')
     ],
     [
-        Cell('OuterTailHingeHighEndStopFurledBase'),
-        Cell('OuterTailHingeHighEndStopOppositeEndFurledBase')
+        # Calculate two vectors, Va and Vb, on the Furled High End Stop plane.
+        Cell('Va'), Cell('Vb')
     ],
     [
-        Cell('=OuterTailHingeHighEndStopFurledPlacement.Base',
-             alias='OuterTailHingeHighEndStopFurledBase'),
-        Cell('=OuterTailHingeHighEndStopOppositeEndFurledPlacement.Base',
-             alias='OuterTailHingeHighEndStopOppositeEndFurledBase')
+        Cell('=.HighEndStopBoomDirectionVectorFurledTailAssemblyBase - .HighEndStopFurledTailAssemblyBase',
+             alias='Va'),
+        Cell('=.HighEndStopYawBearingDirectionVectorTailAssembly - .HighEndStopFurledTailAssemblyBase',
+             alias='Vb')
+    ],
+    [
+        # Cross product Va and Vb to find vector perpendicular to the High End Stop plane, Vn.
+        # Since Va and Vb have length 1, then Vn will be normalized already.
+        # https://en.wikipedia.org/wiki/Cross_product
+        Cell('Vn'),
+        Cell('Va × Vb')
+    ],
+    [
+        Cell('=create(<<vector>>; .Va.y * .Vb.z - .Va.z * .Vb.y; .Va.z * .Vb.x - .Va.x * .Vb.z; .Va.x * .Vb.y - .Va.y * .Vb.x)',
+             alias='Vn'),
+        Cell('Cross Product', styles=[Style.ITALIC])
+    ],
+    [
+        #
+        # Find d (distance from origin) in the general equation of a plane:
+        #
+        #   ax + by + cz + d = 0
+        #
+        # See:
+        # https://en.wikipedia.org/wiki/Euclidean_planes_in_three-dimensional_space#Point%E2%80%93normal_form_and_general_form_of_the_equation_of_a_plane
+        #
+        # Normal vector times a point on the plane.
+        #
+        Cell('FurledHighEndStopPlaneDistance (d)')
+    ],
+    [
+        Cell('=.Vn * .HighEndStopFurledTailAssemblyBase',
+             alias='FurledHighEndStopPlaneDistance')
+    ],
+    [
+        Cell('AngleBetweenYAxisAndHighEndStop'),
+        Cell('TangentAngle')
+    ],
+    [
+        # From the dot product between vector Va and y-axis vector (0, 1, 0).
+        # https://en.wikipedia.org/wiki/Dot_product#Geometric_definition
+        Cell('=acos(.Va.y)',
+             alias='AngleBetweenYAxisAndHighEndStop'),
+        Cell('=360deg - AngleBetweenYAxisAndHighEndStop',
+             alias='TangentAngle')
+    ],
+    #
+    # Find point on yaw bearing pipe which is tangent to the furled high end end stop plane.
+    #
+    # Equation of yaw bearing pipe cylinder:
+    # x^2 + y^2 = r^2
+    #
+    # Parametric equations for yaw bearing pipe cylinder:
+    # x = r * cos(θ)
+    # y = r * sin(θ)
+    #
+    # Plug in (r *cos(θ)) for x and (r * sin(θ)) for y into equation of plane:
+    # a * x + b * y + c * z = d and solve in terms of z
+    #
+    # https://www.wolframalpha.com/input?i=a+*+%28r+*+cos%28%CE%B8%29%29+%2B+b+*+%28r+*+sin%28%CE%B8%29%29+%2B+c+*+z+%3D+d+solve+for+z
+    #
+    # z = (d - a r cos(θ) - b r sin(θ)) / c
+    #
+    [
+        Cell('TangentAngleZ'),
+        Cell('TangentAngleX'),
+        Cell('TangentAngleY'),
+    ],
+    [
+        Cell('=(FurledHighEndStopPlaneDistance - Vn.x * YawPipeRadius * cos(TangentAngle) - Vn.y * YawPipeRadius * sin(TangentAngle)) / Vn.z',
+            alias='TangentAngleZ'),
+        #
+        # Solve for x, given z.
+        #
+        # x = (d - c z - b r sin(θ)) / a
+        #
+        # https://www.wolframalpha.com/input?i=a+*+x+%2B+b+*+%28r+*+sin%28%CE%B8%29%29+%2B+c+*+z+%3D+d+solve+for+x
+        #
+        Cell('=(FurledHighEndStopPlaneDistance - Vn.z * TangentAngleZ - Vn.y * YawPipeRadius * sin(TangentAngle)) / Vn.x',
+             alias='TangentAngleX'),
+        #
+        # Solve for y, given z and x.
+        #
+        # y = (d - a x - c z) / b
+        #
+        # https://www.wolframalpha.com/input?i=a+*+x+%2B+b+*+y+%2B+c+*+z+%3D+d+solve+for+y
+        #
+        Cell('=(FurledHighEndStopPlaneDistance - Vn.x * TangentAngleX - Vn.z * TangentAngleZ) / Vn.y',
+             alias='TangentAngleY')
+    ],
+    [
+        Cell('YawBearingHighEndStopTangentPoint')
+    ],
+    [
+        Cell('=create(<<vector>>; TangentAngleX; TangentAngleY; TangentAngleZ)',
+             alias='YawBearingHighEndStopTangentPoint')
     ],
     [
         Cell('References', styles=[Style.ITALIC, Style.UNDERLINE])
@@ -867,43 +931,30 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('https://math.stackexchange.com/questions/404440/what-is-the-equation-for-a-3d-line/404446#404446')
     ],
     [
-        Cell('Zgiven'),
         # T is a reserved alias since FreeCAD 20.
-        Cell('TT'),
-        Cell('HighEndStopPointWhereZEqualsZgiven'),
-        Cell('HighEndStopWidth', styles=[Style.BOLD, Style.UNDERLINE])
+        Cell('T_tangent'),
+        Cell('HighEndStopPointWhereXEqualsTangent'),
     ],
     [
-        # Center of Yaw Bearing
-        Cell('=YawBearingPlacement.Base.z', alias='Zgiven'),
-        # TT = Zgiven - Az / (Bz - Az)
-        # See above "Finding a point on a 3d line" answer.
-        Cell('=(Zgiven - .OuterTailHingeHighEndStopFurledBase.z) / (.OuterTailHingeHighEndStopOppositeEndFurledBase.z - .OuterTailHingeHighEndStopFurledBase.z)',
-             alias='TT'),
-        Cell('=.OuterTailHingeHighEndStopFurledBase + TT * (.OuterTailHingeHighEndStopOppositeEndFurledBase - .OuterTailHingeHighEndStopFurledBase)',
-             alias='HighEndStopPointWhereZEqualsZgiven'),
-        Cell('=abs(.HighEndStopPointWhereZEqualsZgiven.x) - YawPipeRadius + YawBearingPlacement.Base.x',
-             alias='HighEndStopWidth')
-    ],
-    # SafetyCatch
-    # -----------
-    [
-        Cell('SafetyCatch', styles=[Style.UNDERLINE, Style.BOLD])
+        Cell('=(TangentAngleX - .HighEndStopFurledTailAssemblyBase.x) / .Va.x',
+             alias='T_tangent'),
+        Cell('=.HighEndStopFurledTailAssemblyBase + T_tangent * .Va',
+             alias='HighEndStopPointWhereXEqualsTangent')
     ],
     [
-        Cell('SafetyCatchWidth'),
-        Cell('=YawPipeRadius * 1.67',
-             alias='SafetyCatchWidth')
+        Cell('HighEndStop', styles=[Style.BOLD, Style.UNDERLINE])
     ],
     [
-        Cell('SafetyCatchLength'),
-        Cell('=YawPipeRadius * 1.33',
-             alias='SafetyCatchLength'),
-        Cell(),
-        # This note applies to entire right column, used to calculate LowerPointWhereZEqualsZgiven.
-        Cell('Used in High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
-             styles=[Style.ITALIC])
+        Cell('Width', styles=[Style.UNDERLINE]), Cell('Length', styles=[Style.UNDERLINE])
     ],
+    [
+        Cell('=(.YawBearingHighEndStopTangentPoint - .HighEndStopPointWhereXEqualsTangent).Length',
+             alias='HighEndStopWidth'),
+        # Make high end stop extend YawPipeRadius * 2 in the X-direction.
+        Cell('=(YawPipeRadius * 2 - .HighEndStopFurledTailAssemblyBase.x) / .Va.x',
+             alias='HighEndStopLength'),
+    ],
+    #
     # ASCII drawings of high end stop planes for understanding below aliases (e.g. UpperBottomLeftCorner).
     #
     # Upper plane farthest from ground, seen from top view of turbine.
@@ -939,7 +990,7 @@ high_end_stop_cells: List[List[Cell]] = [
     #          │         │          |
     #          │         │          |
     #          │         │          |
-    #     Left │         │ Right    |  HighEndStopPlaneLength
+    #     Left │         │ Right    |  HighEndStopLength
     #          │         │          |
     #          │         │          |
     #          │         │          |
@@ -948,265 +999,77 @@ high_end_stop_cells: List[List[Cell]] = [
     #            Bottom
     #
     # 2D ASCII Drawing Source: https://asciiflow.com/legacy/
+    #
     [
         # of High End Stop
         Cell('UpperBottomLeftCorner'),
         Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
-             alias='UpperBottomLeftCorner'),
-        Cell('LowerBottomLeftCorner'),
-        Cell('=create(<<vector>>; FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
-             alias='LowerBottomLeftCorner')
+             alias='UpperBottomLeftCorner')
     ],
     [
-        Cell('UpperBottomLeftCornerGlobal'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * UpperBottomLeftCorner',
-             alias='UpperBottomLeftCornerGlobal'),
-        Cell('UpperBottomLeftCornerGlobal'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * LowerBottomLeftCorner',
-             alias='LowerBottomLeftCornerGlobal')
+        Cell('UpperBottomLeftCornerTailAssembly'),
+        Cell('=FurledHighEndStopTailAssemblyPlacement * UpperBottomLeftCorner',
+             alias='UpperBottomLeftCornerTailAssembly')
     ],
     [
         # of High End Stop
         Cell('UpperTopLeftCorner'),
-        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopPlaneLength)',
-             alias='UpperTopLeftCorner'),
-        Cell('LowerTopLeftCorner'),
-        Cell('=create(<<vector>>; FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopPlaneLength)',
-             alias='LowerTopLeftCorner')
+        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopLength)',
+             alias='UpperTopLeftCorner')
     ],
     [
-        Cell('UpperTopLeftCornerGlobal'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * UpperTopLeftCorner',
-             alias='UpperTopLeftCornerGlobal'),
-        Cell('UpperTopLeftCornerGlobal'),
-        Cell('=FurledHighEndStopGlobalParentPlacement * LowerTopLeftCorner',
-             alias='LowerTopLeftCornerGlobal')
+        Cell('UpperTopLeftCornerTailAssembly'),
+        Cell('=FurledHighEndStopTailAssemblyPlacement * UpperTopLeftCorner',
+             alias='UpperTopLeftCornerTailAssembly')
+    ],
+    # SafetyCatch
+    # -----------
+    # Depedent upon high end stop.
+    #
+    [
+        Cell('SafetyCatch', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        # Zgiven
+        Cell('SafetyCatchAngle'),
+        Cell('SafetyCatchWidth'),
+        Cell('SafetyCatchLength')
+    ],
+    [
+        Cell('=AngleBetweenYAxisAndHighEndStop - 90deg',
+             alias='SafetyCatchAngle'),
+        Cell('=YawPipeRadius * 1.67',
+             alias='SafetyCatchWidth'),
+        Cell('=HighEndStopWidth * 0.6',
+             alias='SafetyCatchLength')
+    ],
+    [
+        # Xgiven
         # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
-        Cell('Zupper'),
-        Cell('=YawBearingPlacement.Base.z + (SafetyCatchWidth / 2)',
-             alias='Zupper')
+        Cell('Xupper'),
+        Cell('=SafetyCatchWidth / 2',
+             alias='Xupper')
     ],
     [
         # T
         # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
         Cell('Tupper'),
-        Cell('=(Zupper - .UpperBottomLeftCornerGlobal.z) / (.UpperTopLeftCornerGlobal.z - .UpperBottomLeftCornerGlobal.z)',
-             alias='Tupper'),
-        Cell('Tlower'),
-        Cell('=(Zgiven - .LowerBottomLeftCornerGlobal.z) / (.LowerTopLeftCornerGlobal.z - .LowerBottomLeftCornerGlobal.z)',
-             alias='Tlower')
+        Cell('=(Xupper - .UpperBottomLeftCornerTailAssembly.x) / (.UpperTopLeftCornerTailAssembly.x - .UpperBottomLeftCornerTailAssembly.x)',
+             alias='Tupper')
     ],
     [
         Cell('SafetyCatchPosition'),
-        Cell('=.UpperBottomLeftCornerGlobal + Tupper * (UpperTopLeftCornerGlobal - .UpperBottomLeftCornerGlobal)',
-             alias='SafetyCatchPosition'),
-        Cell('LowerPointWhereZEqualsZgiven'),
-        Cell('=.LowerBottomLeftCornerGlobal + Tlower * (.LowerTopLeftCornerGlobal - .LowerBottomLeftCornerGlobal)',
-             alias='LowerPointWhereZEqualsZgiven')
+        Cell('=.UpperBottomLeftCornerTailAssembly + Tupper * (.UpperTopLeftCornerTailAssembly - .UpperBottomLeftCornerTailAssembly)',
+             alias='SafetyCatchPosition')
     ],
     [
-        Cell('SafetyCatchYPadding'),
-        Cell('12', alias='SafetyCatchYPadding')
+        Cell('SafetyCatchZPadding'),
+        Cell('12', alias='SafetyCatchZPadding')
     ],
     [
-        # Y position of the safety catch
+        # Z position of the safety catch
         # Plus padding for a little extra clearance.
-        Cell('SafetyCatchY'),
-        Cell('=.SafetyCatchPosition.y + SafetyCatchYPadding',
-             alias='SafetyCatchY')
-    ],
-    # High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection
-    # ------------------------------------------------------------------
-    # Calculate an ellipse to make the High End Stop fit the outer pipe of the Yaw Bearing.
-    [
-        Cell('High End Stop Plane, Yaw Bearing Cylinder, Ellipse of Intersection',
-             styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('InverseFurledHighEndStopGlobalParentPlacement')
-    ],
-    [
-        Cell('=minvert(.FurledHighEndStopGlobalParentPlacement)',
-             alias='InverseFurledHighEndStopGlobalParentPlacement')
-    ],
-    [
-        # Calculate two vectors, Va and Vb, on the High End Stop plane.
-        Cell('Va'), Cell('Vb')
-    ],
-    [
-        Cell('=OuterTailHingeHighEndStopOppositeEndFurledBase - OuterTailHingeHighEndStopFurledBase',
-             alias='Va'),
-        Cell('=LowerBottomLeftCornerGlobal - OuterTailHingeHighEndStopFurledBase',
-             alias='Vb')
-    ],
-    [
-        # Cross product Va and Vb to find vector perpendicular to the High End Stop plane, Vc.
-        # https://en.wikipedia.org/wiki/Cross_product
-        Cell('Vc'),
-        Cell('Va × Vb')
-    ],
-    [
-        Cell('=create(<<vector>>; .Va.y * .Vb.z - .Va.z * .Vb.y; .Va.z * .Vb.x - .Va.x * .Vb.z; .Va.x * .Vb.y - .Va.y * .Vb.x)',
-             alias='Vc'),
-        Cell('Cross Product', styles=[Style.ITALIC])
-    ],
-    [
-        # Normalize Vc from step above.
-        Cell('Vn'),
-        Cell('Normalize Vc')
-    ],
-    [
-        Cell('=Vc / .Vc.Length', alias='Vn')
-    ],
-    #
-    # TODO: The following calculations can be relative to Tail_Assembly document
-    #       instead of global coordinates.
-    #       This would avoid needing (x-h)^2 and (z-k)^2 to describe yaw bearing cylinder.
-    #
-    # Relate the equations for a cylinder and plane together,
-    # to find the ellipse of intersection.
-    #
-    # Cylinder Equation (where height is in Y-direction):
-    #
-    #   (x-h)^2 + (z-k)^2 - r^2 = 0
-    #
-    #   Where (h, k) is the center of the cylinder,
-    #   and r is the radius.
-    #
-    # Plane Equation:
-    #
-    #   m * (x - a) + n * (y - b) + o * (z - c) = 0
-    #
-    #   Where (m, n, o) is a normal vector to the plane (i.e. perpendicular),
-    #   and (a, b, c) is a point on the plane.
-    #
-    # Height of Yaw Bearing cylinder is in Y-direction, so we solve for y.
-    #
-    # Using WolframAlpha:
-    # https://www.wolframalpha.com/input/?i=m+*+%28x+-+a%29+%2B+n+*+%28y+-+b%29+%2B+o+*+%28z+-+c%29+%3D+%28x-h%29%5E2+%2B+%28z-k%29%5E2+-+r%5E2+in+terms+of+y
-    #
-    # y = (a m + b n + c o + h^2 - 2 h x + k^2 - 2 k z - m x - o z - r^2 + x^2 + z^2) / n and n!=0
-    #
-    # Next, substitute values for x and z to create a function of v,
-    # where v is the angle (in degrees) of a cross-section of the cylinder.
-    #
-    # See "Curve of Intersection - A Cylinder and a Plane" YouTube video for explanation,
-    #     https://www.youtube.com/watch?v=ds3MrMUz3Z0
-    #
-    # Using WolframAlpha
-    # https://www.wolframalpha.com/input/?i=%28a+m+%2B+b+n+%2B+c+o+%2B+h%5E2+-+2+h+x+%2B+k%5E2+-+2+k+z+-+m+x+-+o+z+-+r%5E2+%2B+x%5E2+%2B+z%5E2%29+%2F+n+where+x+%3D+r+cos%28v%29+%2B+h+and+z+%3D+r+sin%28v%29+%2B+k
-    #
-    # y = (a m + b n + c o - h m - k o - m r cos(v) - o r sin(v)) / n
-    #
-    #   Used in calculate_y_of_ellipse function above.
-    #
-    # Setup short aliases for use in equations.
-    [
-        Cell('(r)adius'),
-    ],
-    [
-        Cell('=YawPipeRadius', alias='r')
-    ],
-    [
-        # Center of Cylinder (h, k)
-        # h and k are reserved aliases.
-        Cell('Cx'), Cell('Cz'), Cell('(C)enter')
-    ],
-    [
-        Cell('=YawBearingPlacement.Base.x', alias='Cx'),
-        Cell('=YawBearingPlacement.Base.z', alias='Cz')
-    ],
-    [
-        Cell('(P)oint, (u)pper plane'),
-        Cell('(P)oint, (l)ower plane')
-    ],
-    [
-        Cell('Pu'),
-        Cell('Pl')
-    ],
-    [
-        Cell('=UpperBottomLeftCornerGlobal', alias='Pu'),
-        Cell('=LowerBottomLeftCornerGlobal', alias='Pl')
-    ],
-    [
-        # Y-value for Upper vertex of ellipse.
-        Cell('Yu (upper)'),
-        # Y-value for Lower vertex of ellipse.
-        Cell('Yl (lower)')
-    ],
-    [
-        calculate_y_of_ellipse(
-            ('.Pu.x', '.Pu.y', '.Pu.z'),
-            ('.Vn.x', '.Vn.y', '.Vn.z'),
-            ('Cx', 'Cz'),
-            'r',
-            '90',
-            'Yu'),
-        calculate_y_of_ellipse(
-            ('.Pl.x', '.Pl.y', '.Pl.z'),
-            ('.Vn.x', '.Vn.y', '.Vn.z'),
-            ('Cx', 'Cz'),
-            'r',
-            '-90',
-            'Yl')
-    ],
-    [
-        Cell('3 Points of Ellipse', styles=[Style.ITALIC])
-    ],
-    [
-        Cell('EllipseUpperVertexGlobal'),
-        Cell('EllipseLowerVertexGlobal'),
-        Cell('EllipseLowerCoVertexGlobal')
-    ],
-    [
-        Cell('=create(<<vector>>; Cx; Yu; Cz + r)',
-             alias='EllipseUpperVertexGlobal'),
-        Cell('=create(<<vector>>; Cx; Yl; Cz - r)',
-             alias='EllipseLowerVertexGlobal'),
-        # Point where High End Stop touches Yaw Bearing.
-        Cell('=LowerPointWhereZEqualsZgiven',
-             alias='EllipseLowerCoVertexGlobal')
-    ],
-    [
-        # Convert to "local" Tail_Stop_HighEnd coordinate system.
-        # For use in Sketcher constraints.
-        # The lower and upper vertexes (1 and 2) form the major axis.
-        # The lower co-vertex (3) forms the minor axis.
-        # 1, 2, and 3 numbering correspond to the following description:
-        # https://wiki.freecadweb.org/Sketcher_CreateEllipseBy3Points
-        #
-        # Vertexes denoted by "x".
-        #
-        #          ^                         , - ~ ~~~ ~ - ,
-        #          |                     , '                 ' ,
-        #          |                   ,                         ,
-        #          |                  ,                           ,
-        #          |    Lower Vertex ,                             , Upper Vertex
-        #  Y-axis  |            <- - x - - - - - - - - - - - - - - x - ->
-        #          |                 ,         Major Axis          ,
-        #          |                  ,                           ,
-        #          |                   ,                         ,
-        #          |                     ,                    , '
-        #          |                       ' - , _ _x_ _ ,  '
-        #          |
-        #          |                          Lower Co-vertex
-        #          |
-        #          +-------------------------------------------------------------->
-        #                                        X-axis
-        #
-        Cell('EllipseUpperVertexLocal'),
-        Cell('EllipseLowerVertexLocal'),
-        Cell('EllipseLowerCoVertexLocal')
-    ],
-    [
-        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseUpperVertexGlobal - OuterTailHingeHighEndStopBase',
-             alias='EllipseUpperVertexLocal'),
-        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerVertexGlobal - OuterTailHingeHighEndStopBase',
-             alias='EllipseLowerVertexLocal'),
-        Cell('=InverseFurledHighEndStopGlobalParentPlacement * EllipseLowerCoVertexGlobal - OuterTailHingeHighEndStopBase',
-             alias='EllipseLowerCoVertexLocal')
+        Cell('SafetyCatchZ'),
+        Cell('=.SafetyCatchPosition.z + SafetyCatchZPadding',
+             alias='SafetyCatchZ')
     ]
 ]

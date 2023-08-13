@@ -34,8 +34,8 @@ def create_spreadsheet_document(name: str,
         'Alternator': alternator_cells,
         'YawBearing': yaw_bearing_cells,
         'Tail': tail_cells,
-        'WindTurbine': wind_turbine_cells,
-        'HighEndStop': high_end_stop_cells
+        'HighEndStop': high_end_stop_cells,
+        'WindTurbine': wind_turbine_cells
     }
     return create_document(name, cells_by_spreadsheet_name)
 
