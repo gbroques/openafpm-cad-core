@@ -465,22 +465,22 @@ tail_cells: List[List[Cell]] = [
         Cell('TailBoomTriangularBraceLength'), Cell('=BoomLength / 3',
                                                     alias='TailBoomTriangularBraceLength')
     ],
-    # Outer Tail Hinge Low End Stop
-    # -----------------------------
+    # Low End Stop
+    # ------------
     # Document: Tail_Hinge_Outer, Part: Stop_LowEnd
     # Document: Tail_Stop_LowEnd, Part: Tail_Stop_LowEnd
     [
-        Cell('Outer Tail Hinge Low End Stop',
+        Cell('Low End Stop',
              styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
         # Relative to Tail_Hinge_Outer
-        Cell('OuterTailHingeLowEndStopZ'), Cell('=TailBoomTriangularBraceWidth - FlatMetalThickness',
-                                                alias='OuterTailHingeLowEndStopZ')
+        Cell('LowEndStopZ'), Cell('=TailBoomTriangularBraceWidth - FlatMetalThickness',
+                                  alias='LowEndStopZ')
     ],
     [
         Cell('LowEndStopBase'),
-        Cell('=create(<<vector>>; 0; 0; OuterTailHingeLowEndStopZ)',
+        Cell('=create(<<vector>>; 0; 0; LowEndStopZ)',
              alias='LowEndStopBase')
     ],
     # Tail Angle
