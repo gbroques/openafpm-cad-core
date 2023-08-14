@@ -51,7 +51,7 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('YawBearing', styles=[Style.UNDERLINE])
-        # ------------------------------------
+        # ------------------------------------------
     ],
     [
         Cell('CanSideExtendToMiddleOfYawBearingPipe')
@@ -204,16 +204,20 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='LowEndStopTailAssemblyBase'),
     ],
     [
+        #
         # General approach:
         # Define a series of transformations to convert the problem from 3D into 2D
         # where an external point forms tangent lines to a circle.
+        #
         Cell('AlignLowEndStopWithXAxis'),
     ],
     [
         Cell('=create(<<placement>>; create(<<vector>>); create(<<vector>>; 0; 0; 1); TailAssemblyAngle)',
              alias='AlignLowEndStopWithXAxis')
     ],
+    #
     # Define two points on low end stop plane to get two vectors on the plane.
+    #
     [
         # Relative to Tail_Stop_LowEnd document.
         Cell('LowEndStopPlanePoint1'),
@@ -331,8 +335,10 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=create(<<vector>>; -YawPipeRadius; 0; PiAngleZ)',
              alias='PiAnglePoint')
     ],
+    #
     # Subtract above two vectors to find length of major axis length for the ellipse
     # formed by the intersection of the yaw bearing pipe and low end stop plane.
+    #
     [
         Cell('MajorAxisLength'),
         Cell('XDownScaleFactor')
@@ -343,8 +349,10 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=YawPipeRadius / MajorAxisLength',
              alias='XDownScaleFactor')
     ],
+    #
     # Scale down x from transformed low end stop point.
     # This forms the external point tangent to a circle in 2d.
+    #
     [
         Cell('ScaledDownLowEndStopX')
     ],
@@ -352,6 +360,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=.LowEndStopTailAssemblyBaseAxisAligned.x * XDownScaleFactor',
              alias='ScaledDownLowEndStopX')
     ],
+    #
     # Use equation of tangent line to circle and solve in terms of m (slope):
     # https://www.wolframalpha.com/input?i=0+%3D+mx+%2B+r+*+sqrt%281+%2B+m%5E2%29+solve+for+m
     # Pick whichever of the two possible equations yield a positive slope.
@@ -369,6 +378,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=YawPipeRadius / sqrt(-(YawPipeRadius^2) + ScaledDownLowEndStopX^2)',
              alias='SlopeOfTangentLine')
     ],
+    #
     # Substitute equation of tangent line into equation of circle to solve for x.
     # Use equation of tangent line with negative y-intercept:
     # https://www.wolframalpha.com/input?i=x%5E2+%2B+%28mx+-+r+*+sqrt%281+%2B+m%5E2%29%29%5E2+%3D+r%5E2+solve+for+x
@@ -385,6 +395,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=SlopeOfTangentLine * TangentPointX2d - YawPipeRadius * sqrt(1 + SlopeOfTangentLine^2)',
              alias='TangentPointY2d')
     ],
+    #
     # Scale x back up before getting 3d tangency point.
     # Find z-coordinate of 3d tangency point by plugging in x value into equation of plane
     # with zero y-component:
@@ -444,12 +455,14 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=create(<<placement>>; LowEndStopBase; create(<<rotation>>; create(<<vector>>; 0; 0; -1); LowEndStopAngle))',
              alias='LowEndStopPlacement'),
+        #
         # For T Shape, scale low end stop length by 1.15 for ALWAYS.
         # For H & Star Shape, scale low end stop length by 1.1 ONLY if side piece doesn't extend to middle of yaw bearing pipe.
         # This factor can't be too big otherwise the low end stop may hit the side piece that stiffens
-        # the top piece for H & Star shape instead of making contact with the yaw bearing pipe.
+        # the top piece instead of making contact with the yaw bearing pipe.
         # Increasing MetalLengthL to 90 and VerticalPlaneAngle to 20 for Star Shape from default values
         # results in CanSideExtendToMiddleOfYawBearingPipe evaluating to True.
+        #
         Cell('=RotorDiskRadius < 187.5 ? 1.15 : CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1',
              alias='LowEndStopLengthScaleFactor'),
         Cell('=TangentVector.Length * LowEndStopLengthScaleFactor',
