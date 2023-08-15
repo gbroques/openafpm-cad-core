@@ -781,7 +781,7 @@ high_end_stop_cells: List[List[Cell]] = [
     # Values correspond to default values for a T Shaped wind turbine.
     #
     # The three points in the plot are:
-    #   1. HighEndStopFurledTailAssemblyBase
+    #   1. FurledHighEndStopTailAssemblyPlacement.Base
     #   2. YawBearingHighEndStopTangentPoint
     #   3. HighEndStopPointWhereXEqualsTangent
     #
@@ -792,7 +792,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         Cell('TailFurlBase'),
         Cell('TailFurlPlacement'),
-        Cell('FurledHighEndStopTailAssemblyPlacement')
+        Cell('FurledHighEndStopTailAssemblyPlacement'),
     ],
     [
         # center - rotation.multVec(center)
@@ -800,55 +800,25 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='TailFurlBase'),
         Cell('=create(<<placement>>; TailFurlBase; FurlRotation)',
              alias='TailFurlPlacement'),
-        Cell('=TailAssemblyPlacement * TailFurlPlacement * TailBoomVaneAssemblyParentPlacement',
-             alias='FurledHighEndStopTailAssemblyPlacement')
+        # Transform vectors in the Tail_Stop_HighEnd document to furled position in Tail_Assembly document.
+        Cell('=.TailAssemblyPlacement * .TailFurlPlacement * .TailBoomVaneAssemblyParentPlacement * .HighEndStopPlacement',
+             alias='FurledHighEndStopTailAssemblyPlacement'),
     ],
     [
-        Cell('HighEndStopBoomDirectionVectorBase'),
+        # Define two vectors, HighEndStopBoomDirectionVector and HighEndStopYawBearingDirectionVector, on the Furled High End Stop plane.
+        Cell('HighEndStopBoomDirectionVector'),
         Cell('HighEndStopYawBearingDirectionVector'),
-    ],
-    [
-        # + 1 in z to create a normalized vector in the direction of the boom.
-        Cell('=HighEndStopBase + create(<<vector>>; 0; 0; 1)',
-             alias='HighEndStopBoomDirectionVectorBase'),
-        # + 1 in y to create a normalized vector in the direction of the yaw bearing.
-        Cell('=HighEndStopBase + create(<<vector>>; 0; 1; 0)',
-             alias='HighEndStopYawBearingDirectionVector')
-    ],
-    [
-        Cell('HighEndStopFurledTailAssemblyBase'),
-        Cell('HighEndStopBoomDirectionVectorFurledTailAssemblyBase'),
-        Cell('HighEndStopYawBearingDirectionVectorTailAssembly')
-    ],
-    [
-        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopBase',
-             alias='HighEndStopFurledTailAssemblyBase'),
-        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopBoomDirectionVectorBase',
-             alias='HighEndStopBoomDirectionVectorFurledTailAssemblyBase'),
-        Cell('=FurledHighEndStopTailAssemblyPlacement * HighEndStopYawBearingDirectionVector',
-             alias='HighEndStopYawBearingDirectionVectorTailAssembly')
-    ],
-    [
-        # Calculate two vectors, Va and Vb, on the Furled High End Stop plane.
-        Cell('Va'), Cell('Vb')
-    ],
-    [
-        Cell('=.HighEndStopBoomDirectionVectorFurledTailAssemblyBase - .HighEndStopFurledTailAssemblyBase',
-             alias='Va'),
-        Cell('=.HighEndStopYawBearingDirectionVectorTailAssembly - .HighEndStopFurledTailAssemblyBase',
-             alias='Vb')
-    ],
-    [
-        # Cross product Va and Vb to find vector perpendicular to the High End Stop plane, Vn.
-        # Since Va and Vb have length 1, then Vn will be normalized already.
-        # https://en.wikipedia.org/wiki/Cross_product
+        # Normal vector to Furled High End Stop plane.
         Cell('Vn'),
-        Cell('Va × Vb')
     ],
     [
-        Cell('=create(<<vector>>; .Va.y * .Vb.z - .Va.z * .Vb.y; .Va.z * .Vb.x - .Va.x * .Vb.z; .Va.x * .Vb.y - .Va.y * .Vb.x)',
-             alias='Vn'),
-        Cell('Cross Product', styles=[Style.ITALIC])
+        # The following unit vectors are local to the Tail_Stop_HighEnd document.
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 1; 0; 0)',
+             alias='HighEndStopBoomDirectionVector'),
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 0; 1; 0)',
+             alias='HighEndStopYawBearingDirectionVector'),
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 0; 0; 1)',
+             alias='Vn')
     ],
     [
         #
@@ -864,7 +834,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('FurledHighEndStopPlaneDistance (d)')
     ],
     [
-        Cell('=.Vn * .HighEndStopFurledTailAssemblyBase',
+        Cell('=.Vn * .FurledHighEndStopTailAssemblyPlacement.Base',
              alias='FurledHighEndStopPlaneDistance')
     ],
     [
@@ -872,9 +842,9 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('TangentAngle')
     ],
     [
-        # From the dot product between vector Va and y-axis vector (0, 1, 0).
+        # From the dot product between vector HighEndStopBoomDirectionVector and y-axis vector (0, 1, 0).
         # https://en.wikipedia.org/wiki/Dot_product#Geometric_definition
-        Cell('=acos(.Va.y)',
+        Cell('=acos(.HighEndStopBoomDirectionVector.y)',
              alias='AngleBetweenYAxisAndHighEndStop'),
         Cell('=360deg - AngleBetweenYAxisAndHighEndStop',
              alias='TangentAngle')
@@ -949,9 +919,9 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('HighEndStopPointWhereXEqualsTangent'),
     ],
     [
-        Cell('=(TangentAngleX - .HighEndStopFurledTailAssemblyBase.x) / .Va.x',
+        Cell('=(TangentAngleX - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
              alias='T_tangent'),
-        Cell('=.HighEndStopFurledTailAssemblyBase + T_tangent * .Va',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Base + T_tangent * .HighEndStopBoomDirectionVector',
              alias='HighEndStopPointWhereXEqualsTangent')
     ],
     [
@@ -964,7 +934,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('=(.YawBearingHighEndStopTangentPoint - .HighEndStopPointWhereXEqualsTangent).Length',
              alias='HighEndStopWidth'),
         # Make high end stop extend YawPipeRadius * 2 in the X-direction.
-        Cell('=(YawPipeRadius * 2 - .HighEndStopFurledTailAssemblyBase.x) / .Va.x',
+        Cell('=(YawPipeRadius * 2 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
              alias='HighEndStopLength'),
     ],
     #
@@ -1016,24 +986,8 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         # of High End Stop
         Cell('UpperBottomLeftCorner'),
-        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; 0)',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement * create(<<vector>>; 0; 0; FlatMetalThickness) + .HighEndStopYawBearingDirectionVector * HighEndStopWidth',
              alias='UpperBottomLeftCorner')
-    ],
-    [
-        Cell('UpperBottomLeftCornerTailAssembly'),
-        Cell('=FurledHighEndStopTailAssemblyPlacement * UpperBottomLeftCorner',
-             alias='UpperBottomLeftCornerTailAssembly')
-    ],
-    [
-        # of High End Stop
-        Cell('UpperTopLeftCorner'),
-        Cell('=create(<<vector>>; -FlatMetalThickness / 2; BoomPipeRadius + HighEndStopWidth; HighEndStopLength)',
-             alias='UpperTopLeftCorner')
-    ],
-    [
-        Cell('UpperTopLeftCornerTailAssembly'),
-        Cell('=FurledHighEndStopTailAssemblyPlacement * UpperTopLeftCorner',
-             alias='UpperTopLeftCornerTailAssembly')
     ],
     # SafetyCatch
     # -----------
@@ -1066,12 +1020,12 @@ high_end_stop_cells: List[List[Cell]] = [
         # T
         # see https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154
         Cell('Tupper'),
-        Cell('=(Xupper - .UpperBottomLeftCornerTailAssembly.x) / (.UpperTopLeftCornerTailAssembly.x - .UpperBottomLeftCornerTailAssembly.x)',
+        Cell('=(Xupper - .UpperBottomLeftCorner.x) / .HighEndStopBoomDirectionVector.x',
              alias='Tupper')
     ],
     [
         Cell('SafetyCatchPosition'),
-        Cell('=.UpperBottomLeftCornerTailAssembly + Tupper * (.UpperTopLeftCornerTailAssembly - .UpperBottomLeftCornerTailAssembly)',
+        Cell('=.UpperBottomLeftCorner + Tupper * .HighEndStopBoomDirectionVector',
              alias='SafetyCatchPosition')
     ],
     [
