@@ -1,5 +1,6 @@
 from typing import List
 
+from .create_placement_cells import create_placement_cells
 from .pipe_size import PipeSize
 from .spreadsheet import Alignment, Cell, Style
 
@@ -433,12 +434,12 @@ tail_cells: List[List[Cell]] = [
                           alias='ZZZ')
     ],
     [
-        Cell('OuterTailHingeX'), Cell('=XXX + TailHingePipeX',
-                                      alias='OuterTailHingeX')
+        Cell('OuterTailHingeXPosition'), Cell('=XXX + TailHingePipeX',
+                                      alias='OuterTailHingeXPosition')
     ],
     [
-        Cell('OuterTailHingeZ'), Cell('=ZZZ + TailHingePipeZ',
-                                      alias='OuterTailHingeZ')
+        Cell('OuterTailHingeZPosition'), Cell('=ZZZ + TailHingePipeZ',
+                                      alias='OuterTailHingeZPosition')
     ],
     # Tail Boom Triangular Brace
     # --------------------------
@@ -465,24 +466,6 @@ tail_cells: List[List[Cell]] = [
         Cell('TailBoomTriangularBraceLength'), Cell('=BoomLength / 3',
                                                     alias='TailBoomTriangularBraceLength')
     ],
-    # Low End Stop
-    # ------------
-    # Document: Tail_Hinge_Outer, Part: Stop_LowEnd
-    # Document: Tail_Stop_LowEnd, Part: Tail_Stop_LowEnd
-    [
-        Cell('Low End Stop',
-             styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        # Relative to Tail_Hinge_Outer
-        Cell('LowEndStopZ'), Cell('=TailBoomTriangularBraceWidth - FlatMetalThickness',
-                                  alias='LowEndStopZ')
-    ],
-    [
-        Cell('LowEndStopBase'),
-        Cell('=create(<<vector>>; 0; 0; LowEndStopZ)',
-             alias='LowEndStopBase')
-    ],
     # Tail Angle
     # ----------
     [
@@ -506,7 +489,7 @@ tail_cells: List[List[Cell]] = [
                                   alias='TailZOffset')
     ],
     [
-        Cell('NonRotatedTailX'), Cell('=TailXInitial + OuterTailHingeX',
+        Cell('NonRotatedTailX'), Cell('=TailXInitial + OuterTailHingeXPosition',
                                       alias='NonRotatedTailX')
     ],
     [
@@ -514,21 +497,21 @@ tail_cells: List[List[Cell]] = [
                                                         alias='OuterTailHingeTruncatedHypotenuse')
     ],
     [
-        Cell('OuterTailHingeXOffset'),
+        Cell('OuterTailHingeXPositionOffset'),
         Cell('=cos(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
-             alias='OuterTailHingeXOffset')
+             alias='OuterTailHingeXPositionOffset')
     ],
     [
         Cell('OuterTailHingeNegativeXOffset'), Cell('=BoomPipeDiameter / tan(90 - VerticalPlaneAngle)',
                                                     alias='OuterTailHingeNegativeXOffset')
     ],
     [
-        Cell('NonRotatedTailZ'), Cell('=OuterTailHingeZ - BoomPipeRadius + TailZOffset',
+        Cell('NonRotatedTailZ'), Cell('=OuterTailHingeZPosition - BoomPipeRadius + TailZOffset',
                                       alias='NonRotatedTailZ')
     ],
     [
-        Cell('OuterTailHingeZOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
-                                            alias='OuterTailHingeZOffset')
+        Cell('OuterTailHingeZPositionOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
+                                            alias='OuterTailHingeZPositionOffset')
     ],
     [
         # Tail Position Before Rotation
@@ -544,11 +527,11 @@ tail_cells: List[List[Cell]] = [
         Cell('Vector')
     ],
     [
-        Cell('=NonRotatedTailX + OuterTailHingeXOffset - OuterTailHingeNegativeXOffset',
+        Cell('=NonRotatedTailX + OuterTailHingeXPositionOffset - OuterTailHingeNegativeXOffset',
              alias='PointX'),
         Cell('0',
              alias='PointY'),
-        Cell('=NonRotatedTailZ + OuterTailHingeZOffset',
+        Cell('=NonRotatedTailZ + OuterTailHingeZPositionOffset',
              alias='PointZ'),
         Cell('=create(<<vector>>; PointX; PointY; PointZ)',
              alias='Point')
@@ -567,18 +550,18 @@ tail_cells: List[List[Cell]] = [
         Cell('Vector')
     ],
     [
-        Cell('=OuterTailHingeX',
+        Cell('=OuterTailHingeXPosition',
              alias='CenterX'),
         Cell('0',
              alias='CenterY'),
-        Cell('=OuterTailHingeZ',
+        Cell('=OuterTailHingeZPosition',
              alias='CenterZ'),
         Cell('=create(<<vector>>; CenterX; CenterY; CenterZ)',
              alias='Center')
     ],
     [
         # Axis of Rotation
-        Cell('TailAxis', styles=[Style.UNDERLINE])
+        Cell('TailAxisVector', styles=[Style.UNDERLINE])
     ],
     [
         Cell('x',
@@ -597,7 +580,7 @@ tail_cells: List[List[Cell]] = [
         Cell('=cos(VerticalPlaneAngle)',
              alias='TailAxisZ'),
         Cell('=create(<<vector>>; TailAxisX; TailAxisY; TailAxisZ)',
-             alias='TailAxis')
+             alias='TailAxisVector')
     ],
     [
         Cell('Angle'),
@@ -606,10 +589,10 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('=180 - HorizontalPlaneAngle - DefaultTailAngle',
-             alias='TailAngle'),
-        Cell('=create(<<rotation>>; TailAxis; TailAngle)',
-             alias='TailRotation'),
-        Cell('=Center + TailRotation * (Point - Center)', alias='RotatedPoint')
+             alias='TailRotationAngle'),
+        Cell('=create(<<rotation>>; TailAxisVector; TailRotationAngle)',
+             alias='TailRotationObject'),
+        Cell('=Center + TailRotationObject * (Point - Center)', alias='RotatedPoint')
     ],
     [
         Cell('Tail', styles=[Style.UNDERLINE])
@@ -623,12 +606,57 @@ tail_cells: List[List[Cell]] = [
              horizontal_alignment=Alignment.RIGHT)
     ],
     [
-        Cell('=.RotatedPoint.x', alias='TailX'),
-        Cell('=.RotatedPoint.y', alias='TailY'),
-        Cell('=.RotatedPoint.z', alias='TailZ')
+        Cell('=.RotatedPoint.x', alias='TailXPosition'),
+        Cell('=.RotatedPoint.y', alias='TailYPosition'),
+        Cell('=.RotatedPoint.z', alias='TailZPosition')
     ],
     [
-        Cell('TailBoomTriangularBraceZAxisAngle'), Cell('=asin(TailY / TailBoomTriangularBraceWidth)',
+        Cell('TailBoomTriangularBraceZAxisAngle'), Cell('=asin(TailYPosition / TailBoomTriangularBraceWidth)',
                                                         alias='TailBoomTriangularBraceZAxisAngle')
+    ],
+    [
+        Cell('----------'), Cell('----------'), Cell('----------')
+    ],
+    # Placement
+    # ---------
+    [
+        Cell('Placement', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    *create_placement_cells(name='TailAssembly',
+                            base=(
+                                '=TailHingeJunctionChamfer * cos(180 - HorizontalPlaneAngle)',
+                                '=TailHingeJunctionChamfer * sin(-(180 - HorizontalPlaneAngle))',
+                                '0'),
+                            axis=('0', '0', '-1'),
+                            angle='=180 - HorizontalPlaneAngle'),
+    *create_placement_cells(name='OuterTailHinge',
+                            base=(
+                                '=OuterTailHingeXPosition',
+                                '0',
+                                '=OuterTailHingeZPosition'),
+                            axis=('0', '1', '0'),
+                            angle='=VerticalPlaneAngle'),
+    # TailBoomVaneAssemblyLink
+    *create_placement_cells(name='Tail',
+                            base=(
+                                '=TailXPosition',
+                                '=TailYPosition',
+                                '=TailZPosition'),
+                            axis=('0', '0', '1'),
+                            angle='=TailRotationAngle'),
+    [
+        Cell('----------'), Cell('----------'), Cell('----------')
+    ],
+    # Calculated Placement
+    # --------------------
+    [
+        Cell('Calculated Placement', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('OuterTailHingeParentPlacement')
+    ],
+    [
+        Cell('=TailAssemblyPlacement * OuterTailHingePlacement',
+             alias='OuterTailHingeParentPlacement')
     ]
 ]
