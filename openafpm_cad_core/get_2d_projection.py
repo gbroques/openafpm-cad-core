@@ -13,7 +13,11 @@ def get_2d_projection(obj: object) -> object:
     obj.Placement = Placement()
     projection = None
     if obj.Label == 'Tail_Stop_HighEnd' or obj.Label == 'Tail_Stop_LowEnd':
-        projection = get_2d_high_end_stop_projection(obj)
+        projection_vector = {
+            'Tail_Stop_HighEnd': Vector(1, 0, 0),
+            'Tail_Stop_LowEnd': Vector(0, 0, 1)
+        }[obj.Label]
+        projection = get_2d_stop_projection(obj, projection_vector)
     else:
         projection = get_2d_projection_on_xy_plane(obj)
     obj.Placement = original_placement
@@ -36,8 +40,8 @@ def get_2d_projection_on_xy_plane(obj: object) -> object:
     return shape
 
 
-def get_2d_high_end_stop_projection(obj: object) -> object:
-    """The High End Stop requires special care when exporting to DXF.
+def get_2d_stop_projection(obj: object, projection_vector: Vector) -> object:
+    """The High End & Low End Stops require special care when exporting to DXF.
     Create a 2D projection of the second to largest face via the Draft workbench.
 
     See Also:
@@ -54,7 +58,7 @@ def get_2d_high_end_stop_projection(obj: object) -> object:
             index = i
             break
     shape = Draft.makeShape2DView(
-        obj, Vector(1, 0, 0), facenumbers=[index - 1])
+        obj, projection_vector, facenumbers=[index - 1])
     shape.ProjectionMode = 'Individual Faces'
     document.recompute()
     return shape
