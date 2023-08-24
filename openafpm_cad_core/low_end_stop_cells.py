@@ -90,7 +90,7 @@ low_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('LowEndStopBase'),
-        Cell('=create(<<vector>>; 0; 0; LowEndStopZ)',
+        Cell('=vector(0; 0; LowEndStopZ)',
              alias='LowEndStopBase')
     ],
     #
@@ -135,7 +135,7 @@ low_end_stop_cells: List[List[Cell]] = [
     [
         # Create LowEndStopTailAssemblyPlacement WITHOUT rotation, and only translation
         # since the angle of rotation is calculated after determining the low end stop plane.
-        Cell('=OuterTailHingeParentPlacement * create(<<placement>>; LowEndStopBase; create(<<rotation>>))',
+        Cell('=OuterTailHingeParentPlacement * placement(LowEndStopBase; rotation(vector(0; 0; 0); 0))',
              alias='LowEndStopTailAssemblyPlacement'),
         Cell('=OuterTailHingeParentPlacement * LowEndStopBase',
              alias='LowEndStopTailAssemblyBase'),
@@ -149,7 +149,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('AlignLowEndStopWithXAxis'),
     ],
     [
-        Cell('=create(<<placement>>; create(<<vector>>); create(<<vector>>; 0; 0; 1); TailAssemblyAngle)',
+        Cell('=placement(vector(0; 0; 0); vector(0; 0; 1); TailAssemblyAngle)',
              alias='AlignLowEndStopWithXAxis')
     ],
     #
@@ -162,7 +162,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('LowEndStopPlanePoint1TailAssemblyAxisAligned')
     ],
     [
-        Cell('=create(<<vector>>; 0; -YawPipeRadius; 0)',
+        Cell('=vector(0; -YawPipeRadius; 0)',
              alias='LowEndStopPlanePoint1'),
         Cell('=LowEndStopTailAssemblyPlacement * LowEndStopPlanePoint1',
              alias='LowEndStopPlanePoint1TailAssembly'),
@@ -176,7 +176,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('LowEndStopPlanePoint2TailAssemblyAxisAligned')
     ],
     [
-        Cell('=create(<<vector>>; LowEndStopWidth; 0; 0)',
+        Cell('=vector(LowEndStopWidth; 0; 0)',
              alias='LowEndStopPlanePoint2'),
         Cell('=LowEndStopTailAssemblyPlacement * LowEndStopPlanePoint2',
              alias='LowEndStopPlanePoint2TailAssembly'),
@@ -207,7 +207,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('Vd × Ve')
     ],
     [
-        Cell('=create(<<vector>>; .Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
+        Cell('=vector(.Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
              alias='Vf'),
         Cell('Cross Product', styles=[Style.ITALIC])
     ],
@@ -267,9 +267,9 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('PiAnglePoint')
     ],
     [
-        Cell('=create(<<vector>>; YawPipeRadius; 0; ZeroAngleZ)',
+        Cell('=vector(YawPipeRadius; 0; ZeroAngleZ)',
              alias='ZeroAnglePoint'),
-        Cell('=create(<<vector>>; -YawPipeRadius; 0; PiAngleZ)',
+        Cell('=vector(-YawPipeRadius; 0; PiAngleZ)',
              alias='PiAnglePoint')
     ],
     #
@@ -361,7 +361,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('AxisAlignedTangentPoint')
     ],
     [
-        Cell('=create(<<vector>>; TangentPointX; TangentPointY2d; TangentPointZ)',
+        Cell('=vector(TangentPointX; TangentPointY2d; TangentPointZ)',
              alias='AxisAlignedTangentPoint')
     ],
     [
@@ -393,7 +393,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('LowEndStopLength')
     ],
     [
-        Cell('=create(<<placement>>; LowEndStopBase; create(<<rotation>>; create(<<vector>>; 0; 0; -1); LowEndStopAngle))',
+        Cell('=placement(LowEndStopBase; rotation(vector(0; 0; -1); LowEndStopAngle))',
              alias='LowEndStopPlacement'),
         #
         # For T Shape, scale low end stop length by 1.15 for ALWAYS.

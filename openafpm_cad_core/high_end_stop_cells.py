@@ -78,7 +78,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('FurlAxis')
     ],
     [
-        Cell('=create(<<vector>>; sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle))',
+        Cell('=vector(sin(VerticalPlaneAngle); 0; cos(VerticalPlaneAngle))',
              alias='FurlAxis')
     ],
     # Calculated
@@ -208,7 +208,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='xIntercept'),
         # Get the normal vector of the maximum furl plane,
         # from the coefficients of the general equation.
-        Cell('=create(<<vector>>; -1; slope; 0)',
+        Cell('=vector(-1; slope; 0)',
              alias='NormalVectorOfMaximumFurlPlane')
     ],
     [
@@ -224,13 +224,13 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('EndOfBoom270Rotation')
     ],
     [
-        Cell('=create(<<rotation>>; FurlAxis; 0deg)',
+        Cell('=rotation(FurlAxis; 0deg)',
              alias='EndOfBoom0Rotation'),
-        Cell('=create(<<rotation>>; FurlAxis; 90deg)',
+        Cell('=rotation(FurlAxis; 90deg)',
              alias='EndOfBoom90Rotation'),
-        Cell('=create(<<rotation>>; FurlAxis; 180deg)',
+        Cell('=rotation(FurlAxis; 180deg)',
              alias='EndOfBoom180Rotation'),
-        Cell('=create(<<rotation>>; FurlAxis; 270deg)',
+        Cell('=rotation(FurlAxis; 270deg)',
              alias='EndOfBoom270Rotation')
     ],
     [
@@ -240,13 +240,13 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('EndOfBoom270Placement')
     ],
     [
-        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom0Rotation * .OuterTailHingeBase; EndOfBoom0Rotation)',
+        Cell('=placement(.OuterTailHingeBase - EndOfBoom0Rotation * .OuterTailHingeBase; EndOfBoom0Rotation)',
              alias='EndOfBoom0Placement'),
-        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom90Rotation * .OuterTailHingeBase; EndOfBoom90Rotation)',
+        Cell('=placement(.OuterTailHingeBase - EndOfBoom90Rotation * .OuterTailHingeBase; EndOfBoom90Rotation)',
              alias='EndOfBoom90Placement'),
-        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom180Rotation * .OuterTailHingeBase; EndOfBoom180Rotation)',
+        Cell('=placement(.OuterTailHingeBase - EndOfBoom180Rotation * .OuterTailHingeBase; EndOfBoom180Rotation)',
              alias='EndOfBoom180Placement'),
-        Cell('=create(<<placement>>; .OuterTailHingeBase - EndOfBoom270Rotation * .OuterTailHingeBase; EndOfBoom270Rotation)',
+        Cell('=placement(.OuterTailHingeBase - EndOfBoom270Rotation * .OuterTailHingeBase; EndOfBoom270Rotation)',
              alias='EndOfBoom270Placement')
     ],
     [
@@ -283,7 +283,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Axis1 × Axis2')
     ],
     [
-        Cell('=create(<<vector>>; .Axis1.y * .Axis2.z - .Axis1.z * .Axis2.y; .Axis1.z * .Axis2.x - .Axis1.x * .Axis2.z; .Axis1.x * .Axis2.y - .Axis1.y * .Axis2.x)',
+        Cell('=vector(.Axis1.y * .Axis2.z - .Axis1.z * .Axis2.y; .Axis1.z * .Axis2.x - .Axis1.x * .Axis2.z; .Axis1.x * .Axis2.y - .Axis1.y * .Axis2.x)',
              alias='Vg'),
         Cell('Cross Product', styles=[Style.ITALIC])
     ],
@@ -350,7 +350,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('LineOrigin')
     ],
     [
-        Cell('=create(<<vector>>; xLineOrigin; yLineOrigin; zLineOrigin)',
+        Cell('=vector(xLineOrigin; yLineOrigin; zLineOrigin)',
              alias='LineOrigin')
     ],
     [
@@ -362,7 +362,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Vh × NormalVectorOfMaximumFurlPlane')
     ],
     [
-        Cell('=create(<<vector>>; .Vh.y * .NormalVectorOfMaximumFurlPlane.z - .Vh.z * .NormalVectorOfMaximumFurlPlane.y; .Vh.z * .NormalVectorOfMaximumFurlPlane.x - .Vh.x * .NormalVectorOfMaximumFurlPlane.z; .Vh.x * .NormalVectorOfMaximumFurlPlane.y - .Vh.y * .NormalVectorOfMaximumFurlPlane.x)',
+        Cell('=vector(.Vh.y * .NormalVectorOfMaximumFurlPlane.z - .Vh.z * .NormalVectorOfMaximumFurlPlane.y; .Vh.z * .NormalVectorOfMaximumFurlPlane.x - .Vh.x * .NormalVectorOfMaximumFurlPlane.z; .Vh.x * .NormalVectorOfMaximumFurlPlane.y - .Vh.y * .NormalVectorOfMaximumFurlPlane.x)',
              alias='DirectionVector'),
         Cell('Cross Product', styles=[Style.ITALIC])
     ],
@@ -434,7 +434,7 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='dDistance'),
         Cell('=acos(1 - dDistance ^ 2 / (2 * Radius ^ 2))',
              alias='MaximumFurlAngle'),
-        Cell('=create(<<rotation>>; FurlAxis; MaximumFurlAngle)',
+        Cell('=rotation(FurlAxis; MaximumFurlAngle)',
              alias='FurlRotation')
     ],
     [
@@ -470,7 +470,7 @@ high_end_stop_cells: List[List[Cell]] = [
         # center - rotation.multVec(center)
         Cell('=.OuterTailHingeBase - FurlRotation * .OuterTailHingeBase',
              alias='TailFurlBase'),
-        Cell('=create(<<placement>>; TailFurlBase; FurlRotation)',
+        Cell('=placement(TailFurlBase; FurlRotation)',
              alias='TailFurlPlacement'),
         # Transform vectors in the Tail_Stop_HighEnd document to furled position in Tail_Assembly document.
         Cell('=.TailAssemblyPlacement * .TailFurlPlacement * .TailBoomVaneAssemblyParentPlacement * .HighEndStopPlacement',
@@ -485,11 +485,11 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         # The following unit vectors are local to the Tail_Stop_HighEnd document.
-        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 1; 0; 0)',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * vector(1; 0; 0)',
              alias='HighEndStopBoomDirectionVector'),
-        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 0; 1; 0)',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * vector(0; 1; 0)',
              alias='HighEndStopYawBearingDirectionVector'),
-        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * create(<<vector>>; 0; 0; 1)',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement.Rotation * vector(0; 0; 1)',
              alias='Vn')
     ],
     [
@@ -569,7 +569,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('YawBearingHighEndStopTangentPoint')
     ],
     [
-        Cell('=create(<<vector>>; TangentAngleX; TangentAngleY; TangentAngleZ)',
+        Cell('=vector(TangentAngleX; TangentAngleY; TangentAngleZ)',
              alias='YawBearingHighEndStopTangentPoint')
     ],
     [
@@ -662,7 +662,7 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         # of High End Stop
         Cell('UpperBottomLeftCorner'),
-        Cell('=.FurledHighEndStopTailAssemblyPlacement * create(<<vector>>; 0; 0; FlatMetalThickness) + .HighEndStopYawBearingDirectionVector * HighEndStopWidth',
+        Cell('=.FurledHighEndStopTailAssemblyPlacement * vector(0; 0; FlatMetalThickness) + .HighEndStopYawBearingDirectionVector * HighEndStopWidth',
              alias='UpperBottomLeftCorner')
     ],
     # SafetyCatch

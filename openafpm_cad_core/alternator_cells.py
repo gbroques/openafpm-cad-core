@@ -828,11 +828,11 @@ alternator_cells: List[List[Cell]] = [
         Cell('AlternatorPlacement')
     ],
     [
-        Cell('=create(<<rotation>>; AlternatorZ; AlternatorY; AlternatorX)',
+        Cell('=rotation(AlternatorZ; AlternatorY; AlternatorX)',
              alias='AlternatorRotation'),
-        Cell('=create(<<vector>>; 0; 0; 0)',
+        Cell('=vector(0; 0; 0)',
              alias='AlternatorBase'),
-        Cell('=create(<<placement>>; AlternatorBase; AlternatorRotation)',
+        Cell('=placement(AlternatorBase; AlternatorRotation)',
              alias='AlternatorPlacement')
     ]
 ]

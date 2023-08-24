@@ -533,7 +533,7 @@ tail_cells: List[List[Cell]] = [
              alias='PointY'),
         Cell('=NonRotatedTailZ + OuterTailHingeZPositionOffset',
              alias='PointZ'),
-        Cell('=create(<<vector>>; PointX; PointY; PointZ)',
+        Cell('=vector(PointX; PointY; PointZ)',
              alias='Point')
     ],
     [
@@ -556,7 +556,7 @@ tail_cells: List[List[Cell]] = [
              alias='CenterY'),
         Cell('=OuterTailHingeZPosition',
              alias='CenterZ'),
-        Cell('=create(<<vector>>; CenterX; CenterY; CenterZ)',
+        Cell('=vector(CenterX; CenterY; CenterZ)',
              alias='Center')
     ],
     [
@@ -579,7 +579,7 @@ tail_cells: List[List[Cell]] = [
              alias='TailAxisY'),
         Cell('=cos(VerticalPlaneAngle)',
              alias='TailAxisZ'),
-        Cell('=create(<<vector>>; TailAxisX; TailAxisY; TailAxisZ)',
+        Cell('=vector(TailAxisX; TailAxisY; TailAxisZ)',
              alias='TailAxisVector')
     ],
     [
@@ -590,7 +590,7 @@ tail_cells: List[List[Cell]] = [
     [
         Cell('=180 - HorizontalPlaneAngle - DefaultTailAngle',
              alias='TailRotationAngle'),
-        Cell('=create(<<rotation>>; TailAxisVector; TailRotationAngle)',
+        Cell('=rotation(TailAxisVector; TailRotationAngle)',
              alias='TailRotationObject'),
         Cell('=Center + TailRotationObject * (Point - Center)', alias='RotatedPoint')
     ],

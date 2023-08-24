@@ -38,9 +38,9 @@ def create_placement_cells(name: str,
             Cell('Angle')
         ],
         [
-            Cell(f'=create(<<vector>>; {X}; {Y}; {Z})',
+            Cell(f'=vector({X}; {Y}; {Z})',
                  alias=Base),
-            Cell(f'=create(<<vector>>; {Ax}; {Ay}; {Az})', alias=Axis),
+            Cell(f'=vector({Ax}; {Ay}; {Az})', alias=Axis),
             Cell(angle, alias=Angle)
         ],
         [
@@ -48,8 +48,8 @@ def create_placement_cells(name: str,
             Cell('Placement')
         ],
         [
-            Cell(f'=create(<<rotation>>; {Axis}; {Angle})', alias=Rotation),
+            Cell(f'=rotation({Axis}; {Angle})', alias=Rotation),
             Cell(
-                f'=create(<<placement>>; {Base}; {Rotation})', alias=Placement)
+                f'=placement({Base}; {Rotation})', alias=Placement)
         ]
     ]
