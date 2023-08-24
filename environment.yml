@@ -7,7 +7,9 @@ name: openafpm-cad-core
 channels:
   - conda-forge
 dependencies:
-  - freecad==0.20.0
+  # Check main label to see if there's a newer version:
+  # https://anaconda.org/conda-forge/freecad/labels
+  - freecad==0.21.0
   - sphinx==4.1.1 # TODO: Update to 5.0.2
   - sphinx_rtd_theme==0.5.2 # TODO: Update to 1.0.0
   - pip

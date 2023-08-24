@@ -273,17 +273,20 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='PiAnglePoint')
     ],
     #
-    # Subtract above two vectors to find length of major axis length for the ellipse
+    # Subtract above two vectors to find semi-major axis length for the ellipse
     # formed by the intersection of the yaw bearing pipe and low end stop plane.
     #
     [
-        Cell('MajorAxisLength'),
+        Cell('MajorAxis'),
+        Cell('SemiMajorAxisLength'),
         Cell('XDownScaleFactor')
     ],
     [
-        Cell('=(ZeroAnglePoint - PiAnglePoint).Length / 2',
-             alias='MajorAxisLength'),
-        Cell('=YawPipeRadius / MajorAxisLength',
+        Cell('=ZeroAnglePoint - PiAnglePoint',
+             alias='MajorAxis'),
+        Cell('=MajorAxis.Length / 2',
+             alias='SemiMajorAxisLength'),
+        Cell('=YawPipeRadius / SemiMajorAxisLength',
              alias='XDownScaleFactor')
     ],
     #

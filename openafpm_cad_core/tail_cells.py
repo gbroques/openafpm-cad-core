@@ -79,52 +79,52 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('LargestPipeDiameter'),
-        Cell(f'{PipeSize.OD_141_3}',
+        Cell(f'{PipeSize.OD_141_3.value}',
              alias='LargestPipeDiameter')
     ],
     [
         Cell('Range8'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_141_3} ? {PipeSize.OD_127_0} : LargestPipeDiameter',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_141_3.value} ? {PipeSize.OD_127_0.value} : LargestPipeDiameter',
              alias='Range8')
     ],
     [
         Cell('Range7'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_127_0} ? {PipeSize.OD_114_3} : Range8',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_127_0.value} ? {PipeSize.OD_114_3.value} : Range8',
              alias='Range7')
     ],
     [
         Cell('Range6'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_114_3} ? {PipeSize.OD_101_6} : Range7',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_114_3.value} ? {PipeSize.OD_101_6.value} : Range7',
              alias='Range6')
     ],
     [
         Cell('Range5'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_101_6} ? {PipeSize.OD_88_9} : Range6',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_101_6.value} ? {PipeSize.OD_88_9.value} : Range6',
              alias='Range5')
     ],
     [
         Cell('Range4'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_88_9} ? {PipeSize.OD_73_0} : Range5',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_88_9.value} ? {PipeSize.OD_73_0.value} : Range5',
              alias='Range4')
     ],
     [
         Cell('Range3'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_73_0} ? {PipeSize.OD_60_3} : Range4',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_73_0.value} ? {PipeSize.OD_60_3.value} : Range4',
              alias='Range3')
     ],
     [
         Cell('Range2'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_60_3} ? {PipeSize.OD_48_3} : Range3',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_60_3.value} ? {PipeSize.OD_48_3.value} : Range3',
              alias='Range2')
     ],
     [
         Cell('Range1'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_48_3} ? {PipeSize.OD_42_2} : Range2',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_48_3.value} ? {PipeSize.OD_42_2.value} : Range2',
              alias='Range1')
     ],
     [
         Cell('InnerPipeDiameter'),
-        Cell(f'=YawPipeDiameter <= {PipeSize.OD_42_2} ? {PipeSize.OD_33_4} : Range1',
+        Cell(f'=YawPipeDiameter <= {PipeSize.OD_42_2.value} ? {PipeSize.OD_33_4.value} : Range1',
              alias='HingeInnerPipeDiameter')
     ],
     [

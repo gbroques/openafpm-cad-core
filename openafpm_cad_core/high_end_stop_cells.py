@@ -392,11 +392,14 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='PointOnLineClosestToCenterOfSphere')
     ],
     [
+        Cell('yVector'),
         Cell('yDistance'),
         Cell('xDistance')
     ],
     [
-        Cell('=(CenterOfSphere - PointOnLineClosestToCenterOfSphere).Length',
+        Cell('=CenterOfSphere - PointOnLineClosestToCenterOfSphere',
+             alias='yVector'),
+        Cell('=yVector.Length',
              alias='yDistance'),
         Cell('=sqrt(Radius^2 - yDistance^2)',
              alias='xDistance')
@@ -419,12 +422,15 @@ high_end_stop_cells: List[List[Cell]] = [
     [
         # Use special case of law of cosines for isosceles triangle to calculate maximum furl angle.
         # https://en.wikipedia.org/wiki/Law_of_cosines#Isosceles_case
+        Cell('dVector'),
         Cell('dDistance'),
         Cell('MaximumFurlAngle'),
         Cell('FurlRotation')
     ],
     [
-        Cell('=(.FarthestIntersectionPoint - .FurledEndOfBoom0Placement.Base).Length',
+        Cell('=.FarthestIntersectionPoint - .FurledEndOfBoom0Placement.Base',
+             alias='dVector'),
+        Cell('=dVector.Length',
              alias='dDistance'),
         Cell('=acos(1 - dDistance ^ 2 / (2 * Radius ^ 2))',
              alias='MaximumFurlAngle'),
@@ -573,7 +579,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Finding a point on a 3d line',
              styles=[Style.ITALIC]),
         Cell('What is the equation for a 3D line?',
-             styles=[Style.ITALIC]),
+             styles=[Style.ITALIC])
     ],
     [
         Cell('https://math.stackexchange.com/questions/576137/finding-a-point-on-a-3d-line/576154#576154'),
@@ -583,21 +589,25 @@ high_end_stop_cells: List[List[Cell]] = [
         # T is a reserved alias since FreeCAD 20.
         Cell('T_tangent'),
         Cell('HighEndStopPointWhereXEqualsTangent'),
+        Cell('HighEndStopWidthVector')
     ],
     [
         Cell('=(TangentAngleX - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
              alias='T_tangent'),
         Cell('=.FurledHighEndStopTailAssemblyPlacement.Base + T_tangent * .HighEndStopBoomDirectionVector',
-             alias='HighEndStopPointWhereXEqualsTangent')
+             alias='HighEndStopPointWhereXEqualsTangent'),
+        Cell('=.YawBearingHighEndStopTangentPoint - .HighEndStopPointWhereXEqualsTangent',
+             alias='HighEndStopWidthVector')
     ],
     [
         Cell('HighEndStop', styles=[Style.BOLD, Style.UNDERLINE])
     ],
     [
-        Cell('Width', styles=[Style.UNDERLINE]), Cell('Length', styles=[Style.UNDERLINE])
+        Cell('Width', styles=[Style.UNDERLINE]),
+        Cell('Length', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('=(.YawBearingHighEndStopTangentPoint - .HighEndStopPointWhereXEqualsTangent).Length',
+        Cell('=HighEndStopWidthVector.Length',
              alias='HighEndStopWidth'),
         # Make high end stop extend YawPipeRadius * 2 in the X-direction.
         Cell('=(YawPipeRadius * 2 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
