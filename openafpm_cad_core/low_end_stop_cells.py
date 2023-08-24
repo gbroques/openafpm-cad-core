@@ -147,77 +147,21 @@ low_end_stop_cells: List[List[Cell]] = [
         # where an external point forms tangent lines to a circle.
         #
         Cell('AlignLowEndStopWithXAxis'),
-    ],
-    [
-        Cell('=placement(vector(0; 0; 0); vector(0; 0; 1); TailAssemblyAngle)',
-             alias='AlignLowEndStopWithXAxis')
-    ],
-    #
-    # Define two points on low end stop plane to get two vectors on the plane.
-    #
-    [
-        # Relative to Tail_Stop_LowEnd document.
-        Cell('LowEndStopPlanePoint1'),
-        Cell('LowEndStopPlanePoint1TailAssembly'),
-        Cell('LowEndStopPlanePoint1TailAssemblyAxisAligned')
-    ],
-    [
-        Cell('=vector(0; -YawPipeRadius; 0)',
-             alias='LowEndStopPlanePoint1'),
-        Cell('=LowEndStopTailAssemblyPlacement * LowEndStopPlanePoint1',
-             alias='LowEndStopPlanePoint1TailAssembly'),
-        Cell('=AlignLowEndStopWithXAxis * LowEndStopPlanePoint1TailAssembly',
-             alias='LowEndStopPlanePoint1TailAssemblyAxisAligned')
-    ],
-    [
-        # Relative to Tail_Stop_LowEnd document.
-        Cell('LowEndStopPlanePoint2'),
-        Cell('LowEndStopPlanePoint2TailAssembly'),
-        Cell('LowEndStopPlanePoint2TailAssemblyAxisAligned')
-    ],
-    [
-        Cell('=vector(LowEndStopWidth; 0; 0)',
-             alias='LowEndStopPlanePoint2'),
-        Cell('=LowEndStopTailAssemblyPlacement * LowEndStopPlanePoint2',
-             alias='LowEndStopPlanePoint2TailAssembly'),
-        Cell('=AlignLowEndStopWithXAxis * LowEndStopPlanePoint2TailAssembly',
-             alias='LowEndStopPlanePoint2TailAssemblyAxisAligned')
-    ],
-    [
         Cell('LowEndStopTailAssemblyBaseAxisAligned')
     ],
     [
+        Cell('=placement(vector(0; 0; 0); vector(0; 0; 1); TailAssemblyAngle)',
+             alias='AlignLowEndStopWithXAxis'),
         Cell('=AlignLowEndStopWithXAxis * LowEndStopTailAssemblyBase',
              alias='LowEndStopTailAssemblyBaseAxisAligned')
     ],
     [
-        # Calculate two vectors, Vd and Ve, on the Low End Stop plane.
-        Cell('Vd'), Cell('Ve')
+        # Normal vector to Low End Stop plane.
+        Cell('Vn'),
     ],
     [
-        Cell('=LowEndStopPlanePoint1TailAssemblyAxisAligned - LowEndStopTailAssemblyBaseAxisAligned',
-             alias='Vd'),
-        Cell('=LowEndStopPlanePoint2TailAssemblyAxisAligned - LowEndStopTailAssemblyBaseAxisAligned',
-             alias='Ve')
-    ],
-    [
-        # Cross product Vd and Ve to find vector perpendicular to the Low End Stop plane, Vf.
-        # https://en.wikipedia.org/wiki/Cross_product
-        Cell('Vf'),
-        Cell('Vd × Ve')
-    ],
-    [
-        Cell('=vector(.Vd.y * .Ve.z - .Vd.z * .Ve.y; .Vd.z * .Ve.x - .Vd.x * .Ve.z; .Vd.x * .Ve.y - .Vd.y * .Ve.x)',
-             alias='Vf'),
-        Cell('Cross Product', styles=[Style.ITALIC])
-    ],
-    [
-        # Normalize Vf from step above.
-        Cell('Vo'),
-        Cell('Normalize Vf')
-    ],
-    [
-        Cell('=.Vf / .Vf.Length', alias='Vo')
+        Cell('=.AlignLowEndStopWithXAxis.Rotation * .LowEndStopTailAssemblyPlacement.Rotation * vector(0; 0; 1)',
+             alias='Vn')
     ],
     [
         #
@@ -233,7 +177,7 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('LowEndStopPlaneDistance (d)')
     ],
     [
-        Cell('=Vo * LowEndStopPlanePoint1TailAssemblyAxisAligned',
+        Cell('=.Vn * LowEndStopTailAssemblyBaseAxisAligned',
              alias='LowEndStopPlaneDistance')
     ],
     #
@@ -257,9 +201,9 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('PiAngleZ')
     ],
     [
-        Cell('=(LowEndStopPlaneDistance - Vo.x * YawPipeRadius * cos(0)) / Vo.z',
+        Cell('=(LowEndStopPlaneDistance - Vn.x * YawPipeRadius * cos(0)) / Vn.z',
              alias='ZeroAngleZ'),
-        Cell('=(LowEndStopPlaneDistance - Vo.x * YawPipeRadius * cos(180)) / Vo.z',
+        Cell('=(LowEndStopPlaneDistance - Vn.x * YawPipeRadius * cos(180)) / Vn.z',
              alias='PiAngleZ')
     ],
     [
@@ -354,7 +298,7 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='XUpScaleFactor'),
         Cell('=XUpScaleFactor * TangentPointX2d',
              alias='TangentPointX'),
-        Cell('=(LowEndStopPlaneDistance - Vo.x * TangentPointX) / Vo.z',
+        Cell('=(LowEndStopPlaneDistance - Vn.x * TangentPointX) / Vn.z',
              alias='TangentPointZ')
     ],
     [
@@ -375,16 +319,18 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='TangentPoint')
     ],
     [
-        Cell('TangentVector'),
-        Cell('FrontBottomRightVector'),
+        # Relative to Tail_Stop_LowEnd document.
+        # The "long end" is the part of the stop that extends towards the yaw pipe.
+        Cell('VectorTowardsLongEnd'),
+        Cell('TangentPointLowEndStopLocal'),
         Cell('LowEndStopAngle')
     ],
     [
-        Cell('=TangentPoint - LowEndStopTailAssemblyBase',
-             alias='TangentVector'),
-        Cell('=LowEndStopPlanePoint1TailAssembly - LowEndStopTailAssemblyBase',
-             alias='FrontBottomRightVector'),
-        Cell('=acos(TangentVector * FrontBottomRightVector / (.TangentVector.Length * .FrontBottomRightVector.Length))',
+        Cell('=vector(0; -1; 0)',
+             alias='VectorTowardsLongEnd'),
+        Cell('=minvert(.LowEndStopTailAssemblyPlacement) * TangentPoint',
+             alias='TangentPointLowEndStopLocal'),
+        Cell('=acos(.TangentPointLowEndStopLocal * .VectorTowardsLongEnd / (.TangentPointLowEndStopLocal.Length * .VectorTowardsLongEnd.Length))',
              alias='LowEndStopAngle')
     ],
     [
@@ -405,7 +351,7 @@ low_end_stop_cells: List[List[Cell]] = [
         #
         Cell('=RotorDiskRadius < 187.5 ? 1.15 : CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1',
              alias='LowEndStopLengthScaleFactor'),
-        Cell('=TangentVector.Length * LowEndStopLengthScaleFactor',
+        Cell('=.TangentPointLowEndStopLocal.Length * LowEndStopLengthScaleFactor',
              alias='LowEndStopLength')
     ]
 ]
