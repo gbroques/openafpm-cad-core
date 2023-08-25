@@ -472,6 +472,7 @@ tail_cells: List[List[Cell]] = [
         Cell('Tail Angle', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        # See "The low end stop" section on the left-hand side of page 33 in "A Wind Turbine Recipe Book (2014)".
         Cell('DefaultTailAngle'), Cell('110',
                                        alias='DefaultTailAngle')
     ],
