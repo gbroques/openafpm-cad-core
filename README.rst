@@ -40,7 +40,7 @@ Related Repositories
 Prerequisites
 -------------
 
-1. Install `conda <https://docs.conda.io/projects/conda/en/latest/>`_.
+1. Install `Miniconda (conda) <https://docs.conda.io/en/latest/miniconda.html>`_.
 
 Setup
 -----
