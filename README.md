@@ -64,7 +64,7 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 
        conda remove --name openafpm-cad-core --all
 
-4. Perform steps in the [Setup](#setup) section to recreate `openafpm-cad-core` conda environment.
+4. Reperform steps in the [Setup](#setup) section to recreate `openafpm-cad-core` conda environment.
 5. Regression test all functionality. (TODO: Write documentation for this)
 
 
