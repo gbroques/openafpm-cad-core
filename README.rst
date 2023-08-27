@@ -1,7 +1,7 @@
 OpenAFPM CAD Core
 =================
 
-Repository containing `OpenAFPM <https://www.openafpm.net/>`_ wind turbine CAD model.
+Repository containing `OpenAFPM <https://www.openafpm.net/>`_ wind turbine model made with open-source CAD program `FreeCAD <https://www.freecad.org/>`_.
 
 Installing Package
 ------------------
