@@ -16,15 +16,6 @@ From the root of this repository:
     ./link_macros.bash
 
 
-## Links
-* [[YouTube] Wind Empowerment Webinar - OpenAFPM tools for designing AFPM generators for Small Wind Turbines](https://www.youtube.com/watch?v=hk0j-qxkG9s&ab_channel=WindEmpowerment)
-* [Wind Empowerment](https://windempowerment.com/)
-* [WISIONS of Sustainability](https://wisions.net/)
-* [Hugh Piggott's blog](http://scoraigwind.co.uk/)
-  * [A Wind Turbine Recipe Book (metric edition) by Hugh Piggott](http://scoraigwind.co.uk/pdf-metric-edition-of-recipe-book-at-scribd/)
-* [[Wikipedia] Wind turbine design](https://en.wikipedia.org/wiki/Wind_turbine_design)
-
-
 ## Related Repositories
 * [openafpm-cad-visualization](https://github.com/gbroques/openafpm-cad-visualization)
 * [openafpm-cad-desktop-app](https://github.com/gbroques/openafpm-cad-desktop-app)
@@ -80,3 +71,12 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 ## Supported FreeCAD Versions
 
 Currently tested with FreeCAD `21.0`.
+
+
+## Links
+* [[YouTube] Wind Empowerment Webinar - OpenAFPM tools for designing AFPM generators for Small Wind Turbines](https://www.youtube.com/watch?v=hk0j-qxkG9s&ab_channel=WindEmpowerment)
+* [Wind Empowerment](https://windempowerment.com/)
+* [WISIONS of Sustainability](https://wisions.net/)
+* [Hugh Piggott's blog](http://scoraigwind.co.uk/)
+  * [A Wind Turbine Recipe Book (metric edition) by Hugh Piggott](http://scoraigwind.co.uk/pdf-metric-edition-of-recipe-book-at-scribd/)
+* [[Wikipedia] Wind turbine design](https://en.wikipedia.org/wiki/Wind_turbine_design)
