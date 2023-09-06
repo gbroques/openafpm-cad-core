@@ -6,6 +6,10 @@
 version: 2
 build:
   os: ubuntu-22.04
+  tools:
+    # Use mambaforge to make builds faster
+    # https://docs.readthedocs.io/en/stable/guides/conda.html#making-builds-faster-with-mamba
+    python: mambaforge-22.9
 formats:
   - htmlzip
 sphinx:
