@@ -63,6 +63,13 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('=Tail.TailAssemblyAngle',
              alias='TailAssemblyAngle')
     ],
+    [
+        Cell('HingeOuterPipeRadius')
+    ],
+    [
+        Cell('=Tail.HingeOuterPipeRadius',
+             alias='HingeOuterPipeRadius'),
+    ],
     # Calculated
     # ----------
     [
@@ -121,11 +128,11 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('LowEndStopWidth')
     ],
     [
-        Cell('=YawPipeRadius * 0.5',
+        Cell('=HingeOuterPipeRadius * 0.5',
              alias='OuterLowEndStopWidth'),
         Cell('=floor(YawPipeDiameter / 6)',
              alias='LowEndStopYawBearingOverlap'),
-        Cell('=YawPipeRadius + OuterLowEndStopWidth',
+        Cell('=HingeOuterPipeRadius + OuterLowEndStopWidth',
              alias='LowEndStopWidth')
     ],
     [
