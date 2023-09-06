@@ -116,7 +116,8 @@ def visit_spreadsheet_alias(self, node: Element) -> None:
 
     :meta private:
     """
-    self.body.append(f'<span title={node.alias}>')
+    if hasattr(node, 'alias'):
+        self.body.append(f'<span title={node.alias}>')
 
 
 def depart_spreadsheet_alias(self, node: Element) -> None:
@@ -124,7 +125,8 @@ def depart_spreadsheet_alias(self, node: Element) -> None:
 
     :meta private:
     """
-    self.body.append('</span>')
+    if hasattr(node, 'alias'):
+        self.body.append('</span>')
 
 
 class FreeCADSpreadsheet(SphinxDirective):
