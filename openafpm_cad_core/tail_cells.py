@@ -532,11 +532,11 @@ tail_cells: List[List[Cell]] = [
         Cell('Tail', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('TailXInitial'), Cell('=cos(VerticalPlaneAngle) * YawPipeRadius',
+        Cell('TailXInitial'), Cell('=cos(VerticalPlaneAngle) * HingeOuterPipeRadius',
                                    alias='TailXInitial')
     ],
     [
-        Cell('TailZOffset'), Cell('=-sin(VerticalPlaneAngle) * YawPipeRadius',
+        Cell('TailZOffset'), Cell('=-sin(VerticalPlaneAngle) * HingeOuterPipeRadius',
                                   alias='TailZOffset')
     ],
     [
