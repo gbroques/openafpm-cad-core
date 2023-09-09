@@ -497,13 +497,18 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorThickness'),
-        Cell('JackingHoleDiameter')
+        Cell('JackingHoleDiameter'),
+        # Switch to reduced weight rotor disks when RotorDiskRadius
+        # exceeds this threshold.
+        Cell('WeightReductionRotorDiskRadiusThreshold')
     ],
     [
         Cell('=MagnetThickness + RotorDiskThickness',
              alias='RotorThickness'),
         Cell('10',
-             alias='JackingHoleDiameter')
+             alias='JackingHoleDiameter'),
+        Cell('230',
+             alias='WeightReductionRotorDiskRadiusThreshold')
     ],
     [
         # Radius of the wooden island when casting the magnets of the rotor in resin
