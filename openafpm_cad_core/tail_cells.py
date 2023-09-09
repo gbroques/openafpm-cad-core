@@ -140,46 +140,46 @@ tail_cells: List[List[Cell]] = [
     [
         Cell('Range8'),
         Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_141_3.value} ? {PipeSize.OD_127_0.value} : {PipeSize.OD_141_3.value}',
-             alias='Range8')
+             alias='Range8_inner')
     ],
     [
         Cell('Range7'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_127_0.value} ? {PipeSize.OD_114_3.value} : Range8',
-             alias='Range7')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_127_0.value} ? {PipeSize.OD_114_3.value} : Range8_inner',
+             alias='Range7_inner')
     ],
     [
         Cell('Range6'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_114_3.value} ? {PipeSize.OD_101_6.value} : Range7',
-             alias='Range6')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_114_3.value} ? {PipeSize.OD_101_6.value} : Range7_inner',
+             alias='Range6_inner')
     ],
     [
         Cell('Range5'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_101_6.value} ? {PipeSize.OD_88_9.value} : Range6',
-             alias='Range5')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_101_6.value} ? {PipeSize.OD_88_9.value} : Range6_inner',
+             alias='Range5_inner')
     ],
     [
         Cell('Range4'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_88_9.value} ? {PipeSize.OD_73_0.value} : Range5',
-             alias='Range4')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_88_9.value} ? {PipeSize.OD_73_0.value} : Range5_inner',
+             alias='Range4_inner')
     ],
     [
         Cell('Range3'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_73_0.value} ? {PipeSize.OD_60_3.value} : Range4',
-             alias='Range3')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_73_0.value} ? {PipeSize.OD_60_3.value} : Range4_inner',
+             alias='Range3_inner')
     ],
     [
         Cell('Range2'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_60_3.value} ? {PipeSize.OD_48_3.value} : Range3',
-             alias='Range2')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_60_3.value} ? {PipeSize.OD_48_3.value} : Range3_inner',
+             alias='Range2_inner')
     ],
     [
         Cell('Range1'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_48_3.value} ? {PipeSize.OD_42_2.value} : Range2',
-             alias='Range1')
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_48_3.value} ? {PipeSize.OD_42_2.value} : Range2_inner',
+             alias='Range1_inner')
     ],
     [
         Cell('Diameter'),
-        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_42_2.value} ? {PipeSize.OD_33_4.value} : Range1',
+        Cell(f'=HingeOuterPipeDiameter <= {PipeSize.OD_42_2.value} ? {PipeSize.OD_33_4.value} : Range1_inner',
              alias='HingeInnerPipeDiameter')
     ],
     [
