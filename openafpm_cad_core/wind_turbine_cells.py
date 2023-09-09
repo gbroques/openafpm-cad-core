@@ -233,7 +233,7 @@ wind_turbine_cells: List[List[Cell]] = [
     [
         Cell('=SmallYawBearingX',
              alias='SmallTailHingeX'),
-        Cell('=-YawPipeLength / 2',
+        Cell('=-SmallYawBearingY - FlatMetalThickness',
              alias='SmallTailHingeY'),
         Cell('=SmallYawBearingZ',
              alias='SmallTailHingeZ'),
