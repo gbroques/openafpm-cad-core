@@ -42,8 +42,8 @@ tail_cells: List[List[Cell]] = [
              alias='HorizontalPlaneAngle')
     ],
     [
-        Cell('BoomPipeDiameter'),
-        Cell('BoomLength')
+        Cell('BoomLength'),
+        Cell('BoomPipeDiameter')
     ],
     [
         Cell('=Spreadsheet.BoomLength',
