@@ -382,7 +382,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=sqrt(MagnetWidth^2 + MagnetLength^2)',
              alias='MagnetDiagonal'),
-        Cell('10',
+        Cell('12',
              alias='CoilWinderDiskRadiusPadding'),
         Cell('60',
              alias='MinimumCoilWinderDiskRadius')
