@@ -77,52 +77,8 @@ tail_cells: List[List[Cell]] = [
         Cell('OuterPipe', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('Diameter', styles=[Style.UNDERLINE]),
-        Cell('Select one size larger than boom pipe for outer hinge based on pipe size list.')
-    ],
-    [
-        Cell('Range8'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_127_0.value} ? {PipeSize.OD_141_3.value} : {PipeSize.OD_141_3.value}',
-             alias='Range8_outer')
-    ],
-    [
-        Cell('Range7'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_114_3.value} ? {PipeSize.OD_127_0.value} : Range8_outer',
-             alias='Range7_outer')
-    ],
-    [
-        Cell('Range6'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_101_6.value} ? {PipeSize.OD_114_3.value} : Range7_outer',
-             alias='Range6_outer')
-    ],
-    [
-        Cell('Range5'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_88_9.value} ? {PipeSize.OD_101_6.value} : Range6_outer',
-             alias='Range5_outer')
-    ],
-    [
-        Cell('Range4'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_73_0.value} ? {PipeSize.OD_88_9.value} : Range5_outer',
-             alias='Range4_outer')
-    ],
-    [
-        Cell('Range3'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_60_3.value} ? {PipeSize.OD_73_0.value} : Range4_outer',
-             alias='Range3_outer')
-    ],
-    [
-        Cell('Range2'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_48_3.value} ? {PipeSize.OD_60_3.value} : Range3_outer',
-             alias='Range2_outer')
-    ],
-    [
-        Cell('Range1'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_42_2.value} ? {PipeSize.OD_48_3.value} : Range2_outer',
-             alias='Range1_outer')
-    ],
-    [
         Cell('Diameter'),
-        Cell(f'=BoomPipeDiameter <= {PipeSize.OD_33_4.value} ? {PipeSize.OD_42_2.value} : Range1_outer',
+        Cell(f'=YawPipeDiameter',
              alias='HingeOuterPipeDiameter')
     ],
     [
