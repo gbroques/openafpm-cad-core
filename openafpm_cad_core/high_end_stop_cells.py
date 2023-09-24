@@ -43,6 +43,17 @@ high_end_stop_cells: List[List[Cell]] = [
              alias='BoomLength')
     ],
     [
+        Cell('YawBearing', styles=[Style.UNDERLINE])
+        # ------------------------------------
+    ],
+    [
+        Cell('YawPipeProjectedLength')
+    ],
+    [
+        Cell('=YawBearing.YawPipeProjectedLength',
+             alias='YawPipeProjectedLength')
+    ],
+    [
         Cell('Tail', styles=[Style.UNDERLINE])
         # ------------------------------------
     ],
@@ -668,6 +679,7 @@ high_end_stop_cells: List[List[Cell]] = [
     # SafetyCatch
     # -----------
     # Depedent upon high end stop.
+    # Relative to Tail_Assembly document.
     #
     [
         Cell('SafetyCatch', styles=[Style.UNDERLINE, Style.BOLD])
@@ -714,5 +726,20 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('SafetyCatchZ'),
         Cell('=.SafetyCatchPosition.z + SafetyCatchZPadding',
              alias='SafetyCatchZ')
+    ],
+    # YawPipeLength
+    # -------------
+    # Depedent upon safety catch position.
+    #
+    [
+        Cell('YawPipeLength', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        # Ensure yaw pipe is long enough to fit safety catch.
+        # The below condition evaluates to false when VerticalPlaneAngle in increased
+        # from 15° to 20° for H & Star Shape default values.
+        Cell('YawPipeLength'),
+        Cell('=SafetyCatchZ <= YawPipeProjectedLength - FlatMetalThickness ? YawPipeProjectedLength : SafetyCatchZ + FlatMetalThickness',
+             alias='YawPipeLength'),
     ]
 ]

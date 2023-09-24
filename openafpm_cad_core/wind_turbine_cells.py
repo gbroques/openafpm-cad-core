@@ -103,10 +103,14 @@ wind_turbine_cells: List[List[Cell]] = [
              alias='LargeYawBearingXOffset'),
     ],
     [
+        Cell('HighEndStop', styles=[Style.UNDERLINE])
+        # -------------------------------------------
+    ],
+    [
         Cell('YawPipeLength')
     ],
     [
-        Cell('=YawBearing.YawPipeLength',
+        Cell('=HighEndStop.YawPipeLength',
              alias='YawPipeLength')
     ],
     # Calculated

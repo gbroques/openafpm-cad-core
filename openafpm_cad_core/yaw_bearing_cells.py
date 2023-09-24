@@ -162,9 +162,11 @@ yaw_bearing_cells: List[List[Cell]] = [
                                   alias='YawPipeScaleFactor')
     ],
     [
-        # TOOD: Should this be a function of BoomLength, and Vertical / Horizontal Plane Angle?
-        Cell('Length'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
-                             alias='YawPipeLength')
+        # This is the "projected" yaw pipe length.
+        # The actual yaw pipe length is calculated later in the HighEndStop spreadsheet
+        # after the position of the safety catch is determined.
+        Cell('ProjectedLength'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
+                                      alias='YawPipeProjectedLength')
     ],
     [
         Cell('Plate', styles=[Style.UNDERLINE, Style.BOLD])
@@ -185,7 +187,7 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         Cell('SideWidth'),
-        Cell('=YawPipeLength * 0.25',
+        Cell('=YawPipeProjectedLength * 0.25',
              alias='SideWidth')
     ],
     [
