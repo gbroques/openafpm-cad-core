@@ -178,16 +178,20 @@ alternator_cells: List[List[Cell]] = [
         # goes through the mounting holes of the stator.
         # This is used in the Frame later to ensure
         # the Frame holes and Stator holes align.
-        Cell('CircularStatorHolesCircumradius'),
-        Cell('HexagonalStatorHolesCircumradius'),
+        Cell('TShapeStatorHolesCircumradius'),
+        Cell('HShapeStatorHolesCircumradius'),
+        Cell('StarShapeStatorHolesCircumradius'),
         Cell('StatorHolesCircumradius')
     ],
     [
         Cell('=RotorDiskRadius + CoilLegWidth + 20',
-             alias='CircularStatorHolesCircumradius'),
+             alias='TShapeStatorHolesCircumradius'),
+        # Ensure 20 mm between hole and coil for H Shape.
+        Cell('=TShapeStatorHolesCircumradius + HolesRadius',
+             alias='HShapeStatorHolesCircumradius'),
         Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (HexagonalStatorOuterCircumradius - RotorDiskRadius - CoilLegWidth)',
-             alias='HexagonalStatorHolesCircumradius'),
-        Cell('=RotorDiskRadius < 275 ? CircularStatorHolesCircumradius : HexagonalStatorHolesCircumradius',
+             alias='StarShapeStatorHolesCircumradius'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorHolesCircumradius : RotorDiskRadius < 275 ? HShapeStatorHolesCircumradius : HexagonalStatorHolesCircumradius',
              alias='StatorHolesCircumradius')
     ],
     [
