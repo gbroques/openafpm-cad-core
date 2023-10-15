@@ -66,11 +66,14 @@ alternator_cells: List[List[Cell]] = [
              alias='YawPipeDiameter'),
     ],
     [
-        Cell('RotorResinMargin')
+        Cell('RotorResinMargin'),
+        Cell('NumberMagnet')
     ],
     [
         Cell('=Spreadsheet.RotorResinMargin',
-             alias='RotorResinMargin')
+             alias='RotorResinMargin'),
+        Cell('=Spreadsheet.NumberMagnet',
+             alias='NumberMagnet')
     ],
     [
         Cell('CoilInnerWidth1'),
@@ -158,13 +161,17 @@ alternator_cells: List[List[Cell]] = [
         # of the stator resin cast for Star Shape.
         Cell('HexagonalStatorOuterCircumradius'),
         # Radius of the inner-most hole of stator.
-        Cell('StatorInnerHoleRadius')
+        Cell('StatorInnerHoleRadius'),
+        Cell('NumberOfCoils')
     ],
     [
         Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
              alias='HexagonalStatorOuterCircumradius'),
         Cell('=RotorDiskRadius - MagnetLength - CoilLegWidth - OffsetToAlignCornersOfMagnetToDisk',
-             alias='StatorInnerHoleRadius')
+             alias='StatorInnerHoleRadius'),
+        # TODO: Number of coils = RotorRadius <= 125 ? 6 : 9
+        # If we ever want to support the smallest wind turbines.
+        Cell('=NumberMagnet * 0.75', alias='NumberOfCoils')
     ],
     [
         # "Holes circumradius" is the radius of the circle that
@@ -208,6 +215,24 @@ alternator_cells: List[List[Cell]] = [
              alias='HShapeEarSize'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : HShapeEarSize',
              alias='EarSize')
+    ],
+    [
+        # CoilsAngle needed to align the stator mounting points (the holes in the resin cast)
+        # with the middle of the space between two coils, and not with the center of one coil.
+        # This provides more space when making the hole in the resin,
+        # without having to worry about hitting a coil.
+        # This isn't strictly needed for Star Shape, but we rotate the coils anyways for consistency.
+        Cell('TAndStarShapeCoilsAngle'),
+        Cell('HShapeCoilsAngle'),
+        Cell('CoilsAngle')
+    ],
+    [
+        Cell('=360 / NumberOfCoils / 2',
+             alias='TAndStarShapeCoilsAngle'),
+        Cell('0',
+             alias='HShapeCoilsAngle'),
+        Cell('=RotorDiskRadius < 187.5 ? TAndStarShapeCoilsAngle : (RotorDiskRadius < 275 ? HShapeCoilsAngle : TAndStarShapeCoilsAngle)',
+             alias='CoilsAngle')
     ],
     [
         Cell('Mold', styles=[Style.UNDERLINE])
