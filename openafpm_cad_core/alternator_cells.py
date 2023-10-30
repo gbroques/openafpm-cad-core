@@ -191,7 +191,7 @@ alternator_cells: List[List[Cell]] = [
              alias='HShapeStatorHolesCircumradius'),
         Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (HexagonalStatorOuterCircumradius - RotorDiskRadius - CoilLegWidth)',
              alias='StarShapeStatorHolesCircumradius'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorHolesCircumradius : RotorDiskRadius < 275 ? HShapeStatorHolesCircumradius : HexagonalStatorHolesCircumradius',
+        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorHolesCircumradius : RotorDiskRadius < 275 ? HShapeStatorHolesCircumradius : StarShapeStatorHolesCircumradius',
              alias='StatorHolesCircumradius')
     ],
     [
