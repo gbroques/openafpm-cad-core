@@ -72,13 +72,27 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('OuterTailHingeBase'),
-        Cell('TailAssemblyPlacement')
+        Cell('TailAssemblyPlacement'),
+        Cell('HingeOuterPipeDiameter')
     ],
     [
         Cell('=Tail.OuterTailHingeBase',
              alias='OuterTailHingeBase'),
         Cell('=Tail.TailAssemblyPlacement',
-             alias='TailAssemblyPlacement')
+             alias='TailAssemblyPlacement'),
+        Cell('=Tail.HingeOuterPipeDiameter',
+             alias='HingeOuterPipeDiameter')
+    ],
+    [
+        Cell('LowEndStop', styles=[Style.UNDERLINE])
+        # ------------------------------------
+    ],
+    [
+        Cell('LowEndStopTopFrontLeftX')
+    ],
+    [
+        Cell('=LowEndStop.LowEndStopTopFrontLeftX',
+             alias='LowEndStopTopFrontLeftX')
     ],
     # Static
     # ------
@@ -556,7 +570,7 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('=(FurledHighEndStopPlaneDistance - Vn.x * YawPipeRadius * cos(TangentAngle) - Vn.y * YawPipeRadius * sin(TangentAngle)) / Vn.z',
-            alias='TangentAngleZ'),
+             alias='TangentAngleZ'),
         #
         # Solve for x, given z.
         #
@@ -623,6 +637,17 @@ high_end_stop_cells: List[List[Cell]] = [
         # Make high end stop extend YawPipeRadius * 2 in the X-direction.
         Cell('=(YawPipeRadius * 2 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
              alias='HighEndStopLength'),
+    ],
+    [
+        # Relative to TailAssembly document.
+        Cell('HighEndStopBottomFrontRight'),
+        Cell('HighEndStopWidthExtensionToLowEndStop')
+    ],
+    [
+        Cell('=.TailAssemblyPlacement * .TailBoomVaneAssemblyParentPlacement * placement(HighEndStopBase + vector(0; 0; -HingeOuterPipeDiameter); rotation(vector(0; 0; 0); 0 deg))',
+             alias='HighEndStopBottomFrontRight'),
+        Cell('=.HighEndStopBottomFrontRight.Base.x - LowEndStopTopFrontLeftX',
+             alias='HighEndStopWidthExtensionToLowEndStop')
     ],
     #
     # ASCII drawings of high end stop planes for understanding below aliases (e.g. UpperBottomLeftCorner).

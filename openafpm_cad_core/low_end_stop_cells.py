@@ -360,5 +360,16 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='LowEndStopLengthScaleFactor'),
         Cell('=.TangentPointLowEndStopLocal.Length * LowEndStopLengthScaleFactor',
              alias='LowEndStopLength')
+    ],
+    # The below calculations are relative to the TailAssembly document.
+    [
+        Cell('LowEndStopTopFrontCenter'),
+        Cell('LowEndStopTopFrontLeftX')
+    ],
+    [
+        Cell('=OuterTailHingeParentPlacement * LowEndStopPlacement * placement(vector(0; -HingeOuterPipeRadius; FlatMetalThickness); rotation(vector(0; 0; 0); 0))',
+             alias='LowEndStopTopFrontCenter'),
+        Cell('=LowEndStopTopFrontCenter.Base.x + LowEndStopYawBearingOverlap',
+             alias='LowEndStopTopFrontLeftX')
     ]
 ]
