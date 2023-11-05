@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from .create_placement_cells import create_placement_cells
-from .spreadsheet import Alignment, Cell, Style
+from .spreadsheet import Cell, Style
 
 __all__ = ['high_end_stop_cells']
 
@@ -88,11 +88,24 @@ high_end_stop_cells: List[List[Cell]] = [
         # ------------------------------------
     ],
     [
-        Cell('LowEndStopTopFrontLeftX')
+        Cell('LeftPerpendicularLowEndStopPlaneNormalVector'),
+        Cell('LeftPerpendicularLowEndStopPlaneDistance')
     ],
     [
-        Cell('=LowEndStop.LowEndStopTopFrontLeftX',
-             alias='LowEndStopTopFrontLeftX')
+        Cell('=LowEndStop.LeftPerpendicularLowEndStopPlaneNormalVector',
+             alias='LeftPerpendicularLowEndStopPlaneNormalVector'),
+        Cell('=LowEndStop.LeftPerpendicularLowEndStopPlaneDistance',
+             alias='LeftPerpendicularLowEndStopPlaneDistance')
+    ],
+    [
+        Cell('LowerLowEndStopPlaneNormalVector'),
+        Cell('LowerLowEndStopPlaneDistance')
+    ],
+    [
+        Cell('=LowEndStop.LowerLowEndStopPlaneNormalVector',
+             alias='LowerLowEndStopPlaneNormalVector'),
+        Cell('=LowEndStop.LowerLowEndStopPlaneDistance',
+             alias='LowerLowEndStopPlaneDistance')
     ],
     # Static
     # ------
@@ -531,6 +544,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('FurledHighEndStopPlaneDistance (d)')
     ],
     [
+        # (This should be negated following the above formula strictly.)
         Cell('=.Vn * .FurledHighEndStopTailAssemblyPlacement.Base',
              alias='FurledHighEndStopPlaneDistance')
     ],
@@ -637,17 +651,6 @@ high_end_stop_cells: List[List[Cell]] = [
         # Make high end stop extend YawPipeRadius * 2 in the X-direction.
         Cell('=(YawPipeRadius * 2 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
              alias='HighEndStopLength'),
-    ],
-    [
-        # Relative to TailAssembly document.
-        Cell('HighEndStopBottomFrontRight'),
-        Cell('HighEndStopWidthExtensionToLowEndStop')
-    ],
-    [
-        Cell('=.TailAssemblyPlacement * .TailBoomVaneAssemblyParentPlacement * placement(HighEndStopBase + vector(0; 0; -HingeOuterPipeDiameter); rotation(vector(0; 0; 0); 0 deg))',
-             alias='HighEndStopBottomFrontRight'),
-        Cell('=.HighEndStopBottomFrontRight.Base.x - LowEndStopTopFrontLeftX',
-             alias='HighEndStopWidthExtensionToLowEndStop')
     ],
     #
     # ASCII drawings of high end stop planes for understanding below aliases (e.g. UpperBottomLeftCorner).
@@ -766,5 +769,169 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('YawPipeLength'),
         Cell('=SafetyCatchZ <= YawPipeProjectedLength - FlatMetalThickness ? YawPipeProjectedLength : SafetyCatchZ + FlatMetalThickness',
              alias='YawPipeLength'),
+    ],
+    #
+    # Extend High End Stop to Low End Stop
+    # ------------------------------------
+    # Find how much to extend the high end stop to touch the low end stop.
+    #
+    # MOTIVATION:
+    # This eases manufacturing since you can place the high end stop,
+    # and then the low end stop without measuring angles.
+    #
+    # The below calculations are relative to the Tail_Assembly document.
+    #
+    # The following is a 3D plot of three planes of intersection:
+    # https://c3d.libretexts.org/CalcPlot3D/index.html?type=implicit;equation=z%20~%20168.66;cubes=16;visible=true;fixdomain=false;xmin=-200;xmax=100;ymin=-200;ymax=100;zmin=0;zmax=350;alpha=-1;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=implicit;equation=0.93x%20-%200.35y%20+%200.09z%20~%20-3.58;cubes=16;visible=true;fixdomain=false;xmin=-200;xmax=100;ymin=-200;ymax=100;zmin=0;zmax=350;alpha=-1;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=vector;vector=%3C-35.48,%20-93.07,%200%3E;visible=true;color=rgb(0,0,0);size=2;initialpt=(0,53.6,168.66)&type=implicit;equation=0.34x%20+%200.94y%20~%20-77.9;cubes=16;visible=true;fixdomain=false;xmin=-200;xmax=100;ymin=-200;ymax=100;zmin=0;zmax=350;alpha=-1;hidemyedges=false;view=0;format=normal;constcol=rgb(255,0,0)&type=point;point=(-45.21,-66.52,168.66);visible=true;color=rgb(0,0,0);size=4&type=point;point=(0,53.6,168.66);visible=true;color=rgb(0,0,0);size=4&type=window;hsrmode=0;nomidpts=true;anaglyph=-1;center=-5.501893548992319,3.338611221803924,7.65394293715053,1;focus=0,0,0,1;up=0.6847789029021875,-0.3441629255767391,0.64236261939697,1;transparent=false;alpha=140;twoviews=false;unlinkviews=false;axisextension=0.7;shownormals=false;shownormalsatpts=false;xaxislabel=x;yaxislabel=y;zaxislabel=z;edgeson=true;faceson=true;showbox=true;showaxes=true;showticks=true;perspective=true;centerxpercent=0.31190724389040614;centerypercent=0.6890812498140327;rotationsteps=30;autospin=true;xygrid=false;yzgrid=false;xzgrid=false;gridsonbox=true;gridplanes=false;gridcolor=rgb(128,128,128);xmin=-200;xmax=100;ymin=-200;ymax=100;zmin=0;zmax=350;xscale=20;yscale=20;zscale=20;zcmin=-4;zcmax=4;xscalefactor=20;yscalefactor=20;zscalefactor=20;tracemode=0;keep2d=false;zoom=0.000571
+    #
+    # Values correspond to default values for a T Shaped wind turbine.
+    #
+    [
+        Cell('Extend High End Stop to Low End Stop', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('HighEndStopTailAssemblyPlacement')
+    ],
+    [
+        Cell('=.TailAssemblyPlacement * .TailBoomVaneAssemblyParentPlacement * .HighEndStopPlacement',
+             alias='HighEndStopTailAssemblyPlacement'),
+    ],
+    [
+        # Relative to TailAssembly document.
+        Cell('HighEndStopBottomFrontRightPoint'),
+        Cell('HighEndStopTopFrontRightPoint'),
+        Cell('HighEndStopFrontRightVector')
+    ],
+    [
+        Cell('=.HighEndStopTailAssemblyPlacement * vector(-HingeOuterPipeDiameter; 0; 0)',
+             alias='HighEndStopBottomFrontRightPoint'),
+        Cell('=.HighEndStopTailAssemblyPlacement * vector(-HingeOuterPipeDiameter; 0; FlatMetalThickness)',
+             alias='HighEndStopTopFrontRightPoint'),
+        Cell('=HighEndStopTopFrontRightPoint - HighEndStopBottomFrontRightPoint',
+             alias='HighEndStopFrontRightVector')
+    ],
+    [
+        # STEP 1
+        # Find front right point on corner of high end stop parallel to bottom of low end stop.
+        Cell('TwhereHighEndStopFrontRightVectorAndLowerLowEndStopPlaneIntersect'),
+        Cell('ZScaleFactor'),
+        Cell('HighEndStopFrontRightPoint')
+    ],
+    [
+        #
+        # The following value is expected to be negative or between 0 and 1.
+        # It's between 0 and 1 for H Shape with a VerticalPlaneAngle of 20°.
+        # If it's ever greater than 1, than there may be an issue with the model.
+        #
+        # https://www.wolframalpha.com/input?i=a+x+%2B+b+y+%2B+c+%28z+%2B+f+*+t%29+%3D+-d+solve+for+t
+        # -(a x + b y + c z + d)/(c f)
+        #
+        Cell('=-(LowerLowEndStopPlaneNormalVector * HighEndStopBottomFrontRightPoint + LowerLowEndStopPlaneDistance) / (LowerLowEndStopPlaneNormalVector.z * FlatMetalThickness)',
+             alias='TwhereHighEndStopFrontRightVectorAndLowerLowEndStopPlaneIntersect'),
+        Cell('=max(TwhereHighEndStopFrontRightVectorAndLowerLowEndStopPlaneIntersect; 0)',
+             alias='ZScaleFactor'),
+        Cell('=HighEndStopBottomFrontRightPoint + ZScaleFactor * vector(0; 0; FlatMetalThickness)',
+             alias='HighEndStopFrontRightPoint')
+    ],
+    [
+        Cell('HighEndStopPlane', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('NormalVector'),
+        Cell('Distance')
+    ],
+    [
+        # Similar to Vn calculation above.
+        # We could define the z-vector statically for this.
+        # vector(0; 0; 1) local to Tail_Stop_HighEnd document.
+        Cell('=.HighEndStopTailAssemblyPlacement.Rotation * vector(0; 0; 1)',
+             alias='HighEndStopPlaneNormalVector'),
+        # Similar to FurledHighEndStopPlaneDistance calculation above.
+        Cell('=.HighEndStopPlaneNormalVector * .HighEndStopFrontRightPoint * -1',
+             alias='HighEndStopPlaneDistance')
+    ],
+    [
+        Cell('FrontPerpendicularHighEndStopPlane', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('NormalVector'),
+        Cell('Distance')
+    ],
+    [
+        # Similar to Vn calculation above.
+        # vector(-1; 0; 0) local to Tail_Stop_HighEnd document.
+        Cell('=.HighEndStopTailAssemblyPlacement.Rotation * vector(-1; 0; 0)',
+             alias='FrontPerpendicularHighEndStopPlaneNormalVector'),
+        # Similar to FurledHighEndStopPlaneDistance calculation above.
+        Cell('=.FrontPerpendicularHighEndStopPlaneNormalVector * .HighEndStopFrontRightPoint * -1',
+             alias='FrontPerpendicularHighEndStopPlaneDistance')
+    ],
+    [
+        # STEP 2
+        # Find intersection line of left perpendicular low end stop plane & high end stop plane.
+        # Cross product LeftPerpendicularLowEndStopPlaneNormalVector and HighEndStopPlaneNormalVector.
+        # https://en.wikipedia.org/wiki/Cross_product
+        # See "Intersection Line of 2 Planes - How to Find It - Step by Step Method & Explanation - Vector Equation" on YouTube:
+        # https://youtu.be/O6O_64zIEYI?t=116
+        Cell('IntersectionVector'),
+        Cell('LeftPerpendicularLowEndStopPlaneNormalVector × HighEndStopPlaneNormalVector')
+    ],
+    [
+        Cell('=vector(.LeftPerpendicularLowEndStopPlaneNormalVector.y * .HighEndStopPlaneNormalVector.z - .LeftPerpendicularLowEndStopPlaneNormalVector.z * .HighEndStopPlaneNormalVector.y; .LeftPerpendicularLowEndStopPlaneNormalVector.z * .HighEndStopPlaneNormalVector.x - .LeftPerpendicularLowEndStopPlaneNormalVector.x * .HighEndStopPlaneNormalVector.z; .LeftPerpendicularLowEndStopPlaneNormalVector.x * .HighEndStopPlaneNormalVector.y - .LeftPerpendicularLowEndStopPlaneNormalVector.y * .HighEndStopPlaneNormalVector.x)',
+             alias='IntersectionVector'),
+        Cell('Cross Product', styles=[Style.ITALIC]),
+    ],
+    [
+        # STEP 3
+        # Find arbitrary point on line of intersection.
+        Cell('PointOnLineOfIntersectionY'),
+        Cell('PointOnLineOfIntersection')
+    ],
+    [
+        # y position of point on line of intersection where x = 0:
+        # https://www.wolframalpha.com/input?i=b+*+y+%2B+c+*+z+%2B+d+%3D+0++solve+for+y
+        # -(d + c * z) / b
+        Cell('=-(LeftPerpendicularLowEndStopPlaneDistance + .LeftPerpendicularLowEndStopPlaneNormalVector.z * -HighEndStopPlaneDistance) / .LeftPerpendicularLowEndStopPlaneNormalVector.y',
+             alias='PointOnLineOfIntersectionY'),
+        Cell('=vector(0; PointOnLineOfIntersectionY; -HighEndStopPlaneDistance)',
+             alias='PointOnLineOfIntersection')
+    ],
+    [
+        # STEP 4
+        # Find point where front perpendicular high end stop plane intersects the line
+        # formed by the intersection of left perpendicular low end stop plane and
+        # high end stop plane
+        Cell('TwherePlanesIntersect'),
+        Cell('IntersectionPoint')
+    ],
+    [
+        #
+        # Define parametric equation for line of intersection (z is constant and x = 0 for point on line):
+        # x = a * t
+        # y = c + b * t
+        #
+        # Define equation of third plane where z is constant:
+        # a * x + b * y = -d
+        #
+        # Plug in values for x & y into equation of third plane for t:
+        # https://www.wolframalpha.com/input?i=a+*+%28x+*+t%29+%2B+b+*+%28c+-+y+*+t%29+%3D+-d+solve+for+t
+        # t = (b * c + d) / (-a * x + b * y)
+        #
+        Cell('=(FrontPerpendicularHighEndStopPlaneNormalVector.y * PointOnLineOfIntersectionY + FrontPerpendicularHighEndStopPlaneDistance) / (-FrontPerpendicularHighEndStopPlaneNormalVector.x * IntersectionVector.x - FrontPerpendicularHighEndStopPlaneNormalVector.y * IntersectionVector.y)',
+             alias='TwherePlanesIntersect'),
+        Cell('=PointOnLineOfIntersection + TwherePlanesIntersect * IntersectionVector',
+             alias='IntersectionPoint')
+    ],
+    [
+        # STEP 5
+        # Find distance between high end stop and low end stop.
+        Cell('HighEndToLowEndStopExtensionVector'),
+        Cell('HighEndStopWidthExtensionToLowEndStop')
+    ],
+    [
+        Cell('=IntersectionPoint - .HighEndStopFrontRightPoint',
+             alias='HighEndToLowEndStopExtensionVector'),
+        Cell('=HighEndToLowEndStopExtensionVector.Length',
+             alias='HighEndStopWidthExtensionToLowEndStop')
     ]
 ]

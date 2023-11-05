@@ -136,14 +136,14 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='LowEndStopWidth')
     ],
     [
-        Cell('LowEndStopTailAssemblyPlacement'),
+        Cell('LowEndStopTailAssemblyPlacementAxisAligned'),
         Cell('LowEndStopTailAssemblyBase')
     ],
     [
-        # Create LowEndStopTailAssemblyPlacement WITHOUT rotation, and only translation
+        # Create LowEndStopTailAssemblyPlacementAxisAligned WITHOUT rotation, and only translation
         # since the angle of rotation is calculated after determining the low end stop plane.
         Cell('=OuterTailHingeParentPlacement * placement(LowEndStopBase; rotation(vector(0; 0; 0); 0))',
-             alias='LowEndStopTailAssemblyPlacement'),
+             alias='LowEndStopTailAssemblyPlacementAxisAligned'),
         Cell('=OuterTailHingeParentPlacement * LowEndStopBase',
              alias='LowEndStopTailAssemblyBase'),
     ],
@@ -163,11 +163,11 @@ low_end_stop_cells: List[List[Cell]] = [
              alias='LowEndStopTailAssemblyBaseAxisAligned')
     ],
     [
-        # Normal vector to Low End Stop plane.
+        # Normal vector to (lower) Low End Stop plane aligned with x-axis.
         Cell('Vn'),
     ],
     [
-        Cell('=.AlignLowEndStopWithXAxis.Rotation * .LowEndStopTailAssemblyPlacement.Rotation * vector(0; 0; 1)',
+        Cell('=.AlignLowEndStopWithXAxis.Rotation * .LowEndStopTailAssemblyPlacementAxisAligned.Rotation * vector(0; 0; 1)',
              alias='Vn')
     ],
     [
@@ -335,7 +335,7 @@ low_end_stop_cells: List[List[Cell]] = [
     [
         Cell('=vector(0; -1; 0)',
              alias='VectorTowardsLongEnd'),
-        Cell('=minvert(.LowEndStopTailAssemblyPlacement) * TangentPoint',
+        Cell('=minvert(.LowEndStopTailAssemblyPlacementAxisAligned) * TangentPoint',
              alias='TangentPointLowEndStopLocal'),
         Cell('=acos(.TangentPointLowEndStopLocal * .VectorTowardsLongEnd / (.TangentPointLowEndStopLocal.Length * .VectorTowardsLongEnd.Length))',
              alias='LowEndStopAngle')
@@ -361,15 +361,47 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('=.TangentPointLowEndStopLocal.Length * LowEndStopLengthScaleFactor',
              alias='LowEndStopLength')
     ],
+    # Extend High End Stop to Low End Stop
+    # ------------------------------------
+    [
+        Cell('Extend High End Stop to Low End Stop', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
     # The below calculations are relative to the TailAssembly document.
     [
-        Cell('LowEndStopTopFrontCenter'),
-        Cell('LowEndStopTopFrontLeftX')
+        Cell('VectorTowardsHighEndStop'),
+        Cell('LowEndStopTailAssemblyPlacement'),
+        Cell('LowEndStopBottomLeftPoint')
     ],
     [
-        Cell('=OuterTailHingeParentPlacement * LowEndStopPlacement * placement(vector(0; -HingeOuterPipeRadius; FlatMetalThickness); rotation(vector(0; 0; 0); 0))',
-             alias='LowEndStopTopFrontCenter'),
-        Cell('=LowEndStopTopFrontCenter.Base.x + LowEndStopYawBearingOverlap',
-             alias='LowEndStopTopFrontLeftX')
-    ]
+        Cell('=vector(-1; 0; 0)',
+             alias='VectorTowardsHighEndStop'),
+        Cell('=OuterTailHingeParentPlacement * LowEndStopPlacement',
+             alias='LowEndStopTailAssemblyPlacement'),
+        Cell('=LowEndStopTailAssemblyPlacement * vector(-LowEndStopYawBearingOverlap; 0; 0)',
+             alias='LowEndStopBottomLeftPoint')
+    ],
+    [
+        Cell('LeftPerpendicularLowEndStopPlane', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('NormalVector'), Cell('Distance')
+    ],
+    [
+        Cell('=LowEndStopTailAssemblyPlacement.Rotation * VectorTowardsHighEndStop',
+             alias='LeftPerpendicularLowEndStopPlaneNormalVector'),
+        Cell('=.LeftPerpendicularLowEndStopPlaneNormalVector * .LowEndStopBottomLeftPoint * -1',
+             alias='LeftPerpendicularLowEndStopPlaneDistance')
+    ],
+    [
+        Cell('LowerLowEndStopPlane', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('NormalVector'), Cell('Distance')
+    ],
+    [
+        Cell('=LowEndStopTailAssemblyPlacement.Rotation * vector(0; 0; 1)',
+             alias='LowerLowEndStopPlaneNormalVector'),
+        Cell('=.LowerLowEndStopPlaneNormalVector * LowEndStopBottomLeftPoint * -1',
+             alias='LowerLowEndStopPlaneDistance')
+    ],
 ]
