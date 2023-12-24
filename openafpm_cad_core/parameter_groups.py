@@ -36,11 +36,21 @@ class MagnafpmParameters(TypedDict):
         https://openafpm.net/design-tips
     """
 
-    MagnetLength: float
-    """Length of magnet."""
+    MagnetLength: float # TODO: Rename to MagnetRadialDimension?
+    """Length of magnet.
 
-    MagnetWidth: float
-    """Width of magnet."""
+    Not always the longest dimension of the magnet,
+    but the radial dimension of the magnet
+    (in terms of the rotor circle).
+    """
+
+    MagnetWidth: float # TODO: Rename to MagnetTangentialDimension?
+    """Width of magnet.
+
+    Not always shorter than MagnetLength,
+    but the tangential dimension of the magnet
+    (in terms of the rotor circle).
+    """
 
     MagnetThickness: float
     """Thickness of magnet.
