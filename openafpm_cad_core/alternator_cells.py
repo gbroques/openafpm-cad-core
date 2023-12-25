@@ -460,6 +460,8 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=CoilType != 3 ? 4 : CoilInnerWidth2 / 2',
              alias='CoilWinderDiskBottomHoleRadius'),
+        # TODO: Rename to RectangularRadialDistanceOfHolesFromCenter?
+        # Vertical may not make sense since coil winder parts are rotated by CoilWinderAngle.
         Cell('=MagnetLength / 2 - CoilWinderDiskSmallHoleRadius',
              alias='RectangularVerticalDistanceOfHolesFromCenter'),
         Cell('4',
@@ -492,11 +494,27 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderCenterRodLength')
     ],
     [
-        Cell('CoilWinderPinLength')
+        Cell('CoilWinderPinLength'),
     ],
     [
         Cell('=CoilWinderAssemblyThicknessTotal + DistanceThreadsExtendFromNuts * 2',
              alias='CoilWinderPinLength')
+    ],
+    [
+        Cell('ShouldRotateCoilWinderParts'),
+        Cell('CoilWinderAngle'),
+        Cell('CoilWinderPinsMirrorNormalVector')
+    ],
+    [
+        # Equivalent to AND boolean logic.
+        # https://forum.freecad.org/viewtopic.php?p=690156#p690156
+        Cell('=MagnetWidth > MagnetLength ? (CoilType != 3 ? 1 : 0) : 0',
+             alias='ShouldRotateCoilWinderParts'),
+        # Rotate coil, pins, and spacer 90 deg if magnet width is greater than length.
+        Cell('=ShouldRotateCoilWinderParts == 1 ? 90 : 0',
+             alias='CoilWinderAngle'),
+        Cell('=ShouldRotateCoilWinderParts == 1 ? vector(0; 1; 0) : vector(1; 0; 0)',
+             alias='CoilWinderPinsMirrorNormalVector')
     ],
     [
         Cell('LargestMagnetDimension'),
@@ -513,13 +531,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('InnerHorizontalDistanceBetweenCenterOfSmallHoles')
+        Cell('InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
+        Cell('RectangularLargestDistanceOfHolesFromCenter')
     ],
     [
         Cell('=CoilInnerWidth1 - CoilWinderDiskSmallHoleDiameter',
              alias='OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
         Cell('=CoilType != 3 ? (CoilInnerWidth2 - CoilWinderDiskSmallHoleDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
-             alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles')
+             alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
+        Cell('=LargestMagnetDimension / 2 - CoilWinderDiskSmallHoleRadius',
+             alias='RectangularLargestDistanceOfHolesFromCenter'),
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
@@ -753,7 +774,7 @@ alternator_cells: List[List[Cell]] = [
              styles=[Style.UNDERLINE])
     ],
     [
-        Cell('I'), Cell('=Offset - (YawPipeRadius + MetalThicknessL + X)',
+        Cell('I'), Cell('=max(Offset - (YawPipeRadius + MetalThicknessL + X); 0)',
                         alias='I')
     ],
     [
