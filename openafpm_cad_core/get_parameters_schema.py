@@ -331,7 +331,7 @@ def get_numeric_type_and_multiple_of(group_name: str, parameter_name: str) -> di
     }
 
 
-def get_multiple_of(json_schema_type: str) -> str:
+def get_multiple_of(json_schema_type: str) -> float:
     if json_schema_type == 'integer':
         return 1
     else:  # number
@@ -399,7 +399,7 @@ def get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter: float) -> List[float]:
     return pipe_sizes[index:index+2]
 
 
-def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> List[float]:
+def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 3
     elif wind_turbine == WindTurbine.H_SHAPE:
@@ -408,7 +408,7 @@ def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> List[float]:
         return 5
 
 
-def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> List[float]:
+def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 5
     elif wind_turbine == WindTurbine.H_SHAPE:
@@ -417,7 +417,7 @@ def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> List[float]:
         return 8
 
 
-def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> List[float]:
+def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 50
     elif wind_turbine == WindTurbine.H_SHAPE:
@@ -426,7 +426,7 @@ def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> List[float]:
         return 60
 
 
-def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> List[float]:
+def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 60
     elif wind_turbine == WindTurbine.H_SHAPE:
@@ -435,7 +435,7 @@ def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> List[float]:
         return 100
 
 
-def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> List[float]:
+def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 5
     elif wind_turbine == WindTurbine.H_SHAPE:
@@ -444,7 +444,7 @@ def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> List[float]:
         return 6
 
 
-def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> List[float]:
+def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
         return 6
     elif wind_turbine == WindTurbine.H_SHAPE:
