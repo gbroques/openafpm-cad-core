@@ -356,7 +356,7 @@ low_end_stop_cells: List[List[Cell]] = [
         # Increasing MetalLengthL to 90 and VerticalPlaneAngle to 20 for Star Shape from default values
         # results in CanSideExtendToMiddleOfYawBearingPipe evaluating to True.
         #
-        Cell('=RotorDiskRadius < 187.5 ? 1.15 : CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1',
+        Cell('=RotorDiskRadius < 187.5 ? 1.15 : (CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1)',
              alias='LowEndStopLengthScaleFactor'),
         Cell('=.TangentPointLowEndStopLocal.Length * LowEndStopLengthScaleFactor',
              alias='LowEndStopLength')
