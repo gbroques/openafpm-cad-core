@@ -41,7 +41,7 @@ Execute the following commands from the root of this repository.
 
        ./add_conda_path_to_python_path.sh
 
-4. Deactivate and re-activate ``openafpm-cad-core`` environment.
+4. Deactivate and re-activate `openafpm-cad-core` environment.
 
        conda deactivate && conda activate openafpm-cad-core
 
