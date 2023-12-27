@@ -70,7 +70,7 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 
 ## Supported FreeCAD Versions
 
-Currently tested with FreeCAD `21.0`.
+Currently tested with FreeCAD `21.2`.
 
 
 ## Links
