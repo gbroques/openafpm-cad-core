@@ -30,7 +30,7 @@ def assembly_to_obj(assembly: Assembly,
         'AngularDeflection': 0.1,
         'Relative': True
     }
-    export_kwargs.update({'mesh_settings': mesh_settings});
+    export_kwargs.update({'mesh_settings': mesh_settings})
     obj_file_contents = freecad_to_obj.export([obj], **export_kwargs)
     return obj_file_contents
 
