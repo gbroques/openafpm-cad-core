@@ -8,14 +8,14 @@ with open('openafpm_cad_core/_version.py') as fp:
     exec(fp.read(), version)
 
 current_dir = path.abspath(path.dirname(__file__))
-with io.open(path.join(current_dir, 'README.rst'), encoding='utf-8') as f:
+with io.open(path.join(current_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='openafpm-cad-core',
     description='Contains OpenAFPM wind turbine CAD model.',
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     url='https://github.com/gbroques/openafpm-cad-core',
     author='G Roques',
     version=version['__version__'],
