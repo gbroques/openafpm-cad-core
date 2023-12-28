@@ -214,13 +214,13 @@ yaw_bearing_cells: List[List[Cell]] = [
     ],
     [
         # Distance Top piece of Yaw Bearing is greater than where it meets the Frame of the Alternator.
-        Cell('TopFrameJunctionOverhangeDistance'),
+        Cell('TopFrameJunctionOverhangDistance'),
         Cell('=Epsilon + Gamma',
-             alias='TopFrameJunctionOverhangeDistance')
+             alias='TopFrameJunctionOverhangDistance')
     ],
     [
         Cell('Mhypotenuse'),
-        Cell('=MetalLengthL * 2 + TopFrameJunctionOverhangeDistance',
+        Cell('=MetalLengthL * 2 + TopFrameJunctionOverhangDistance',
              alias='Mhypotenuse')
     ],
     [
@@ -254,11 +254,11 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('LargeYawBearingXOffset')
     ],
     [
-        Cell('=(MetalLengthL * 2 - TopFrameJunctionOverhangeDistance) / 2 / MMhypotenuse',
+        Cell('=(MetalLengthL * 2 - TopFrameJunctionOverhangDistance) / 2 / MMhypotenuse',
              alias='AlternatorCenterRatio'),
         Cell('=YawPipeRadius + (Offset / cos(TopAngle)) + (AlternatorCenterRatio * MM)',
              alias='L'),
-        Cell('=TopFrameJunctionOverhangeDistance / 2',
+        Cell('=TopFrameJunctionOverhangDistance / 2',
              alias='LargeYawBearingXOffset')
     ],
     [
@@ -278,6 +278,10 @@ yaw_bearing_cells: List[List[Cell]] = [
     [
         Cell('DistanceBetweenTopAndPipe'), Cell('=HalfWidth - YawPipeRadius',
                                                 alias='DistanceBetweenTopAndPipe')
+    ],
+    [
+        Cell('DistanceBetweenSideAndPipe'), Cell('=CanSideExtendToMiddleOfYawBearingPipe == True ? DistanceBetweenTopAndPipe - FlatMetalThickness : 0',
+                                                 alias='DistanceBetweenSideAndPipe')
     ],
     [
         # Protect against negative number for T Shape when Side is not tangent to Yaw Pipe.
@@ -303,7 +307,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('=-SideWidth',
              alias='SideY',
              horizontal_alignment=Alignment.RIGHT),
-        Cell('=-HalfWidth',
+        Cell('=-HalfWidth + DistanceBetweenSideAndPipe',
              alias='SideZ',
              horizontal_alignment=Alignment.RIGHT)
     ],
@@ -311,18 +315,24 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        Cell('DistanceSideExtendsFromFrameAtJunction'),
+        Cell('=TopFrameJunctionOverhangDistance - hypot(DistanceBetweenSideAndPipe; DistanceBetweenSideAndPipe)',
+             alias='DistanceSideExtendsFromFrameAtJunction')
+    ],
+    [
         Cell('Eta'),
-        Cell('=hypot(TopFrameJunctionOverhangeDistance; TopFrameJunctionOverhangeDistance)',
+        Cell('=hypot(DistanceSideExtendsFromFrameAtJunction; DistanceSideExtendsFromFrameAtJunction)',
              alias='Eta')
     ],
     [
+        # Distance to extend side from top to frame
         Cell('Theta'),
         Cell('=Eta - FlatMetalThickness',
              alias='Theta')
     ],
     [
         Cell('SideLength'),
-        Cell('=L - MM - YawPipeRadius - SideX + Theta',
+        Cell('=L - MM - YawPipeRadius - SideX + DistanceBetweenSideAndPipe + Theta',
              alias='SideLength')
     ],
     [
