@@ -46,7 +46,7 @@ Execute the following commands from the root of this repository.
        conda deactivate && conda activate openafpm-cad-core
 
 
-5. Verify ``freecad`` executable is accessible:
+5. Verify `freecad` executable is accessible:
 
        freecad --version
 
