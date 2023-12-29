@@ -239,6 +239,15 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilsAngle')
     ],
     [
+        # Make coil slightly thinner than stator resin cast to fix z-fighting rendering issue.
+        Cell('CoilThicknessOffset'),
+        Cell('CoilThickness')
+    ],
+    [
+        Cell('0.2', alias='CoilThicknessOffset'),
+        Cell('=StatorThickness - CoilThicknessOffset', alias='CoilThickness')
+    ],
+    [
         Cell('Mold', styles=[Style.UNDERLINE])
     ],
     # For metric hex bolt dimensions, see:
