@@ -23,7 +23,7 @@ From the root of this repository:
 
 ## Prerequisites
 
-1. Install [Miniconda (conda)](https://docs.conda.io/en/latest/miniconda.html).
+1. Install [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
 
 
 ## Setup
@@ -31,11 +31,11 @@ Execute the following commands from the root of this repository.
 
 1. Create `openafpm-cad-core` conda environment.
 
-       conda env create --file environment.yml
+       micromamba env create --file environment.yml
 
 2. Activate `openafpm-cad-core` environment.
 
-       conda activate openafpm-cad-core
+       micromamba activate openafpm-cad-core
 
 3. Add the `$CONDA_PREFIX/lib` directory to `$PYTHONPATH` (this allows `FreeCAD` to be imported as a module within python).
 
@@ -43,7 +43,7 @@ Execute the following commands from the root of this repository.
 
 4. Deactivate and re-activate `openafpm-cad-core` environment.
 
-       conda deactivate && conda activate openafpm-cad-core
+       micromamba deactivate && micromamba activate openafpm-cad-core
 
 
 5. Verify `freecad` executable is accessible:
@@ -62,7 +62,7 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 2. Increase version for `freecad` in `environment.yml`.
 3. Remove `openafpm-cad-core` conda environment created in the "Setup" section.
 
-       conda remove --name openafpm-cad-core --all
+       micromamba remove --name openafpm-cad-core --all
 
 4. Reperform steps in the [Setup](#setup) section to recreate `openafpm-cad-core` conda environment.
 5. Regression test all functionality. (TODO: Write documentation for this)
