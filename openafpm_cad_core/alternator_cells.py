@@ -552,6 +552,39 @@ alternator_cells: List[List[Cell]] = [
              alias='RectangularLargestDistanceOfHolesFromCenter'),
     ],
     [
+        Cell('RotorDiskCircumference'),
+        Cell('CoilSectorArcLength'),
+        Cell('CoilOuterWidthArcLength')
+    ],
+    [
+        Cell('=RotorDiskRadius * 2 * pi',
+             alias='RotorDiskCircumference'),
+        Cell('=RotorDiskCircumference / NumberOfCoils',
+             alias='CoilSectorArcLength'),
+        Cell('=asin(CoilInnerWidth1 / (2 * RotorDiskRadius)) * 2 * RotorDiskRadius * pi / 180',
+             alias='CoilOuterWidthArcLength')
+    ],
+    [
+        Cell('ApproximateCoilArcLength'),
+        Cell('CoilLegWidthReduction'),
+        Cell('CoilLegWidthReduced')
+    ],
+    [
+        Cell('=CoilOuterWidthArcLength.Value + CoilLegWidth * 2',
+             alias='ApproximateCoilArcLength'),
+        Cell('=(ApproximateCoilArcLength - CoilSectorArcLength) / 2',
+             alias='CoilLegWidthReduction'),
+        Cell('=CoilLegWidth - CoilLegWidthReduction',
+             alias='CoilLegWidthReduced'),
+    ],
+    [
+        Cell('DoCoilsOverlap')
+    ],
+    [
+        Cell('=ApproximateCoilArcLength > CoilSectorArcLength ? 1 : 0',
+             alias='DoCoilsOverlap')
+    ],
+    [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
