@@ -198,5 +198,55 @@
             "RotorResinMargin": 10,
             "HubHolesDiameter": 12
         }
+    },
+    "H Shape 4F": {
+        "magnafpm": {
+            "RotorDiskRadius": 274.77,
+            "RotorDiskInnerRadius": 198.63,
+            "RotorDiskThickness": 10,
+            "MagnetLength": 75,
+            "MagnetWidth": 50,
+            "MagnetThickness": 20,
+            "MagnetMaterial": "Ferrite",
+            "NumberMagnet": 24,
+            "StatorThickness": 14,
+            "CoilType": 3,
+            "CoilLegWidth": 25.92,
+            "CoilInnerWidth1": 50,
+            "CoilInnerWidth2": 8,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 2,
+            "NumberOfCoilsPerPhase": 6,
+            "WireWeight": 19.68,
+            "WireDiameter": 0.95,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 322
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 600,
+            "BracketWidth": 50,
+            "BracketThickness": 6,
+            "BoomLength": 1800,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 3,
+            "VaneThickness": 12,
+            "VaneLength": 2000,
+            "VaneWidth": 900,
+            "Offset": 250
+        },
+        "user": {
+            "HubPitchCircleDiameter": 130,
+            "RotorDiskCentralHoleDiameter": 95,
+            "HolesDiameter": 14,
+            "MetalLengthL": 60,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 101.6,
+            "PipeThickness": 5,
+            "RotorResinMargin": 10,
+            "HubHolesDiameter": 14
+        }
     }
 }
