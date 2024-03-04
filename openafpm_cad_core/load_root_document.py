@@ -84,7 +84,7 @@ def recompute_document(document: Document) -> None:
 
 def set_preferences():
     # fix error with stator coil not being properly linked to by coil winder
-    # because it's opened eaÓrlier in a partial state.
+    # because it's opened earlier in a partial state.
     document_preferences = App.ParamGet(
         'User parameter:BaseApp/Preferences/Document')
     document_preferences.SetBool('NoPartialLoading', True)
