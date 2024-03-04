@@ -22,5 +22,10 @@ class WindTurbine(Enum):
     T_SHAPE_2F = 'T Shape 2F'
     """2 meter diameter wind turbine with a T-shape frame and (F)errite magnets.
 
-    It's useful for testing triangular coils and the outer magnet jig.
+    Useful for testing triangular coils and the outer magnet jig.
+    """
+    H_SHAPE_4F = 'H Shape 4F'
+    """4 meter diameter wind turbine with a H-shape frame and (F)errite magnets.
+
+    Useful for testing triangular coils with a reduced coil leg width.
     """
