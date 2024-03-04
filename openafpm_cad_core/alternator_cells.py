@@ -574,15 +574,21 @@ alternator_cells: List[List[Cell]] = [
              alias='ApproximateCoilArcLength'),
         Cell('=(ApproximateCoilArcLength - CoilSectorArcLength) / 2',
              alias='CoilLegWidthReduction'),
-        Cell('=CoilLegWidth - CoilLegWidthReduction',
+        # Ensure CoilLegWidthReduced is less than or equal to CoilLegWidth
+        Cell('=min(CoilLegWidth - CoilLegWidthReduction; CoilLegWidth)',
              alias='CoilLegWidthReduced'),
     ],
     [
-        Cell('DoCoilsOverlap')
+        Cell('DoCoilsOverlap'),
+        Cell('CircumscribedCircleAboutTriangularPinsRadius')
     ],
     [
         Cell('=ApproximateCoilArcLength > CoilSectorArcLength ? 1 : 0',
-             alias='DoCoilsOverlap')
+             alias='DoCoilsOverlap'),
+        # Find the value of radius, when an isosceles triangle is inscribed in this circle.
+        # https://youtu.be/uIV1KVc7OxA?t=334
+        Cell('=(CoilInnerWidth1 ^ 2 + 4 * TriangularCoilHoleHeight ^ 2) / (8 * TriangularCoilHoleHeight)',
+             alias='CircumscribedCircleAboutTriangularPinsRadius')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
