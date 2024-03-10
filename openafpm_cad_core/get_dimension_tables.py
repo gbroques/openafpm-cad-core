@@ -212,7 +212,7 @@ def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Docume
         'Alternator Frame to Yaw Pipe Sizes',
         [
             ('Length of yaw bearing pipe',
-             format_length(spreadsheet_document.YawBearing.YawPipeLength)),
+             format_length(spreadsheet_document.HighEndStop.YawPipeLength)),
             ('I', format_length(spreadsheet_document.Alternator.I)),
             ('J', format_length(spreadsheet_document.Alternator.j)),
             ('K', format_length(spreadsheet_document.Alternator.k))
@@ -244,7 +244,7 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
                 spreadsheet_document.Spreadsheet.FlatMetalThickness)),
             (
                 'Length of yaw bearing pipe',
-                format_length(spreadsheet_document.YawBearing.YawPipeLength)
+                format_length(spreadsheet_document.HighEndStop.YawPipeLength)
             )
         ],
         book_reference_template % 'page 29 left-hand side'
