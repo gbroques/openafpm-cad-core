@@ -23,7 +23,7 @@ setup(
     # Incude data files specified in MANIFEST.in file.
     include_package_data=True,
     install_requires=[
-        'freecad-to-obj==0.1.0'
+        'freecad-to-obj==0.2.0'
     ],
     classifiers=[
         # Full List: https://pypi.org/pypi?%3Aaction=list_classifiers

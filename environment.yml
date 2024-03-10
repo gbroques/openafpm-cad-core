@@ -14,4 +14,4 @@ dependencies:
   - sphinx_rtd_theme==1.3.0
   - pip
   - pip:
-    - freecad-to-obj==0.1.0
+    - freecad-to-obj==0.2.0
