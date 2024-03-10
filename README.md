@@ -67,6 +67,12 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 4. Reperform steps in the [Setup](#setup) section to recreate `openafpm-cad-core` conda environment.
 5. Regression test all functionality. (TODO: Write documentation for this)
 
+## Generating OBJ Files for openafpm-cad-visualization
+
+1. Activate the `openafpm-cad-core` conda environment.
+2. If `openafpm-cad-visualization` is cloned up a directory from this repository, then run:
+
+       python macros/visualize.py ../openafpm-cad-visualization/public/
 
 ## Supported FreeCAD Versions
 
