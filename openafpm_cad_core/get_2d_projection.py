@@ -19,7 +19,10 @@ def get_2d_projection(obj: object) -> object:
         }[obj.Label]
         projection = get_2d_stop_projection(obj, projection_vector)
     else:
-        projection = get_2d_projection_on_xy_plane(obj)
+        if obj.Label == 'YawBearing_Extended_Top':
+            projection = get_2d_projection_on_xz_plane(obj)
+        else:
+            projection = get_2d_projection_on_xy_plane(obj)
     obj.Placement = original_placement
     return projection
 
@@ -33,9 +36,30 @@ def get_2d_projection_on_xy_plane(obj: object) -> object:
     See Also:
         https://wiki.freecadweb.org/Draft_Shape2DView
     """
+    return get_2d_projection_for(obj, Vector(0, 0, 1))
+
+
+def get_2d_projection_on_xz_plane(obj: object) -> object:
+    """Create a 2D projection of the object via the Draft workbench.
+
+    Assumes the flat face of the object is aligned with the XZ plane,
+    along the y-axis.
+
+    See Also:
+        https://wiki.freecadweb.org/Draft_Shape2DView
+    """
+    return get_2d_projection_for(obj, Vector(0, 1, 0))
+
+
+def get_2d_projection_for(obj: object, projection_vector: Vector) -> object:
+    """Create a 2D projection of the object via the Draft workbench.
+
+    See Also:
+        https://wiki.freecadweb.org/Draft_Shape2DView
+    """
     document = obj.Document
     App.setActiveDocument(document.Name)
-    shape = Draft.makeShape2DView(obj, Vector(0, 0, 1))
+    shape = Draft.makeShape2DView(obj, projection_vector)
     document.recompute()
     return shape
 
