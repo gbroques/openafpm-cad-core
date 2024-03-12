@@ -125,9 +125,9 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
         'Yaw Bearing Pipe Sizes',
         [
             ('Tower top stub outer diameter',
-             format_length(spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1)),
+             round_and_format_length(spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1)),
             ('Yaw pipe outer diameter',
-             format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
+             round_and_format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
         ],
         book_reference_template % 'page 24 left-hand side'
     )
@@ -138,9 +138,9 @@ def create_wheel_bearing_hub_table(spreadsheet_document: Document) -> Element:
         'Wheel Bearing Hub',
         [
             ('Pitch Circle Diameter (PCD)',
-             format_length(spreadsheet_document.Spreadsheet.HubPitchCircleDiameter)),
+             round_and_format_length(spreadsheet_document.Spreadsheet.HubPitchCircleDiameter)),
             ('Number of bolts', spreadsheet_document.Hub.NumberOfHoles),
-            ('Bolt diameter', format_length(
+            ('Bolt diameter', round_and_format_length(
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
         ],
         book_reference_template % 'page 25 left-hand side'
@@ -151,12 +151,12 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
     return create_table(
         'Steel Disk Sizes',
         [
-            ('Diameter', format_length(
+            ('Diameter', round_and_format_length(
                 spreadsheet_document.Spreadsheet.RotorDiskRadius * 2)),
-            ('Thickness', format_length(
+            ('Thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.RotorDiskThickness)),
             ('Central hole diameter',
-             format_length(spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter)),
+             round_and_format_length(spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter)),
         ],
         book_reference_template % 'page 25 right-hand side'
     )
@@ -171,18 +171,18 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
             [
                 (
                     'Length of upright A',
-                    format_length(
+                    round_and_format_length(
                         spreadsheet_document.Alternator.TShapeTwoHoleEndBracketLength)
                 ),
-                ('Channel pieces B,C', format_length(
+                ('Channel pieces B,C', round_and_format_length(
                     spreadsheet_document.Alternator.BC)),
-                ('End bracket D', format_length(spreadsheet_document.Alternator.D)),
-                ('Position of shaft X', format_length(
+                ('End bracket D', round_and_format_length(spreadsheet_document.Alternator.D)),
+                ('Position of shaft X', round_and_format_length(
                     spreadsheet_document.Alternator.X)),
                 ('Steel angle section width',
-                 format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
+                 round_and_format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
                 ('Steel angle section thickness',
-                 format_length(spreadsheet_document.Spreadsheet.MetalThicknessL))
+                 round_and_format_length(spreadsheet_document.Spreadsheet.MetalThicknessL))
             ],
             book_reference_template % 'page 26 right-hand side'
         )
@@ -190,8 +190,8 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
         return create_table(
             header,
             [
-                ('G', format_length(spreadsheet_document.Alternator.GG)),
-                ('H', format_length(spreadsheet_document.Alternator.HH))
+                ('G', round_and_format_length(spreadsheet_document.Alternator.GG)),
+                ('H', round_and_format_length(spreadsheet_document.Alternator.HH))
             ],
             book_reference_template % 'page 27 right-hand side'
         )
@@ -199,10 +199,10 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
         return create_table(
             header,
             [
-                ('A', format_length(
+                ('A', round_and_format_length(
                     spreadsheet_document.Alternator.StarShapeTwoHoleEndBracketLength)),
-                ('B', format_length(spreadsheet_document.Alternator.B)),
-                ('C', format_length(spreadsheet_document.Alternator.CC))
+                ('B', round_and_format_length(spreadsheet_document.Alternator.B)),
+                ('C', round_and_format_length(spreadsheet_document.Alternator.CC))
             ]
         )
 
@@ -212,10 +212,10 @@ def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Docume
         'Alternator Frame to Yaw Pipe Sizes',
         [
             ('Length of yaw bearing pipe',
-             format_length(spreadsheet_document.HighEndStop.YawPipeLength)),
-            ('I', format_length(spreadsheet_document.Alternator.I)),
-            ('J', format_length(spreadsheet_document.Alternator.j)),
-            ('K', format_length(spreadsheet_document.Alternator.k))
+             round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)),
+            ('I', round_and_format_length(spreadsheet_document.Alternator.I)),
+            ('J', round_and_format_length(spreadsheet_document.Alternator.j)),
+            ('K', round_and_format_length(spreadsheet_document.Alternator.k))
         ],
         book_reference_template % 'page 28 right-hand side'
     )
@@ -225,7 +225,7 @@ def create_offset_table(spreadsheet_document: Document) -> Element:
     return create_table(
         'Offset distance laterally from alternator center to yaw center',
         [
-            ('Offset', format_length(spreadsheet_document.Spreadsheet.Offset))
+            ('Offset', round_and_format_length(spreadsheet_document.Spreadsheet.Offset))
         ],
         book_reference_template % 'page 27 right-hand side'
     )
@@ -235,16 +235,16 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
     return create_table(
         'Frame Dimensions, Flat Bar',
         [
-            ('Offset', format_length(spreadsheet_document.Spreadsheet.Offset)),
-            ('L length of flat bar', format_length(
+            ('Offset', round_and_format_length(spreadsheet_document.Spreadsheet.Offset)),
+            ('L length of flat bar', round_and_format_length(
                 spreadsheet_document.YawBearing.L)),
-            ('M width of flat bar', format_length(
+            ('M width of flat bar', round_and_format_length(
                 spreadsheet_document.YawBearing.MM)),
-            ('Flat bar thickness', format_length(
+            ('Flat bar thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.FlatMetalThickness)),
             (
                 'Length of yaw bearing pipe',
-                format_length(spreadsheet_document.HighEndStop.YawPipeLength)
+                round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)
             )
         ],
         book_reference_template % 'page 29 left-hand side'
@@ -255,18 +255,18 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
     return create_table(
         'Steel Pipe Dimensions for Tail',
         [
-            ('Boom length A', format_length(
+            ('Boom length A', round_and_format_length(
                 spreadsheet_document.Spreadsheet.BoomLength)),
-            ('Diameter B', format_length(
+            ('Diameter B', round_and_format_length(
                 spreadsheet_document.Spreadsheet.BoomPipeDiameter, ndigits=1)),
-            ('Hinge outer C', format_length(
+            ('Hinge outer C', round_and_format_length(
                 spreadsheet_document.Tail.HingeOuterPipeLength)),
             # See Also: Tail.HingeOuterPipeRadius in tail_cells.py
-            ('Diameter D', format_length(
+            ('Diameter D', round_and_format_length(
                 spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
-            ('Hinge inner E', format_length(
+            ('Hinge inner E', round_and_format_length(
                 spreadsheet_document.Tail.HingeInnerPipeLength)),
-            ('Diameter F', format_length(
+            ('Diameter F', round_and_format_length(
                 spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1))
         ],
         book_reference_template % 'page 31 right-hand side'
@@ -279,27 +279,27 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
         [
             (
                 'Tail hinge angle',
-                format_angle(
+                round_and_format_angle(
                     spreadsheet_document.Spreadsheet.VerticalPlaneAngle)
             ),
-            ('Vane plywood dimension G', format_length(
+            ('Vane plywood dimension G', round_and_format_length(
                 spreadsheet_document.Spreadsheet.VaneWidth)),
-            ('Vane plywood dimension H', format_length(
+            ('Vane plywood dimension H', round_and_format_length(
                 spreadsheet_document.Spreadsheet.VaneLength)),
-            ('Vane plywood thickness', format_length(
+            ('Vane plywood thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.VaneThickness)),
             (
                 'Vane bracket flat bar width',
-                format_length(spreadsheet_document.Spreadsheet.BracketWidth)
+                round_and_format_length(spreadsheet_document.Spreadsheet.BracketWidth)
             ),
             (
                 'Vane bracket flat bar thickness',
-                format_length(
+                round_and_format_length(
                     spreadsheet_document.Spreadsheet.BracketThickness)
             ),
             (
                 'Vane bracket flat bar length J',
-                format_length(spreadsheet_document.Spreadsheet.BracketLength)
+                round_and_format_length(spreadsheet_document.Spreadsheet.BracketLength)
             )
         ],
         book_reference_template % 'page 32 bottom'
@@ -313,14 +313,14 @@ def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
             ('Number of rotor disks', 2),
             ('Magnets per rotor disk', spreadsheet_document.Spreadsheet.NumberMagnet),
             ('Magnet material', spreadsheet_document.Spreadsheet.MagnetMaterial),
-            ('Magnet length', format_length(
+            ('Magnet length', round_and_format_length(
                 spreadsheet_document.Spreadsheet.MagnetLength)),
-            ('Magnet width', format_length(
+            ('Magnet width', round_and_format_length(
                 spreadsheet_document.Spreadsheet.MagnetWidth)),
-            ('Magnet thickness', format_length(
+            ('Magnet thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.MagnetThickness)),
             ('Number of coils', spreadsheet_document.Spreadsheet.NumberOfCoilsPerPhase * 3),
-            ('Weight of wire', format_weight(
+            ('Weight of wire', round_and_format_weight(
                 spreadsheet_document.Spreadsheet.WireWeight)),
             ('Wire diameter', format_length(
                 spreadsheet_document.Spreadsheet.WireDiameter)),
@@ -336,14 +336,14 @@ def create_tail_junction_dimensions_table(spreadsheet_document: Document) -> Ele
         'Tail Junction Cross Piece Dimensions',
         [
             (
-                'Width of cross piece D', format_length(
+                'Width of cross piece D', round_and_format_length(
                     spreadsheet_document.Tail.TailHingeJunctionFullWidth -
                     (spreadsheet_document.Spreadsheet.YawPipeDiameter / 2) -
                     spreadsheet_document.Tail.HingeInnerPipeRadius
                 )
             ),
             ('Position from end of yaw bearing pipe',
-             format_length(spreadsheet_document.Tail.TailHingeJunctionHeight))
+             round_and_format_length(spreadsheet_document.Tail.TailHingeJunctionHeight))
         ]
     )
 
@@ -352,11 +352,11 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Coil Winder Dimensions',
         [
-            ('A', format_length(
+            ('A', round_and_format_length(
                 spreadsheet_document.Alternator.RectangularVerticalDistanceOfHolesFromCenter * 2)),
-            ('B', format_length(
+            ('B', round_and_format_length(
                 spreadsheet_document.Alternator.OuterHorizontalDistanceBetweenCenterOfSmallHoles)),
-            ('C', format_length(
+            ('C', round_and_format_length(
                 spreadsheet_document.Alternator.InnerHorizontalDistanceBetweenCenterOfSmallHoles
                 if spreadsheet_document.Spreadsheet.CoilType != 3 else
                 spreadsheet_document.Alternator.CoilWinderDiskBottomHoleRadius * 2
@@ -370,11 +370,11 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Stator Mould Dimensions',
         [
-            ('Mould side A', format_length(
+            ('Mould side A', round_and_format_length(
                 spreadsheet_document.Alternator.StatorMoldSideLength)),
-            ('Outer radius B', format_length(
+            ('Outer radius B', round_and_format_length(
                 spreadsheet_document.Alternator.StatorHolesCircumradius)),
-            ('Inner radius C', format_length(
+            ('Inner radius C', round_and_format_length(
                 spreadsheet_document.Alternator.StatorInnerHoleRadius)),
             (
                 'Number of mounts',
@@ -382,7 +382,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                 if rotor_disk_radius <= 275 else 6
             ),
             ('Surround and island thickness',
-             format_length(spreadsheet_document.Spreadsheet.StatorThickness))
+             round_and_format_length(spreadsheet_document.Spreadsheet.StatorThickness))
         ],
         book_reference_template % 'page 40 left-hand side'
     )
@@ -392,15 +392,15 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
     return create_table(
         'Rotor Mould Dimensions',
         [
-            ('Mould side A', format_length(
+            ('Mould side A', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldSideLength)),
-            ('Rotor radius B', format_length(
+            ('Rotor radius B', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldSurroundRadius)),
-            ('Island radius C', format_length(
+            ('Island radius C', round_and_format_length(
                 spreadsheet_document.Alternator.IslandRadius)),
             ('Surround thickness',
-             format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
-            ('Island thickness', format_length(
+             round_and_format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
+            ('Island thickness', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldIslandThickness)),
         ],
         book_reference_template % 'page 42 left-hand side'
@@ -412,13 +412,13 @@ def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Doc
         'Magnet Positioning Jig Dimensions',
         [
             ('Number of magnets', spreadsheet_document.Spreadsheet.NumberMagnet),
-            ('Smaller radius D', format_length(
+            ('Smaller radius D', round_and_format_length(
                 spreadsheet_document.Spreadsheet.RotorDiskRadius -
                 spreadsheet_document.Spreadsheet.MagnetLength
             )),
-            ('Larger radius E', format_length(
+            ('Larger radius E', round_and_format_length(
                 spreadsheet_document.Spreadsheet.RotorDiskRadius)),
-            ('Circle radius', format_length(
+            ('Circle radius', round_and_format_length(
                 spreadsheet_document.Spreadsheet.MagnetWidth / 2))
         ],
         book_reference_template % 'page 42 & 43'
@@ -433,28 +433,28 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                 'Hub studs length',
                 'TODO: Adjust when blades are added.'
             ),
-            ('Hub studs diameter', format_length(
+            ('Hub studs diameter', round_and_format_length(
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             (
                 'Stator studs length',
-                format_length(
+                round_and_format_length(
                     spreadsheet_document.Alternator.StatorMountingStudsLength)
             ),
             (
                 'Stator studs diameter',
-                format_length(spreadsheet_document.Spreadsheet.HolesDiameter)),
+                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)),
             (
                 'Vane bracket bolts diameter',
-                format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
+                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
             ),
             (
                 'Thickness of all flat steel pieces',
-                format_length(
+                round_and_format_length(
                     spreadsheet_document.Spreadsheet.FlatMetalThickness)
             ),
             (
                 'Wall thickness of yaw and tail hinge pipes',
-                format_length(spreadsheet_document.Spreadsheet.PipeThickness)
+                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
             )
         ],
         book_reference_template % 'page 46 left-hand side'
@@ -524,13 +524,17 @@ def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None) ->
     return element
 
 
-def format_length(length: float, ndigits=None) -> str:
-    return f'{round(length, ndigits)} mm'
+def round_and_format_length(length: float, ndigits=None) -> str:
+    return format_length(round(length, ndigits))
 
 
-def format_angle(angle: float, ndigits=None) -> str:
+def format_length(length: float) -> str:
+    return f'{length} mm'
+
+
+def round_and_format_angle(angle: float, ndigits=None) -> str:
     return f'{round(angle, ndigits)}°'
 
 
-def format_weight(length: float, ndigits=2) -> str:
+def round_and_format_weight(length: float, ndigits=2) -> str:
     return f'{round(length, ndigits)} kg'
