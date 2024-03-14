@@ -352,6 +352,8 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
     return create_table(
         'Coil Winder Dimensions',
         [
+            ('Cheek piece diameter', round_and_format_length(
+                spreadsheet_document.Alternator.CoilWinderDiskRadius * 2)),
             ('A', round_and_format_length(
                 spreadsheet_document.Alternator.RectangularVerticalDistanceOfHolesFromCenter * 2)),
             ('B', round_and_format_length(
