@@ -58,7 +58,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
             create_alternator_frame_to_yaw_pipe_sizes_table(
                 spreadsheet_document)
         )
-    if rotor_disk_radius >= 187.5:
+    else:
         tables.append(
             create_frame_dimensions_flat_bar_table(spreadsheet_document)
         )
