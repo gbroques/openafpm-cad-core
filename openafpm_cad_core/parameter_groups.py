@@ -31,12 +31,12 @@ class MagnafpmParameters(TypedDict):
 
     RotorDiskThickness: float
     """Thickness of rotor disk.
-    
+
     See "Rotor Disk Thickness" section at:
         https://openafpm.net/design-tips
     """
 
-    MagnetLength: float # TODO: Rename to MagnetRadialDimension?
+    MagnetLength: float  # TODO: Rename to MagnetRadialDimension?
     """Length of magnet.
 
     Not always the longest dimension of the magnet,
@@ -44,7 +44,7 @@ class MagnafpmParameters(TypedDict):
     (in terms of the rotor circle).
     """
 
-    MagnetWidth: float # TODO: Rename to MagnetTangentialDimension?
+    MagnetWidth: float  # TODO: Rename to MagnetTangentialDimension?
     """Width of magnet.
 
     Not always shorter than MagnetLength,
@@ -54,7 +54,7 @@ class MagnafpmParameters(TypedDict):
 
     MagnetThickness: float
     """Thickness of magnet.
-    
+
     See "Magnet Thickness" section at:
         https://openafpm.net/design-tips
     """
@@ -85,13 +85,13 @@ class MagnafpmParameters(TypedDict):
 
     CoilLegWidth: float
     """Distance from the inner-most edge, surrounding the hole, to the outer-most edge of the coil.
-    
+
     See "Wire sizes and power losses" section on page 55 of "A Wind Turbine Recipe Book (2014)".
     """
 
     CoilInnerWidth1: float  # CoilHoleOuterWidth
     """Outer width of coil hole with respect to center of rotor disk.
-    
+
     In conjuction with CoilInnerWidth2, controls the shape of the inner hole and type of coil:
 
     * rectangular
@@ -106,7 +106,7 @@ class MagnafpmParameters(TypedDict):
 
     CoilInnerWidth2: float  # CoilHoleInnerWidth
     """Inner width of coil hole with respect to center of rotor disk.
-    
+
     In conjuction with CoilInnerWidth1, controls the shape of the inner hole and type of coil:
 
     * rectangular
@@ -182,25 +182,25 @@ class FurlingParameters(TypedDict):
 
     VerticalPlaneAngle: float  # TailHingeAngle?
     """Angle between outer pipe of yaw-bearing and inner pipe of tail hinge (in degrees).
-    
+
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
     HorizontalPlaneAngle: float
     """Angle of the alternator frame from a horizontal plane when welding the tail hinge (in degrees).
-    
+
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
     BoomLength: float  # BoomPipeLength
     """Length of tail boom pipe.
-    
+
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
     BoomPipeDiameter: float
     """Outer diameter of tail boom pipe including thickness.
-    
+
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
@@ -233,7 +233,8 @@ class FurlingParameters(TypedDict):
 
     Where ``X`` is described on the right-hand side of page 26 of "A Wind Turbine Recipe Book (2014)".
 
-    For H Shape, see "Mounting the alternator to the yaw bearing" section on page 27 of "A Wind Turbine Recipe Book (2014)".
+    For H Shape, see "Mounting the alternator to the yaw bearing" section
+    on page 27 of "A Wind Turbine Recipe Book (2014)".
 
     Notably, the diagram on the left-hand side of page 29.
 
@@ -267,7 +268,7 @@ class UserParameters(TypedDict):
 
     RotorResinMargin: int
     """Margin of resin to surround and protect the outer edge of the magnets.
-    
+
     See left-hand side of page 42 of "A Wind Turbine Recipe Book (2014)".
     """
 
