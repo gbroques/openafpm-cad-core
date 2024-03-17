@@ -1,6 +1,7 @@
 {
     "T Shape": {
         "magnafpm": {
+            "RotorDiameter": 2400,
             "RotorDiskRadius": 150,
             "RotorDiskInnerRadius": 100,
             "RotorDiskThickness": 10,
@@ -51,6 +52,7 @@
     },
     "H Shape": {
         "magnafpm": {
+            "RotorDiameter": 4200,
             "RotorDiskRadius": 225,
             "RotorDiskInnerRadius": 100,
             "RotorDiskThickness": 10,
@@ -101,6 +103,7 @@
     },
     "Star Shape": {
         "magnafpm": {
+            "RotorDiameter": 6500,
             "RotorDiskRadius": 350,
             "RotorDiskInnerRadius": 100,
             "RotorDiskThickness": 10,
@@ -151,6 +154,7 @@
     },
     "T Shape 2F": {
         "magnafpm": {
+            "RotorDiameter": 2400,
             "RotorDiskRadius": 151.39,
             "RotorDiskInnerRadius": 99.32,
             "RotorDiskThickness": 8,
@@ -201,6 +205,7 @@
     },
     "H Shape 4F": {
         "magnafpm": {
+            "RotorDiameter": 4200,
             "RotorDiskRadius": 274.77,
             "RotorDiskInnerRadius": 198.63,
             "RotorDiskThickness": 10,

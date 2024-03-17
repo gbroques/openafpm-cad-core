@@ -22,6 +22,11 @@ class MagnafpmParameters(TypedDict):
     * how electricity is generated
     * and (**magn**)etism.
     """
+    RotorDiameter: float
+    """The width of the circle swept by the rotating blades.
+
+    Also referred to as the "turbine diameter".
+    """
 
     RotorDiskRadius: float
     """Outer radius of rotor disk(s) for the generator."""
