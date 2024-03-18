@@ -4,6 +4,7 @@ import FreeCAD as App
 from FreeCAD import Document
 
 from .alternator_cells import alternator_cells
+from .blade_cells import blade_cells
 from .fastener_cells import get_fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
@@ -33,6 +34,7 @@ def create_spreadsheet_document(name: str,
         'Fastener': get_fastener_cells(),
         'Hub': hub_cells,
         'Alternator': alternator_cells,
+        'Blade': blade_cells,
         'YawBearing': yaw_bearing_cells,
         'Tail': tail_cells,
         'LowEndStop': low_end_stop_cells,

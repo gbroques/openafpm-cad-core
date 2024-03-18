@@ -264,7 +264,8 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldBoltWidthAcrossCorners')
     ],
     [
-        # Controls radius of screw holes for both Stator & Rotor molds.
+        # Controls radius of screw holes for stator mold, rotor mold,
+        # and blade hub rotor plates.
         # These appear to be pilot holes for a 5mm diameter screw.
         Cell('ScrewHoleRadius'),
         Cell('DistanceBetweenOuterHolesAndStatorMold'),

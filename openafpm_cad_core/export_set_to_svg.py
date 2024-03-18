@@ -198,7 +198,12 @@ def get_material(obj: object) -> str:
 
 
 def is_wooden(label: str) -> bool:
-    wooden_labels = ['Tail_Vane']
+    # TODO: Use materials upon upgrading to FreeCAD 22
+    # https://forum.freecad.org/viewtopic.php?t=78242
+    # https://github.com/FreeCAD/FreeCAD/pull/10690
+    # https://wiki.freecad.org/Release_notes_0.22#Material
+    # https://wiki.freecad.org/Material
+    wooden_labels = ['Tail_Vane', 'Blade_Assembly_BackDisk']
     wooden_label_fragments = ['Mold', 'CoilWinder', 'MagnetJig']
     return (
         any([wooden_label == label for wooden_label in wooden_labels]) or
