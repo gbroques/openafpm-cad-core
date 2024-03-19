@@ -103,7 +103,7 @@
     },
     "Star Shape": {
         "magnafpm": {
-            "RotorDiameter": 6500,
+            "RotorDiameter": 6000,
             "RotorDiskRadius": 350,
             "RotorDiskInnerRadius": 100,
             "RotorDiskThickness": 10,
