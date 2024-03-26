@@ -203,7 +203,9 @@ def is_wooden(label: str) -> bool:
     # https://github.com/FreeCAD/FreeCAD/pull/10690
     # https://wiki.freecad.org/Release_notes_0.22#Material
     # https://wiki.freecad.org/Material
-    wooden_labels = ['Tail_Vane', 'Blade_Assembly_BackDisk']
+    wooden_labels = [
+        'Tail_Vane', 'Blade_Assembly_BackDisk', 'Blade_Assembly_FrontTriangle'
+    ]
     wooden_label_fragments = ['Mold', 'CoilWinder', 'MagnetJig']
     return (
         any([wooden_label == label for wooden_label in wooden_labels]) or

@@ -119,11 +119,14 @@ alternator_cells: List[List[Cell]] = [
              alias='HubHolesRadius')
     ],
     [
-        Cell('HubPitchCircleRadius')
+        Cell('HubPitchCircleRadius'),
+        Cell('MiddlePadThickness')
     ],
     [
         Cell('=Hub.HubPitchCircleRadius',
-             alias='HubPitchCircleRadius')
+             alias='HubPitchCircleRadius'),
+        Cell('=Hub.MiddlePadThickness',
+             alias='MiddlePadThickness')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -144,6 +147,20 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceThreadsExtendFromNuts'),
         Cell('=Fastener.WasherThickness',
              alias='WasherThickness')
+    ],
+    [
+        Cell('Blade', styles=[Style.UNDERLINE])
+        # -------------------------------------
+    ],
+    [
+        Cell('BladeAssemblyPlateThickness'),
+        Cell('BladeThickness')
+    ],
+    [
+        Cell('=Blade.BladeAssemblyPlateThickness',
+             alias='BladeAssemblyPlateThickness'),
+        Cell('=Blade.BladeThickness',
+             alias='BladeThickness')
     ],
     [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
@@ -743,11 +760,14 @@ alternator_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('StatorMountingStudsLength')
+        Cell('StatorMountingStudsLength'),
+        Cell('HubStudsLength')
     ],
     [
         Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorThickness + MechanicalClearance + StatorThickness + WasherThickness',
-             alias='StatorMountingStudsLength')
+             alias='StatorMountingStudsLength'),
+        Cell('=DistanceThreadsExtendFromNuts * 2 + HubHexNutThickness * 3 + MiddlePadThickness + RotorThickness * 2 + MechanicalClearance * 2 + StatorThickness + BladeAssemblyPlateThickness * 2 + WasherThickness * 2 + BladeThickness',
+             alias='HubStudsLength')
     ],
     [
         Cell('Rotor Mounting Studs', styles=[Style.UNDERLINE, Style.BOLD])

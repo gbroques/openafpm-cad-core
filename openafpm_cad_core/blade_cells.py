@@ -26,10 +26,26 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('BladeAssemblyBackDiskDiameter'),
+        Cell('BladeAssemblyFrontTriangleSideLength')
     ],
     [
         Cell('=0.106 * RotorDiameter - 3.121',
              alias='BladeAssemblyBackDiskDiameter'),
+        Cell('=0.147 * RotorDiameter + 6.213',
+             alias='BladeAssemblyFrontTriangleSideLength')
+    ],
+    [
+        Cell('BladeTemplateDim_V'),
+        Cell('BladeTemplateDim_W'),
+        Cell('BladeTemplateDim_X')
+    ],
+    [
+        Cell('=0.086 * RotorDiameter - 10.669',
+             alias='BladeTemplateDim_V'),
+        Cell('=0.018 * RotorDiameter + 12.986',
+             alias='BladeTemplateDim_W'),
+        Cell('=0.030 * RotorDiameter + 23.570',
+             alias='BladeTemplateDim_X')
     ],
     [
         Cell('UnroundedBladeAssemblyPlateThickness'),
@@ -123,4 +139,30 @@ blade_cells: List[List[Cell]] = [
         Cell('=UnroundedNumberOfScrews - mod(UnroundedNumberOfScrews; 3)',
              alias='NumberOfScrews')
     ],
+    [
+        Cell('NumberOfScrewsPerBlade'),
+        Cell('NumberOfInnerScrews'),
+        Cell('NumberOfOuterScrews')
+    ],
+    [
+        Cell('=NumberOfScrews / 3',
+             alias='NumberOfScrewsPerBlade'),
+        Cell('=round(NumberOfScrewsPerBlade * 0.43)',
+             alias='NumberOfInnerScrews'),
+        Cell('=NumberOfScrewsPerBlade - NumberOfInnerScrews',
+             alias='NumberOfOuterScrews')
+    ],
+    [
+        Cell('LessThan3000'),
+        Cell('GreaterThanOrEqualTo3000'),
+        Cell('BladeThickness')
+    ],
+    [
+        Cell('=RotorDiameter * 0.0083333333333 + 20 ',
+             alias='LessThan3000'),
+        Cell('=RotorDiameter * 0.025 - 30',
+             alias='GreaterThanOrEqualTo3000'),
+        Cell('=RotorDiameter < 3000 ? LessThan3000 : GreaterThanOrEqualTo3000',
+             alias='BladeThickness')
+    ]
 ]

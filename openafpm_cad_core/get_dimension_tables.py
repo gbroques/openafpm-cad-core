@@ -439,7 +439,8 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
         [
             (
                 'Hub studs length',
-                'TODO: Adjust when blades are added.'
+                round_and_format_length(
+                    spreadsheet_document.Alternator.HubStudsLength)
             ),
             ('Hub studs diameter', round_and_format_length(
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
