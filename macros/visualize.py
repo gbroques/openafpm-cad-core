@@ -70,7 +70,7 @@ if __name__ == '__main__':
         Assembly.COIL_WINDER)
     path = Path(args.path)
     triples = [(turbine, assembly, path)
-                for turbine in turbines for assembly in assemblies]
+               for turbine in turbines for assembly in assemblies]
 
     with Pool(len(triples)) as p:
         filepaths = p.map(write_obj_file, triples)
