@@ -24,6 +24,7 @@ class Assembly(Enum):
     ROTOR_MOLD = 'Rotor Mold'
     MAGNET_JIG = 'Magnet Jig'
     COIL_WINDER = 'Coil Winder'
+    BLADE_TEMPLATE = 'Blade Template'
 
 
 def load_assembly(assembly: Assembly,
@@ -36,7 +37,8 @@ def load_assembly(assembly: Assembly,
         Assembly.STATOR_MOLD: load_stator_mold,
         Assembly.ROTOR_MOLD: load_rotor_mold,
         Assembly.MAGNET_JIG: load_magnet_jig,
-        Assembly.COIL_WINDER: load_coil_winder
+        Assembly.COIL_WINDER: load_coil_winder,
+        Assembly.BLADE_TEMPLATE: load_blade_template
     }
     load_function = load_function_by_assembly[assembly]
     return load_function(magnafpm_parameters, furling_parameters, user_parameters, save_spreadsheet_document)
@@ -52,7 +54,8 @@ def load_all(magnafpm_parameters: MagnafpmParameters,
             get_stator_mold_assembly_document_path,
             get_rotor_mold_assembly_document_path,
             get_magnet_jig_assembly_document_path,
-            get_coil_winder_assembly_document_path
+            get_coil_winder_assembly_document_path,
+            get_blade_template_document_path
         ],
         magnafpm_parameters,
         furling_parameters,
@@ -148,3 +151,21 @@ def load_coil_winder(magnafpm_parameters: MagnafpmParameters,
 def get_coil_winder_assembly_document_path(documents_path: Path) -> Path:
     return documents_path.joinpath(
         'Alternator', 'Stator', 'CoilWinder', 'Stator_CoilWinder_Assembly.FCStd')
+
+
+def load_blade_template(magnafpm_parameters: MagnafpmParameters,
+                        furling_parameters: FurlingParameters,
+                        user_parameters: UserParameters,
+                        save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+    return load_root_document(
+        get_blade_template_document_path,
+        magnafpm_parameters,
+        furling_parameters,
+        user_parameters,
+        save_spreadsheet_document
+    )
+
+
+def get_blade_template_document_path(documents_path: Path) -> Path:
+    return documents_path.joinpath('Blades', 'Blade_Template.FCStd')
+

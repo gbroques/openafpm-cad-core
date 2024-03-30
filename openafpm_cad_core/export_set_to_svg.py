@@ -204,7 +204,7 @@ def is_wooden(label: str) -> bool:
     # https://wiki.freecad.org/Release_notes_0.22#Material
     # https://wiki.freecad.org/Material
     wooden_labels = [
-        'Tail_Vane', 'Blade_Assembly_BackDisk', 'Blade_Assembly_FrontTriangle'
+        'Tail_Vane', 'Blade_Assembly_BackDisk', 'Blade_Assembly_FrontTriangle', 'Blade_Template'
     ]
     wooden_label_fragments = ['Mold', 'CoilWinder', 'MagnetJig']
     return (
