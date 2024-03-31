@@ -22,6 +22,16 @@ blade_cells: List[List[Cell]] = [
              alias='RotorDiameter'),
     ],
     [
+        Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('BladeTemplateThickness')
+    ],
+    [
+        Cell('6',
+             alias='BladeTemplateThickness')
+    ],
+    [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
