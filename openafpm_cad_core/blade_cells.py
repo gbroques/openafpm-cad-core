@@ -49,9 +49,9 @@ blade_cells: List[List[Cell]] = [
         Cell('BladeTemplateDim_W')
     ],
     [
-        Cell('=0.086 * RotorDiameter - 10.669',
+        Cell('=round(0.086 * RotorDiameter - 10.669)',
              alias='BladeTemplateDim_V'),
-        Cell('=0.018 * RotorDiameter + 12.986',
+        Cell('=round(0.018 * RotorDiameter + 12.986)',
              alias='BladeTemplateDim_W')
     ],
     [
