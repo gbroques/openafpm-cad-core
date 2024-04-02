@@ -106,28 +106,39 @@ blade_cells: List[List[Cell]] = [
              alias='BladeAssemblyPlateThickness')
     ],
     [
-        Cell('UnroundedNumberOfScrews'),
-        Cell('NumberOfScrews')
+        Cell('TotalNumberOfBladeScrews'),
+        Cell('UnroundedNumberOfFrontTriangleScrews'),
+        Cell('UnroundedNumberOfBackDiskScrews'),
     ],
     [
         Cell('=0.013 * RotorDiameter + 16.929',
-             alias='UnroundedNumberOfScrews'),
-        # Round down to nearest multiple of 3.
-        Cell('=UnroundedNumberOfScrews - mod(UnroundedNumberOfScrews; 3)',
-             alias='NumberOfScrews')
+             alias='TotalNumberOfBladeScrews'),
+        Cell('=TotalNumberOfBladeScrews * 0.48',
+             alias='UnroundedNumberOfFrontTriangleScrews'),
+        Cell('=TotalNumberOfBladeScrews - UnroundedNumberOfFrontTriangleScrews',
+             alias='UnroundedNumberOfBackDiskScrews'),
     ],
     [
-        Cell('NumberOfScrewsPerBlade'),
-        Cell('NumberOfInnerScrews'),
-        Cell('NumberOfOuterScrews')
+        Cell('NumberOfFrontTriangleScrews'),
+        Cell('NumberOfBackDiskScrews')
     ],
     [
-        Cell('=NumberOfScrews / 3',
-             alias='NumberOfScrewsPerBlade'),
-        Cell('=round(NumberOfScrewsPerBlade * 0.43)',
-             alias='NumberOfInnerScrews'),
-        Cell('=NumberOfScrewsPerBlade - NumberOfInnerScrews',
-             alias='NumberOfOuterScrews')
+        # Round up to nearest multiple of 3.
+        Cell('=UnroundedNumberOfFrontTriangleScrews + 3 - mod(UnroundedNumberOfFrontTriangleScrews; 3)',
+             alias='NumberOfFrontTriangleScrews'),
+        # Round up to nearest multiple of 3.
+        Cell('=UnroundedNumberOfBackDiskScrews + 3 - mod(UnroundedNumberOfBackDiskScrews; 3)',
+             alias='NumberOfBackDiskScrews')
+    ],
+    [
+        Cell('NumberOfFrontTriangleScrewsPerBlade'),
+        Cell('NumberOfBackDiskScrewsPerBlade')
+    ],
+    [
+        Cell('=NumberOfFrontTriangleScrews / 3',
+             alias='NumberOfFrontTriangleScrewsPerBlade'),
+        Cell('=NumberOfBackDiskScrews / 3',
+             alias='NumberOfBackDiskScrewsPerBlade')
     ],
     [
         Cell('LessThan3000'),
