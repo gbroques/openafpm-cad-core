@@ -20,11 +20,13 @@ __all__ = ['create_archive']
 
 def create_archive(magnafpm_parameters: MagnafpmParameters,
                    furling_parameters: FurlingParameters,
-                   user_parameters: UserParameters) -> bytes:
+                   user_parameters: UserParameters,
+                   save_spreadsheet_document: bool = False) -> bytes:
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters,
         furling_parameters,
-        user_parameters)
+        user_parameters,
+        save_spreadsheet_document)
     wind_turbine_document = root_documents[0]
     document_source = Path(get_filename(wind_turbine_document)).parent
     temporary_unique_directory = Path(gettempdir()).joinpath(str(uuid1()))
