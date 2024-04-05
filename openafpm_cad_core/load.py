@@ -30,8 +30,7 @@ class Assembly(Enum):
 def load_assembly(assembly: Assembly,
                   magnafpm_parameters: MagnafpmParameters,
                   furling_parameters: FurlingParameters,
-                  user_parameters: UserParameters,
-                  save_spreadsheet_document: bool = False):
+                  user_parameters: UserParameters):
     load_function_by_assembly = {
         Assembly.WIND_TURBINE: load_turbine,
         Assembly.STATOR_MOLD: load_stator_mold,
@@ -41,13 +40,12 @@ def load_assembly(assembly: Assembly,
         Assembly.BLADE_TEMPLATE: load_blade_template
     }
     load_function = load_function_by_assembly[assembly]
-    return load_function(magnafpm_parameters, furling_parameters, user_parameters, save_spreadsheet_document)
+    return load_function(magnafpm_parameters, furling_parameters, user_parameters)
 
 
 def load_all(magnafpm_parameters: MagnafpmParameters,
              furling_parameters: FurlingParameters,
-             user_parameters: UserParameters,
-             save_spreadsheet_document: bool = False) -> Tuple[List[Document], Document]:
+             user_parameters: UserParameters) -> Tuple[List[Document], Document]:
     return load_root_documents(
         [
             get_wind_turbine_document_path,
@@ -59,21 +57,18 @@ def load_all(magnafpm_parameters: MagnafpmParameters,
         ],
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
 def load_turbine(magnafpm_parameters: MagnafpmParameters,
                  furling_parameters: FurlingParameters,
-                 user_parameters: UserParameters,
-                 save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                 user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_wind_turbine_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
@@ -83,14 +78,12 @@ def get_wind_turbine_document_path(documents_path: Path) -> Path:
 
 def load_stator_mold(magnafpm_parameters: MagnafpmParameters,
                      furling_parameters: FurlingParameters,
-                     user_parameters: UserParameters,
-                     save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                     user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_stator_mold_assembly_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
@@ -101,14 +94,12 @@ def get_stator_mold_assembly_document_path(documents_path: Path) -> Path:
 
 def load_rotor_mold(magnafpm_parameters: MagnafpmParameters,
                     furling_parameters: FurlingParameters,
-                    user_parameters: UserParameters,
-                    save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                    user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_rotor_mold_assembly_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
@@ -119,14 +110,12 @@ def get_rotor_mold_assembly_document_path(documents_path: Path) -> Path:
 
 def load_magnet_jig(magnafpm_parameters: MagnafpmParameters,
                     furling_parameters: FurlingParameters,
-                    user_parameters: UserParameters,
-                    save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                    user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_magnet_jig_assembly_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
@@ -137,14 +126,12 @@ def get_magnet_jig_assembly_document_path(documents_path: Path) -> Path:
 
 def load_coil_winder(magnafpm_parameters: MagnafpmParameters,
                      furling_parameters: FurlingParameters,
-                     user_parameters: UserParameters,
-                     save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                     user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_coil_winder_assembly_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
@@ -155,17 +142,14 @@ def get_coil_winder_assembly_document_path(documents_path: Path) -> Path:
 
 def load_blade_template(magnafpm_parameters: MagnafpmParameters,
                         furling_parameters: FurlingParameters,
-                        user_parameters: UserParameters,
-                        save_spreadsheet_document: bool = False) -> Tuple[Document, Document]:
+                        user_parameters: UserParameters) -> Tuple[Document, Document]:
     return load_root_document(
         get_blade_template_document_path,
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document
+        user_parameters
     )
 
 
 def get_blade_template_document_path(documents_path: Path) -> Path:
     return documents_path.joinpath('Blades', 'Blade_Template.FCStd')
-

@@ -14,13 +14,11 @@ __all__ = ['assembly_to_obj']
 def assembly_to_obj(assembly: Assembly,
                     magnafpm_parameters: MagnafpmParameters,
                     furling_parameters: FurlingParameters,
-                    user_parameters: UserParameters,
-                    save_spreadsheet_document: bool = False) -> str:
+                    user_parameters: UserParameters) -> str:
     root_document, spreadsheet_document = load_assembly(assembly,
                                                         magnafpm_parameters,
                                                         furling_parameters,
-                                                        user_parameters,
-                                                        save_spreadsheet_document)
+                                                        user_parameters)
     obj = find_object_by_label(
         root_document, root_document.Name)
     export_kwargs = get_export_kwargs(assembly)

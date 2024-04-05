@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from pathlib import Path
@@ -17,20 +18,24 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
 
 __all__ = ['create_archive']
 
+logger = logging.getLogger(__name__)
+# Uncomment below line for DEBUG logging
+# logging.basicConfig(level=logging.DEBUG)
+
 
 def create_archive(magnafpm_parameters: MagnafpmParameters,
                    furling_parameters: FurlingParameters,
-                   user_parameters: UserParameters,
-                   save_spreadsheet_document: bool = False) -> bytes:
+                   user_parameters: UserParameters) -> bytes:
+    logger.debug('Loading all documents')
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters,
         furling_parameters,
-        user_parameters,
-        save_spreadsheet_document)
+        user_parameters)
     wind_turbine_document = root_documents[0]
     document_source = Path(get_filename(wind_turbine_document)).parent
     temporary_unique_directory = Path(gettempdir()).joinpath(str(uuid1()))
     archive_source = temporary_unique_directory.joinpath('WindTurbine')
+    logger.debug(f'Creating temporary directory {archive_source}')
     archive_source.mkdir(parents=True)
 
     # Save documents to where the archive will be created from first.
@@ -42,6 +47,7 @@ def create_archive(magnafpm_parameters: MagnafpmParameters,
 
     bytes_content = make_archive(str(archive_source))
     # Delete the directory the archive was created from.
+    logger.debug(f'Removing {temporary_unique_directory}')
     shutil.rmtree(temporary_unique_directory)
     return bytes_content
 
@@ -51,6 +57,7 @@ def save_documents(root_documents: List[Document],
                    source: Path,
                    destination: Path) -> None:
     if not destination.exists():
+        logger.debug(f'Creating {destination}')
         destination.mkdir(parents=True, exist_ok=True)
 
     spreadsheet_document_path = save_and_close_spreadsheet_document(
@@ -88,9 +95,12 @@ def save_document_copies_and_close(source: Path,
         document_destination = get_destination_path(
             document_source, source, destination)
         if not document_destination.parent.exists():
+            logger.debug(f'Creating directory {document_destination.parent}')
             document_destination.parent.mkdir(parents=True, exist_ok=True)
+        logger.debug(f'Copying document from {document_source} to {document_destination}')
         document.saveCopy(str(document_destination))
         destination_by_source[document_source] = str(document_destination)
+        logger.debug(f'Closing document {document.Name}')
         App.closeDocument(document.Name)
     return destination_by_source
 
@@ -100,7 +110,9 @@ def save_and_close_spreadsheet_document(spreadsheet_document_name: str, destinat
     spreadsheet_document_filename = f'{spreadsheet_document_name}.FCStd'
     spreadsheet_document_path = destination.joinpath(
         spreadsheet_document_filename)
+    logger.debug(f'Saving spreadsheet document as {spreadsheet_document_path}')
     spreadsheet_document.saveAs(str(spreadsheet_document_path))
+    logger.debug(f'Closing spreadsheet document {spreadsheet_document.Name}')
     App.closeDocument(spreadsheet_document_name)
     return str(spreadsheet_document_path)
 
@@ -113,6 +125,7 @@ def reopen_and_save_documents(source: Path, destination: Path, root_document_fil
     documents = get_open_documents()
     for document in documents:
         if not document.Temporary:
+            logger.debug(f'Saving document {document.FileName}')
             document.save()
     return documents
 

@@ -1,13 +1,14 @@
 """Module for retrieving dimensions to display in a tabular format."""
-
+from pathlib import Path
 from typing import Any, List, Optional, Tuple, TypedDict
 
 from FreeCAD import Document
 from typing_extensions import NotRequired
 
-from .create_spreadsheet_document import create_spreadsheet_document
+from .get_documents_path import get_documents_path
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
+from .upsert_spreadsheet_document import upsert_spreadsheet_document
 
 __all__ = ['get_dimension_tables']
 
@@ -29,7 +30,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
                          furling_parameters: FurlingParameters,
                          user_parameters: UserParameters) -> List[Element]:
     name = 'Master_of_Puppets'
-    spreadsheet_document = create_spreadsheet_document(name,
+    documents_path = get_documents_path()
+    spreadsheet_document_path = documents_path.joinpath(f'{name}.FCStd')
+    spreadsheet_document = upsert_spreadsheet_document(spreadsheet_document_path,
                                                        magnafpm_parameters,
                                                        furling_parameters,
                                                        user_parameters)

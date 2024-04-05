@@ -42,12 +42,10 @@ class FurlTransform(TypedDict):
 
 def load_furl_transform(magnafpm_parameters: MagnafpmParameters,
                         furling_parameters: FurlingParameters,
-                        user_parameters: UserParameters,
-                        save_spreadsheet_document: bool = False) -> FurlTransform:
+                        user_parameters: UserParameters) -> FurlTransform:
     root_document, spreadsheet_document = load_turbine(magnafpm_parameters,
                                                        furling_parameters,
-                                                       user_parameters,
-                                                       save_spreadsheet_document)
+                                                       user_parameters)
     return {
         'maximum_angle': get_maximum_furl_angle(spreadsheet_document),
         'transforms': get_furl_transforms(root_document)

@@ -11,8 +11,7 @@ def export(turbine: WindTurbine) -> str:
     zip_bytes = create_archive(
         parameters['magnafpm'],
         parameters['furling'],
-        parameters['user'],
-        save_spreadsheet_document=True)
+        parameters['user'])
 
     name = turbine.value.lower().replace(' ', '-')
     filename = f'{name}.zip'

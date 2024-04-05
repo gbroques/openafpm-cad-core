@@ -21,8 +21,7 @@ def write_obj_file(turbine_assembly_path_triple: Tuple[WindTurbine, Assembly, Pa
         assembly,
         parameters['magnafpm'],
         parameters['furling'],
-        parameters['user'],
-        save_spreadsheet_document=True)
+        parameters['user'])
     filepath = turbine_dir.joinpath(f'{slugify_enum(assembly)}.obj')
     with open(filepath, 'w') as f:
         f.write(obj_file_contents)

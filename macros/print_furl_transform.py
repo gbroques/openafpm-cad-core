@@ -16,8 +16,7 @@ def get_furl_transform(turbine: WindTurbine) -> dict:
     return load_furl_transform(
         parameters['magnafpm'],
         parameters['user'],
-        parameters['furling'],
-        save_spreadsheet_document=True)
+        parameters['furling'])
 
 
 class CompactJSONEncoder(json.JSONEncoder):

@@ -50,14 +50,6 @@ Execute the following commands from the root of this repository.
 
        freecad --version
 
-6. Ignore changes to `Master_of_Puppets.FCStd`:
-
-       git update-index --assume-unchanged openafpm_cad_core/documents/Master_of_Puppets.FCStd
-
-   If you want to make a change to `Master_of_Puppets.FCStd`, then run:
-   
-       git update-index --no-assume-unchanged openafpm_cad_core/documents/Master_of_Puppets.FCStd
-
 ## Docs
 Run `./make_docs.sh` from `docs/` with `openafpm-cad-core` conda environment activated.
 
