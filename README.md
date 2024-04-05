@@ -73,6 +73,12 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 
        python macros/visualize.py ../openafpm-cad-visualization/public/
 
+## Troubleshooting
+
+Run `/macros` from FreeCAD's GUI to see FreeCAD related warnings and errors.
+
+Currently, macros must be manually edited to remove multi-threading to avoid a pickle-related serialization error.
+
 ## Supported FreeCAD Versions
 
 Currently tested with FreeCAD `21.2`.
