@@ -16,10 +16,13 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorDiameter'),
+        Cell('BladeWidth')
     ],
     [
         Cell('=Spreadsheet.RotorDiameter',
              alias='RotorDiameter'),
+        Cell('=Spreadsheet.BladeWidth',
+             alias='BladeWidth')
     ],
     [
         Cell('Static', styles=[Style.UNDERLINE, Style.BOLD])
@@ -33,6 +36,17 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('BladeRadius'),
+        Cell('MinimumBladeWidth')
+    ],
+    [
+        Cell('=RotorDiameter / 2',
+             alias='BladeRadius'),
+        # TODO: Should we round this?
+        Cell('=0.055 * RotorDiameter - 8',
+             alias='MinimumBladeWidth')
     ],
     [
         Cell('BladeAssemblyBackDiskDiameter'),

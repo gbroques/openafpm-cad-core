@@ -250,6 +250,18 @@ class FurlingParameters(TypedDict):
 class UserParameters(TypedDict):
     """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
 
+    BladeWidth: float
+    """The width of the blade near the root.
+
+    The width depends on available wood.
+
+    If no value is specified, then it defaults to the minimum.
+
+    See "Selecting the wood" section on the right-hand side
+    of page 15 and "The blank shapes" section on page 16
+    of "A Wind Turbine Recipe Book (2014)".
+    """
+
     RotorDiskCentralHoleDiameter: int
     """Diameter of central hole for rotor disk."""
 

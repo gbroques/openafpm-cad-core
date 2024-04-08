@@ -38,6 +38,7 @@
             "Offset": 125
         },
         "user": {
+            "BladeWidth": 124,
             "HubPitchCircleDiameter": 100,
             "RotorDiskCentralHoleDiameter": 65,
             "HolesDiameter": 12,
@@ -89,6 +90,7 @@
             "Offset": 250
         },
         "user": {
+            "BladeWidth": 223,
             "HubPitchCircleDiameter": 130,
             "RotorDiskCentralHoleDiameter": 95,
             "HolesDiameter": 14,
@@ -140,6 +142,7 @@
             "Offset": 348
         },
         "user": {
+            "BladeWidth": 322,
             "HubPitchCircleDiameter": 205,
             "RotorDiskCentralHoleDiameter": 163,
             "HolesDiameter": 14,
@@ -191,6 +194,7 @@
             "Offset": 125
         },
         "user": {
+            "BladeWidth": 124,
             "HubPitchCircleDiameter": 100,
             "RotorDiskCentralHoleDiameter": 65,
             "HolesDiameter": 12,
@@ -242,6 +246,7 @@
             "Offset": 250
         },
         "user": {
+            "BladeWidth": 223,
             "HubPitchCircleDiameter": 130,
             "RotorDiskCentralHoleDiameter": 95,
             "HolesDiameter": 14,

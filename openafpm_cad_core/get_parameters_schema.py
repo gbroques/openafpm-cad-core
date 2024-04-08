@@ -247,6 +247,19 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                 "type": "object",
                 "description": "Parameters with default values that may be overridden by individual users to satisfy unique needs.",
                 "properties": {
+                    "BladeWidth": {
+                        "title": "Blade Width",
+                        "description": get_description("user", "BladeWidth"),
+                        # TODO: Set minimum and maximum based on RotorDiameter
+                        # These are calculated in blade_cells.py
+                        # MinimumBladeWidth
+                        # =0.055 * RotorDiameter - 8
+                        # BladeTemplateDim_V
+                        # =round(0.086 * RotorDiameter - 10.669)
+                        # "minimum": ,
+                        # "maximum": ,
+                        **get_numeric_type_and_multiple_of("user", "BladeWidth")
+                    },
                     "HubPitchCircleDiameter": {
                         "title": "Hub Pitch Circle Diameter",
                         "description": get_description("user", "HubPitchCircleDiameter"),
