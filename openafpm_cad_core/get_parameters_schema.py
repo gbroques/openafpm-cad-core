@@ -276,10 +276,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "RotorDiskCentralHoleDiameter": {
                         "title": "Rotor Disk Central Hole Diameter",
                         "description": get_description("user", "RotorDiskCentralHoleDiameter"),
-                        "minimum": (
-                            default_rotor_disk_central_hole_diameter -
-                            30 if wind_turbine == WindTurbine.H_SHAPE else 10
-                        ),
+                        "minimum": default_rotor_disk_central_hole_diameter - 30,
                         "maximum": default_rotor_disk_central_hole_diameter + 5,
                         **get_numeric_type_and_multiple_of("user", "RotorDiskCentralHoleDiameter")
                     },
