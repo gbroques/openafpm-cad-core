@@ -132,7 +132,7 @@ def get_group_element(x, y, title, children) -> str:
     )
 
 
-def iterate_by_material_and_thickness(flat_objects: List[FlatObject]) -> Iterator[Tuple[List[object], str, float]]:
+def iterate_by_material_and_thickness(flat_objects: List[FlatObject]) -> Iterator[Tuple[List[FlatObject], str, float]]:
     for key, grouped_objects in group_by_material_and_thickness(flat_objects).items():
         sorted_objects = sort_by_y_length_then_label_descending(
             grouped_objects)
