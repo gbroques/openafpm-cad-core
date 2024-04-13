@@ -54,7 +54,7 @@ def export_set_to_svg(export_set: Set[object],
         formatted_thickness = '{:.2f}'.format(thickness)
         unit = get_unit()
         text_element = get_text_element(
-            group_x, group_y, f'{material} {thickness} {unit}', font_size, font_family, foreground)
+            group_x, group_y, f'{material} {formatted_thickness} {unit}', font_size, font_family, foreground)
         svg_elements.append(text_element)
         group_y += text_margin_bottom
         # first object is the tallest object in each row.
