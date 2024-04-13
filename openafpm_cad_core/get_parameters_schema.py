@@ -41,6 +41,12 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                 "type": "object",
                 "description": "Parameters from the MagnAFPM tool.",
                 "properties": {
+                    "RotorDiameter": {
+                        "title": "Rotor Diameter",
+                        "description": get_description("magnafpm", "RotorDiameter"),
+                        "minimum": 0,
+                        **get_numeric_type_and_multiple_of("magnafpm", "RotorDiameter")
+                    },
                     "RotorDiskRadius": {
                         "title": "Rotor Disk Radius",
                         "description": get_description("magnafpm", "RotorDiskRadius"),
