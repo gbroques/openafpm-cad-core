@@ -88,7 +88,7 @@ def export_set_to_svg(export_set: Set[object],
         group_y += row_gap
         group_y += padding
     return (
-        f'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {group_y}">' +
+        f'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="{width}mm" height="{group_y}mm" viewBox="0 0 {width} {group_y}">' +
         f'<rect width="100%" height="100%" fill="{background}"/>' +
         '\n'.join(svg_elements) +
         '</svg>'
