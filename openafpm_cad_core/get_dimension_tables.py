@@ -371,6 +371,12 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
                  1,
                  spreadsheet_document.Alternator.CoilWinderDiskCenterHoleRadius * 2,
                  spreadsheet_document.Alternator.CoilWinderCenterRodLength)),
+            ('Nuts',
+             format_fastener(
+                 spreadsheet_document.Alternator.CoilWinderNumberOfSpacingNuts *
+                 # + 2 for front and back outer nuts
+                 spreadsheet_document.Alternator.CoilWinderNumberOfNutStacks + 2,
+                 spreadsheet_document.Alternator.CoilWinderDiskCenterHoleRadius * 2)),
             ('Rods',
              format_fastener(
                  4,
@@ -564,5 +570,8 @@ def round_and_format_weight(length: float, ndigits=2) -> str:
     return f'{round(length, ndigits)} kg'
 
 
-def format_fastener(quantity: int, diameter: int, length: float) -> str:
-    return f'{quantity}x — M{diameter}×{round_and_format_length(length)}'
+def format_fastener(quantity: int, diameter: int, length: Optional[float] = None) -> str:
+    display = f'{quantity}x — M{diameter}'
+    if length is not None:
+        display += f'×{round_and_format_length(length)}'
+    return display
