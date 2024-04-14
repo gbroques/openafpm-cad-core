@@ -413,6 +413,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
              round_and_format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
             ('Island thickness', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldIslandThickness)),
+            ('Number of bolts', spreadsheet_document.Alternator.NumberOfRotorMoldBolts),
         ],
         book_reference_template % 'page 42 left-hand side'
     )
