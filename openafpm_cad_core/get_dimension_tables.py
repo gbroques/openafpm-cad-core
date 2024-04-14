@@ -404,14 +404,23 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
             ),
             ('Surround and island thickness',
              round_and_format_length(spreadsheet_document.Spreadsheet.StatorThickness)),
-            ('Number of bolts',
-             (
-                 spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts +
-                 spreadsheet_document.Alternator.NumberOfStatorHoles * 4
-             ) if rotor_disk_radius < 275 else
-             spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts + 24)
+            ('Bolts',
+             format_fastener(
+                 calculate_number_of_stator_mold_bolts(spreadsheet_document),
+                 spreadsheet_document.Alternator.StatorMoldBoltDiameter,
+                 spreadsheet_document.Alternator.StatorMoldBoltLength))
         ],
         book_reference_template % 'page 40 left-hand side'
+    )
+
+
+def calculate_number_of_stator_mold_bolts(spreadsheet_document: Document) -> int:
+    rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
+    return (
+        spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts +
+        spreadsheet_document.Alternator.NumberOfStatorHoles * 4
+        if rotor_disk_radius < 275 else
+        spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts + 24
     )
 
 
