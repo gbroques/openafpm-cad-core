@@ -365,7 +365,17 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
                 spreadsheet_document.Alternator.InnerHorizontalDistanceBetweenCenterOfSmallHoles
                 if spreadsheet_document.Spreadsheet.CoilType != 3 else
                 spreadsheet_document.Alternator.CoilWinderDiskBottomHoleRadius * 2
-            ))
+            )),
+            ('Threaded rod',
+             '1x — ' +
+             f'M{spreadsheet_document.Alternator.CoilWinderDiskCenterHoleRadius * 2}' +
+             '×' +
+             round_and_format_length(spreadsheet_document.Alternator.CoilWinderCenterRodLength)),
+            ('Rods',
+             '4x — ' +
+             f'M{round(spreadsheet_document.Alternator.CoilWinderDiskSmallHoleRadius * 2)}' +
+             '×' +
+             round_and_format_length(spreadsheet_document.Alternator.CoilWinderPinLength))
         ]
     )
 
