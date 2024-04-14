@@ -380,7 +380,7 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
             ('Rods',
              format_fastener(
                  4,
-                 spreadsheet_document.Alternator.CoilWinderDiskSmallHoleRadius * 2,
+                 round(spreadsheet_document.Alternator.CoilWinderDiskSmallHoleRadius * 2),
                  spreadsheet_document.Alternator.CoilWinderPinLength))
         ]
     )
