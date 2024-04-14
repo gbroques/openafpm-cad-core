@@ -81,6 +81,11 @@ def get_fastener_cells() -> List[List[Cell]]:
                  alias='DistanceThreadsExtendFromNuts')
         ],
         [
+            Cell('HubHolesBoltLength'),
+            Cell('50',
+                 alias='HubHolesBoltLength')
+        ],
+        [
             Cell('Calculated', styles=[Style.UNDERLINE])
         ],
         [

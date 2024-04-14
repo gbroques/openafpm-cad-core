@@ -271,14 +271,28 @@ alternator_cells: List[List[Cell]] = [
     # https://www.atlrod.com/metric-hex-bolt-dimensions/
     [
         Cell('StatorMoldBoltDiameter'),
-        Cell('StatorMoldBoltWidthAcrossCorners')
+        Cell('StatorMoldBoltWidthAcrossCorners'),
+        Cell('StatorMoldBoltLength'),
     ],
     [
         # M12 Bolt
         Cell('12',
              alias='StatorMoldBoltDiameter'),
         Cell('20.78',  # C (MAX)
-             alias='StatorMoldBoltWidthAcrossCorners')
+             alias='StatorMoldBoltWidthAcrossCorners'),
+        Cell('65',
+             alias='StatorMoldBoltLength')
+    ],
+    [
+        Cell('LocatingBoltDiameter'),
+        Cell('LocatingBoltLength'),
+    ],
+    [
+        # M12 Bolt
+        Cell('12',
+             alias='LocatingBoltDiameter'),
+        Cell('85',
+             alias='LocatingBoltLength')
     ],
     [
         # Controls radius of screw holes for stator mold, rotor mold,
