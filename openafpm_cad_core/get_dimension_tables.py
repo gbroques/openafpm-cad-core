@@ -431,7 +431,8 @@ def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Doc
             ('Larger radius E', round_and_format_length(
                 spreadsheet_document.Spreadsheet.RotorDiskRadius)),
             ('Circle radius', round_and_format_length(
-                spreadsheet_document.Spreadsheet.MagnetWidth / 2))
+                spreadsheet_document.Spreadsheet.MagnetWidth / 2)),
+            ('Number of bolts', spreadsheet_document.Alternator.NumberOfRotorMoldBolts),
         ],
         book_reference_template % 'page 42 & 43'
     )
