@@ -87,7 +87,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         create_rotor_mold_dimensions_table(spreadsheet_document)
     )
     tables.append(
-        create_magnet_positioning_and_jig_dimensions_table(
+        create_magnet_positioning_jig_dimensions_table(
             spreadsheet_document)
     )
     tables.append(
@@ -464,7 +464,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
     )
 
 
-def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Document) -> Element:
     return create_table(
         'Magnet Positioning Jig Dimensions',
         [
