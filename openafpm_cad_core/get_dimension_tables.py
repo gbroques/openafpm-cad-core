@@ -481,6 +481,12 @@ def create_magnet_positioning_and_jig_dimensions_table(spreadsheet_document: Doc
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter,
                 spreadsheet_document.Fastener.HubHolesBoltLength)),
+            ('Nuts', format_fastener(
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Washers (small)', format_fastener(
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
         ],
         book_reference_template % 'page 42 & 43'
     )
