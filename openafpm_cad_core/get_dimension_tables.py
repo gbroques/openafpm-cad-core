@@ -417,10 +417,12 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  spreadsheet_document.Alternator.LocatingBoltLength)),
             ('Nuts',
              format_fastener(
-                 # What about nuts for 3 'locating' bolts?
-                 calculate_number_of_stator_mold_bolts(spreadsheet_document),
+                 calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
+                 spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
+            ('Washers (small))',
+             format_fastener(
+                 calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter))
-            # TODO: Washers
         ],
         book_reference_template % 'page 40 left-hand side'
     )
