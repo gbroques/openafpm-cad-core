@@ -388,6 +388,7 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
 
 def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
+    number_of_locating_bolts = 3
     return create_table(
         'Stator Mould Dimensions',
         [
@@ -409,6 +410,11 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  calculate_number_of_stator_mold_bolts(spreadsheet_document),
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter,
                  spreadsheet_document.Alternator.StatorMoldBoltLength)),
+            ('Locating Bolts',
+             format_fastener(
+                 number_of_locating_bolts,
+                 spreadsheet_document.Alternator.LocatingBoltDiameter,
+                 spreadsheet_document.Alternator.LocatingBoltLength)),
             ('Nuts',
              format_fastener(
                  # What about nuts for 3 'locating' bolts?
