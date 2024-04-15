@@ -422,7 +422,15 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
             ('Washers (small))',
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
-                 spreadsheet_document.Alternator.StatorMoldBoltDiameter))
+                 spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
+            ('Wood screws',
+             format_fastener(
+                 # Surround screws
+                 (4 * 2) * spreadsheet_document.Alternator.NumberOfStatorHoles +
+                 # Island screws
+                 2 * spreadsheet_document.Alternator.StatorMoldIslandNumberOfScrews,
+                 spreadsheet_document.Fastener.WoodScrewDiameter,
+                 spreadsheet_document.Alternator.StatorMoldScrewLength))
         ],
         book_reference_template % 'page 40 left-hand side'
     )

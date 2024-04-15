@@ -86,6 +86,11 @@ def get_fastener_cells() -> List[List[Cell]]:
                  alias='HubHolesBoltLength')
         ],
         [
+            Cell('WoodScrewDiameter'),
+            Cell('5',
+                 alias='WoodScrewDiameter')
+        ],
+        [
             Cell('Calculated', styles=[Style.UNDERLINE])
         ],
         [
