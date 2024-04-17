@@ -451,6 +451,10 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
             ('Nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Wood screws', format_fastener(
+                spreadsheet_document.Alternator.NumberOfRotorMoldScrews,
+                spreadsheet_document.Fastener.WoodScrewDiameter,
+                spreadsheet_document.Alternator.RotorMoldScrewLength)),
         ],
         book_reference_template % 'page 42 left-hand side'
     )
