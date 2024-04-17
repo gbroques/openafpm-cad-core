@@ -403,7 +403,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
-            ('Washers (small))',
+            ('Washers (standard)',
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
@@ -476,7 +476,7 @@ def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Documen
             ('Nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-            ('Washers (small)', format_fastener(
+            ('Washers (standard)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
         ],
