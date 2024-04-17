@@ -94,8 +94,15 @@ def get_fastener_cells() -> List[List[Cell]]:
             Cell('Calculated', styles=[Style.UNDERLINE])
         ],
         [
+            Cell('UnroundedTailVaneBracketBoltLength'),
+            Cell('=BracketThickness + VaneThickness + FlatMetalThickness + ' +
+                 'DistanceThreadsExtendFromNuts + WasherThickness',
+                 alias='UnroundedTailVaneBracketBoltLength')
+        ],
+        [
             Cell('TailVaneBracketBoltLength'),
-            Cell('=BracketThickness + VaneThickness + FlatMetalThickness + DistanceThreadsExtendFromNuts + WasherThickness',
+            # Round up to nearest multiple of 5
+            Cell('=UnroundedTailVaneBracketBoltLength + 5 - mod(UnroundedTailVaneBracketBoltLength; 5)',
                  alias='TailVaneBracketBoltLength')
         ],
         *generate_width_across_corners_cells(
