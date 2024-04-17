@@ -407,7 +407,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
-            ('Wood screws',
+            ('Screws',
              format_fastener(
                  # Surround screws
                  (4 * 2) * spreadsheet_document.Alternator.NumberOfStatorHoles +
@@ -451,7 +451,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
             ('Nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-            ('Wood screws', format_fastener(
+            ('Screws', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldScrews,
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
