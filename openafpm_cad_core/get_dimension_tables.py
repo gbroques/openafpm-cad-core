@@ -277,6 +277,7 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
 
 
 def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element:
+    number_of_vane_bracket_fasteners = 4
     return create_table(
         'Tail Vane Dimensions',
         [
@@ -307,9 +308,21 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
             (
                 'Vane bracket bolts',
                 format_fastener(
-                    4,
+                    number_of_vane_bracket_fasteners,
                     spreadsheet_document.Spreadsheet.HolesDiameter,
                     spreadsheet_document.Fastener.TailVaneBracketBoltLength)
+            ),
+            (
+                'Vane bracket nuts',
+                format_fastener(
+                    number_of_vane_bracket_fasteners,
+                    spreadsheet_document.Spreadsheet.HolesDiameter)
+            ),
+            (
+                'Vane bracket washers (large)',
+                format_fastener(
+                    number_of_vane_bracket_fasteners,
+                    spreadsheet_document.Spreadsheet.HolesDiameter)
             ),
         ],
         book_reference_template % 'page 32 bottom'
