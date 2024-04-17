@@ -403,7 +403,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
-            ('Washers (standard)',
+            ('Washers (large)',
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
