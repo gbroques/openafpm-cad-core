@@ -303,7 +303,14 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
             (
                 'Vane bracket flat bar length J',
                 round_and_format_length(spreadsheet_document.Spreadsheet.BracketLength)
-            )
+            ),
+            (
+                'Vane bracket bolts',
+                format_fastener(
+                    4,
+                    spreadsheet_document.Spreadsheet.HolesDiameter,
+                    spreadsheet_document.Fastener.TailVaneBracketBoltLength)
+            ),
         ],
         book_reference_template % 'page 32 bottom'
     )
@@ -507,10 +514,6 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
             (
                 'Stator studs diameter',
                 round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)),
-            (
-                'Vane bracket bolts diameter',
-                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
-            ),
             (
                 'Thickness of all flat steel pieces',
                 round_and_format_length(
