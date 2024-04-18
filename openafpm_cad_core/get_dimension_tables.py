@@ -623,7 +623,7 @@ def th(content: Any = None, col_span: Optional[int] = None) -> Element:
 
 def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None) -> Element:
     """https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement"""
-    element = {
+    element: Element = {
         'tagName': tag_name,
         'properties': {
             'textContent': "" if content is None else str(content)
