@@ -629,7 +629,7 @@ def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None) ->
             'textContent': "" if content is None else str(content)
         }
     }
-    if col_span:
+    if col_span is not None:
         element['properties']['colSpan'] = col_span
     return element
 
