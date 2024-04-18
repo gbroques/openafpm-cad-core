@@ -518,6 +518,10 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                     spreadsheet_document.Spreadsheet.FlatMetalThickness)
             ),
             (
+                'Total steel angle bar length',
+                format_length(sum_angle_bar_length(spreadsheet_document))
+            ),
+            (
                 'Wall thickness of yaw and tail hinge pipes',
                 round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
             )
@@ -605,6 +609,27 @@ def get_pipe_outer_diameter_length_tuples(spreadsheet_document: Document) -> Lis
             spreadsheet_document.Spreadsheet.BoomLength
         )
     ]
+
+
+def sum_angle_bar_length(spreadsheet_document: Document) -> float:
+    rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
+    if rotor_disk_radius < 187.5:
+        return sum([
+            round(spreadsheet_document.Alternator.TShapeTwoHoleEndBracketLength),
+            round(spreadsheet_document.Alternator.BC) * 2,
+            round(spreadsheet_document.Alternator.D)
+        ])
+    elif rotor_disk_radius < 275:
+        return sum([
+            round(spreadsheet_document.Alternator.GG) * 2,
+            round(spreadsheet_document.Alternator.HH) * 2
+        ])
+    else:
+        return sum([
+            round(spreadsheet_document.Alternator.StarShapeTwoHoleEndBracketLength) * 2,
+            round(spreadsheet_document.Alternator.B) * 2,
+            round(spreadsheet_document.Alternator.CC) * 2
+        ])
 
 
 def table(children: List[Element]) -> Element:
