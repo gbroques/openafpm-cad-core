@@ -92,9 +92,8 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_various_parts_dimensions_table(spreadsheet_document)
     )
-    tables.append(
-        create_fasteners_table(spreadsheet_document)
-    )
+    tables.append(create_pipes_table(spreadsheet_document))
+    tables.append(create_fasteners_table(spreadsheet_document))
     return tables
 
 
@@ -568,6 +567,44 @@ def create_fasteners_table(spreadsheet_document: Document) -> Element:
             )
         ]
     )
+
+
+def create_pipes_table(spreadsheet_document: Document) -> Element:
+    pipe_outer_diameter_length_tuples = get_pipe_outer_diameter_length_tuples(spreadsheet_document)
+    length_by_outer_diameter = {}
+    for outer_diameter, length in pipe_outer_diameter_length_tuples:
+        rounded_length = round(length)
+        if outer_diameter not in length_by_outer_diameter:
+            length_by_outer_diameter[outer_diameter] = rounded_length
+        else:
+            length_by_outer_diameter[outer_diameter] += rounded_length
+    outer_diameter_length_items = sorted(length_by_outer_diameter.items())
+    rows = [
+        (f'{outer_diameter} mm outer diameter pipe length', format_length(length))
+        for outer_diameter, length in outer_diameter_length_items
+    ]
+    return create_table('Pipes', rows)
+
+
+def get_pipe_outer_diameter_length_tuples(spreadsheet_document: Document) -> List[Tuple[float, float]]:
+    return [
+        (
+            spreadsheet_document.Spreadsheet.YawPipeDiameter,
+            spreadsheet_document.HighEndStop.YawPipeLength
+        ),
+        (
+            spreadsheet_document.Tail.HingeOuterPipeDiameter,
+            spreadsheet_document.Tail.HingeOuterPipeLength
+        ),
+        (
+            spreadsheet_document.Tail.HingeInnerPipeDiameter,
+            spreadsheet_document.Tail.HingeInnerPipeLength
+        ),
+        (
+            spreadsheet_document.Spreadsheet.BoomPipeDiameter,
+            spreadsheet_document.Spreadsheet.BoomLength
+        )
+    ]
 
 
 def table(children: List[Element]) -> Element:
