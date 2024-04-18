@@ -1,6 +1,6 @@
 """Module for retrieving dimensions to display in a tabular format."""
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, TypedDict
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from FreeCAD import Document
 from typing_extensions import NotRequired
@@ -20,7 +20,7 @@ class Element(TypedDict):
     """
     tagName: str
     children: NotRequired[List['Element']]
-    properties: NotRequired[dict]
+    properties: NotRequired[Dict[str, Any]]
 
 
 book_reference_template = 'A Wind Turbine Recipe Book (2014 metric edition), %s'
