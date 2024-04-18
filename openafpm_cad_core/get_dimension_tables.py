@@ -169,6 +169,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
 def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
     header = 'Frame Dimensions'
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
+    total_angle_bar_length_label = 'Steel angle section length total'
     if rotor_disk_radius < 187.5:
         return create_table(
             header,
@@ -183,6 +184,10 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('End bracket D', round_and_format_length(spreadsheet_document.Alternator.D)),
                 ('Position of shaft X', round_and_format_length(
                     spreadsheet_document.Alternator.X)),
+                (
+                    total_angle_bar_length_label,
+                    format_length(sum_angle_bar_length(spreadsheet_document))
+                ),
                 ('Steel angle section width',
                  round_and_format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
                 ('Steel angle section thickness',
@@ -195,7 +200,11 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
             header,
             [
                 ('G', round_and_format_length(spreadsheet_document.Alternator.GG)),
-                ('H', round_and_format_length(spreadsheet_document.Alternator.HH))
+                ('H', round_and_format_length(spreadsheet_document.Alternator.HH)),
+                (
+                    total_angle_bar_length_label,
+                    format_length(sum_angle_bar_length(spreadsheet_document))
+                )
             ],
             book_reference_template % 'page 27 right-hand side'
         )
@@ -206,7 +215,11 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('A', round_and_format_length(
                     spreadsheet_document.Alternator.StarShapeTwoHoleEndBracketLength)),
                 ('B', round_and_format_length(spreadsheet_document.Alternator.B)),
-                ('C', round_and_format_length(spreadsheet_document.Alternator.CC))
+                ('C', round_and_format_length(spreadsheet_document.Alternator.CC)),
+                (
+                    total_angle_bar_length_label,
+                    format_length(sum_angle_bar_length(spreadsheet_document))
+                )
             ]
         )
 
@@ -516,10 +529,6 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                 'Thickness of all flat steel pieces',
                 round_and_format_length(
                     spreadsheet_document.Spreadsheet.FlatMetalThickness)
-            ),
-            (
-                'Total steel angle bar length',
-                format_length(sum_angle_bar_length(spreadsheet_document))
             ),
             (
                 'Wall thickness of yaw and tail hinge pipes',
