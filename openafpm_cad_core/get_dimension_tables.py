@@ -1,5 +1,4 @@
 """Module for retrieving dimensions to display in a tabular format."""
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from FreeCAD import Document
