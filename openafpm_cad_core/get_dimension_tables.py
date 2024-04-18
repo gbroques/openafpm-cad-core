@@ -568,8 +568,7 @@ def create_fasteners_table(spreadsheet_document: Document) -> Element:
                 'Stator studs diameter',
                 round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
             )
-        ],
-        book_reference_template % 'page 46 left-hand side'
+        ]
     )
 
 
