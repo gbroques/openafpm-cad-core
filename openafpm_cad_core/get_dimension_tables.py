@@ -93,6 +93,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_various_parts_dimensions_table(spreadsheet_document)
     )
+    tables.append(
+        create_fasteners_table(spreadsheet_document)
+    )
     return tables
 
 
@@ -513,6 +516,43 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
         'Various Parts Dimensions',
         [
             (
+                'Thickness of all flat steel pieces',
+                round_and_format_length(
+                    spreadsheet_document.Spreadsheet.FlatMetalThickness)
+            ),
+            (
+                'Wall thickness of yaw and tail hinge pipes',
+                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
+            )
+        ],
+        book_reference_template % 'page 46 left-hand side'
+    )
+
+
+def create_fasteners_table(spreadsheet_document: Document) -> Element:
+    number_of_blade_assembly_fasteners = spreadsheet_document.Hub.NumberOfHoles * 2
+    return create_table(
+        'Fasteners',
+        [
+            ('Blade assembly nuts', format_fastener(
+                number_of_blade_assembly_fasteners,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Blade assembly washers (large)', format_fastener(
+                number_of_blade_assembly_fasteners,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Rotor disk assembly nuts', format_fastener(
+                spreadsheet_document.Alternator.NumberOfNutsBetweenRotorDisks,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Rotor disk assembly washers (standard)', format_fastener(
+                spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks,
+                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            ('Stator assembly nuts', format_fastener(
+                spreadsheet_document.Alternator.NumberOfStatorHoles * 4,
+                spreadsheet_document.Spreadsheet.HolesDiameter)),
+            ('Stator assembly washers (standard)', format_fastener(
+                spreadsheet_document.Alternator.NumberOfStatorHoles * 2,
+                spreadsheet_document.Spreadsheet.HolesDiameter)),
+            (
                 'Hub studs length',
                 round_and_format_length(
                     spreadsheet_document.Alternator.HubStudsLength)
@@ -526,15 +566,7 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
             ),
             (
                 'Stator studs diameter',
-                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)),
-            (
-                'Thickness of all flat steel pieces',
-                round_and_format_length(
-                    spreadsheet_document.Spreadsheet.FlatMetalThickness)
-            ),
-            (
-                'Wall thickness of yaw and tail hinge pipes',
-                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
+                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
             )
         ],
         book_reference_template % 'page 46 left-hand side'

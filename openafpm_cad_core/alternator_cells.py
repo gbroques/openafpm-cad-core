@@ -214,6 +214,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('TShapeNumberOfStatorHoles'),
         Cell('HShapeNumberOfStatorHoles'),
+        Cell('StarShapeNumberOfStatorHoles'),
         Cell('NumberOfStatorHoles')
     ],
     [
@@ -221,7 +222,10 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeNumberOfStatorHoles'),
         Cell('4',
              alias='HShapeNumberOfStatorHoles'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeNumberOfStatorHoles : HShapeNumberOfStatorHoles',
+        Cell('6',
+             alias='StarShapeNumberOfStatorHoles'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeNumberOfStatorHoles : ' +
+             '(RotorDiskRadius < 275 ? HShapeNumberOfStatorHoles : StarShapeNumberOfStatorHoles)',
              alias='NumberOfStatorHoles')
     ],
     [
