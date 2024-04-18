@@ -92,7 +92,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_various_parts_dimensions_table(spreadsheet_document)
     )
-    tables.append(create_pipes_table(spreadsheet_document))
+    tables.append(create_total_pipe_length_by_outer_diameter_table(spreadsheet_document))
     tables.append(create_fasteners_table(spreadsheet_document))
     return tables
 
@@ -573,7 +573,7 @@ def create_fasteners_table(spreadsheet_document: Document) -> Element:
     )
 
 
-def create_pipes_table(spreadsheet_document: Document) -> Element:
+def create_total_pipe_length_by_outer_diameter_table(spreadsheet_document: Document) -> Element:
     pipe_outer_diameter_length_tuples = get_pipe_outer_diameter_length_tuples(spreadsheet_document)
     length_by_outer_diameter = {}
     for outer_diameter, length in pipe_outer_diameter_length_tuples:
@@ -587,7 +587,7 @@ def create_pipes_table(spreadsheet_document: Document) -> Element:
         (f'{outer_diameter} mm outer diameter pipe length', format_length(length))
         for outer_diameter, length in outer_diameter_length_items
     ]
-    return create_table('Pipes', rows)
+    return create_table('Total pipe length by outer diameter', rows)
 
 
 def get_pipe_outer_diameter_length_tuples(spreadsheet_document: Document) -> List[Tuple[float, float]]:
