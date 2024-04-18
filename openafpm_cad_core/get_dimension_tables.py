@@ -93,7 +93,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         create_various_parts_dimensions_table(spreadsheet_document)
     )
     tables.append(create_total_pipe_length_by_outer_diameter_table(spreadsheet_document))
-    tables.append(create_fasteners_table(spreadsheet_document))
+    tables.append(create_studs_nuts_and_washers_table(spreadsheet_document))
     return tables
 
 
@@ -530,11 +530,19 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
     )
 
 
-def create_fasteners_table(spreadsheet_document: Document) -> Element:
+def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Element:
     number_of_blade_assembly_fasteners = spreadsheet_document.Hub.NumberOfHoles * 2
     return create_table(
-        'Fasteners',
+        'Studs, nuts, & washers',
         [
+            (
+                'Hub studs length',
+                round_and_format_length(spreadsheet_document.Alternator.HubStudsLength)
+            ),
+            (
+                'Hub studs diameter',
+                round_and_format_length(spreadsheet_document.Spreadsheet.HubHolesDiameter)
+            ),
             ('Blade assembly nuts', format_fastener(
                 number_of_blade_assembly_fasteners,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
@@ -547,28 +555,20 @@ def create_fasteners_table(spreadsheet_document: Document) -> Element:
             ('Rotor disk assembly washers (standard)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+            (
+                'Stator studs length',
+                round_and_format_length(spreadsheet_document.Alternator.StatorMountingStudsLength)
+            ),
+            (
+                'Stator studs diameter',
+                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
+            ),
             ('Stator assembly nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfStatorHoles * 4,
                 spreadsheet_document.Spreadsheet.HolesDiameter)),
             ('Stator assembly washers (standard)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfStatorHoles * 2,
                 spreadsheet_document.Spreadsheet.HolesDiameter)),
-            (
-                'Hub studs length',
-                round_and_format_length(
-                    spreadsheet_document.Alternator.HubStudsLength)
-            ),
-            ('Hub studs diameter', round_and_format_length(
-                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-            (
-                'Stator studs length',
-                round_and_format_length(
-                    spreadsheet_document.Alternator.StatorMountingStudsLength)
-            ),
-            (
-                'Stator studs diameter',
-                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
-            )
         ]
     )
 
