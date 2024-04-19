@@ -96,17 +96,10 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('UnroundedBladeAssemblyPlateThickness'),
-        Cell('UnroundedBladeAssemblyScrewLength'),
-        Cell('BladeAssemblyScrewLength')
     ],
     [
         Cell('=0.004 * RotorDiameter + 2.426',
              alias='UnroundedBladeAssemblyPlateThickness'),
-        Cell('=0.010 * RotorDiameter + 8.755',
-             alias='UnroundedBladeAssemblyScrewLength'),
-        # Round down to nearest multiple of 5
-        Cell('=round(UnroundedBladeAssemblyScrewLength - mod(UnroundedBladeAssemblyScrewLength; 5))',
-             alias='BladeAssemblyScrewLength')
     ],
     [
         Cell('BladeAssemblyPlateThickness', styles=[Style.UNDERLINE]),
@@ -200,6 +193,17 @@ blade_cells: List[List[Cell]] = [
              alias='GreaterThanOrEqualTo3000'),
         Cell('=RotorDiameter < 3000 ? LessThan3000 : GreaterThanOrEqualTo3000',
              alias='BladeThickness')
+    ],
+    [
+        Cell('UnroundedBladeAssemblyScrewLength'),
+        Cell('BladeAssemblyScrewLength'),
+    ],
+    [
+        Cell('=(BladeAssemblyPlateThickness * 2 + BladeThickness) / 2',
+             alias='UnroundedBladeAssemblyScrewLength'),
+        # Round down to nearest multiple of 5
+        Cell('=round(UnroundedBladeAssemblyScrewLength - mod(UnroundedBladeAssemblyScrewLength; 5))',
+             alias='BladeAssemblyScrewLength')
     ],
     [
         Cell('Front Triangle Screw Calculations', styles=[Style.UNDERLINE, Style.BOLD])
