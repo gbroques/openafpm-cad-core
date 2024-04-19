@@ -52,9 +52,6 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_frame_dimensions_table(spreadsheet_document)
     )
-    # TODO: Create offset table only for T Shape?
-    #       This information is repeated for H & Star in
-    #       create_frame_dimensions_flat_bar_table
     tables.append(
         create_offset_table(spreadsheet_document)
     )
