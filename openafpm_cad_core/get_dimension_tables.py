@@ -38,6 +38,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
     tables = []
     tables.append(
+        create_dimension_of_hub_plywood_pieces_table(spreadsheet_document)
+    )
+    tables.append(
         create_yaw_bearing_pipe_sizes_table(spreadsheet_document)
     )
     tables.append(
@@ -134,6 +137,34 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
              round_and_format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
         ],
         book_reference_template % 'page 24 left-hand side'
+    )
+
+
+def create_dimension_of_hub_plywood_pieces_table(spreadsheet_document: Document) -> Element:
+    return create_table(
+        'Dimensions of hub plywood pieces',
+        [
+            ('Thickness',
+             round_and_format_length(spreadsheet_document.Blade.BladeAssemblyPlateThickness)),
+            ('Disk diameter',
+             round_and_format_length(spreadsheet_document.Blade.BladeAssemblyBackDiskDiameter)),
+            ('Triangle side',
+             round_and_format_length(spreadsheet_document.Blade.BladeAssemblyFrontTriangleSideLength)),
+            ('Stainless steel screws', format_fastener(
+                sum_hub_plywood_screws(spreadsheet_document),
+                spreadsheet_document.Fastener.WoodScrewDiameter,
+                spreadsheet_document.Blade.BladeAssemblyScrewLength)),
+        ],
+        book_reference_template % 'page 20 right-hand side'
+    )
+
+
+def sum_hub_plywood_screws(spreadsheet_document: Document) -> int:
+    return (
+        spreadsheet_document.Blade.NumberOfBackDiskScrews +
+        spreadsheet_document.Blade.MinimumNumberOfFrontTriangleScrews +
+        spreadsheet_document.Blade.NumberOfAdditionalInnerScrews +
+        spreadsheet_document.Blade.NumberOfAdditionalOuterScrews
     )
 
 

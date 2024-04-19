@@ -149,6 +149,13 @@ alternator_cells: List[List[Cell]] = [
              alias='WasherThickness')
     ],
     [
+        Cell('ScrewHoleDiameter')
+    ],
+    [
+        Cell('=Fastener.ScrewHoleDiameter',
+             alias='ScrewHoleDiameter')
+    ],
+    [
         Cell('Blade', styles=[Style.UNDERLINE])
         # -------------------------------------
     ],
@@ -307,7 +314,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('DistanceBetweenInnerHolesAndStatorMold')
     ],
     [
-        Cell('2',
+        Cell('=ScrewHoleDiameter / 2',
              alias='ScrewHoleRadius'),
         # Ensure holes are close enough to create
         # pressure for the resin not to flow out.
