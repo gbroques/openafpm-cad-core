@@ -64,6 +64,10 @@ blade_cells: List[List[Cell]] = [
              alias='ScrewHoleRadius')
     ],
     [
+        Cell('BladeRadius'),
+        Cell('MinimumBladeWidth'),
+    ],
+    [
         Cell('=RotorDiameter / 2',
              alias='BladeRadius'),
         # TODO: Should we round this?
