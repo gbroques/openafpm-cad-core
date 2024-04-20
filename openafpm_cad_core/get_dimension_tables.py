@@ -449,12 +449,12 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
             ),
             ('Surround and island thickness',
              round_and_format_length(spreadsheet_document.Spreadsheet.StatorThickness)),
-            ('Bolts',
+            ('Bolts (fully threaded)',
              format_fastener(
                  calculate_number_of_stator_mold_bolts(spreadsheet_document),
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter,
                  spreadsheet_document.Alternator.StatorMoldBoltLength)),
-            ('Locating Bolts',
+            ('Locating Bolts (fully threaded)',
              format_fastener(
                  number_of_locating_bolts,
                  spreadsheet_document.Alternator.LocatingBoltDiameter,
@@ -504,7 +504,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
              round_and_format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
             ('Island thickness', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldIslandThickness)),
-            ('Bolts', format_fastener(
+            ('Bolts (fully threaded)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter,
                 spreadsheet_document.Fastener.HubHolesBoltLength)),
@@ -533,7 +533,7 @@ def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Documen
                 spreadsheet_document.Spreadsheet.RotorDiskRadius)),
             ('Circle radius', round_and_format_length(
                 spreadsheet_document.Spreadsheet.MagnetWidth / 2)),
-            ('Bolts', format_fastener(
+            ('Bolts (fully threaded)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter,
                 spreadsheet_document.Fastener.HubHolesBoltLength)),
