@@ -290,7 +290,13 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
             (
                 'Length of yaw bearing pipe',
                 round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)
-            )
+            ),
+            ('Side piece flat bar length', round_and_format_length(
+                spreadsheet_document.YawBearing.SideLength)),
+            ('Side piece flat bar width', round_and_format_length(
+                spreadsheet_document.YawBearing.SideWidth)),
+            ('Side piece flat bar thickness', round_and_format_length(
+                spreadsheet_document.Spreadsheet.FlatMetalThickness)),
         ],
         book_reference_template % 'page 29 left-hand side'
     )
