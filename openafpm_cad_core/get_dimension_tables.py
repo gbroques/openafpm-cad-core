@@ -99,7 +99,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
 
 def create_table(header: str,
                  rows: List[Tuple[str, Any]],
-                 reference: Optional[str] = None) -> Element:
+                 footer_rows: Optional[List[str]] = None) -> Element:
     children = [
         thead([
             tr([
@@ -113,12 +113,11 @@ def create_table(header: str,
             ]) for row in rows
         ])
     ]
-    if reference:
+    if footer_rows:
         children.append(
             tfoot([
-                tr([
-                    td(reference, col_span=2)
-                ])
+                tr([td(row, col_span=2)])
+                for row in footer_rows
             ])
         )
     return table(children)
@@ -133,7 +132,7 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
             ('Yaw pipe outer diameter',
              round_and_format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
         ],
-        book_reference_template % 'page 24 left-hand side'
+        [book_reference_template % 'page 24 left-hand side']
     )
 
 
@@ -152,7 +151,7 @@ def create_dimension_of_hub_plywood_pieces_table(spreadsheet_document: Document)
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Blade.BladeAssemblyScrewLength)),
         ],
-        book_reference_template % 'page 20 right-hand side'
+        [book_reference_template % 'page 20 right-hand side']
     )
 
 
@@ -175,7 +174,7 @@ def create_wheel_bearing_hub_table(spreadsheet_document: Document) -> Element:
             ('Bolt diameter', round_and_format_length(
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
         ],
-        book_reference_template % 'page 25 left-hand side'
+        [book_reference_template % 'page 25 left-hand side']
     )
 
 
@@ -190,7 +189,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
             ('Central hole diameter',
              round_and_format_length(spreadsheet_document.Spreadsheet.RotorDiskCentralHoleDiameter)),
         ],
-        book_reference_template % 'page 25 right-hand side'
+        [book_reference_template % 'page 25 right-hand side']
     )
 
 
@@ -221,7 +220,7 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                     spreadsheet_document.Alternator.X)),
                 *steel_angle_section_rows
             ],
-            book_reference_template % 'page 26 right-hand side'
+            [book_reference_template % 'page 26 right-hand side']
         )
     elif rotor_disk_radius < 275:
         return create_table(
@@ -231,7 +230,7 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('H', round_and_format_length(spreadsheet_document.Alternator.HH)),
                 *steel_angle_section_rows
             ],
-            book_reference_template % 'page 27 right-hand side'
+            [book_reference_template % 'page 27 right-hand side']
         )
     else:
         return create_table(
@@ -256,7 +255,7 @@ def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Docume
             ('J', round_and_format_length(spreadsheet_document.Alternator.j)),
             ('K', round_and_format_length(spreadsheet_document.Alternator.k))
         ],
-        book_reference_template % 'page 28 right-hand side'
+        [book_reference_template % 'page 28 right-hand side']
     )
 
 
@@ -266,7 +265,7 @@ def create_offset_table(spreadsheet_document: Document) -> Element:
         [
             ('Offset', round_and_format_length(spreadsheet_document.Spreadsheet.Offset))
         ],
-        book_reference_template % 'page 27 right-hand side'
+        [book_reference_template % 'page 27 right-hand side']
     )
 
 
@@ -292,7 +291,7 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
             ('Side piece flat bar thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.FlatMetalThickness)),
         ],
-        book_reference_template % 'page 29 left-hand side'
+        [book_reference_template % 'page 29 left-hand side']
     )
 
 
@@ -313,7 +312,7 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
             ('Diameter F', round_and_format_length(
                 spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1))
         ],
-        book_reference_template % 'page 31 right-hand side'
+        [book_reference_template % 'page 31 right-hand side']
     )
 
 
@@ -366,7 +365,7 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
                     spreadsheet_document.Spreadsheet.HolesDiameter)
             ),
         ],
-        book_reference_template % 'page 32 bottom'
+        [book_reference_template % 'page 32 bottom']
     )
 
 
@@ -477,7 +476,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  spreadsheet_document.Fastener.WoodScrewDiameter,
                  spreadsheet_document.Alternator.StatorMoldScrewLength))
         ],
-        book_reference_template % 'page 40 left-hand side'
+        [book_reference_template % 'page 40 left-hand side']
     )
 
 
@@ -517,7 +516,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
         ],
-        book_reference_template % 'page 42 left-hand side'
+        [book_reference_template % 'page 42 left-hand side']
     )
 
 
@@ -545,7 +544,7 @@ def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Documen
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
         ],
-        book_reference_template % 'page 42 & 43'
+        [book_reference_template % 'page 42 & 43']
     )
 
 
@@ -563,7 +562,7 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                 round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
             )
         ],
-        book_reference_template % 'page 46 left-hand side'
+        [book_reference_template % 'page 46 left-hand side']
     )
 
 
