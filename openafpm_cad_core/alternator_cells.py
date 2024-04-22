@@ -569,17 +569,11 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderPinsMirrorNormalVector')
     ],
     [
-        Cell('LargestMagnetDimension'),
-        Cell('VerticalOffset'),
-        Cell('TriangularCoilHoleHeight')
+        Cell('LargestMagnetDimension')
     ],
     [
         Cell('=max(MagnetLength; MagnetWidth)',
-             alias='LargestMagnetDimension'),
-        Cell('=CoilWinderDiskSmallHoleRadius * cos(60)',
-             alias='VerticalOffset'),
-        Cell('=LargestMagnetDimension - VerticalOffset',
-             alias='TriangularCoilHoleHeight')
+             alias='LargestMagnetDimension')
     ],
     [
         Cell('OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
@@ -622,16 +616,44 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilLegWidthReduced'),
     ],
     [
-        Cell('DoCoilsOverlap'),
-        Cell('CircumscribedCircleAboutTriangularPinsRadius')
+        Cell('DoCoilsOverlap')
     ],
     [
         Cell('=ApproximateCoilArcLength > CoilSectorArcLength ? 1 : 0',
-             alias='DoCoilsOverlap'),
-        # Find the value of radius, when an isosceles triangle is inscribed in this circle.
-        # https://youtu.be/uIV1KVc7OxA?t=334
-        Cell('=(CoilInnerWidth1 ^ 2 + 4 * TriangularCoilHoleHeight ^ 2) / (8 * TriangularCoilHoleHeight)',
-             alias='CircumscribedCircleAboutTriangularPinsRadius')
+             alias='DoCoilsOverlap')
+    ],
+    [
+        # Setup short aliases for making complex equation more readable
+        Cell('Mw'),  # Magnet width
+        Cell('Ml'),  # Magnet length
+        Cell('Pr')  # Pin radius
+    ],
+    [
+        # Set to MagnetLength when rectanuglar or keyhole coil type to prevent
+        # Stator_Coil_Triangular_Reduced & Stator_CoilWinder_Triangular_Spacer
+        # from breaking.
+        Cell('=CoilType != 3 ? MagnetLength : MagnetWidth',
+             alias='Mw'),
+        Cell('=MagnetLength',
+             alias='Ml'),
+        Cell('=CoilWinderDiskSmallHoleRadius',
+             alias='Pr')
+    ],
+    [
+        Cell('TriangularHorizontalDistanceBetweenPins'),
+        Cell('TriangularCoilWinderCircumradius'),
+        Cell('TriangularVerticalDistanceOfHolesFromCenter')
+    ],
+    [
+        Cell('=Mw - CoilWinderDiskSmallHoleRadius * 2',
+             alias='TriangularHorizontalDistanceBetweenPins'),
+        # References:
+        # https://math.stackexchange.com/a/4905815/1315686
+        # https://www.wolframalpha.com/input?i=%28R+-+r%29%5E2+%3D+%28l+-+r+-+R%29%5E2+%2B+%28%28w-2r%29+%2F+2%29%5E2+solve+for+R
+        Cell('=(4 * Ml ^ 2 - 8 * Ml * Pr + (Mw - 2 * Pr) ^ 2) / (8 * (Ml - 2 * Pr))',
+             alias='TriangularCoilWinderCircumradius'),
+        Cell('=Ml - Pr - TriangularCoilWinderCircumradius',
+             alias='TriangularVerticalDistanceOfHolesFromCenter')
     ],
     [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
