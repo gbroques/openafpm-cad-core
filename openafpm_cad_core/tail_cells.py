@@ -356,8 +356,8 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('Length'),
-        # 20 for padding
-        Cell('=HingeInnerPipeLength - h1 - h2 - 20',
+        # 10 for padding
+        Cell('=HingeInnerPipeLength - h1 - h2 - 10',
              alias='HingeOuterPipeLength')
     ],
     # Vane Bracket
