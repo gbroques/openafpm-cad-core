@@ -611,8 +611,10 @@ alternator_cells: List[List[Cell]] = [
              alias='ApproximateCoilArcLength'),
         Cell('=(ApproximateCoilArcLength - CoilSectorArcLength) / 2',
              alias='CoilLegWidthReduction'),
-        # Ensure CoilLegWidthReduced is less than or equal to CoilLegWidth
-        Cell('=min(CoilLegWidth - CoilLegWidthReduction; CoilLegWidth)',
+        # Ensure CoilLegWidthReduced is less than CoilLegWidth to prevent model from breaking when NOT H Shape 4F
+        Cell('=CoilLegWidthReduction < 0 ? ' +
+             'CoilLegWidth * 0.8 : ' +
+             'CoilLegWidth - CoilLegWidthReduction',
              alias='CoilLegWidthReduced'),
     ],
     [
