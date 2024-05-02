@@ -23,7 +23,6 @@ MAX_NUMBER_MAGNET = 32
 def get_parameters_schema(rotor_disk_radius: float) -> dict:
     wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
     default_parameters = get_default_parameters(wind_turbine)
-    default_yaw_pipe_diameter = default_parameters['user']['YawPipeDiameter']
     default_flat_metal_thickness = default_parameters['user']['FlatMetalThickness']
     default_rotor_disk_central_hole_diameter = default_parameters[
         'user']['RotorDiskCentralHoleDiameter']
@@ -312,7 +311,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Yaw Pipe Diameter",
                         "description": get_description("user", "YawPipeDiameter"),
                         "type": get_type("user", "YawPipeDiameter"),
-                        "enum": get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter)
+                        "enum": get_yaw_pipe_diameter_enum(wind_turbine)
                     },
                     "PipeThickness": {
                         "title": "Pipe Thickness",
@@ -411,11 +410,18 @@ def get_pipe_sizes() -> List[float]:
     return [pipe_size.value for pipe_size in list(PipeSize)]
 
 
-def get_yaw_pipe_diameter_enum(default_yaw_pipe_diameter: float) -> List[float]:
-    """Get default diameter and one size up."""
+def get_yaw_pipe_diameter_enum(wind_turbine: WindTurbine) -> List[float]:
+    """Get default diameter and one size up.
+
+    For T Shape, also allow one size down from the default.
+    """
+    default_parameters = get_default_parameters(wind_turbine)
+    default_yaw_pipe_diameter = default_parameters['user']['YawPipeDiameter']
     pipe_sizes = get_pipe_sizes()
     index = pipe_sizes.index(default_yaw_pipe_diameter)
-    return pipe_sizes[index:index+2]
+    start = index - 1 if wind_turbine == WindTurbine.T_SHAPE else index
+    end = index + 2
+    return pipe_sizes[start:end]
 
 
 def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
