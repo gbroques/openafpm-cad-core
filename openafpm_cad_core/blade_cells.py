@@ -261,7 +261,7 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('OuterScrewLineDistanceFromCenter'),
-        Cell('=InnerScrewLineDistanceFromCenter + DistanceBetweenScrewHolesCircumradii',
+        Cell('=InnerScrewLineDistanceFromCenter + ScrewHoleRadius + DistanceBetweenScrewHolesCircumradii',
              alias='OuterScrewLineDistanceFromCenter')
     ],
     [
