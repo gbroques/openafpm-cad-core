@@ -70,8 +70,7 @@ blade_cells: List[List[Cell]] = [
     [
         Cell('=RotorDiameter / 2',
              alias='BladeRadius'),
-        # TODO: Should we round this?
-        Cell('=0.055 * RotorDiameter - 8',
+        Cell('=max(round(0.055 * RotorDiameter - 8); 95)',
              alias='MinimumBladeWidth')
     ],
     [
@@ -79,20 +78,23 @@ blade_cells: List[List[Cell]] = [
         Cell('BladeAssemblyFrontTriangleSideLength')
     ],
     [
-        Cell('=0.106 * RotorDiameter - 3.121',
+        Cell('=max(round(0.106 * RotorDiameter - 3.121); 200)',
              alias='BladeAssemblyBackDiskDiameter'),
-        Cell('=0.147 * RotorDiameter + 6.213',
+        Cell('=max(round(0.147 * RotorDiameter + 6.213); 274)',
              alias='BladeAssemblyFrontTriangleSideLength')
     ],
     [
         Cell('BladeTemplateDim_V'),
-        Cell('BladeTemplateDim_W')
+        Cell('BladeTemplateDim_W_Tip'),
+        Cell('BladeTemplateDim_W_Root')
     ],
     [
-        Cell('=round(0.086 * RotorDiameter - 10.669)',
+        Cell('=max(round(0.086 * RotorDiameter - 10.669); 140)',
              alias='BladeTemplateDim_V'),
         Cell('=round(0.018 * RotorDiameter + 12.986)',
-             alias='BladeTemplateDim_W')
+             alias='BladeTemplateDim_W_Tip'),
+        Cell('=max(BladeTemplateDim_W_Tip; 50)',
+             alias='BladeTemplateDim_W_Root')
     ],
     [
         Cell('UnroundedBladeAssemblyPlateThickness'),
@@ -137,13 +139,8 @@ blade_cells: List[List[Cell]] = [
              alias='Range2')
     ],
     [
-        Cell('Range1'),
-        Cell(f'=UnroundedBladeAssemblyPlateThickness < 10.5 ? {PlywoodThickness.MM_9.value} : Range2',
-             alias='Range1')
-    ],
-    [
         Cell('BladeAssemblyPlateThickness'),
-        Cell(f'=UnroundedBladeAssemblyPlateThickness < 7.5 ? {PlywoodThickness.MM_6.value} : Range1',
+        Cell(f'=UnroundedBladeAssemblyPlateThickness < 10.5 ? {PlywoodThickness.MM_9.value} : Range2',
              alias='BladeAssemblyPlateThickness')
     ],
     [
@@ -152,7 +149,7 @@ blade_cells: List[List[Cell]] = [
         Cell('UnroundedNumberOfBackDiskScrews'),
     ],
     [
-        Cell('=0.013 * RotorDiameter + 16.929',
+        Cell('=max(round(0.013 * RotorDiameter + 16.929); 42)',
              alias='TotalNumberOfBladeScrews'),
         Cell('=TotalNumberOfBladeScrews * 0.48',
              alias='UnroundedMinimumNumberOfFrontTriangleScrews'),
@@ -187,11 +184,11 @@ blade_cells: List[List[Cell]] = [
         Cell('BladeThickness')
     ],
     [
-        Cell('=RotorDiameter * 0.0083333333333 + 20 ',
+        Cell('=round(RotorDiameter * 0.0083333333333 + 20)',
              alias='LessThan3000'),
-        Cell('=RotorDiameter * 0.025 - 30',
+        Cell('=round(RotorDiameter * 0.025 - 30)',
              alias='GreaterThanOrEqualTo3000'),
-        Cell('=RotorDiameter < 3000 ? LessThan3000 : GreaterThanOrEqualTo3000',
+        Cell('=max(RotorDiameter < 3000 ? LessThan3000 : GreaterThanOrEqualTo3000; 35)',
              alias='BladeThickness')
     ],
     [
@@ -211,12 +208,12 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('DistanceFromCenter'),
-        Cell('=BladeWidth - BladeTemplateDim_W',
+        Cell('=BladeWidth - BladeTemplateDim_W_Root',
              alias='DistanceFromCenter')
     ],
     [
         Cell('MinimumDistanceFromCenter'),
-        Cell('=MinimumBladeWidth - BladeTemplateDim_W',
+        Cell('=MinimumBladeWidth - BladeTemplateDim_W_Root',
              alias='MinimumDistanceFromCenter')
     ],
     [
@@ -266,7 +263,7 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('Alpha'),
-        Cell('=acos(BladeTemplateDim_W / TriangleCenterToVertexDistance)',
+        Cell('=acos(BladeTemplateDim_W_Root / TriangleCenterToVertexDistance)',
              alias='Alpha')
     ],
     [
@@ -289,10 +286,10 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('InnerScrewLineTriangle_Adjacent'),
-        Cell('=InnerScrewBetaHypotenuse + BladeTemplateDim_W',
+        Cell('=InnerScrewBetaHypotenuse + BladeTemplateDim_W_Root',
              alias='InnerScrewLineTriangle_Adjacent'),
         Cell('OuterScrewLineTriangle_Adjacent'),
-        Cell('=OuterScrewBetaHypotenuse + BladeTemplateDim_W',
+        Cell('=OuterScrewBetaHypotenuse + BladeTemplateDim_W_Root',
              alias='OuterScrewLineTriangle_Adjacent')
     ],
     [
@@ -353,12 +350,12 @@ blade_cells: List[List[Cell]] = [
     ],
     [
         Cell('BladeTemplateTrailingEdgeAngle'),
-        Cell('=atan(BladeRadius / (BladeWidth - BladeTemplateDim_W))',
+        Cell('=atan(BladeRadius / (BladeWidth - BladeTemplateDim_W_Root))',
              alias='BladeTemplateTrailingEdgeAngle')
     ],
     [
         Cell('MinimumBladeTemplateTrailingEdgeAngle'),
-        Cell('=atan(BladeRadius / (MinimumBladeWidth - BladeTemplateDim_W))',
+        Cell('=atan(BladeRadius / (MinimumBladeWidth - BladeTemplateDim_W_Root))',
              alias='MinimumBladeTemplateTrailingEdgeAngle')
     ],
     [
