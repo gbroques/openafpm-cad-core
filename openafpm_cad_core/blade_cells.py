@@ -239,9 +239,16 @@ blade_cells: List[List[Cell]] = [
              alias='InscribedCircleRadius')
     ],
     [
-        Cell('DistanceBetweenScrewHolesCircumradii'),
+        # "Large" means for turbines 2200 and up.
+        Cell('LargeDistanceBetweenScrewHolesCircumradii'),
+        # "Small" means for turbines 2100 and below.
+        Cell('SmallDistanceBetweenScrewHolesCircumradii')
+    ],
+    [
         Cell('=(InscribedCircleRadius - ScrewHoleRadius - (HubPitchCircleRadius + HubHolesRadius)) / 3',
-             alias='DistanceBetweenScrewHolesCircumradii')
+             alias='LargeDistanceBetweenScrewHolesCircumradii'),
+        Cell('=(InscribedCircleRadius - ScrewHoleRadius - HubPitchCircleRadius) / 2',
+             alias='SmallDistanceBetweenScrewHolesCircumradii')
     ],
     [
         Cell('TriangleCenterToVertexDistance'),
@@ -249,13 +256,47 @@ blade_cells: List[List[Cell]] = [
              alias='TriangleCenterToVertexDistance')
     ],
     [
+        Cell('LargeInnerScrewLineDistanceFromCenter'),
+        Cell('SmallInnerScrewLineDistanceFromCenter')
+    ],
+    [
+        Cell('=HubPitchCircleRadius + HubHolesRadius + LargeDistanceBetweenScrewHolesCircumradii',
+             alias='LargeInnerScrewLineDistanceFromCenter'),
+        Cell('=HubPitchCircleRadius',
+             alias='SmallInnerScrewLineDistanceFromCenter')
+    ],
+    [
+        Cell('LargeOuterScrewLineDistanceFromCenter'),
+        Cell('SmallOuterScrewLineDistanceFromCenter')
+    ],
+    [
+        Cell('=LargeInnerScrewLineDistanceFromCenter + ScrewHoleRadius + LargeDistanceBetweenScrewHolesCircumradii',
+             alias='LargeOuterScrewLineDistanceFromCenter'),
+        Cell('=SmallInnerScrewLineDistanceFromCenter + ScrewHoleRadius + SmallDistanceBetweenScrewHolesCircumradii',
+             alias='SmallOuterScrewLineDistanceFromCenter')
+    ],
+    [
+        Cell('DistanceBetweenOuterScrewAndEdge'),
+        Cell('=InscribedCircleRadius - (LargeOuterScrewLineDistanceFromCenter + ScrewHoleRadius)',
+             alias='DistanceBetweenOuterScrewAndEdge')
+    ],
+    [
+        Cell('HideInnerScrews'),
+        Cell('=DistanceBetweenOuterScrewAndEdge < 10 ? 1 : 0',
+             alias='HideInnerScrews')
+    ],
+    [
         Cell('InnerScrewLineDistanceFromCenter'),
-        Cell('=HubPitchCircleRadius + HubHolesRadius + DistanceBetweenScrewHolesCircumradii',
+        Cell('=HideInnerScrews == 1 ?' +
+             ' SmallInnerScrewLineDistanceFromCenter :' +
+             ' LargeInnerScrewLineDistanceFromCenter',
              alias='InnerScrewLineDistanceFromCenter')
     ],
     [
         Cell('OuterScrewLineDistanceFromCenter'),
-        Cell('=InnerScrewLineDistanceFromCenter + ScrewHoleRadius + DistanceBetweenScrewHolesCircumradii',
+        Cell('=HideInnerScrews == 1 ?' +
+             ' SmallOuterScrewLineDistanceFromCenter :' +
+             ' LargeOuterScrewLineDistanceFromCenter',
              alias='OuterScrewLineDistanceFromCenter')
     ],
     [
