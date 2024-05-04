@@ -356,7 +356,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('DistanceBetweenJunctionAndOuterHinge'),
-        Cell('10',
+        Cell('5',
              alias='DistanceBetweenJunctionAndOuterHinge')
     ],
     [
