@@ -751,6 +751,6 @@ def round_and_format_weight(length: float, ndigits=2) -> str:
 def format_fastener(quantity: int, diameter: int, length: Optional[float] = None) -> str:
     display = f'M{diameter}'
     if length is not None:
-        display += f'×{round_and_format_length(length)}'
+        display += f' × {round_and_format_length(length)}'
     display += f' — {quantity} pieces'
     return display
