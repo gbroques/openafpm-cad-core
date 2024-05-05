@@ -262,8 +262,8 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         # =0.055 * RotorDiameter - 8
                         # BladeTemplateDim_V
                         # =round(0.086 * RotorDiameter - 10.669)
-                        # "minimum": ,
-                        # "maximum": ,
+                        "minimum": 0,
+                        "maximum": 380,
                         **get_numeric_type_and_multiple_of("user", "BladeWidth")
                     },
                     "HubPitchCircleDiameter": {
