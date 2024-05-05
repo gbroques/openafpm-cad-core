@@ -380,15 +380,23 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('StatorMoldIslandNumberOfScrews'),
-        Cell('DistanceOfLocatingHoleFromCenter'),
-        Cell('StatorMoldScrewLength')
+        Cell('DistanceOfLocatingHoleFromCenter')
     ],
     [
         Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
              alias='StatorMoldIslandNumberOfScrews'),
         Cell('=0.63559 * StatorMoldSideLength',
-             alias='DistanceOfLocatingHoleFromCenter'),
+             alias='DistanceOfLocatingHoleFromCenter')
+    ],
+    [
+        Cell('UnroundedStatorMoldScrewLength'),
+        Cell('StatorMoldScrewLength')
+    ],
+    [
         Cell('=StatorThickness * 2',
+             alias='UnroundedStatorMoldScrewLength'),
+        # Round down to nearest multiple of 5
+        Cell('=UnroundedStatorMoldScrewLength - mod(UnroundedStatorMoldScrewLength; 5)',
              alias='StatorMoldScrewLength')
     ],
     [
