@@ -197,12 +197,12 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
     header = 'Frame Dimensions'
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     steel_angle_section_rows = [
-        ('Steel angle section length total',
-         format_length(sum_angle_bar_length(spreadsheet_document))),
         ('Steel angle section width',
          round_and_format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
         ('Steel angle section thickness',
-         round_and_format_length(spreadsheet_document.Spreadsheet.MetalThicknessL))
+         round_and_format_length(spreadsheet_document.Spreadsheet.MetalThicknessL)),
+        ('Steel angle section length total',
+         format_length(sum_angle_bar_length(spreadsheet_document))),
     ]
     if rotor_disk_radius < 187.5:
         return create_table(
