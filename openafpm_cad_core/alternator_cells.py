@@ -779,16 +779,23 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorMoldSurroundThickness'),
-        Cell('RotorMoldScrewLength'),
         Cell('RotorMoldSurroundRadius')
     ],
     [
         Cell('=RotorDiskThickness + RotorMoldIslandThickness',
              alias='RotorMoldSurroundThickness'),
-        Cell('=RotorMoldSurroundThickness + RotorMoldBaseThickness',
-             alias='RotorMoldScrewLength'),
         Cell('=RotorDiskRadius + RotorResinMargin',
              alias='RotorMoldSurroundRadius')
+    ],
+    [
+        Cell('UnroundedRotorMoldScrewLength'),
+        Cell('RotorMoldScrewLength')
+    ],
+    [
+        Cell('=RotorMoldSurroundThickness + RotorMoldBaseThickness',
+             alias='UnroundedRotorMoldScrewLength'),
+        Cell('=UnroundedRotorMoldScrewLength + - mod(UnroundedRotorMoldScrewLength; 5)',
+             alias='RotorMoldScrewLength')
     ],
     [
         Cell('DistanceBetweenRotorMoldScrewsAndResin'),
