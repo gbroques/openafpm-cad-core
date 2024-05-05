@@ -132,9 +132,11 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
             ('Yaw pipe outer diameter',
              round_and_format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
             (
-                'Wall thickness of yaw pipe',
+                'Yaw pipe wall thickness',
                 round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
-            )
+            ),
+            ('Yaw pipe length',
+             round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)),
         ],
         [book_reference_template % 'page 24 left-hand side']
     )
