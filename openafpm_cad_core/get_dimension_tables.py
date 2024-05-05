@@ -146,7 +146,7 @@ def create_dimension_of_hub_plywood_pieces_table(spreadsheet_document: Document)
              round_and_format_length(spreadsheet_document.Blade.BladeAssemblyBackDiskDiameter)),
             ('Triangle side',
              round_and_format_length(spreadsheet_document.Blade.BladeAssemblyFrontTriangleSideLength)),
-            ('Stainless steel screws', format_fastener(
+            ('Stainless steel screws', format_screw(
                 sum_hub_plywood_screws(spreadsheet_document),
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Blade.BladeAssemblyScrewLength)),
@@ -468,7 +468,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  calculate_number_of_stator_mold_bolts(spreadsheet_document) + number_of_locating_bolts,
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
             ('Screws',
-             format_fastener(
+             format_screw(
                  # Surround screws
                  (4 * 2) * spreadsheet_document.Alternator.NumberOfStatorHoles +
                  # Island screws
@@ -511,7 +511,7 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
             ('Nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-            ('Screws', format_fastener(
+            ('Screws', format_screw(
                 spreadsheet_document.Alternator.NumberOfRotorMoldScrews,
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
@@ -749,7 +749,11 @@ def round_and_format_weight(length: float, ndigits=2) -> str:
 
 
 def format_fastener(quantity: int, diameter: int, length: Optional[float] = None) -> str:
-    display = f'M{diameter}'
+    return 'M' + format_screw(quantity, diameter, length)
+
+
+def format_screw(quantity: int, diameter: int, length: Optional[float] = None) -> str:
+    display = str(diameter)
     if length is not None:
         display += f' × {round_and_format_length(length)}'
     display += f' — {quantity} pieces'
