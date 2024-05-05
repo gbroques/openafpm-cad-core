@@ -44,6 +44,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Rotor Diameter",
                         "description": get_description("magnafpm", "RotorDiameter"),
                         "minimum": 0,
+                        "maximum": 7000,
                         **get_numeric_type_and_multiple_of("magnafpm", "RotorDiameter")
                     },
                     "RotorDiskRadius": {
