@@ -131,6 +131,10 @@ def create_yaw_bearing_pipe_sizes_table(spreadsheet_document: Document) -> Eleme
              round_and_format_length(spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1)),
             ('Yaw pipe outer diameter',
              round_and_format_length(spreadsheet_document.Spreadsheet.YawPipeDiameter, ndigits=1)),
+            (
+                'Wall thickness of yaw pipe',
+                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
+            )
         ],
         [book_reference_template % 'page 24 left-hand side']
     )
@@ -310,7 +314,11 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
             ('Hinge inner E', round_and_format_length(
                 spreadsheet_document.Tail.HingeInnerPipeLength)),
             ('Diameter F', round_and_format_length(
-                spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1))
+                spreadsheet_document.Tail.HingeInnerPipeDiameter, ndigits=1)),
+            (
+                'Wall thickness of tail hinge pipes',
+                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
+            )
         ],
         [book_reference_template % 'page 31 right-hand side']
     )
@@ -556,13 +564,8 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
                 'Thickness of all flat steel pieces',
                 round_and_format_length(
                     spreadsheet_document.Spreadsheet.FlatMetalThickness)
-            ),
-            (
-                'Wall thickness of yaw and tail hinge pipes',
-                round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
             )
-        ],
-        [book_reference_template % 'page 46 left-hand side']
+        ]
     )
 
 
