@@ -577,11 +577,11 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
         'Studs, nuts, & washers',
         [
             (
-                'Hub studs length',
+                'Bearing hub studs length',
                 round_and_format_length(spreadsheet_document.Alternator.HubStudsLength)
             ),
             (
-                'Hub studs diameter',
+                'Bearing hub studs diameter',
                 round_and_format_length(spreadsheet_document.Spreadsheet.HubHolesDiameter)
             ),
             ('Blade assembly nuts', format_fastener(
