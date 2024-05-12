@@ -251,7 +251,10 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
             },
             "user": {
                 "type": "object",
-                "description": "Parameters with default values that may be overridden by individual users to satisfy unique needs.",
+                "description": (
+                    "Parameters with default values " +
+                    "that may be overridden by users to meet individual needs."
+                ),
                 "properties": {
                     "BladeWidth": {
                         "title": "Blade Width",
