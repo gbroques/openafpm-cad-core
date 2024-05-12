@@ -445,11 +445,11 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('OuterTailHingeXPosition'), Cell('=XXX + TailHingePipeX',
-                                      alias='OuterTailHingeXPosition')
+                                              alias='OuterTailHingeXPosition')
     ],
     [
         Cell('OuterTailHingeZPosition'), Cell('=ZZZ + TailHingePipeZ',
-                                      alias='OuterTailHingeZPosition')
+                                              alias='OuterTailHingeZPosition')
     ],
     # Tail Boom Triangular Brace
     # --------------------------
@@ -522,7 +522,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('OuterTailHingeZPositionOffset'), Cell('=sin(90 - VerticalPlaneAngle) * OuterTailHingeTruncatedHypotenuse',
-                                            alias='OuterTailHingeZPositionOffset')
+                                                    alias='OuterTailHingeZPositionOffset')
     ],
     [
         # Tail Position Before Rotation
