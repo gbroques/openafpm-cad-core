@@ -531,29 +531,31 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
 
 
 def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Document) -> Element:
+    rows = [
+        ('Number of magnets', spreadsheet_document.Spreadsheet.NumberMagnet),
+        ('Smaller radius D', round_and_format_length(
+            spreadsheet_document.Spreadsheet.RotorDiskRadius -
+            spreadsheet_document.Spreadsheet.MagnetLength
+        )),
+        ('Larger radius E', round_and_format_length(
+            spreadsheet_document.Spreadsheet.RotorDiskRadius)),
+        ('Circle radius', round_and_format_length(
+            spreadsheet_document.Spreadsheet.MagnetWidth / 2)),
+        ('Bolts (fully threaded)', format_fastener(
+            spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+            spreadsheet_document.Spreadsheet.HubHolesDiameter,
+            spreadsheet_document.Fastener.HubHolesBoltLength)),
+        ('Nuts', format_fastener(
+            spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+            spreadsheet_document.Spreadsheet.HubHolesDiameter)),
+    ]
+    if spreadsheet_document.Spreadsheet.MagnetMaterial == 'Neodymium':
+        rows.append(('Washers (standard)', format_fastener(
+            spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+            spreadsheet_document.Spreadsheet.HubHolesDiameter)))
     return create_table(
         'Magnet Positioning Jig Dimensions',
-        [
-            ('Number of magnets', spreadsheet_document.Spreadsheet.NumberMagnet),
-            ('Smaller radius D', round_and_format_length(
-                spreadsheet_document.Spreadsheet.RotorDiskRadius -
-                spreadsheet_document.Spreadsheet.MagnetLength
-            )),
-            ('Larger radius E', round_and_format_length(
-                spreadsheet_document.Spreadsheet.RotorDiskRadius)),
-            ('Circle radius', round_and_format_length(
-                spreadsheet_document.Spreadsheet.MagnetWidth / 2)),
-            ('Bolts (fully threaded)', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
-                spreadsheet_document.Spreadsheet.HubHolesDiameter,
-                spreadsheet_document.Fastener.HubHolesBoltLength)),
-            ('Nuts', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
-                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-            ('Washers (standard)', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
-                spreadsheet_document.Spreadsheet.HubHolesDiameter)),
-        ],
+        rows,
         [book_reference_template % 'page 42 & 43']
     )
 
