@@ -307,7 +307,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     },
                     "FlatMetalThickness": {
                         "title": "Flat Metal Thickness",
-                        "minimum": default_flat_metal_thickness - 2,
+                        "minimum": get_flat_metal_thickness_minimum(wind_turbine),
                         "maximum": default_flat_metal_thickness + 3,
                         **get_numeric_type_and_multiple_of("user", "FlatMetalThickness")
                     },
@@ -504,3 +504,12 @@ def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
         raise ValueError(
             f'"{wind_turbine}" not supported. ' +
             f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+
+
+def get_flat_metal_thickness_minimum(wind_turbine: WindTurbine) -> float:
+    default_parameters = get_default_parameters(wind_turbine)
+    default_flat_metal_thickness = default_parameters['user']['FlatMetalThickness']
+    if wind_turbine == WindTurbine.T_SHAPE:
+        return default_flat_metal_thickness - 5
+    else:
+        return default_flat_metal_thickness - 2
