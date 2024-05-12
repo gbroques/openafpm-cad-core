@@ -456,7 +456,7 @@ def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
 
 def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
     if wind_turbine == WindTurbine.T_SHAPE:
-        return 50
+        return 40
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 50
     elif wind_turbine == WindTurbine.STAR_SHAPE:
