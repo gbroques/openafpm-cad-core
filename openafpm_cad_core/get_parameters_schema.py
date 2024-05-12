@@ -432,6 +432,10 @@ def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
         return 4
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 5
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
 
 
 def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
@@ -441,6 +445,10 @@ def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
         return 6
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 8
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
 
 
 def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
@@ -450,6 +458,10 @@ def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
         return 50
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 60
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
 
 
 def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
@@ -459,6 +471,10 @@ def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
         return 70
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 100
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
 
 
 def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
@@ -468,6 +484,10 @@ def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
         return 5
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 6
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
 
 
 def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
@@ -477,3 +497,7 @@ def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
         return 7
     elif wind_turbine == WindTurbine.STAR_SHAPE:
         return 10
+    else:
+        raise ValueError(
+            f'"{wind_turbine}" not supported. ' +
+            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
