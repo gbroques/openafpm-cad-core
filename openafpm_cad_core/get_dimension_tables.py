@@ -585,12 +585,11 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
         'Studs, nuts, & washers',
         [
             (
-                'Bearing hub studs length',
-                round_and_format_length(spreadsheet_document.Alternator.HubStudsLength)
-            ),
-            (
-                'Bearing hub studs diameter',
-                round_and_format_length(spreadsheet_document.Spreadsheet.HubHolesDiameter)
+                'Bearing hub studs',
+                format_fastener(
+                    spreadsheet_document.Hub.NumberOfHoles,
+                    spreadsheet_document.Spreadsheet.HubHolesDiameter,
+                    spreadsheet_document.Alternator.HubStudsLength)
             ),
             ('Blade assembly nuts', format_fastener(
                 number_of_blade_assembly_fasteners,
@@ -606,12 +605,11 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                 spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             (
-                'Stator studs length',
-                round_and_format_length(spreadsheet_document.Alternator.StatorMountingStudsLength)
-            ),
-            (
-                'Stator studs diameter',
-                round_and_format_length(spreadsheet_document.Spreadsheet.HolesDiameter)
+                'Stator studs',
+                format_fastener(
+                    spreadsheet_document.Alternator.NumberOfStatorHoles,
+                    spreadsheet_document.Spreadsheet.HolesDiameter,
+                    spreadsheet_document.Alternator.StatorMountingStudsLength)
             ),
             ('Stator assembly nuts', format_fastener(
                 spreadsheet_document.Alternator.NumberOfStatorHoles * 4,
@@ -670,11 +668,13 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
     return [
         (
             spreadsheet_document.Spreadsheet.HubHolesDiameter,
-            spreadsheet_document.Alternator.HubStudsLength
+            round(spreadsheet_document.Alternator.HubStudsLength) *
+            spreadsheet_document.Hub.NumberOfHoles
         ),
         (
             spreadsheet_document.Spreadsheet.HolesDiameter,
-            spreadsheet_document.Alternator.StatorMountingStudsLength
+            round(spreadsheet_document.Alternator.StatorMountingStudsLength) *
+            spreadsheet_document.Alternator.NumberOfStatorHoles
         )
     ]
 
