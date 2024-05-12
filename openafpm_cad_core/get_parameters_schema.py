@@ -426,7 +426,7 @@ def get_yaw_pipe_diameter_enum(wind_turbine: WindTurbine) -> List[float]:
 
 
 def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 3
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 4
@@ -435,7 +435,7 @@ def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
 
 
 def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 5
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 6
@@ -444,7 +444,7 @@ def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
 
 
 def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 50
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 50
@@ -453,7 +453,7 @@ def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
 
 
 def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 60
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 70
@@ -462,7 +462,7 @@ def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
 
 
 def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 5
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 5
@@ -471,7 +471,7 @@ def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
 
 
 def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE or wind_turbine == WindTurbine.T_SHAPE_2F:
+    if wind_turbine == WindTurbine.T_SHAPE:
         return 6
     elif wind_turbine == WindTurbine.H_SHAPE:
         return 7
