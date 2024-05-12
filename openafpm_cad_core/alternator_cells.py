@@ -478,13 +478,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('ProjectedCoilWinderDiskRadius'),
-        Cell('CoilWinderDiskRadius')
+        Cell('CoilWinderDiskRadius'),
+        Cell('DistanceBetweenTriangularCoilAndTapeNotch')
     ],
     [
         Cell('=(MagnetDiagonal / 2) + CoilLegWidth + CoilWinderDiskRadiusPadding',
              alias='ProjectedCoilWinderDiskRadius'),
         Cell('=ProjectedCoilWinderDiskRadius <= MinimumCoilWinderDiskRadius ? MinimumCoilWinderDiskRadius : ProjectedCoilWinderDiskRadius',
-             alias='CoilWinderDiskRadius')
+             alias='CoilWinderDiskRadius'),
+        Cell('2',
+             alias='DistanceBetweenTriangularCoilAndTapeNotch')
     ],
     [
         Cell('CoilWinderDiskCenterHoleRadius'),
