@@ -468,9 +468,20 @@ tail_cells: List[List[Cell]] = [
                                                             alias='DistanceOfBoomFromTopOfOuterTailHinge')
     ],
     [
-        # Distance or length of tail boom support along the slant of the tail hinge.
-        Cell('TailBoomTriangularBraceWidth'), Cell('=HingeOuterPipeLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
-                                                   alias='TailBoomTriangularBraceWidth')
+        Cell('MaximumTailBoomTriangularBraceWidth'), Cell('=round(HingeOuterPipeLength / 2)',
+                                                          alias='MaximumTailBoomTriangularBraceWidth')
+    ],
+    [
+        # Distance along the slant of the outer tail hinge below boom.
+        Cell('DistanceOfOuterHingeBelowBoom'),
+        Cell('=HingeOuterPipeLength - DistanceOfBoomFromTopOfOuterTailHinge - BoomPipeTailHingeHypotenuse',
+             alias='DistanceOfOuterHingeBelowBoom')
+    ],
+    [
+        # Width of tail boom support along the slant of the outer tail hinge.
+        Cell('TailBoomTriangularBraceWidth'),
+        Cell('=min(DistanceOfOuterHingeBelowBoom; MaximumTailBoomTriangularBraceWidth)',
+             alias='TailBoomTriangularBraceWidth')
     ],
     [
         Cell('TailBoomTriangularBraceLength'), Cell('=BoomLength / 3',
