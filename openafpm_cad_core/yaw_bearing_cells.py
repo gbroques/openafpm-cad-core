@@ -315,6 +315,14 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('SideLength', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        # Short for (Adj)acent since this is used in a right triangle calculation later.
+        Cell('Adj'),
+        Cell('=L - MM - YawPipeRadius',
+             alias='Adj')
+    ],
+    # Variables for when side does NOT extend to middle of yaw bearing pipe
+    # ---------------------------------------------------------------------
+    [
         Cell('DistanceSideExtendsFromFrameAtJunction'),
         Cell('=TopFrameJunctionOverhangDistance - hypot(DistanceBetweenSideAndPipe; DistanceBetweenSideAndPipe)',
              alias='DistanceSideExtendsFromFrameAtJunction')
@@ -330,9 +338,46 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('=Eta - FlatMetalThickness',
              alias='Theta')
     ],
+    # Variables for when side extends to middle of yaw bearing pipe
+    # -------------------------------------------------------------
+    [
+        # Angle side about Y-axis slightly when MetalLengthL is at its maximum for H & Star Shape.
+        # tan(SideYAngle) = opposite / adjacent
+        Cell('SideYAngle'),
+        Cell('=atan(DistanceBetweenSideAndPipe / Adj)',
+             alias='SideYAngle')
+    ],
+    [
+        # Short for (Hyp)otenuse
+        Cell('Hyp'),
+        Cell('=hypot(DistanceBetweenSideAndPipe; Adj)',
+             alias='Hyp')
+    ],
+    [
+        Cell('Iota'),
+        Cell('=FlatMetalThickness * tan(TopAngle - SideYAngle)',
+             alias='Iota')
+    ],
+    [
+        Cell('Kappa'),
+        Cell('=FlatMetalThickness / sin(TopAngle + SideYAngle)',
+             alias='Kappa')
+    ],
+    [
+        Cell('Lambda'),
+        Cell('=TopFrameJunctionOverhangDistance - Kappa',
+             alias='Lambda')
+    ],
+    [
+        Cell('Zeta'),
+        Cell('=Lambda / cos(TopAngle + SideYAngle)',
+             alias='Zeta')
+    ],
     [
         Cell('SideLength'),
-        Cell('=L - MM - YawPipeRadius - SideX + DistanceBetweenSideAndPipe + Theta',
+        Cell('=CanSideExtendToMiddleOfYawBearingPipe == True ? ' +
+             'Hyp + Iota + Zeta : ' +
+             'Adj - SideX + DistanceBetweenSideAndPipe + Theta',
              alias='SideLength')
     ],
     [
