@@ -1,0 +1,26 @@
+Coils
+=====
+
+* The number of magnets is a multiple of 4 between 8 and 32 inclusive.
+* The number of coils is 3/4 the number of magnets.
+* RotorDiskRadius, MagnetWidth, and CoilLegWidth affect how many coils can fit in a stator.
+* Stator mounting holes are aligned between coils.
+
+=====  ===============  ============  ==========  ======
+Shape  RotorDiskRadius  NumberMagnet  NumberCoil  Angle
+=====  ===============  ============  ==========  ======
+T      115              8             6           60°
+T      150              12            9           40°
+T      185              16            12          30°
+H      225              16            12          30°
+H      270              20            15          24°
+Star   280              24            18          20°
+Star   315              28            21          17.14°
+Star   350              32            24          15°
+=====  ===============  ============  ==========  ======
+
+The following has stator mounting holes which doesn't align between coils:
+
+* H Shape, 270 RotorDiskRadius / 20 NumberMagnet
+* Star Shape, 280 RotorDiskRadius / 24 NumberMagnet
+* Star Shape, 315 RotorDiskRadius / 28 NumberMagnet
