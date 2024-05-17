@@ -272,7 +272,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HubPitchCircleDiameter": {
                         "title": "Hub Pitch Circle Diameter",
                         "description": get_description("user", "HubPitchCircleDiameter"),
-                        "minimum": default_hub_pitch_circle_diameter - 10,
+                        "minimum": get_hub_pitch_circle_diameter_minimum(wind_turbine),
                         "maximum": default_hub_pitch_circle_diameter + 40,
                         **get_numeric_type_and_multiple_of("user", "HubPitchCircleDiameter")
                     },
@@ -452,6 +452,15 @@ def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
         raise ValueError(
             f'"{wind_turbine}" not supported. ' +
             f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+
+
+def get_hub_pitch_circle_diameter_minimum(wind_turbine: WindTurbine) -> float:
+    default_parameters = get_default_parameters(wind_turbine)
+    default_hub_pitch_circle_diameter = default_parameters['user']['HubPitchCircleDiameter']
+    if wind_turbine == WindTurbine.T_SHAPE:
+        return default_hub_pitch_circle_diameter - 50
+    else:
+        return default_hub_pitch_circle_diameter - 10
 
 
 def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
