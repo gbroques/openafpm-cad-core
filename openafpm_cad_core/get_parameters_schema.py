@@ -286,7 +286,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HolesDiameter": {
                         "title": "Holes Diameter",
                         "description": get_description("user", "HolesDiameter"),
-                        "minimum": default_holes_diameter - 2,
+                        "minimum": get_holes_diameter_minimum(wind_turbine),
                         "maximum": default_holes_diameter + 2,
                         **get_numeric_type_and_multiple_of("user", "HolesDiameter")
                     },
@@ -334,7 +334,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HubHolesDiameter": {
                         "title": "Hub Holes Diameter",
                         "description": get_description("user", "HubHolesDiameter"),
-                        "minimum": default_hub_holes_diameter - 2,
+                        "minimum": get_hub_holes_diameter_minimum(wind_turbine),
                         "maximum": default_hub_holes_diameter + 2,
                         **get_numeric_type_and_multiple_of("user", "HubHolesDiameter")
                     }
@@ -461,6 +461,24 @@ def get_hub_pitch_circle_diameter_minimum(wind_turbine: WindTurbine) -> float:
         return default_hub_pitch_circle_diameter - 50
     else:
         return default_hub_pitch_circle_diameter - 10
+
+
+def get_holes_diameter_minimum(wind_turbine: WindTurbine) -> float:
+    default_parameters = get_default_parameters(wind_turbine)
+    default_holes_diameter = default_parameters['user']['HolesDiameter']
+    if wind_turbine == WindTurbine.T_SHAPE:
+        return default_holes_diameter - 4
+    else:
+        return default_holes_diameter - 2
+
+
+def get_hub_holes_diameter_minimum(wind_turbine: WindTurbine) -> float:
+    default_parameters = get_default_parameters(wind_turbine)
+    default_hub_holes_diameter = default_parameters['user']['HubHolesDiameter']
+    if wind_turbine == WindTurbine.T_SHAPE:
+        return default_hub_holes_diameter - 4
+    else:
+        return default_hub_holes_diameter - 2
 
 
 def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
