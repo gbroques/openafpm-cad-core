@@ -1,6 +1,8 @@
-
 from argparse import ArgumentParser
 from multiprocessing import Pool
+
+import FreeCAD as App
+from FreeCAD import Console
 
 from openafpm_cad_core.app import (WindTurbine, export_to_dxf,
                                    get_default_parameters)
@@ -32,6 +34,7 @@ if __name__ == '__main__':
                         default='all',
                         help='Type of turbine. Defaults to all.')
     args = parser.parse_args()
+    turbines: tuple = ()
     if args.type == 'all':
         turbines = (
             WindTurbine.T_SHAPE,
@@ -46,6 +49,10 @@ if __name__ == '__main__':
             't2f': WindTurbine.T_SHAPE_2F
         }[args.type]
         turbines = (turbine,)
-    with Pool(len(turbines)) as p:
-        filepaths = p.map(export, turbines)
-        print('\n'.join(filepaths))
+    if App.GuiUp == 1:
+        Console.PrintWarning(f'FreeCAD Gui is up. Defaulting to {turbines[0]}\n')
+        print(export(turbines[0]))
+    else:
+        with Pool(len(turbines)) as p:
+            filepaths = p.map(export, turbines)
+            print('\n'.join(filepaths))
