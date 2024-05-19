@@ -67,13 +67,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorResinMargin'),
-        Cell('NumberMagnet')
+        Cell('NumberMagnet'),
+        Cell('HubHolesDiameter')
     ],
     [
         Cell('=Spreadsheet.RotorResinMargin',
              alias='RotorResinMargin'),
         Cell('=Spreadsheet.NumberMagnet',
-             alias='NumberMagnet')
+             alias='NumberMagnet'),
+        Cell('=Spreadsheet.HubHolesDiameter',
+             alias='HubHolesDiameter')
     ],
     [
         Cell('CoilInnerWidth1'),
@@ -681,7 +684,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=MagnetThickness + RotorDiskThickness',
              alias='RotorThickness'),
-        Cell('10',
+        Cell('=min(10; HubHolesDiameter)',
              alias='JackingHoleDiameter'),
         Cell('230',
              alias='WeightReductionRotorDiskRadiusThreshold')
