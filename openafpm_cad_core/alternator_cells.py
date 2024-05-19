@@ -355,6 +355,8 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('LargeHoleAngle'),
+        # TODO: Similar to IslandInnerRadius -> IslandHolesCircumradius rename above
+        # Should we rename LengthMiddleHoles to SurroundHolesCircumradius?
         Cell('LengthMiddleHoles'),
         Cell('StatorMoldHolesSketchAngle')
     ],
