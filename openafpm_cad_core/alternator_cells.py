@@ -514,7 +514,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('CoilWinderCheekThickness')
     ],
     [
-        Cell('23',
+        Cell('21',
              alias='CoilWinderDiskTapeNotchWidth'),
         Cell('8',
              alias='CoilWinderDiskFillet'),
