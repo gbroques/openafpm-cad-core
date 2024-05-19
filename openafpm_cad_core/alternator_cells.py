@@ -496,6 +496,7 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderDiskCenterHoleRadius'),
+        # TODO: Rename to CoilWinderPinRadius?
         Cell('CoilWinderDiskSmallHoleRadius'),
         Cell('CoilWinderDiskSmallHoleDiameter')
     ],
