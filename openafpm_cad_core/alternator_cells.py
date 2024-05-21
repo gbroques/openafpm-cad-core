@@ -489,6 +489,7 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenTriangularCoilAndTapeNotch')
     ],
     [
+        # TODO: Rename to CoilWinderBoltRadius?
         Cell('CoilWinderDiskCenterHoleRadius'),
         # TODO: Rename to CoilWinderPinRadius?
         Cell('CoilWinderDiskSmallHoleRadius'),
