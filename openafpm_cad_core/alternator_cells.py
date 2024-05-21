@@ -489,13 +489,46 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenTriangularCoilAndTapeNotch')
     ],
     [
-        Cell('CoilWinderBoltDiameter'),
-        Cell('CoilWinderPinDiameter')
+        Cell('CoilWinderBoltDiameter', styles=[Style.UNDERLINE]),
+        Cell('Ensure 2 mm of plywood between hole and tape notch.')
     ],
     [
-        Cell('10',
-             alias='CoilWinderBoltDiameter'),
-        Cell('5',
+        Cell('CwbRange4'),
+        Cell('=MagnetWidth < 19 ? 8 : 10',
+             alias='CwbRange4')
+    ],
+    [
+        Cell('CwbRange3'),
+        Cell('=MagnetWidth < 17 ? 6 : CwbRange4',
+             alias='CwbRange3')
+    ],
+    [
+        Cell('CwbRange2'),
+        Cell('=MagnetWidth < 15 ? 5 : CwbRange3',
+             alias='CwbRange2')
+    ],
+    [
+        Cell('CwbRange1'),
+        Cell('=MagnetWidth < 13 ? 4 : CwbRange2',
+             alias='CwbRange1')
+    ],
+    [
+        Cell('CoilWinderBoltDiameter'),
+        Cell('=MagnetWidth < 11 ? 3 : CwbRange1',
+             alias='CoilWinderBoltDiameter')
+    ],
+    [
+        Cell('CoilWinderPinDiameter', styles=[Style.UNDERLINE]),
+        Cell('Ensure 2 mm of plywood between hole and tape notch.')
+    ],
+    [
+        Cell('CwpRange1'),
+        Cell('=MagnetWidth < 14 ? 4 : 5',
+             alias='CwpRange1')
+    ],
+    [
+        Cell('CoilWinderPinDiameter'),
+        Cell('=MagnetWidth < 12 ? 3 : CwbRange1',
              alias='CoilWinderPinDiameter')
     ],
     [
