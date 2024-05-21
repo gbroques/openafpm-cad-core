@@ -489,17 +489,24 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenTriangularCoilAndTapeNotch')
     ],
     [
-        Cell('CoilWinderBoltRadius'),
-        Cell('CoilWinderPinRadius'),
+        Cell('CoilWinderBoltDiameter'),
         Cell('CoilWinderPinDiameter')
     ],
     [
+        Cell('10',
+             alias='CoilWinderBoltDiameter'),
         Cell('5',
-             alias='CoilWinderBoltRadius'),
-        Cell('2.5',
-             alias='CoilWinderPinRadius'),
-        Cell('=CoilWinderPinRadius * 2',
              alias='CoilWinderPinDiameter')
+    ],
+    [
+        Cell('CoilWinderBoltRadius'),
+        Cell('CoilWinderPinRadius')
+    ],
+    [
+        Cell('=CoilWinderBoltDiameter / 2',
+             alias='CoilWinderBoltRadius'),
+        Cell('=CoilWinderPinDiameter / 2',
+             alias='CoilWinderPinRadius')
     ],
     [
         Cell('CoilWinderDiskTapeNotchWidth'),
