@@ -490,17 +490,16 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderBoltRadius'),
-        # TODO: Rename to CoilWinderPinRadius?
-        Cell('CoilWinderDiskSmallHoleRadius'),
-        Cell('CoilWinderDiskSmallHoleDiameter')
+        Cell('CoilWinderPinRadius'),
+        Cell('CoilWinderPinDiameter')
     ],
     [
         Cell('5',
              alias='CoilWinderBoltRadius'),
         Cell('2.5',
-             alias='CoilWinderDiskSmallHoleRadius'),
-        Cell('=CoilWinderDiskSmallHoleRadius * 2',
-             alias='CoilWinderDiskSmallHoleDiameter')
+             alias='CoilWinderPinRadius'),
+        Cell('=CoilWinderPinRadius * 2',
+             alias='CoilWinderPinDiameter')
     ],
     [
         Cell('CoilWinderDiskTapeNotchWidth'),
@@ -525,7 +524,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderDiskBottomHoleRadius'),
         # TODO: Rename to RectangularRadialDistanceOfHolesFromCenter?
         # Vertical may not make sense since coil winder parts are rotated by CoilWinderAngle.
-        Cell('=MagnetLength / 2 - CoilWinderDiskSmallHoleRadius',
+        Cell('=MagnetLength / 2 - CoilWinderPinRadius',
              alias='RectangularVerticalDistanceOfHolesFromCenter'),
         Cell('4',
              alias='CoilWinderNumberOfSpacingNuts')
@@ -592,11 +591,11 @@ alternator_cells: List[List[Cell]] = [
         Cell('RectangularLargestDistanceOfHolesFromCenter')
     ],
     [
-        Cell('=CoilInnerWidth1 - CoilWinderDiskSmallHoleDiameter',
+        Cell('=CoilInnerWidth1 - CoilWinderPinDiameter',
              alias='OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('=CoilType != 3 ? (CoilInnerWidth2 - CoilWinderDiskSmallHoleDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
+        Cell('=CoilType != 3 ? (CoilInnerWidth2 - CoilWinderPinDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
              alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('=LargestMagnetDimension / 2 - CoilWinderDiskSmallHoleRadius',
+        Cell('=LargestMagnetDimension / 2 - CoilWinderPinRadius',
              alias='RectangularLargestDistanceOfHolesFromCenter'),
     ],
     [
@@ -649,7 +648,7 @@ alternator_cells: List[List[Cell]] = [
              alias='Mw'),
         Cell('=MagnetLength',
              alias='Ml'),
-        Cell('=CoilWinderDiskSmallHoleRadius',
+        Cell('=CoilWinderPinRadius',
              alias='Pr')
     ],
     [
@@ -658,7 +657,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('TriangularVerticalDistanceOfHolesFromCenter')
     ],
     [
-        Cell('=Mw - CoilWinderDiskSmallHoleRadius * 2',
+        Cell('=Mw - CoilWinderPinRadius * 2',
              alias='TriangularHorizontalDistanceBetweenPins'),
         # References:
         # https://math.stackexchange.com/a/4905815/1315686
