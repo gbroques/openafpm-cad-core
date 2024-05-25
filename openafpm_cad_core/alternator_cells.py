@@ -535,7 +535,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderBoltDiameter')
     ],
     [
-        Cell('______________________'), Cell('______________________')
+        Cell('_________________'), Cell('_________________')
     ],
     [
         Cell('CoilWinderPinDiameter', styles=[Style.UNDERLINE]),
@@ -552,7 +552,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderPinDiameter')
     ],
     [
-        Cell('______________________'), Cell('______________________')
+        Cell('_________________'), Cell('_________________')
     ],
     [
         Cell('CoilWinderBoltRadius'),
@@ -585,7 +585,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderDiskTapeNotchWidth')
     ],
     [
-        Cell('______________________'), Cell('______________________')
+        Cell('_________________'), Cell('_________________')
     ],
     [
         Cell('CoilWinderDiskFillet'),
