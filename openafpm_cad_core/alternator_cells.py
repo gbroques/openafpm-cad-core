@@ -528,7 +528,7 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderPinDiameter'),
-        Cell('=MagnetWidth < 12 ? 3 : CwbRange1',
+        Cell('=MagnetWidth < 12 ? 3 : CwpRange1',
              alias='CoilWinderPinDiameter')
     ],
     [
