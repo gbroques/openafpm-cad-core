@@ -5,6 +5,23 @@ from .spreadsheet import Alignment, Cell, Style
 __all__ = ['alternator_cells']
 
 
+def generate_tape_notch_width_cells(n: int) -> List[List[Cell]]:
+    cells: List[List[Cell]] = []
+    i = n
+    while i >= 0:
+        true = f'MaximumCoilWinderDiskTapeNotchWidth - {i + 1}' if i == n else f'TnwRange{i + 1}'
+        cells.append(
+            [
+                Cell(f'TnwRange{i}'),
+                Cell(f'=(MagnetLength - 2 * CoilWinderPinDiameter - MaximumCoilWinderDiskTapeNotchWidth + {i}) / 2' +
+                     f' < MinimumSpaceBetweenPinsAndTapeNotch ? {true} : MaximumCoilWinderDiskTapeNotchWidth - {i}',
+                     alias=f'TnwRange{i}')
+            ]
+        )
+        i = i - 1
+    return cells
+
+
 alternator_cells: List[List[Cell]] = [
     [
         Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
@@ -490,7 +507,7 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderBoltDiameter', styles=[Style.UNDERLINE]),
-        Cell('Ensure 2 mm of plywood between hole and tape notch.')
+        Cell('Ensure 2 mm of plywood between bolt hole and tape notch.')
     ],
     [
         Cell('CwbRange4'),
@@ -518,8 +535,11 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderBoltDiameter')
     ],
     [
+        Cell('______________________'), Cell('______________________')
+    ],
+    [
         Cell('CoilWinderPinDiameter', styles=[Style.UNDERLINE]),
-        Cell('Ensure 2 mm of plywood between hole and tape notch.')
+        Cell('Ensure 2 mm of plywood between bolt hole and tape notch.')
     ],
     [
         Cell('CwpRange1'),
@@ -532,6 +552,9 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderPinDiameter')
     ],
     [
+        Cell('______________________'), Cell('______________________')
+    ],
+    [
         Cell('CoilWinderBoltRadius'),
         Cell('CoilWinderPinRadius')
     ],
@@ -542,13 +565,33 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderPinRadius')
     ],
     [
+        Cell('MaximumCoilWinderDiskTapeNotchWidth'),
+        Cell('MinimumSpaceBetweenPinsAndTapeNotch')
+    ],
+    [
+        Cell('21',
+             alias='MaximumCoilWinderDiskTapeNotchWidth'),
+        Cell('2',
+             alias='MinimumSpaceBetweenPinsAndTapeNotch')
+    ],
+    [
+        Cell('CoilWinderDiskTapeNotchWidth', styles=[Style.UNDERLINE]),
+        Cell('Ensure 2 mm of plywood between pins and tape notch.')
+    ],
+    *generate_tape_notch_width_cells(10),
+    [
         Cell('CoilWinderDiskTapeNotchWidth'),
+        Cell('=TnwRange0',
+             alias='CoilWinderDiskTapeNotchWidth')
+    ],
+    [
+        Cell('______________________'), Cell('______________________')
+    ],
+    [
         Cell('CoilWinderDiskFillet'),
         Cell('CoilWinderCheekThickness')
     ],
     [
-        Cell('21',
-             alias='CoilWinderDiskTapeNotchWidth'),
         Cell('8',
              alias='CoilWinderDiskFillet'),
         Cell('12',
