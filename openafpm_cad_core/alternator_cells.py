@@ -874,26 +874,29 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('UnroundedRotorMoldScrewLength'),
-        Cell('RotorMoldScrewLength')
+        Cell('RotorMoldScrewLength'),
+        Cell('NumberOfRotorMoldBolts')
     ],
     [
         Cell('=RotorMoldSurroundThickness + RotorMoldBaseThickness',
              alias='UnroundedRotorMoldScrewLength'),
         Cell('=UnroundedRotorMoldScrewLength + - mod(UnroundedRotorMoldScrewLength; 5)',
-             alias='RotorMoldScrewLength')
+             alias='RotorMoldScrewLength'),
+        Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
+             alias='NumberOfRotorMoldBolts')
     ],
     [
-        Cell('DistanceBetweenRotorMoldScrewsAndResin'),
+        Cell('MaxDistanceBetweenRotorMoldScrewsAndResin'),
+        Cell('MaxRotorMoldScrewHolesCircumradius'),
         Cell('RotorMoldScrewHolesCircumradius'),
-        Cell('NumberOfRotorMoldBolts')
     ],
     [
         Cell('22',
-             alias='DistanceBetweenRotorMoldScrewsAndResin'),
-        Cell('=RotorMoldSurroundRadius + DistanceBetweenRotorMoldScrewsAndResin',
+             alias='MaxDistanceBetweenRotorMoldScrewsAndResin'),
+        Cell('=RotorMoldSurroundRadius + MaxDistanceBetweenRotorMoldScrewsAndResin',
+             alias='MaxRotorMoldScrewHolesCircumradius'),
+        Cell('=min(MaxRotorMoldScrewHolesCircumradius; RotorMoldSurroundRadius * 1.14)',
              alias='RotorMoldScrewHolesCircumradius'),
-        Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
-             alias='NumberOfRotorMoldBolts')
     ],
     [
         Cell('MagnetJig', styles=[Style.UNDERLINE])
