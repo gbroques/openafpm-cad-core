@@ -13,7 +13,8 @@ def generate_tape_notch_width_cells(n: int) -> List[List[Cell]]:
         cells.append(
             [
                 Cell(f'TnwRange{i}'),
-                Cell(f'=(MagnetLength - 2 * CoilWinderPinDiameter - MaximumCoilWinderDiskTapeNotchWidth + {i}) / 2' +
+                Cell('=(LargestMagnetDimension - 2 * CoilWinderPinDiameter' +
+                     f' - MaximumCoilWinderDiskTapeNotchWidth + {i}) / 2' +
                      f' < MinimumSpaceBetweenPinsAndTapeNotch ? {true} : MaximumCoilWinderDiskTapeNotchWidth - {i}',
                      alias=f'TnwRange{i}')
             ]
@@ -499,11 +500,17 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderDiskRadius')
     ],
     [
-        Cell('DistanceBetweenTriangularCoilAndTapeNotch')
+        Cell('DistanceBetweenTriangularCoilAndTapeNotch'),
+        Cell('LargestMagnetDimension'),
+        Cell('SmallestMagnetDimension')
     ],
     [
         Cell('2',
-             alias='DistanceBetweenTriangularCoilAndTapeNotch')
+             alias='DistanceBetweenTriangularCoilAndTapeNotch'),
+        Cell('=max(MagnetLength; MagnetWidth)',
+             alias='LargestMagnetDimension'),
+        Cell('=min(MagnetLength; MagnetWidth)',
+             alias='SmallestMagnetDimension')
     ],
     [
         Cell('CoilWinderBoltDiameter', styles=[Style.UNDERLINE]),
@@ -511,27 +518,27 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CwbRange4'),
-        Cell('=MagnetWidth < 19 ? 8 : 10',
+        Cell('=SmallestMagnetDimension < 19 ? 8 : 10',
              alias='CwbRange4')
     ],
     [
         Cell('CwbRange3'),
-        Cell('=MagnetWidth < 17 ? 6 : CwbRange4',
+        Cell('=SmallestMagnetDimension < 17 ? 6 : CwbRange4',
              alias='CwbRange3')
     ],
     [
         Cell('CwbRange2'),
-        Cell('=MagnetWidth < 15 ? 5 : CwbRange3',
+        Cell('=SmallestMagnetDimension < 15 ? 5 : CwbRange3',
              alias='CwbRange2')
     ],
     [
         Cell('CwbRange1'),
-        Cell('=MagnetWidth < 13 ? 4 : CwbRange2',
+        Cell('=SmallestMagnetDimension < 13 ? 4 : CwbRange2',
              alias='CwbRange1')
     ],
     [
         Cell('CoilWinderBoltDiameter'),
-        Cell('=MagnetWidth < 11 ? 3 : CwbRange1',
+        Cell('=SmallestMagnetDimension < 11 ? 3 : CwbRange1',
              alias='CoilWinderBoltDiameter')
     ],
     [
@@ -543,12 +550,12 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CwpRange1'),
-        Cell('=MagnetWidth < 14 ? 4 : 5',
+        Cell('=SmallestMagnetDimension < 14 ? 4 : 5',
              alias='CwpRange1')
     ],
     [
         Cell('CoilWinderPinDiameter'),
-        Cell('=MagnetWidth < 12 ? 3 : CwpRange1',
+        Cell('=SmallestMagnetDimension < 12 ? 3 : CwpRange1',
              alias='CoilWinderPinDiameter')
     ],
     [
@@ -660,13 +667,6 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderAngle'),
         Cell('=ShouldRotateCoilWinderParts == 1 ? vector(0; 1; 0) : vector(1; 0; 0)',
              alias='CoilWinderPinsMirrorNormalVector')
-    ],
-    [
-        Cell('LargestMagnetDimension')
-    ],
-    [
-        Cell('=max(MagnetLength; MagnetWidth)',
-             alias='LargestMagnetDimension')
     ],
     [
         Cell('OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
