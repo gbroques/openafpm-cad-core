@@ -563,11 +563,20 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoilWinderBoltRadius'),
+        Cell('CoilWinderHexNutThickness'),
         Cell('CoilWinderPinRadius')
     ],
     [
         Cell('=CoilWinderBoltDiameter / 2',
              alias='CoilWinderBoltRadius'),
+        # Hex nut thickness equations are derived from
+        # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
+        # linear equation function finder.
+        # http://www.worldfastener.com/bs-4190-metric-hexagon-nuts/
+        # https://www.dcode.fr/function-equation-finder
+        # Duplicated in Fastener cells & Fastener_HexNut document.
+        Cell('=1.64 * CoilWinderBoltRadius + 0.35',
+             alias='CoilWinderHexNutThickness'),
         Cell('=CoilWinderPinDiameter / 2',
              alias='CoilWinderPinRadius')
     ],
@@ -625,7 +634,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('CoilWinderSpaceBetweenLayer')
     ],
     [
-        Cell('=HexNutThickness * CoilWinderNumberOfSpacingNuts',
+        Cell('=CoilWinderHexNutThickness * CoilWinderNumberOfSpacingNuts',
              alias='CoilWinderNutStackThickness'),
         Cell('=CoilWinderCheekThickness * 2 + StatorThickness',
              alias='CoilWinderAssemblyThickness'),
@@ -642,7 +651,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderNumberOfNutStacks'),
         Cell('=CoilWinderAssemblyThickness * NumberOfCoilsPerPhase + CoilWinderNutStackThickness * CoilWinderNumberOfNutStacks',
              alias='CoilWinderAssemblyThicknessTotal'),
-        Cell('=CoilWinderAssemblyThicknessTotal + HexNutThickness * 2 + DistanceThreadsExtendFromNuts * 2',
+        Cell('=CoilWinderAssemblyThicknessTotal + CoilWinderHexNutThickness * 2 + DistanceThreadsExtendFromNuts * 2',
              alias='CoilWinderCenterRodLength')
     ],
     [
