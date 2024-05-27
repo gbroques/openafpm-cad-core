@@ -1,7 +1,5 @@
 """Module for retrieving default values for wind turbine variants."""
-import json
-from pathlib import Path
-from typing import TypedDict
+from typing import Dict, TypedDict
 
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
@@ -19,13 +17,269 @@ class Parameters(TypedDict):
 
 def get_default_parameters(variant: WindTurbine) -> Parameters:
     """Get default parameter values for "T Shape", "H Shape", or "Star Shape" turbines.
-
-    .. literalinclude:: ../../openafpm_cad_core/default_parameters.json
-       :language: JSON
     """
-    dir_path = Path(__file__).parent.resolve()
-    parameters_path = dir_path.joinpath('default_parameters.json')
+    return default_parameters[variant.value]
 
-    with open(parameters_path) as f:
-        parameters_by_variant = json.load(f)
-    return parameters_by_variant[variant.value]
+
+default_parameters: Dict[str, Parameters] = {
+    "T Shape": {
+        "magnafpm": {
+            "RotorDiameter": 2400,
+            "RotorDiskRadius": 150,
+            "RotorDiskInnerRadius": 100,
+            "RotorDiskThickness": 10,
+            "MagnetLength": 46,
+            "MagnetWidth": 30,
+            "MagnetThickness": 10,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 12,
+            "StatorThickness": 13,
+            "CoilType": 1,
+            "CoilLegWidth": 21.5,
+            "CoilInnerWidth1": 30,
+            "CoilInnerWidth2": 30,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 20,
+            "NumberOfCoilsPerPhase": 3,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 300,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 1000,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 6,
+            "VaneLength": 1200,
+            "VaneWidth": 500,
+            "Offset": 125
+        },
+        "user": {
+            "BladeWidth": 124,
+            "HubPitchCircleDiameter": 100,
+            "RotorDiskCentralHoleDiameter": 65,
+            "HolesDiameter": 12,
+            "MetalLengthL": 50,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 60.3,
+            "PipeThickness": 5,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 12
+        }
+    },
+    "H Shape": {
+        "magnafpm": {
+            "RotorDiameter": 4200,
+            "RotorDiskRadius": 225,
+            "RotorDiskInnerRadius": 100,
+            "RotorDiskThickness": 10,
+            "MagnetLength": 46,
+            "MagnetWidth": 30,
+            "MagnetThickness": 10,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 16,
+            "StatorThickness": 13,
+            "CoilType": 1,
+            "CoilLegWidth": 32,
+            "CoilInnerWidth1": 30,
+            "CoilInnerWidth2": 30,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 36,
+            "NumberOfCoilsPerPhase": 4,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
+        },
+        "furling": {
+            "VerticalPlaneAngle": 15,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 600,
+            "BracketWidth": 50,
+            "BracketThickness": 6,
+            "BoomLength": 1800,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 9,
+            "VaneLength": 2000,
+            "VaneWidth": 900,
+            "Offset": 250
+        },
+        "user": {
+            "BladeWidth": 223,
+            "HubPitchCircleDiameter": 130,
+            "RotorDiskCentralHoleDiameter": 95,
+            "HolesDiameter": 14,
+            "MetalLengthL": 60,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 88.9,
+            "PipeThickness": 5,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 14
+        }
+    },
+    "Star Shape": {
+        "magnafpm": {
+            "RotorDiameter": 6000,
+            "RotorDiskRadius": 350,
+            "RotorDiskInnerRadius": 100,
+            "RotorDiskThickness": 10,
+            "MagnetLength": 58,
+            "MagnetWidth": 27,
+            "MagnetThickness": 10,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 32,
+            "StatorThickness": 15,
+            "CoilType": 2,
+            "CoilLegWidth": 22.4,
+            "CoilInnerWidth1": 40,
+            "CoilInnerWidth2": 27,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 44,
+            "NumberOfCoilsPerPhase": 8,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
+        },
+        "furling": {
+            "VerticalPlaneAngle": 15,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 900,
+            "BracketWidth": 50,
+            "BracketThickness": 6,
+            "BoomLength": 2600,
+            "BoomPipeDiameter": 73,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 12,
+            "VaneLength": 3000,
+            "VaneWidth": 1260,
+            "Offset": 348
+        },
+        "user": {
+            "BladeWidth": 322,
+            "HubPitchCircleDiameter": 205,
+            "RotorDiskCentralHoleDiameter": 163,
+            "HolesDiameter": 14,
+            "MetalLengthL": 80,
+            "MetalThicknessL": 8,
+            "FlatMetalThickness": 12,
+            "YawPipeDiameter": 114.3,
+            "PipeThickness": 6,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 20
+        }
+    },
+    "T Shape 2F": {
+        "magnafpm": {
+            "RotorDiameter": 2400,
+            "RotorDiskRadius": 151.39,
+            "RotorDiskInnerRadius": 99.32,
+            "RotorDiskThickness": 8,
+            "MagnetLength": 50,
+            "MagnetWidth": 50,
+            "MagnetThickness": 20,
+            "MagnetMaterial": "Ferrite",
+            "NumberMagnet": 12,
+            "StatorThickness": 13,
+            "CoilType": 3,
+            "CoilLegWidth": 20.63,
+            "CoilInnerWidth1": 50,
+            "CoilInnerWidth2": 8,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 2,
+            "NumberOfCoilsPerPhase": 3,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 300,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 1000,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 6,
+            "VaneLength": 1200,
+            "VaneWidth": 500,
+            "Offset": 125
+        },
+        "user": {
+            "BladeWidth": 124,
+            "HubPitchCircleDiameter": 100,
+            "RotorDiskCentralHoleDiameter": 65,
+            "HolesDiameter": 12,
+            "MetalLengthL": 50,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 60.3,
+            "PipeThickness": 5,
+            "RotorResinMargin": 10,
+            "HubHolesDiameter": 12
+        }
+    },
+    "H Shape 4F": {
+        "magnafpm": {
+            "RotorDiameter": 4200,
+            "RotorDiskRadius": 274.77,
+            "RotorDiskInnerRadius": 198.63,
+            "RotorDiskThickness": 10,
+            "MagnetLength": 75,
+            "MagnetWidth": 50,
+            "MagnetThickness": 20,
+            "MagnetMaterial": "Ferrite",
+            "NumberMagnet": 24,
+            "StatorThickness": 14,
+            "CoilType": 3,
+            "CoilLegWidth": 25.92,
+            "CoilInnerWidth1": 50,
+            "CoilInnerWidth2": 8,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 2,
+            "NumberOfCoilsPerPhase": 6,
+            "WireWeight": 19.68,
+            "WireDiameter": 0.95,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 322
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 600,
+            "BracketWidth": 50,
+            "BracketThickness": 6,
+            "BoomLength": 1800,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 3,
+            "VaneThickness": 12,
+            "VaneLength": 2000,
+            "VaneWidth": 900,
+            "Offset": 250
+        },
+        "user": {
+            "BladeWidth": 223,
+            "HubPitchCircleDiameter": 130,
+            "RotorDiskCentralHoleDiameter": 95,
+            "HolesDiameter": 14,
+            "MetalLengthL": 60,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 101.6,
+            "PipeThickness": 5,
+            "RotorResinMargin": 10,
+            "HubHolesDiameter": 14
+        }
+    }
+}
