@@ -978,18 +978,18 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         # Setup short aliases for making complex equation more readable
-        Cell('Mw'),  # Magnet width
-        Cell('Ml'),  # Magnet length
+        Cell('Mh'),  # Magnet horizontal
+        Cell('Mv'),  # Magnet vertical
         Cell('Pr')  # Pin radius
     ],
     [
-        # Set to MagnetLength when rectanuglar or keyhole coil type to prevent
+        # Set to LargestMagnetDimension when rectanuglar or keyhole coil type to prevent
         # Stator_Coil_Triangular_Reduced & Stator_CoilWinder_Triangular_Spacer
         # from breaking.
-        Cell('=CoilType != 3 ? MagnetLength : MagnetWidth',
-             alias='Mw'),
-        Cell('=MagnetLength',
-             alias='Ml'),
+        Cell('=CoilType != 3 ? LargestMagnetDimension : SmallestMagnetDimension',
+             alias='Mh'),
+        Cell('=LargestMagnetDimension',
+             alias='Mv'),
         Cell('=CoilWinderPinRadius',
              alias='Pr')
     ],
@@ -999,14 +999,14 @@ alternator_cells: List[List[Cell]] = [
         Cell('TriangularVerticalDistanceOfHolesFromCenter')
     ],
     [
-        Cell('=Mw - CoilWinderPinRadius * 2',
+        Cell('=Mh - CoilWinderPinRadius * 2',
              alias='TriangularHorizontalDistanceBetweenPins'),
         # References:
         # https://math.stackexchange.com/a/4905815/1315686
         # https://www.wolframalpha.com/input?i=%28R+-+r%29%5E2+%3D+%28l+-+r+-+R%29%5E2+%2B+%28%28w-2r%29+%2F+2%29%5E2+solve+for+R
-        Cell('=(4 * Ml ^ 2 - 8 * Ml * Pr + (Mw - 2 * Pr) ^ 2) / (8 * (Ml - 2 * Pr))',
+        Cell('=(4 * Mv ^ 2 - 8 * Mv * Pr + (Mh - 2 * Pr) ^ 2) / (8 * (Mv - 2 * Pr))',
              alias='TriangularCoilWinderCircumradius'),
-        Cell('=Ml - Pr - TriangularCoilWinderCircumradius',
+        Cell('=Mv - Pr - TriangularCoilWinderCircumradius',
              alias='TriangularVerticalDistanceOfHolesFromCenter')
     ],
     [
