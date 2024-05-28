@@ -13,7 +13,7 @@ from .map_magnafpm_parameters import map_magnafpm_parameters
 from .parameter_hash import hash_parameters, unhash_parameters
 from .preview_dxf_as_svg import preview_dxf_as_svg
 from .upsert_spreadsheet_document import upsert_spreadsheet_document
-from .wind_turbine import WindTurbine
+from .wind_turbine_shape import WindTurbineShape
 
 __all__ = [
     'Assembly',
@@ -32,5 +32,5 @@ __all__ = [
     'preview_dxf_as_svg',
     'unhash_parameters',
     'upsert_spreadsheet_document',
-    'WindTurbine'
+    'WindTurbineShape'
 ]

@@ -5,19 +5,19 @@ from typing import Callable
 import FreeCAD as App
 from FreeCAD import Console
 
-from .wind_turbine import WindTurbine
+from .wind_turbine_shape import WindTurbineShape
 
 __all__ = ['exec_turbine_function']
 
 
 def exec_turbine_function(
         description: str,
-        turbine_function: Callable[[WindTurbine], str]) -> None:
+        turbine_function: Callable[[WindTurbineShape], str]) -> None:
     parser = ArgumentParser(description=description)
     parser.add_argument('-t',
                         '--type',
                         type=str,
-                        choices=['t', 'h', 'star', 't2f', 'all'],
+                        choices=['t', 'h', 'star', 'all'],
                         required=False,
                         default='t',
                         help='Type of turbine. Defaults to t.')
@@ -25,16 +25,14 @@ def exec_turbine_function(
     turbines: tuple = ()
     if args.type == 'all':
         turbines = (
-            WindTurbine.T_SHAPE,
-            WindTurbine.H_SHAPE,
-            WindTurbine.STAR_SHAPE,
-            WindTurbine.T_SHAPE_2F)
+            WindTurbineShape.T,
+            WindTurbineShape.H,
+            WindTurbineShape.STAR)
     else:
         turbine = {
-            't': WindTurbine.T_SHAPE,
-            'h': WindTurbine.H_SHAPE,
-            'star': WindTurbine.STAR_SHAPE,
-            't2f': WindTurbine.T_SHAPE_2F
+            't': WindTurbineShape.T,
+            'h': WindTurbineShape.H,
+            'star': WindTurbineShape.STAR
         }[args.type]
         turbines = (turbine,)
     if App.GuiUp == 1:

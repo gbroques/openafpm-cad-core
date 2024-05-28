@@ -1,17 +1,17 @@
-from openafpm_cad_core.app import (WindTurbine, create_archive,
+from openafpm_cad_core.app import (WindTurbineShape, create_archive,
                                    exec_turbine_function,
                                    get_default_parameters)
 
 
-def write_archive(turbine: WindTurbine) -> str:
-    parameters = get_default_parameters(turbine)
+def write_archive(turbine_shape: WindTurbineShape) -> str:
+    parameters = get_default_parameters(turbine_shape)
 
     zip_bytes = create_archive(
         parameters['magnafpm'],
         parameters['furling'],
         parameters['user'])
 
-    name = turbine.value.lower().replace(' ', '-')
+    name = turbine_shape.value.lower().replace(' ', '-')
     filename = f'{name}.zip'
     with open(filename, 'wb') as zip_file:
         zip_file.write(zip_bytes)

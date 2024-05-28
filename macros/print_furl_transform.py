@@ -6,12 +6,12 @@ from collections import OrderedDict
 from multiprocessing import Pool
 from typing import Union
 
-from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
+from openafpm_cad_core.app import (WindTurbineShape, get_default_parameters,
                                    load_furl_transform)
 
 
-def get_furl_transform(turbine: WindTurbine) -> dict:
-    parameters = get_default_parameters(turbine)
+def get_furl_transform(turbine_shape: WindTurbineShape) -> dict:
+    parameters = get_default_parameters(turbine_shape)
 
     return load_furl_transform(
         parameters['magnafpm'],
@@ -93,16 +93,15 @@ class CompactJSONEncoder(json.JSONEncoder):
         return self.INDENTATION_CHAR*(self.indentation_level*self.indent)
 
 
-def slugify_enum(enum: WindTurbine) -> str:
+def slugify_enum(enum: WindTurbineShape) -> str:
     return enum.value.lower().replace(' ', '-')
 
 
 if __name__ == '__main__':
     turbines = [
-        WindTurbine.T_SHAPE,
-        WindTurbine.H_SHAPE,
-        WindTurbine.STAR_SHAPE,
-        WindTurbine.T_SHAPE_2F]
+        WindTurbineShape.T,
+        WindTurbineShape.H,
+        WindTurbineShape.STAR]
     with Pool(len(turbines)) as p:
         results = p.map(get_furl_transform, turbines)
         furl_transforms = OrderedDict()

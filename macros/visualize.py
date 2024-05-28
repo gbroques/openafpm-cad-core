@@ -6,15 +6,15 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Tuple, Union
 
-from openafpm_cad_core.app import (Assembly, WindTurbine, assembly_to_obj,
+from openafpm_cad_core.app import (Assembly, WindTurbineShape, assembly_to_obj,
                                    get_default_parameters)
 
 
-def write_obj_file(turbine_assembly_path_triple: Tuple[WindTurbine, Assembly, Path]) -> str:
-    turbine, assembly, path = turbine_assembly_path_triple
-    parameters = get_default_parameters(turbine)
+def write_obj_file(shape_assembly_path_triple: Tuple[WindTurbineShape, Assembly, Path]) -> str:
+    shape, assembly, path = shape_assembly_path_triple
+    parameters = get_default_parameters(shape)
 
-    turbine_dir = path.joinpath(slugify_enum(turbine))
+    turbine_dir = path.joinpath(slugify_enum(shape))
     turbine_dir.mkdir(exist_ok=True)
 
     obj_file_contents = assembly_to_obj(
@@ -28,7 +28,7 @@ def write_obj_file(turbine_assembly_path_triple: Tuple[WindTurbine, Assembly, Pa
         return str(filepath.resolve())
 
 
-def slugify_enum(enum: Union[Assembly, WindTurbine]) -> str:
+def slugify_enum(enum: Union[Assembly, WindTurbineShape]) -> str:
     return enum.value.lower().replace(' ', '-')
 
 
@@ -42,23 +42,21 @@ if __name__ == '__main__':
     parser.add_argument('-t',
                         '--type',
                         type=str,
-                        choices=['t', 'h', 'star', 't2f', 'all'],
+                        choices=['t', 'h', 'star', 'all'],
                         required=False,
                         default='all',
                         help='Type of turbine to visualize. Defaults to all.')
     args = parser.parse_args()
     if args.type == 'all':
         turbines = (
-            WindTurbine.T_SHAPE,
-            WindTurbine.H_SHAPE,
-            WindTurbine.STAR_SHAPE,
-            WindTurbine.T_SHAPE_2F)
+            WindTurbineShape.T,
+            WindTurbineShape.H,
+            WindTurbineShape.STAR)
     else:
         turbine = {
-            't': WindTurbine.T_SHAPE,
-            'h': WindTurbine.H_SHAPE,
-            'star': WindTurbine.STAR_SHAPE,
-            't2f': WindTurbine.T_SHAPE_2F
+            't': WindTurbineShape.T,
+            'h': WindTurbineShape.H,
+            'star': WindTurbineShape.STAR
         }[args.type]
         turbines = (turbine,)
     assemblies = (

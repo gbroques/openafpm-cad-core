@@ -1,24 +1,28 @@
 """Module for retrieving default values for wind turbine variants."""
-from typing import Dict, TypedDict
+from typing import Dict, TypedDict, Union
+
+from typing_extensions import NotRequired
 
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .wind_turbine import WindTurbine
+from .wind_turbine_shape import WindTurbineShape
 
 __all__ = ['get_default_parameters', 'Parameters']
 
 
 class Parameters(TypedDict):
     """Dictionary containing magnafpm, furling, and user parameters."""
+    description: NotRequired[str]
     magnafpm: MagnafpmParameters
     furling: FurlingParameters
     user: UserParameters
 
 
-def get_default_parameters(variant: WindTurbine) -> Parameters:
+def get_default_parameters(variant: Union[WindTurbineShape, str]) -> Parameters:
     """Get default parameter values for "T Shape", "H Shape", or "Star Shape" turbines.
     """
-    return default_parameters[variant.value]
+    key = variant if isinstance(variant, str) else variant.value
+    return default_parameters[key]
 
 
 default_parameters: Dict[str, Parameters] = {
@@ -179,6 +183,10 @@ default_parameters: Dict[str, Parameters] = {
         }
     },
     "T Shape 2F": {
+        "description": (
+            "2m meter diameter wind turbine with T-shape frame and (F)errite magnets. " +
+            "Useful for testing triangular coils and the outer magnet jig."
+        ),
         "magnafpm": {
             "RotorDiameter": 2400,
             "RotorDiskRadius": 151.39,
@@ -231,6 +239,10 @@ default_parameters: Dict[str, Parameters] = {
         }
     },
     "H Shape 4F": {
+        "description": (
+            "4 meter diameter wind turbine with H-shape frame and (F)errite magnets. " +
+            "Useful for testing triangular coils with a reduced coil leg width."
+        ),
         "magnafpm": {
             "RotorDiameter": 4200,
             "RotorDiskRadius": 274.77,

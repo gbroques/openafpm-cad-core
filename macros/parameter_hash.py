@@ -1,9 +1,9 @@
 import json
 
-from openafpm_cad_core.app import (WindTurbine, get_default_parameters,
+from openafpm_cad_core.app import (WindTurbineShape, get_default_parameters,
                                    hash_parameters, unhash_parameters)
 
-parameters = get_default_parameters(WindTurbine.T_SHAPE)
+parameters = get_default_parameters(WindTurbineShape.T)
 print(json.dumps(parameters, indent=2) + '\n')
 
 hash = hash_parameters(

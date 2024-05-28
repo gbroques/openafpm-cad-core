@@ -9,23 +9,22 @@ from typing import List, get_type_hints
 
 from .get_default_parameters import get_default_parameters
 from .get_docstring_by_key import get_docstring_by_key
-from .map_rotor_disk_radius_to_wind_turbine import \
-    map_rotor_disk_radius_to_wind_turbine
+from .map_rotor_disk_radius_to_wind_turbine_shape import \
+    map_rotor_disk_radius_to_wind_turbine_shape
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .pipe_size import PipeSize
-from .wind_turbine import WindTurbine
+from .wind_turbine_shape import WindTurbineShape
 
 MIN_NUMBER_MAGNET = 8
 MAX_NUMBER_MAGNET = 32
 
 
 def get_parameters_schema(rotor_disk_radius: float) -> dict:
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
-    default_parameters = get_default_parameters(wind_turbine)
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_flat_metal_thickness = default_parameters['user']['FlatMetalThickness']
-    default_rotor_disk_central_hole_diameter = default_parameters[
-        'user']['RotorDiskCentralHoleDiameter']
+    default_rotor_disk_central_hole_diameter = default_parameters['user']['RotorDiskCentralHoleDiameter']
     default_hub_holes_diameter = default_parameters['user']['HubHolesDiameter']
     default_hub_pitch_circle_diameter = default_parameters['user']['HubPitchCircleDiameter']
     default_holes_diameter = default_parameters['user']['HolesDiameter']
@@ -272,7 +271,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HubPitchCircleDiameter": {
                         "title": "Hub Pitch Circle Diameter",
                         "description": get_description("user", "HubPitchCircleDiameter"),
-                        "minimum": get_hub_pitch_circle_diameter_minimum(wind_turbine),
+                        "minimum": get_hub_pitch_circle_diameter_minimum(wind_turbine_shape),
                         "maximum": default_hub_pitch_circle_diameter + 40,
                         **get_numeric_type_and_multiple_of("user", "HubPitchCircleDiameter")
                     },
@@ -286,7 +285,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HolesDiameter": {
                         "title": "Holes Diameter",
                         "description": get_description("user", "HolesDiameter"),
-                        "minimum": get_holes_diameter_minimum(wind_turbine),
+                        "minimum": get_holes_diameter_minimum(wind_turbine_shape),
                         "maximum": default_holes_diameter + 2,
                         **get_numeric_type_and_multiple_of("user", "HolesDiameter")
                     },
@@ -294,20 +293,20 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Metal Length L",
                         "description": get_description("user", "MetalLengthL"),
                         "type": get_type("user", "MetalLengthL"),
-                        "minimum": get_metal_length_l_minimum(wind_turbine),
-                        "maximum": get_metal_length_l_maximum(wind_turbine),
+                        "minimum": get_metal_length_l_minimum(wind_turbine_shape),
+                        "maximum": get_metal_length_l_maximum(wind_turbine_shape),
                         "multipleOf": 10
                     },
                     "MetalThicknessL": {
                         "title": "Metal Thickness L",
                         "description": get_description("user", "MetalThicknessL"),
-                        "minimum": get_metal_thickness_l_minimum(wind_turbine),
-                        "maximum": get_metal_thickness_l_maximum(wind_turbine),
+                        "minimum": get_metal_thickness_l_minimum(wind_turbine_shape),
+                        "maximum": get_metal_thickness_l_maximum(wind_turbine_shape),
                         **get_numeric_type_and_multiple_of("user", "MetalThicknessL")
                     },
                     "FlatMetalThickness": {
                         "title": "Flat Metal Thickness",
-                        "minimum": get_flat_metal_thickness_minimum(wind_turbine),
+                        "minimum": get_flat_metal_thickness_minimum(wind_turbine_shape),
                         "maximum": default_flat_metal_thickness + 3,
                         **get_numeric_type_and_multiple_of("user", "FlatMetalThickness")
                     },
@@ -315,13 +314,13 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Yaw Pipe Diameter",
                         "description": get_description("user", "YawPipeDiameter"),
                         "type": get_type("user", "YawPipeDiameter"),
-                        "enum": get_yaw_pipe_diameter_enum(wind_turbine)
+                        "enum": get_yaw_pipe_diameter_enum(wind_turbine_shape)
                     },
                     "PipeThickness": {
                         "title": "Pipe Thickness",
                         "description": get_description("user", "PipeThickness"),
-                        "minimum": get_pipe_thickness_minimum(wind_turbine),
-                        "maximum": get_pipe_thickness_maximum(wind_turbine),
+                        "minimum": get_pipe_thickness_minimum(wind_turbine_shape),
+                        "maximum": get_pipe_thickness_maximum(wind_turbine_shape),
                         **get_numeric_type_and_multiple_of("user", "PipeThickness")
                     },
                     "RotorResinMargin": {
@@ -334,7 +333,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "HubHolesDiameter": {
                         "title": "Hub Holes Diameter",
                         "description": get_description("user", "HubHolesDiameter"),
-                        "minimum": get_hub_holes_diameter_minimum(wind_turbine),
+                        "minimum": get_hub_holes_diameter_minimum(wind_turbine_shape),
                         "maximum": default_hub_holes_diameter + 2,
                         **get_numeric_type_and_multiple_of("user", "HubHolesDiameter")
                     }
@@ -414,129 +413,129 @@ def get_pipe_sizes() -> List[float]:
     return [pipe_size.value for pipe_size in list(PipeSize)]
 
 
-def get_yaw_pipe_diameter_enum(wind_turbine: WindTurbine) -> List[float]:
+def get_yaw_pipe_diameter_enum(wind_turbine_shape: WindTurbineShape) -> List[float]:
     """Get default diameter and one size up.
 
     For T Shape, also allow one size down from the default.
     """
-    default_parameters = get_default_parameters(wind_turbine)
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_yaw_pipe_diameter = default_parameters['user']['YawPipeDiameter']
     pipe_sizes = get_pipe_sizes()
     index = pipe_sizes.index(default_yaw_pipe_diameter)
-    start = index - 1 if wind_turbine == WindTurbine.T_SHAPE else index
+    start = index - 1 if wind_turbine_shape == WindTurbineShape.T else index
     end = index + 2
     return pipe_sizes[start:end]
 
 
-def get_pipe_thickness_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_pipe_thickness_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 3
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 4
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 5
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_pipe_thickness_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_pipe_thickness_maximum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 5
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 6
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 8
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_hub_pitch_circle_diameter_minimum(wind_turbine: WindTurbine) -> float:
-    default_parameters = get_default_parameters(wind_turbine)
+def get_hub_pitch_circle_diameter_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_hub_pitch_circle_diameter = default_parameters['user']['HubPitchCircleDiameter']
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         return default_hub_pitch_circle_diameter - 50
     else:
         return default_hub_pitch_circle_diameter - 10
 
 
-def get_holes_diameter_minimum(wind_turbine: WindTurbine) -> float:
-    default_parameters = get_default_parameters(wind_turbine)
+def get_holes_diameter_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_holes_diameter = default_parameters['user']['HolesDiameter']
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         return default_holes_diameter - 4
     else:
         return default_holes_diameter - 2
 
 
-def get_hub_holes_diameter_minimum(wind_turbine: WindTurbine) -> float:
-    default_parameters = get_default_parameters(wind_turbine)
+def get_hub_holes_diameter_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_hub_holes_diameter = default_parameters['user']['HubHolesDiameter']
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         return default_hub_holes_diameter - 4
     else:
         return default_hub_holes_diameter - 2
 
 
-def get_metal_length_l_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_metal_length_l_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 40
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 50
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 60
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_metal_length_l_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_metal_length_l_maximum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 60
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 70
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 100
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_metal_thickness_l_minimum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_metal_thickness_l_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 5
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 5
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 6
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_metal_thickness_l_maximum(wind_turbine: WindTurbine) -> float:
-    if wind_turbine == WindTurbine.T_SHAPE:
+def get_metal_thickness_l_maximum(wind_turbine_shape: WindTurbineShape) -> float:
+    if wind_turbine_shape == WindTurbineShape.T:
         return 6
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return 7
-    elif wind_turbine == WindTurbine.STAR_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.STAR:
         return 10
     else:
         raise ValueError(
-            f'"{wind_turbine}" not supported. ' +
-            f'Must be one of {WindTurbine.T_SHAPE}, {WindTurbine.H_SHAPE}, or {WindTurbine.STAR_SHAPE}.')
+            f'"{wind_turbine_shape}" not supported. ' +
+            f'Must be one of {WindTurbineShape.T}, {WindTurbineShape.H}, or {WindTurbineShape.STAR}.')
 
 
-def get_flat_metal_thickness_minimum(wind_turbine: WindTurbine) -> float:
-    default_parameters = get_default_parameters(wind_turbine)
+def get_flat_metal_thickness_minimum(wind_turbine_shape: WindTurbineShape) -> float:
+    default_parameters = get_default_parameters(wind_turbine_shape)
     default_flat_metal_thickness = default_parameters['user']['FlatMetalThickness']
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         return default_flat_metal_thickness - 5
     else:
         return default_flat_metal_thickness - 2

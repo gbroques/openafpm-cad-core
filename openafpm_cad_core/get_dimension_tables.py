@@ -5,12 +5,12 @@ from FreeCAD import Document
 from typing_extensions import NotRequired
 
 from .get_documents_path import get_documents_path
-from .map_rotor_disk_radius_to_wind_turbine import \
-    map_rotor_disk_radius_to_wind_turbine
+from .map_rotor_disk_radius_to_wind_turbine_shape import \
+    map_rotor_disk_radius_to_wind_turbine_shape
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .upsert_spreadsheet_document import upsert_spreadsheet_document
-from .wind_turbine import WindTurbine
+from .wind_turbine_shape import WindTurbineShape
 
 __all__ = ['get_dimension_tables']
 
@@ -39,7 +39,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
                                                        furling_parameters,
                                                        user_parameters)
     rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     tables = []
     tables.append(
         create_dimension_of_hub_plywood_pieces_table(spreadsheet_document)
@@ -59,7 +59,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     tables.append(
         create_offset_table(spreadsheet_document)
     )
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         tables.append(
             create_alternator_frame_to_yaw_pipe_sizes_table(
                 spreadsheet_document)
@@ -206,7 +206,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
 def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
     header = 'Frame Dimensions'
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     steel_angle_section_rows = [
         ('Steel angle section width',
          round_and_format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
@@ -215,7 +215,7 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
         ('Steel angle section length total',
          format_length(sum_angle_bar_length(spreadsheet_document))),
     ]
-    if wind_turbine == WindTurbine.T_SHAPE:
+    if wind_turbine_shape == WindTurbineShape.T:
         return create_table(
             header,
             [
@@ -233,7 +233,7 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
             ],
             [book_reference_template % 'page 26 right-hand side']
         )
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return create_table(
             header,
             [
@@ -447,7 +447,7 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
 
 def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     number_of_locating_bolts = 3
     return create_table(
         'Stator Mould Dimensions',
@@ -461,7 +461,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
             (
                 'Number of mounts',
                 spreadsheet_document.Alternator.NumberOfStatorHoles
-                if wind_turbine != wind_turbine.STAR_SHAPE else 6
+                if wind_turbine_shape != wind_turbine_shape.STAR else 6
             ),
             ('Surround and island thickness',
              round_and_format_length(spreadsheet_document.Spreadsheet.StatorThickness)),
@@ -498,11 +498,11 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
 
 def calculate_number_of_stator_mold_bolts(spreadsheet_document: Document) -> int:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     return (
         spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts +
         spreadsheet_document.Alternator.NumberOfStatorHoles * 4
-        if wind_turbine != WindTurbine.STAR_SHAPE else
+        if wind_turbine_shape != WindTurbineShape.STAR else
         spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts + 24
     )
 
@@ -688,14 +688,14 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
 
 def sum_angle_bar_length(spreadsheet_document: Document) -> float:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine = map_rotor_disk_radius_to_wind_turbine(rotor_disk_radius)
-    if wind_turbine == WindTurbine.T_SHAPE:
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    if wind_turbine_shape == WindTurbineShape.T:
         return sum([
             round(spreadsheet_document.Alternator.TShapeTwoHoleEndBracketLength),
             round(spreadsheet_document.Alternator.BC) * 2,
             round(spreadsheet_document.Alternator.D)
         ])
-    elif wind_turbine == WindTurbine.H_SHAPE:
+    elif wind_turbine_shape == WindTurbineShape.H:
         return sum([
             round(spreadsheet_document.Alternator.GG) * 2,
             round(spreadsheet_document.Alternator.HH) * 2

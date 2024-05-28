@@ -7,7 +7,7 @@ from PySide import QtGui
 
 from ..get_default_parameters import get_default_parameters
 from ..load import Assembly, load_all, load_assembly
-from ..wind_turbine import WindTurbine
+from ..wind_turbine_shape import WindTurbineShape
 
 __all__ = ['CreateSpreadsheetTaskPanel']
 
@@ -57,22 +57,23 @@ class CreateSpreadsheetTaskPanel:
         layout.addLayout(row3)
 
     def create_rotor_disk_radius_value(self):
-        default_variant = WindTurbine.T_SHAPE
+        default_variant = WindTurbineShape.T
         default_rotor_disk_radius = get_rotor_disk_radius(default_variant)
         return QtGui.QLabel(default_rotor_disk_radius, self.form)
 
     def create_variant_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
-        items = [variant.value for variant in list(WindTurbine)]
+        # TODO: Add all possible options like T Shape 2F, H Shape 4F, and magnet width > length.
+        items = [variant.value for variant in list(WindTurbineShape)]
         combo_box.addItems(items)
         combo_box.activated[str].connect(
             self.handle_variant_combo_box_activated)
         return combo_box
 
     def handle_variant_combo_box_activated(self, selected_variant: str):
-        selected_wind_turbine = WindTurbine(selected_variant)
+        selected_wind_turbine_shape = WindTurbineShape(selected_variant)
         selected_rotor_disk_radius = get_rotor_disk_radius(
-            selected_wind_turbine)
+            selected_wind_turbine_shape)
         self.rotor_disk_radius_value.setText(selected_rotor_disk_radius)
 
     def create_load_combo_box(self):
@@ -86,7 +87,7 @@ class CreateSpreadsheetTaskPanel:
         """
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
         """
-        variant = WindTurbine(self.variant_combo_box.currentText())
+        variant = WindTurbineShape(self.variant_combo_box.currentText())
         parameters = get_default_parameters(variant)
         assembly_text = self.load_combo_box.currentText()
         if assembly_text == ALL:
@@ -102,6 +103,6 @@ class CreateSpreadsheetTaskPanel:
         Gui.Control.closeDialog()
 
 
-def get_rotor_disk_radius(variant: WindTurbine):
+def get_rotor_disk_radius(variant: WindTurbineShape):
     parameters = get_default_parameters(variant)
     return str(parameters['magnafpm']['RotorDiskRadius'])
