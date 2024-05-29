@@ -75,8 +75,8 @@ class MagnafpmParameters(TypedDict):
         https://openafpm.net/design-tips
     """
 
-    NumberMagnet: int  # NumberOfMagnets, MagnetCount?
-    """Number of magnets."""
+    NumberMagnet: int  # NumberOfMagnets, MagnetCount, NumberOfPoles?
+    """Number of magnets per rotor disk."""
 
     StatorThickness: float
     """Thickness of stator."""
