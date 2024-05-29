@@ -188,7 +188,7 @@ default_parameters: Dict[str, Parameters] = {
     },
     "T Shape 2F": {
         "description": (
-            "2m meter diameter wind turbine with T-shape frame and (F)errite magnets. " +
+            "2 meter diameter wind turbine with T-shape frame and (F)errite magnets. " +
             "Useful for testing triangular coils and the outer magnet jig."
         ),
         "magnafpm": {
