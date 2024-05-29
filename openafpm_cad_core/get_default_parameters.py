@@ -1,36 +1,39 @@
-"""Module for retrieving default values for wind turbine variants."""
-from typing import Dict, List, TypedDict, Union
+"""Module for retrieving values for various wind turbine preset designs."""
+from typing import Dict, List, Union
 
-from typing_extensions import NotRequired
-
-from .parameter_groups import (FurlingParameters, MagnafpmParameters,
-                               UserParameters)
 from .wind_turbine_shape import WindTurbineShape
 
-__all__ = ['get_default_parameters', 'get_presets', 'Parameters']
+__all__ = ['get_default_parameters', 'get_presets']
 
 
-class Parameters(TypedDict):
-    """Dictionary containing magnafpm, furling, and user parameters."""
-    description: NotRequired[str]
-    magnafpm: MagnafpmParameters
-    furling: FurlingParameters
-    user: UserParameters
-
-
-def get_default_parameters(preset: Union[WindTurbineShape, str]) -> Parameters:
+def get_default_parameters(preset: Union[WindTurbineShape, str]) -> dict:
     """Get default parameters for "T Shape", "H Shape", "Star Shape", or another preset turbine.
     """
     key = preset if isinstance(preset, str) else preset.value
-    return default_parameters[key]
+    parameters = preset_by_name[key]
+    if 'inheritsFrom' not in parameters:
+        return parameters
+    else:
+        parent_parameters = preset_by_name[parameters['inheritsFrom']]
+        merged_parameters = {'description': parameters['description']}
+        for group in ['magnafpm', 'furling', 'user']:
+            if group in parameters:
+                merged_parameters[group] = parent_parameters[group] | parameters[group]
+            else:
+                merged_parameters[group] = parent_parameters[group]
+        return merged_parameters
 
 
 def get_presets() -> List[str]:
-    return list(default_parameters.keys())
+    return list(preset_by_name.keys())
 
 
-default_parameters: Dict[str, Parameters] = {
+preset_by_name: Dict[str, dict] = {
     "T Shape": {
+        "description": (
+            "2.4 meter diameter wind turbine with T-shape frame. " +
+            "Based on 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott."
+        ),
         "magnafpm": {
             "RotorDiameter": 2400,
             "RotorDiskRadius": 150,
@@ -83,6 +86,10 @@ default_parameters: Dict[str, Parameters] = {
         }
     },
     "H Shape": {
+        "description": (
+            "4.2 meter diameter wind turbine with H-shape frame. " +
+            "Based on 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott."
+        ),
         "magnafpm": {
             "RotorDiameter": 4200,
             "RotorDiskRadius": 225,
@@ -135,6 +142,14 @@ default_parameters: Dict[str, Parameters] = {
         }
     },
     "Star Shape": {
+        "description": (
+            "6 meter diameter wind turbine with six-pointed star-shape frame. " +
+            "Designs larger than 4.2 meters are not included in 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott. " +
+            "Several have been built by Wind Empowerment members, " +
+            "and this design was developed by the Rural Electrification Research Group (RurERG)."
+            # See:
+            # https://rurerg.net/2016/01/16/july-2015-neodymium-magnet-generator-for-a-6m-rotor-swt-for-battery-charging/
+        ),
         "magnafpm": {
             "RotorDiameter": 6000,
             "RotorDiskRadius": 350,
@@ -189,57 +204,41 @@ default_parameters: Dict[str, Parameters] = {
     "T Shape 2F": {
         "description": (
             "2 meter diameter wind turbine with T-shape frame and (F)errite magnets. " +
-            "Useful for testing triangular coils and the outer magnet jig."
+            "Based on the '2F wind turbine construction manual' 2014 edition by Hugh Piggott. " +
+            "Useful for testing partially covered magnets, triangular coils, and the outer magnet jig."
         ),
+        # TSR = 6, page 11
+        # See https://www.openafpm.net/simulation/9098
+        "inheritsFrom": "T Shape",
         "magnafpm": {
-            "RotorDiameter": 2400,
-            "RotorDiskRadius": 151.39,
-            "RotorDiskInnerRadius": 99.32,
-            "RotorDiskThickness": 8,
-            "MagnetLength": 50,
-            "MagnetWidth": 50,
-            "MagnetThickness": 20,
-            "MagnetMaterial": "Ferrite",
-            "NumberMagnet": 12,
-            "StatorThickness": 13,
-            "CoilType": 3,
-            "CoilLegWidth": 20.63,
+            "RotorDiameter": 2000,  # page 3
+            "RotorDiskRadius": 148.57,
+            "RotorDiskInnerRadius": 96.45,
+            "RotorDiskThickness": 6,  # page 64
+            "MagnetLength": 50,  # page 5
+            "MagnetWidth": 50,  # page 5
+            "MagnetThickness": 20,  # page 5
+            "MagnetMaterial": "Ferrite",  # page 3
+            "StatorThickness": 12,  # pages 69, 84, & 86
+            "CoilType": 3,  # page 78
+            "CoilLegWidth": 21.99,
             "CoilInnerWidth1": 50,
-            "CoilInnerWidth2": 8,
-            "MechanicalClearance": 3,
-            "InnerDistanceBetweenMagnets": 2,
-            "NumberOfCoilsPerPhase": 3,
-            "WireWeight": 2.6,
-            "WireDiameter": 1.4,
-            "NumberOfWiresInHand": 2,
-            "TurnsPerCoil": 43
+            "CoilInnerWidth2": 8,  # page 74
+            "MechanicalClearance": 5,
+            "InnerDistanceBetweenMagnets": 0.5,
+            "WireWeight": 3.05,
+            "WireDiameter": 1.5,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 82
         },
         "furling": {
-            "VerticalPlaneAngle": 20,
-            "HorizontalPlaneAngle": 55,
-            "BracketLength": 300,
-            "BracketWidth": 30,
-            "BracketThickness": 5,
-            "BoomLength": 1000,
-            "BoomPipeDiameter": 48.3,
-            "BoomPipeThickness": 5,
-            "VaneThickness": 6,
-            "VaneLength": 1200,
-            "VaneWidth": 500,
-            "Offset": 125
+            "VerticalPlaneAngle": 13,  # page 50 - 52
+            "Offset": 100,  # page 9 & 46
+            "VaneLength": 1000  # page 62 & 63
         },
         "user": {
-            "BladeWidth": 124,
-            "HubPitchCircleDiameter": 100,
-            "RotorDiskCentralHoleDiameter": 65,
-            "HolesDiameter": 12,
-            "MetalLengthL": 50,
-            "MetalThicknessL": 6,
-            "FlatMetalThickness": 10,
-            "YawPipeDiameter": 60.3,
-            "PipeThickness": 5,
-            "RotorResinMargin": 10,
-            "HubHolesDiameter": 12
+            "YawPipeDiameter": 60.3,  # page 31
+            "RotorResinMargin": 10
         }
     },
     "H Shape 4F": {
@@ -247,11 +246,10 @@ default_parameters: Dict[str, Parameters] = {
             "4 meter diameter wind turbine with H-shape frame and (F)errite magnets. " +
             "Useful for testing triangular coils with a reduced coil leg width."
         ),
+        "inheritsFrom": "H Shape",
         "magnafpm": {
-            "RotorDiameter": 4200,
             "RotorDiskRadius": 274.77,
             "RotorDiskInnerRadius": 198.63,
-            "RotorDiskThickness": 10,
             "MagnetLength": 75,
             "MagnetWidth": 50,
             "MagnetThickness": 20,
@@ -262,7 +260,6 @@ default_parameters: Dict[str, Parameters] = {
             "CoilLegWidth": 25.92,
             "CoilInnerWidth1": 50,
             "CoilInnerWidth2": 8,
-            "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 2,
             "NumberOfCoilsPerPhase": 6,
             "WireWeight": 19.68,
@@ -272,30 +269,82 @@ default_parameters: Dict[str, Parameters] = {
         },
         "furling": {
             "VerticalPlaneAngle": 20,
-            "HorizontalPlaneAngle": 55,
-            "BracketLength": 600,
-            "BracketWidth": 50,
-            "BracketThickness": 6,
-            "BoomLength": 1800,
-            "BoomPipeDiameter": 48.3,
-            "BoomPipeThickness": 3,
-            "VaneThickness": 12,
-            "VaneLength": 2000,
-            "VaneWidth": 900,
-            "Offset": 250
+            "VaneThickness": 12
         },
         "user": {
-            "BladeWidth": 223,
-            "HubPitchCircleDiameter": 130,
-            "RotorDiskCentralHoleDiameter": 95,
-            "HolesDiameter": 14,
-            "MetalLengthL": 60,
-            "MetalThicknessL": 6,
-            "FlatMetalThickness": 10,
             "YawPipeDiameter": 101.6,
-            "PipeThickness": 5,
-            "RotorResinMargin": 10,
-            "HubHolesDiameter": 14
+            "RotorResinMargin": 10
+        }
+    },
+    "Magnet Width > Length, Rectangular Coil": {
+        "description": (
+            "Turbine with magnet width greater than magnet length and rectangular coils. " +
+            "Useful for testing magnets overlapping coils & coil winder."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiskRadius": 150.78,
+            "RotorDiskInnerRadius": 119.02,
+            "MagnetLength": 30,
+            "MagnetWidth": 46,
+            "MagnetThickness": 10,
+            "NumberMagnet": 12,
+            "CoilType": 1,
+            "CoilLegWidth": 18.52,
+            "CoilInnerWidth1": 46,
+            "CoilInnerWidth2": 46,
+            "InnerDistanceBetweenMagnets": 16.3162,
+            "WireWeight": 2.6,
+            "WireDiameter": 1.4,
+            "NumberOfWiresInHand": 2,
+            "TurnsPerCoil": 43
+        }
+    },
+    "Magnet Width > Length, Keyhole Coil": {
+        "description": (
+            "Turbine with magnet width greater than magnet length and keyhole coils. " +
+            "Useful for testing magnets overlapping coils & coil winder."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiskRadius": 143.69,
+            "RotorDiskInnerRadius": 111.84,
+            "MagnetLength": 30,
+            "MagnetWidth": 46,
+            "MagnetThickness": 10,
+            "NumberMagnet": 12,
+            "CoilType": 2,
+            "CoilLegWidth": 21,
+            "CoilInnerWidth1": 56.14,
+            "CoilInnerWidth2": 35.42,
+            "InnerDistanceBetweenMagnets": 12.5582,
+            "WireWeight": 2.65,
+            "WireDiameter": 1.5,
+            "TurnsPerCoil": 42
+        }
+    },
+    "Magnet Width > Length, Triangular Coil": {
+        "description": (
+            "Turbine with magnet width greater than magnet length and triangular coils. " +
+            "Useful for testing magnets overlapping coils & coil winder."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiskRadius": 150.18,
+            "RotorDiskInnerRadius": 118.41,
+            "MagnetLength": 30,
+            "MagnetWidth": 46,
+            "MagnetThickness": 10,
+            "NumberMagnet": 16,
+            "CoilType": 3,
+            "CoilLegWidth": 17.33,
+            "CoilInnerWidth1": 46,
+            "CoilInnerWidth2": 8.0,
+            "InnerDistanceBetweenMagnets": 0.5,
+            "NumberOfCoilsPerPhase": 4,
+            "WireWeight": 2.47,
+            "WireDiameter": 1.5,
+            "TurnsPerCoil": 35
         }
     }
 }

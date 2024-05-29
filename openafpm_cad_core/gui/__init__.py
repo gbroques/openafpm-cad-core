@@ -1,3 +1,3 @@
-from .create_spreadsheet_task_panel import CreateSpreadsheetTaskPanel
+from .load_assembly_task_panel import LoadAssemblyTaskPanel
 
-__all__ = ['CreateSpreadsheetTaskPanel']
+__all__ = ['LoadAssemblyTaskPanel']
