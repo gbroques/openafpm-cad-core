@@ -5,12 +5,11 @@ from FreeCAD import Document
 from typing_extensions import NotRequired
 
 from .get_documents_path import get_documents_path
-from .map_rotor_disk_radius_to_wind_turbine_shape import \
-    map_rotor_disk_radius_to_wind_turbine_shape
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .upsert_spreadsheet_document import upsert_spreadsheet_document
-from .wind_turbine_shape import WindTurbineShape
+from .wind_turbine_shape import (WindTurbineShape,
+                                 map_rotor_disk_radius_to_wind_turbine_shape)
 
 __all__ = ['get_dimension_tables']
 

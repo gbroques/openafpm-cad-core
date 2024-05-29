@@ -9,12 +9,11 @@ from typing import List, get_type_hints
 
 from .get_default_parameters import get_default_parameters
 from .get_docstring_by_key import get_docstring_by_key
-from .map_rotor_disk_radius_to_wind_turbine_shape import \
-    map_rotor_disk_radius_to_wind_turbine_shape
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .pipe_size import PipeSize
-from .wind_turbine_shape import WindTurbineShape
+from .wind_turbine_shape import (WindTurbineShape,
+                                 map_rotor_disk_radius_to_wind_turbine_shape)
 
 MIN_NUMBER_MAGNET = 8
 MAX_NUMBER_MAGNET = 32
