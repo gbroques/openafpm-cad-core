@@ -5,7 +5,7 @@ with spreadsheet containing input parameters.
 import FreeCADGui as Gui
 from PySide import QtGui
 
-from ..get_default_parameters import get_default_parameters
+from ..get_default_parameters import get_default_parameters, get_presets
 from ..load import Assembly, load_all, load_assembly
 from ..wind_turbine_shape import WindTurbineShape
 
@@ -25,11 +25,11 @@ class CreateSpreadsheetTaskPanel:
         # Row 1
         row1 = QtGui.QHBoxLayout()
 
-        variant_label = QtGui.QLabel('<strong>Variant:</strong>', self.form)
-        self.variant_combo_box = self.create_variant_combo_box()
+        preset_label = QtGui.QLabel('<strong>Preset:</strong>', self.form)
+        self.preset_combo_box = self.create_preset_combo_box()
 
-        row1.addWidget(variant_label)
-        row1.addWidget(self.variant_combo_box)
+        row1.addWidget(preset_label)
+        row1.addWidget(self.preset_combo_box)
 
         layout.addLayout(row1)
 
@@ -57,28 +57,26 @@ class CreateSpreadsheetTaskPanel:
         layout.addLayout(row3)
 
     def create_rotor_disk_radius_value(self):
-        default_variant = WindTurbineShape.T
-        default_rotor_disk_radius = get_rotor_disk_radius(default_variant)
+        default_preset = WindTurbineShape.T.value
+        default_rotor_disk_radius = get_rotor_disk_radius(default_preset)
         return QtGui.QLabel(default_rotor_disk_radius, self.form)
 
-    def create_variant_combo_box(self):
+    def create_preset_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
-        # TODO: Add all possible options like T Shape 2F, H Shape 4F, and magnet width > length.
-        items = [variant.value for variant in list(WindTurbineShape)]
+        items = get_presets()
         combo_box.addItems(items)
         combo_box.activated[str].connect(
-            self.handle_variant_combo_box_activated)
+            self.handle_preset_combo_box_activated)
         return combo_box
 
-    def handle_variant_combo_box_activated(self, selected_variant: str):
-        selected_wind_turbine_shape = WindTurbineShape(selected_variant)
+    def handle_preset_combo_box_activated(self, selected_preset: str):
         selected_rotor_disk_radius = get_rotor_disk_radius(
-            selected_wind_turbine_shape)
+            selected_preset)
         self.rotor_disk_radius_value.setText(selected_rotor_disk_radius)
 
     def create_load_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
-        items = [variant.value for variant in list(Assembly)]
+        items = [assembly.value for assembly in list(Assembly)]
         items.append(ALL)
         combo_box.addItems(items)
         return combo_box
@@ -87,8 +85,8 @@ class CreateSpreadsheetTaskPanel:
         """
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
         """
-        variant = WindTurbineShape(self.variant_combo_box.currentText())
-        parameters = get_default_parameters(variant)
+        preset = self.preset_combo_box.currentText()
+        parameters = get_default_parameters(preset)
         assembly_text = self.load_combo_box.currentText()
         if assembly_text == ALL:
             load_all(parameters['magnafpm'],
@@ -103,6 +101,6 @@ class CreateSpreadsheetTaskPanel:
         Gui.Control.closeDialog()
 
 
-def get_rotor_disk_radius(variant: WindTurbineShape):
-    parameters = get_default_parameters(variant)
+def get_rotor_disk_radius(preset: str) -> str:
+    parameters = get_default_parameters(preset)
     return str(parameters['magnafpm']['RotorDiskRadius'])

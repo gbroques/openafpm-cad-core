@@ -3,7 +3,7 @@ from .close_all_documents import close_all_documents
 from .create_archive import create_archive
 from .exec_turbine_function import exec_turbine_function
 from .export_to_dxf import export_to_dxf
-from .get_default_parameters import get_default_parameters
+from .get_default_parameters import get_default_parameters, get_presets
 from .get_dimension_tables import get_dimension_tables
 from .get_parameters_schema import get_parameters_schema
 from .load import Assembly
@@ -26,6 +26,7 @@ __all__ = [
     'get_default_parameters',
     'get_dimension_tables',
     'get_parameters_schema',
+    'get_presets',
     'load_furl_transform',
     'loadmat',
     'map_magnafpm_parameters',

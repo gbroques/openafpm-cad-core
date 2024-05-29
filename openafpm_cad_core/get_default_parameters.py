@@ -1,5 +1,5 @@
 """Module for retrieving default values for wind turbine variants."""
-from typing import Dict, TypedDict, Union
+from typing import Dict, List, TypedDict, Union
 
 from typing_extensions import NotRequired
 
@@ -7,7 +7,7 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .wind_turbine_shape import WindTurbineShape
 
-__all__ = ['get_default_parameters', 'Parameters']
+__all__ = ['get_default_parameters', 'get_presets', 'Parameters']
 
 
 class Parameters(TypedDict):
@@ -18,11 +18,15 @@ class Parameters(TypedDict):
     user: UserParameters
 
 
-def get_default_parameters(variant: Union[WindTurbineShape, str]) -> Parameters:
-    """Get default parameter values for "T Shape", "H Shape", or "Star Shape" turbines.
+def get_default_parameters(preset: Union[WindTurbineShape, str]) -> Parameters:
+    """Get default parameters for "T Shape", "H Shape", "Star Shape", or another preset turbine.
     """
-    key = variant if isinstance(variant, str) else variant.value
+    key = preset if isinstance(preset, str) else preset.value
     return default_parameters[key]
+
+
+def get_presets() -> List[str]:
+    return list(default_parameters.keys())
 
 
 default_parameters: Dict[str, Parameters] = {
