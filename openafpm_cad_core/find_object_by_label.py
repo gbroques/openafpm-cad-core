@@ -13,6 +13,6 @@ def find_object_by_label(document: Document, label: str) -> Optional[object]:
     objects = document.getObjectsByLabel(label)
     if len(objects) == 0:
         Console.PrintError(
-            f'No object with Label "{label}" found in document. Check {document.Name}.FCStd.')
+            f'No object with Label "{label}" found in document "{document.Name}".')
         return None
     return objects[0]
