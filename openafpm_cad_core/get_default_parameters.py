@@ -242,12 +242,14 @@ preset_by_name: Dict[str, dict] = {
         }
     },
     "H Shape 4F": {
+        # https://www.openafpm.net/simulation/8930
         "description": (
             "4 meter diameter wind turbine with H-shape frame and (F)errite magnets. " +
             "Useful for testing triangular coils with a reduced coil leg width."
         ),
         "inheritsFrom": "H Shape",
         "magnafpm": {
+            "RotorDiameter": 4340,
             "RotorDiskRadius": 274.77,
             "RotorDiskInnerRadius": 198.63,
             "MagnetLength": 75,
