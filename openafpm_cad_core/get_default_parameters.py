@@ -328,7 +328,9 @@ preset_by_name: Dict[str, dict] = {
     "Magnet Width > Length, Triangular Coil": {
         "description": (
             "Turbine with magnet width greater than magnet length and triangular coils. " +
-            "Useful for testing magnets overlapping coils & coil winder."
+            "Useful for testing magnets overlapping coils & coil winder." +
+            "Also uses outer magnet jig with neodymium magnets, " +
+            "and triangular coils with a reduced coil leg width."
         ),
         "inheritsFrom": "T Shape",
         "magnafpm": {
