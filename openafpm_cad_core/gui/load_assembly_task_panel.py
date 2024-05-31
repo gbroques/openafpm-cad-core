@@ -121,7 +121,7 @@ def get_turbine_value_text(preset: str) -> str:
     rotor_diameter, rotor_disk_radius = get_rotor_diameter_and_rotor_disk_radius(
         preset)
     wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
-    return f'{rotor_diameter / 1000}m diameter {wind_turbine_shape.value}'
+    return f'{rotor_diameter / 1000:g}m diameter {wind_turbine_shape.value}'
 
 
 def get_rotor_diameter_and_rotor_disk_radius(preset: str) -> Tuple[float, float]:
