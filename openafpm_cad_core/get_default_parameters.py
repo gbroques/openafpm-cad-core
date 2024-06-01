@@ -150,10 +150,11 @@ preset_by_name: Dict[str, dict] = {
             # See:
             # https://rurerg.net/2016/01/16/july-2015-neodymium-magnet-generator-for-a-6m-rotor-swt-for-battery-charging/
         ),
+        # https://www.openafpm.net/simulation/9102
         "magnafpm": {
             "RotorDiameter": 6000,
-            "RotorDiskRadius": 350,
-            "RotorDiskInnerRadius": 100,
+            "RotorDiskRadius": 372.24,
+            "RotorDiskInnerRadius": 313.99,
             "RotorDiskThickness": 10,
             "MagnetLength": 58,
             "MagnetWidth": 27,
@@ -162,16 +163,16 @@ preset_by_name: Dict[str, dict] = {
             "NumberMagnet": 32,
             "StatorThickness": 15,
             "CoilType": 2,
-            "CoilLegWidth": 22.4,
-            "CoilHoleWidthAtOuterRadius": 40,
-            "CoilHoleWidthAtInnerRadius": 27,
+            "CoilLegWidth": 31.13,
+            "CoilHoleWidthAtOuterRadius": 34.63,
+            "CoilHoleWidthAtInnerRadius": 19.45,
             "MechanicalClearance": 3,
-            "InnerDistanceBetweenMagnets": 44,
+            "InnerDistanceBetweenMagnets": 34.65,
             "NumberOfCoilsPerPhase": 8,
-            "WireWeight": 2.6,
-            "WireDiameter": 1.4,
-            "NumberOfWiresInHand": 2,
-            "TurnsPerCoil": 43
+            "WireWeight": 15.99,
+            "WireDiameter": 1.7,
+            "NumberOfWiresInHand": 8,
+            "TurnsPerCoil": 14
         },
         "furling": {
             "VerticalPlaneAngle": 15,
