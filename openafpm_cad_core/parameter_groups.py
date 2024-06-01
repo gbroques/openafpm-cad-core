@@ -94,10 +94,12 @@ class MagnafpmParameters(TypedDict):
     See "Wire sizes and power losses" section on page 55 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    CoilInnerWidth1: float  # CoilHoleOuterWidth
-    """Outer width of coil hole with respect to center of rotor disk.
+    CoilHoleWidthAtOuterRadius: float
+    """Width of coil hole at the outer radius of the effective length of the generator.
 
-    In conjuction with CoilInnerWidth2, controls the shape of the inner hole and type of coil:
+    Also corresponds to the width of the coil hole at the outer radius of the rotor disk(s).
+
+    In conjuction with CoilHoleWidthAtInnerRadius, controls the type of coil:
 
     * rectangular
     * keyhole
@@ -109,10 +111,13 @@ class MagnafpmParameters(TypedDict):
     "Coil hole at R out" in Winding Type diagram.
     """
 
-    CoilInnerWidth2: float  # CoilHoleInnerWidth
-    """Inner width of coil hole with respect to center of rotor disk.
+    CoilHoleWidthAtInnerRadius: float
+    """Width of coil hole at the inner radius of the effective length of the generator.
 
-    In conjuction with CoilInnerWidth1, controls the shape of the inner hole and type of coil:
+    Also corresponds to the width of the coil hole at the outer radius of the rotor disk(s)
+    minus the magnet length and a small offset to align the corners of the magnets to the rotor disk.
+
+    In conjuction with CoilHoleWidthAtOuterRadius, controls the type of coil:
 
     * rectangular
     * keyhole

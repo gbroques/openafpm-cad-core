@@ -111,18 +111,18 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "minimum": 0,
                         **get_numeric_type_and_multiple_of("magnafpm", "CoilLegWidth")
                     },
-                    "CoilInnerWidth1": {
-                        "title": "Coil Inner Width 1",
-                        "description": get_description("magnafpm", "CoilInnerWidth1"),
+                    "CoilHoleWidthAtOuterRadius": {
+                        "title": "Coil Hole Width at Outer Radius",
+                        "description": get_description("magnafpm", "CoilHoleWidthAtOuterRadius"),
                         "minimum": 0,
-                        **get_numeric_type_and_multiple_of("magnafpm", "CoilInnerWidth1")
+                        **get_numeric_type_and_multiple_of("magnafpm", "CoilHoleWidthAtOuterRadius")
 
                     },
-                    "CoilInnerWidth2": {
-                        "title": "Coil Inner Width 2",
-                        "description": get_description("magnafpm", "CoilInnerWidth2"),
+                    "CoilHoleWidthAtInnerRadius": {
+                        "title": "Coil Hole Width at Inner Radius",
+                        "description": get_description("magnafpm", "CoilHoleWidthAtInnerRadius"),
                         "minimum": 0,
-                        **get_numeric_type_and_multiple_of("magnafpm", "CoilInnerWidth2")
+                        **get_numeric_type_and_multiple_of("magnafpm", "CoilHoleWidthAtInnerRadius")
                     },
                     "MechanicalClearance": {
                         "title": "Mechanical Clearance",

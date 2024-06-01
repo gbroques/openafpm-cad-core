@@ -97,15 +97,15 @@ alternator_cells: List[List[Cell]] = [
              alias='HubHolesDiameter')
     ],
     [
-        Cell('CoilInnerWidth1'),
-        Cell('CoilInnerWidth2'),
+        Cell('CoilHoleWidthAtOuterRadius'),
+        Cell('CoilHoleWidthAtInnerRadius'),
         Cell('CoilType'),
     ],
     [
-        Cell('=Spreadsheet.CoilInnerWidth1',
-             alias='CoilInnerWidth1'),
-        Cell('=Spreadsheet.CoilInnerWidth2',
-             alias='CoilInnerWidth2'),
+        Cell('=Spreadsheet.CoilHoleWidthAtOuterRadius',
+             alias='CoilHoleWidthAtOuterRadius'),
+        Cell('=Spreadsheet.CoilHoleWidthAtInnerRadius',
+             alias='CoilHoleWidthAtInnerRadius'),
         Cell('=Spreadsheet.CoilType',
              alias='CoilType'),
     ],
@@ -619,7 +619,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('CoilWinderNumberOfSpacingNuts')
     ],
     [
-        Cell('=CoilType != 3 ? 4 : CoilInnerWidth2 / 2',
+        Cell('=CoilType != 3 ? 4 : CoilHoleWidthAtInnerRadius / 2',
              alias='CoilWinderDiskBottomHoleRadius'),
         # TODO: Rename to RectangularRadialDistanceOfHolesFromCenter?
         # Vertical may not make sense since coil winder parts are rotated by CoilWinderAngle.
@@ -683,9 +683,9 @@ alternator_cells: List[List[Cell]] = [
         Cell('RectangularLargestDistanceOfHolesFromCenter')
     ],
     [
-        Cell('=CoilInnerWidth1 - CoilWinderPinDiameter',
+        Cell('=CoilHoleWidthAtOuterRadius - CoilWinderPinDiameter',
              alias='OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('=CoilType != 3 ? (CoilInnerWidth2 - CoilWinderPinDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
+        Cell('=CoilType != 3 ? (CoilHoleWidthAtInnerRadius - CoilWinderPinDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
              alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
         Cell('=LargestMagnetDimension / 2 - CoilWinderPinRadius',
              alias='RectangularLargestDistanceOfHolesFromCenter'),
@@ -700,7 +700,7 @@ alternator_cells: List[List[Cell]] = [
              alias='RotorDiskCircumference'),
         Cell('=RotorDiskCircumference / NumberOfCoils',
              alias='CoilSectorArcLength'),
-        Cell('=asin(CoilInnerWidth1 / (2 * RotorDiskRadius)) * 2 * RotorDiskRadius * pi / 180',
+        Cell('=asin(CoilHoleWidthAtOuterRadius / (2 * RotorDiskRadius)) * 2 * RotorDiskRadius * pi / 180',
              alias='CoilOuterWidthArcLength')
     ],
     [
