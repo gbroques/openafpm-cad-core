@@ -31,7 +31,7 @@ class MagnafpmParameters(TypedDict):
     RotorDiskRadius: float
     """Outer radius of rotor disk(s) for the generator."""
 
-    RotorDiskInnerRadius: float
+    RotorDiskInnerRadius: float  # TODO: Rename to GeneratorInnerRadius?
     """Inner radius of the effective length of the generator."""
 
     RotorDiskThickness: float
