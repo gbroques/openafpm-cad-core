@@ -212,7 +212,8 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
              alias='HexagonalStatorOuterCircumradius'),
-        Cell('=RotorDiskRadius - MagnetLength - CoilLegWidth - OffsetToAlignCornersOfMagnetToDisk',
+        # TODO: This is equal to DistanceOfMagnetFromCenter which should be equal to RotorDiskInnerRadius
+        Cell('=RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk - CoilLegWidth',
              alias='StatorInnerHoleRadius'),
         # TODO: Number of coils = RotorRadius <= 125 ? 6 : 9
         # If we ever want to support the smallest wind turbines.
