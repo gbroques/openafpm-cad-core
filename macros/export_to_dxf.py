@@ -1,8 +1,10 @@
+from typing import Union
+
 from openafpm_cad_core.app import (WindTurbineShape, exec_turbine_function,
                                    export_to_dxf, get_default_parameters)
 
 
-def write_dxf_zip(turbine_shape: WindTurbineShape) -> str:
+def write_dxf_zip(turbine_shape: Union[WindTurbineShape, str]) -> str:
     parameters = get_default_parameters(turbine_shape)
 
     zip_bytes = export_to_dxf(
@@ -10,7 +12,8 @@ def write_dxf_zip(turbine_shape: WindTurbineShape) -> str:
         parameters['furling'],
         parameters['user'])
 
-    name = turbine_shape.value.lower().replace(' ', '-')
+    shape = turbine_shape if isinstance(turbine_shape, str) else turbine_shape.value
+    name = shape.lower().replace(' ', '-')
     filename = f'{name}-dxf.zip'
     with open(filename, 'wb') as zip_file:
         zip_file.write(zip_bytes)
