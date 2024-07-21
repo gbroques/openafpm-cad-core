@@ -439,7 +439,9 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
                 spreadsheet_document.Alternator.InnerHorizontalDistanceBetweenCenterOfSmallHoles
                 if spreadsheet_document.Spreadsheet.CoilType != 3 else
                 spreadsheet_document.Alternator.CoilWinderDiskBottomHoleRadius * 2
-            ))
+            )),
+            ('Bolt diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderBoltDiameter)}'),
+            ('Pin diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderPinDiameter)}')
         ]
     )
 
