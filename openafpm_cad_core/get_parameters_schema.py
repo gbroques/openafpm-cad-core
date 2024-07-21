@@ -286,7 +286,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "description": get_description("user", "HolesDiameter"),
                         "minimum": get_holes_diameter_minimum(wind_turbine_shape),
                         "maximum": default_holes_diameter + 2,
-                        **get_numeric_type_and_multiple_of("user", "HolesDiameter")
+                        **get_numeric_type_and_multiple_of("user", "HolesDiameter", 2)
                     },
                     "MetalLengthL": {
                         "title": "Metal Length L",
@@ -334,7 +334,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "description": get_description("user", "HubHolesDiameter"),
                         "minimum": get_hub_holes_diameter_minimum(wind_turbine_shape),
                         "maximum": default_hub_holes_diameter + 2,
-                        **get_numeric_type_and_multiple_of("user", "HubHolesDiameter")
+                        **get_numeric_type_and_multiple_of("user", "HubHolesDiameter", 2)
                     }
                 }
             }
@@ -342,18 +342,18 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
     }
 
 
-def get_numeric_type_and_multiple_of(group_name: str, parameter_name: str) -> dict:
+def get_numeric_type_and_multiple_of(group_name: str, parameter_name: str, integer_mulitple_of: int = 1) -> dict:
     json_schema_type = get_type(group_name, parameter_name)
-    multiple_of = get_multiple_of(json_schema_type)
+    multiple_of = get_multiple_of(json_schema_type, integer_mulitple_of)
     return {
         'type': json_schema_type,
         'multipleOf': multiple_of
     }
 
 
-def get_multiple_of(json_schema_type: str) -> float:
+def get_multiple_of(json_schema_type: str, integer_mulitple_of: int = 1) -> float:
     if json_schema_type == 'integer':
-        return 1
+        return integer_mulitple_of
     else:  # number
         return 0.01
 
