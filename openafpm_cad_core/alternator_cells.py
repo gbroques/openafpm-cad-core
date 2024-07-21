@@ -305,7 +305,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('StatorMoldBoltDiameter'),
         Cell('StatorMoldBoltWidthAcrossCorners'),
-        Cell('StatorMoldBoltLength'),
+        Cell('StatorMoldHexNutThickness')
     ],
     [
         # M12 Bolt
@@ -313,18 +313,41 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldBoltDiameter'),
         Cell('20.78',  # C (MAX)
              alias='StatorMoldBoltWidthAcrossCorners'),
-        Cell('65',
+        # Hex nut thickness equations are derived from
+        # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
+        # linear equation function finder.
+        # http://www.worldfastener.com/bs-4190-metric-hexagon-nuts/
+        # https://www.dcode.fr/function-equation-finder
+        Cell('=1.64 * (StatorMoldBoltDiameter / 2) + 0.35',
+             alias='StatorMoldHexNutThickness')
+    ],
+    [
+        Cell('MinimumDistanceStatorMoldBoltsExtendFromNuts'),
+        Cell('UnroundedStatorMoldBoltLength'),
+        Cell('StatorMoldBoltLength')
+    ],
+    [
+        Cell('2',
+             alias='MinimumDistanceStatorMoldBoltsExtendFromNuts'),
+        Cell('=4 * StatorThickness - HexNutThickness + WasherThickness +'
+             ' StatorMoldHexNutThickness + MinimumDistanceStatorMoldBoltsExtendFromNuts',
+             alias='UnroundedStatorMoldBoltLength'),
+        # Round up to nearest multiple of 5
+        Cell('=UnroundedStatorMoldBoltLength + 5 - mod(UnroundedStatorMoldBoltLength; 5)',
              alias='StatorMoldBoltLength')
     ],
     [
         Cell('LocatingBoltDiameter'),
+        Cell('UnroundedLocatingBoltLength'),
         Cell('LocatingBoltLength'),
     ],
     [
         # M12 Bolt
         Cell('12',
              alias='LocatingBoltDiameter'),
-        Cell('85',
+        Cell('=WasherThickness * 2 + StatorThickness * 5 + StatorMoldHexNutThickness + MinimumDistanceStatorMoldBoltsExtendFromNuts',
+             alias='UnroundedLocatingBoltLength'),
+        Cell('=UnroundedLocatingBoltLength + 5 - mod(UnroundedLocatingBoltLength; 5)',
              alias='LocatingBoltLength')
     ],
     [
