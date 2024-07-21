@@ -478,9 +478,14 @@ tail_cells: List[List[Cell]] = [
              alias='DistanceOfOuterHingeBelowBoom')
     ],
     [
+        Cell('TShapeTailBoomTriangularBraceWidth'),
+        Cell('=min(HalfHingeOuterPipeLength; DistanceOfOuterHingeBelowBoom)',
+             alias='TShapeTailBoomTriangularBraceWidth')
+    ],
+    [
         # Width of tail boom support along the slant of the outer tail hinge.
         Cell('TailBoomTriangularBraceWidth'),
-        Cell('=RotorDiskRadius < 187.5 ? HalfHingeOuterPipeLength : DistanceOfOuterHingeBelowBoom',
+        Cell('=RotorDiskRadius < 187.5 ? TShapeTailBoomTriangularBraceWidth : DistanceOfOuterHingeBelowBoom',
              alias='TailBoomTriangularBraceWidth')
     ],
     [
