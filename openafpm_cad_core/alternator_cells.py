@@ -787,8 +787,48 @@ alternator_cells: List[List[Cell]] = [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
+        Cell('JackingRodDiameter'),
+    ],
+    [
+        Cell('=min(HubHolesDiameter; 12)',
+             alias='JackingRodDiameter'),
+    ],
+    [
+        Cell('JackingHoleDiameter', styles=[Style.UNDERLINE]),
+        # See "Tapping a thread" section on the bottom right-hand
+        # side of page 13 in "A Wind Turbine Recipe Book (2014)".
+        Cell('Select size smaller than jacking rod diameter to tap threads.')
+    ],
+    [
+        Cell('Range4'),
+        Cell('=JackingRodDiameter >= 8 ? 7 : 5',
+             alias='Range4_jhd')
+    ],
+    [
+        Cell('Range3'),
+        Cell('=JackingRodDiameter >= 10 ? 8.5 : Range4_jhd',
+             alias='Range3_jhd')
+    ],
+    [
+        Cell('Range2'),
+        Cell('=JackingRodDiameter >= 12 ? 10.25 : Range3_jhd',
+             alias='Range2_jhd')
+    ],
+    [
+        Cell('Range1'),
+        Cell('=JackingRodDiameter >= 14 ? 12 : Range2_jhd',
+             alias='Range1_jhd')
+    ],
+    [
+        Cell('Diameter'),
+        Cell('=JackingRodDiameter >= 16 ? 14 : Range1_jhd',
+             alias='JackingHoleDiameter')
+    ],
+    [
+        Cell('____________'), Cell('____________')
+    ],
+    [
         Cell('RotorThickness'),
-        Cell('JackingHoleDiameter'),
         # Switch to reduced weight rotor disks when RotorDiskRadius
         # exceeds this threshold.
         Cell('WeightReductionRotorDiskRadiusThreshold')
@@ -796,8 +836,6 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=MagnetThickness + RotorDiskThickness',
              alias='RotorThickness'),
-        Cell('=min(10; HubHolesDiameter)',
-             alias='JackingHoleDiameter'),
         Cell('230',
              alias='WeightReductionRotorDiskRadiusThreshold')
     ],
