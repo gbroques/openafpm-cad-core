@@ -27,9 +27,9 @@ class LoadAssemblyTaskPanel:
 
         rows = [
             {
-                'label': '<strong>Load:</strong>',
-                'value': self.create_load_combo_box(),
-                'value_field_name': 'load_combo_box'
+                'label': '<strong>Assembly:</strong>',
+                'value': self.create_assembly_combo_box(),
+                'value_field_name': 'assembly_combo_box'
             },
             {
                 'label': '<strong>Preset:</strong>',
@@ -90,7 +90,7 @@ class LoadAssemblyTaskPanel:
         self.turbine_value.setText(turbine_value_text)
         self.description_value.setText(description)
 
-    def create_load_combo_box(self):
+    def create_assembly_combo_box(self):
         combo_box = QtGui.QComboBox(self.form)
         items = [assembly.value for assembly in list(Assembly)]
         items.append(ALL)
@@ -103,7 +103,7 @@ class LoadAssemblyTaskPanel:
         """
         preset = self.preset_combo_box.currentText()
         parameters = get_default_parameters(preset)
-        assembly_text = self.load_combo_box.currentText()
+        assembly_text = self.assembly_combo_box.currentText()
         if assembly_text == ALL:
             load_all(parameters['magnafpm'],
                      parameters['furling'],
