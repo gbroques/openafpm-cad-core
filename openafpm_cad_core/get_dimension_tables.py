@@ -25,6 +25,7 @@ class Element(TypedDict):
 
 
 book_reference_template = 'A Wind Turbine Recipe Book (2014 metric edition), %s'
+jacking_rods_length = 250  # in mm
 
 
 def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
@@ -625,7 +626,12 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
             ('Stator assembly washers (standard)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfStatorHoles * 2,
                 spreadsheet_document.Spreadsheet.HolesDiameter)),
-            *rows
+            ('Jacking studs', format_fastener(
+                spreadsheet_document.Alternator.NumberOfJackingHoles,
+                spreadsheet_document.Alternator.JackingRodDiameter,
+                jacking_rods_length)),
+            ('Jacking hole diameter', format_length(spreadsheet_document.Alternator.JackingHoleDiameter)),
+            * rows
         ]
     )
 
@@ -683,6 +689,11 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
             spreadsheet_document.Spreadsheet.HolesDiameter,
             round(spreadsheet_document.Alternator.StatorMountingStudsLength) *
             spreadsheet_document.Alternator.NumberOfStatorHoles
+        ),
+        (
+            spreadsheet_document.Alternator.JackingRodDiameter,
+            jacking_rods_length *
+            spreadsheet_document.Alternator.NumberOfJackingHoles
         )
     ]
 

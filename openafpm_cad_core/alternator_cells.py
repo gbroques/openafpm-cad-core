@@ -787,11 +787,14 @@ alternator_cells: List[List[Cell]] = [
         Cell('Rotor', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('JackingRodDiameter'),
+        Cell('NumberOfJackingHoles'),
+        Cell('JackingRodDiameter')
     ],
     [
+        Cell('=RotorDiskRadius < 187.5 ? 4 : 3',
+             alias='NumberOfJackingHoles'),
         Cell('=min(HubHolesDiameter; 12)',
-             alias='JackingRodDiameter'),
+             alias='JackingRodDiameter')
     ],
     [
         Cell('JackingHoleDiameter', styles=[Style.UNDERLINE]),
