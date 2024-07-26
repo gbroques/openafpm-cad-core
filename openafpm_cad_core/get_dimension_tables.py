@@ -487,10 +487,8 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  spreadsheet_document.Alternator.StatorMoldBoltDiameter)),
             ('Screws',
              format_screw(
-                 # Surround screws
-                 (4 * 2) * spreadsheet_document.Alternator.NumberOfStatorHoles +
-                 # Island screws
-                 2 * spreadsheet_document.Alternator.StatorMoldIslandNumberOfScrews,
+                 spreadsheet_document.Alternator.StatorMoldSurroundNumberOfScrews +
+                 spreadsheet_document.Alternator.StatorMoldIslandNumberOfScrews,
                  spreadsheet_document.Fastener.WoodScrewDiameter,
                  spreadsheet_document.Alternator.StatorMoldScrewLength))
         ],
@@ -499,13 +497,9 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
 
 
 def calculate_number_of_stator_mold_bolts(spreadsheet_document: Document) -> int:
-    rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     return (
         spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts +
-        spreadsheet_document.Alternator.NumberOfStatorHoles * 4
-        if wind_turbine_shape != WindTurbineShape.STAR else
-        spreadsheet_document.Alternator.StatorMoldIslandNumberOfBolts + 24
+        spreadsheet_document.Alternator.StatorMoldSurroundNumberOfBolts
     )
 
 

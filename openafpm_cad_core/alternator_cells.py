@@ -399,6 +399,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('LargeHoleAngle'),
         # TODO: Similar to IslandInnerRadius -> IslandHolesCircumradius rename above
         # Should we rename LengthMiddleHoles to SurroundHolesCircumradius?
+        # StatorMoldSurroundHolesCircumradius
         Cell('LengthMiddleHoles'),
         Cell('StatorMoldHolesSketchAngle')
     ],
@@ -426,14 +427,17 @@ alternator_cells: List[List[Cell]] = [
              alias='StatorMoldIslandScrewAngle'),
     ],
     [
-        Cell('StatorMoldIslandNumberOfScrews'),
-        Cell('DistanceOfLocatingHoleFromCenter')
+        Cell('StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
+        Cell('DistanceOfLocatingHoleFromCenter'),
+        Cell('StatorMoldSurroundNumberOfBolts')
     ],
     [
         Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
-             alias='StatorMoldIslandNumberOfScrews'),
+             alias='StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
         Cell('=0.63559 * StatorMoldSideLength',
-             alias='DistanceOfLocatingHoleFromCenter')
+             alias='DistanceOfLocatingHoleFromCenter'),
+        Cell('=RotorDiskRadius < 275 ? NumberOfStatorHoles * 4 : 24',
+             alias='StatorMoldSurroundNumberOfBolts')
     ],
     [
         Cell('UnroundedStatorMoldScrewLength'),
@@ -445,6 +449,16 @@ alternator_cells: List[List[Cell]] = [
         # Round down to nearest multiple of 5
         Cell('=UnroundedStatorMoldScrewLength - mod(UnroundedStatorMoldScrewLength; 5)',
              alias='StatorMoldScrewLength')
+    ],
+    [
+        Cell('StatorMoldSurroundNumberOfScrews'),
+        Cell('StatorMoldIslandNumberOfScrews')
+    ],
+    [
+        Cell('=4 * 2 * NumberOfStatorHoles',
+             alias='StatorMoldSurroundNumberOfScrews'),
+        Cell('=2 * StatorMoldIslandNumberOfPolarPatternScrewOccurrences',
+             alias='StatorMoldIslandNumberOfScrews')
     ],
     [
         Cell('LocatingBolt1X'),
