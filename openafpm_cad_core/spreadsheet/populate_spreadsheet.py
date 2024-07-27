@@ -39,6 +39,8 @@ def populate_spreadsheet_with_cell(spreadsheet: object,
                                    cell_address: str,
                                    cell: Cell) -> None:
     spreadsheet.set(cell_address, cell.content)
+    if spreadsheet.getCellFromAlias(cell.alias) is not None:
+        raise ValueError(f'Alias "{cell.alias}" already defined')
     spreadsheet.setAlias(cell_address, cell.alias)
     spreadsheet.setStyle(cell_address, cell.style)
     spreadsheet.setAlignment(cell_address, cell.alignment)
