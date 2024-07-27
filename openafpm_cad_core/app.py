@@ -9,6 +9,7 @@ from .get_dimension_tables import get_dimension_tables
 from .get_parameters_schema import get_parameters_schema
 from .load import Assembly
 from .load_furl_transform import load_furl_transform
+from .load_spreadsheet_document import load_spreadsheet_document
 from .loadmat import loadmat
 from .map_magnafpm_parameters import map_magnafpm_parameters
 from .parameter_hash import hash_parameters, unhash_parameters
@@ -30,6 +31,7 @@ __all__ = [
     'get_parameters_schema',
     'get_presets',
     'load_furl_transform',
+    'load_spreadsheet_document',
     'loadmat',
     'map_magnafpm_parameters',
     'preview_dxf_as_svg',

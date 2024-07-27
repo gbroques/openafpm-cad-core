@@ -4,10 +4,9 @@ from typing import Any, Dict, List, Optional, Tuple, TypedDict
 from FreeCAD import Document
 from typing_extensions import NotRequired
 
-from .get_documents_path import get_documents_path
+from .load_spreadsheet_document import load_spreadsheet_document
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .upsert_spreadsheet_document import upsert_spreadsheet_document
 from .wind_turbine_shape import (WindTurbineShape,
                                  map_rotor_disk_radius_to_wind_turbine_shape)
 
@@ -31,13 +30,9 @@ jacking_rods_length = 250  # in mm
 def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
                          furling_parameters: FurlingParameters,
                          user_parameters: UserParameters) -> List[Element]:
-    name = 'Master_of_Puppets'
-    documents_path = get_documents_path()
-    spreadsheet_document_path = documents_path.joinpath(f'{name}.FCStd')
-    spreadsheet_document = upsert_spreadsheet_document(spreadsheet_document_path,
-                                                       magnafpm_parameters,
-                                                       furling_parameters,
-                                                       user_parameters)
+    spreadsheet_document = load_spreadsheet_document(magnafpm_parameters,
+                                                     furling_parameters,
+                                                     user_parameters)
     rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
     wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     tables = []
