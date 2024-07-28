@@ -37,7 +37,7 @@ preset_by_name: Dict[str, dict] = {
         "magnafpm": {
             "RotorDiameter": 2400,
             "RotorDiskRadius": 150,
-            "RotorDiskInnerRadius": 100,
+            "RotorDiskInnerRadius": 103.25,
             "RotorDiskThickness": 10,
             "MagnetLength": 46,
             "MagnetWidth": 30,
@@ -93,7 +93,7 @@ preset_by_name: Dict[str, dict] = {
         "magnafpm": {
             "RotorDiameter": 4200,
             "RotorDiskRadius": 225,
-            "RotorDiskInnerRadius": 100,
+            "RotorDiskInnerRadius": 178.50,
             "RotorDiskThickness": 10,
             "MagnetLength": 46,
             "MagnetWidth": 30,
