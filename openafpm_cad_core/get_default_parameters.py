@@ -351,5 +351,58 @@ preset_by_name: Dict[str, dict] = {
             "WireDiameter": 1.5,
             "TurnsPerCoil": 35
         }
+    },
+    "2N MWT Hoverboard 20 pole SIM 9033_18_05_24": {
+        "description": "",
+        "magnafpm": {
+            "RotorDiameter": 2000,
+            "RotorDiskRadius": 102.96,
+            "RotorDiskInnerRadius": 77.84,
+            "RotorDiskThickness": 5,
+            "MagnetLength": 25,
+            "MagnetWidth": 10,
+            "MagnetThickness": 8,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 20,
+            "StatorThickness": 8,
+            "CoilType": 1,
+            "CoilLegWidth": 11.29,
+            "CoilInnerWidth1": 10,
+            "CoilInnerWidth2": 10,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 14.45,
+            "NumberOfCoilsPerPhase": 5,
+            "WireWeight": 0.77,
+            "WireDiameter": 0.95,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 70
+        },
+        "furling": {
+            "VerticalPlaneAngle": 15,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 300,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 900,
+            "BoomPipeDiameter": 42.2,
+            "BoomPipeThickness": 3,
+            "VaneThickness": 6,
+            "VaneLength": 1100,
+            "VaneWidth": 400,
+            "Offset": 115
+        },
+        "user": {
+            "BladeWidth": 162,
+            "HubPitchCircleDiameter": 90,
+            "RotorDiskCentralHoleDiameter": 60,
+            "HolesDiameter": 12,
+            "MetalLengthL": 50,
+            "MetalThicknessL": 5,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 60.3,
+            "PipeThickness": 3,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 12
+        }
     }
 }
