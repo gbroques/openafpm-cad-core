@@ -22,7 +22,7 @@ def map_magnafpm_parameters(magnafpm: dict) -> MagnafpmParameters:
         'CoilHoleWidthAtOuterRadius': round(magnafpm['coil_hole_Rout_constr'], ndigits=2),
         'CoilHoleWidthAtInnerRadius': round(magnafpm['coil_hole_Rin_constr'], ndigits=2),
         'MechanicalClearance': magnafpm['g'],
-        'InnerDistanceBetweenMagnets': magnafpm['dist_magnet_Rin'],
+        'InnerDistanceBetweenMagnets': round(magnafpm['dist_magnet_Rin'], ndigits=2),
         'NumberOfCoilsPerPhase': magnafpm['q'],
         'WireWeight': round(magnafpm['mcu_constr'], ndigits=2),
         'WireDiameter': magnafpm['dc'],
