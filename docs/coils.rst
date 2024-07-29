@@ -9,6 +9,7 @@ Coils
 =====  ===============  ============  ==========  ======
 Shape  RotorDiskRadius  NumberMagnet  NumberCoil  Angle
 =====  ===============  ============  ==========  ======
+T      102.96           20            15          24°
 T      115              8             6           60°
 T      150              12            9           40°
 T      185              16            12          30°
@@ -18,6 +19,19 @@ Star   280              24            18          20°
 Star   315              28            21          17.14°
 Star   350              32            24          15°
 =====  ===============  ============  ==========  ======
+
+
+"2N MWT Hoverboard 20 pole SIM 9033_18_05_24":
+"RotorDiskRadius": 102.96,
+"MagnetLength": 25,
+"MagnetWidth": 10,
+"MagnetThickness": 8,
+"MagnetMaterial": "Neodymium",
+"NumberMagnet": 20,
+"CoilType": 1,
+"CoilLegWidth": 11.29,
+"CoilInnerWidth1": 10,
+"CoilInnerWidth2": 10,
 
 The following has stator mounting holes which doesn't align between coils:
 
