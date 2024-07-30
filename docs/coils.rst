@@ -3,6 +3,7 @@ Coils
 
 * The number of magnets is a multiple of 4 between 8 and 32 inclusive.
 * The number of coils is 3/4 the number of magnets.
+* Thus, the number of coils is a multiple of 3 between 3 and 24 inclusive.
 * RotorDiskRadius, MagnetWidth, and CoilLegWidth affect how many coils can fit in a stator.
 * Stator mounting holes are aligned between coils.
 
