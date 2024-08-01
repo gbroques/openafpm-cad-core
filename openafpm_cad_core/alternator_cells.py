@@ -170,9 +170,12 @@ alternator_cells: List[List[Cell]] = [
              alias='WasherThickness')
     ],
     [
+        Cell('WoodScrewDiameter'),
         Cell('ScrewHoleDiameter')
     ],
     [
+        Cell('=Fastener.WoodScrewDiameter',
+             alias='WoodScrewDiameter'),
         Cell('=Fastener.ScrewHoleDiameter',
              alias='ScrewHoleDiameter')
     ],
@@ -202,20 +205,45 @@ alternator_cells: List[List[Cell]] = [
         Cell('Stator', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        # The radius of the circle that circumscribes the hexagon
-        # of the stator resin cast for Star Shape.
-        Cell('HexagonalStatorOuterCircumradius'),
         # Radius of the inner-most hole of stator.
         Cell('StatorInnerHoleRadius'),
         Cell('NumberOfCoils')
     ],
     [
-        Cell('=(RotorDiskRadius + CoilLegWidth + 20) / cos(30)',
-             alias='HexagonalStatorOuterCircumradius'),
-        # TODO: This is equal to DistanceOfMagnetFromCenter which should be equal to RotorDiskInnerRadius
+        # TODO: RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk is equal to
+        #       DistanceOfMagnetFromCenter which should be equal to RotorDiskInnerRadius
         Cell('=RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk - CoilLegWidth',
              alias='StatorInnerHoleRadius'),
         Cell('=NumberMagnet * 0.75', alias='NumberOfCoils')
+    ],
+    [
+        # For spacing between outside edge of coil and stator mold surround.
+        # Needs to be large enough to fit wires and tube around coils.
+        # Typically a 20mm diameter tube is used, but a 16mm tube can be used in smaller designs.
+        Cell('MaximumSpaceBetweenCoilEdgeAndSurround'),
+        Cell('SurroundEdgeSpacingFactor'),
+        Cell('OutsideCoilEdgeRadius')
+    ],
+    [
+        Cell('20',
+             alias='MaximumSpaceBetweenCoilEdgeAndSurround'),
+        Cell('1.12',
+             alias='SurroundEdgeSpacingFactor'),
+        Cell('=RotorDiskRadius + CoilLegWidth',
+             alias='OutsideCoilEdgeRadius')
+    ],
+    [
+        Cell('StatorMoldSurroundEdgeRadius'),
+        # The radius of the circle that circumscribes the hexagon
+        # of the stator resin cast for Star Shape.
+        Cell('HexagonalStatorOuterCircumradius')
+    ],
+    [
+        Cell('=min(OutsideCoilEdgeRadius * SurroundEdgeSpacingFactor;' +
+             ' OutsideCoilEdgeRadius + MaximumSpaceBetweenCoilEdgeAndSurround)',
+             alias='StatorMoldSurroundEdgeRadius'),
+        Cell('=StatorMoldSurroundEdgeRadius / cos(30)',
+             alias='HexagonalStatorOuterCircumradius')
     ],
     [
         # "Holes circumradius" is the radius of the circle that
@@ -228,12 +256,12 @@ alternator_cells: List[List[Cell]] = [
         Cell('StatorHolesCircumradius')
     ],
     [
-        Cell('=RotorDiskRadius + CoilLegWidth + 20',
+        Cell('=StatorMoldSurroundEdgeRadius',
              alias='TShapeStatorHolesCircumradius'),
         # Ensure 20 mm between hole and coil for H Shape.
         Cell('=TShapeStatorHolesCircumradius + HolesRadius',
              alias='HShapeStatorHolesCircumradius'),
-        Cell('=RotorDiskRadius + CoilLegWidth + 0.5 * (HexagonalStatorOuterCircumradius - RotorDiskRadius - CoilLegWidth)',
+        Cell('=OutsideCoilEdgeRadius + 0.5 * (HexagonalStatorOuterCircumradius - RotorDiskRadius - CoilLegWidth)',
              alias='StarShapeStatorHolesCircumradius'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeStatorHolesCircumradius : (RotorDiskRadius < 275 ? HShapeStatorHolesCircumradius : StarShapeStatorHolesCircumradius)',
              alias='StatorHolesCircumradius')
@@ -301,15 +329,153 @@ alternator_cells: List[List[Cell]] = [
     # For metric hex bolt dimensions, see:
     # https://www.atlrod.com/metric-hex-bolt-dimensions/
     [
-        Cell('StatorMoldBoltDiameter'),
-        Cell('StatorMoldBoltWidthAcrossCorners'),
-        Cell('StatorMoldHexNutThickness')
+        Cell('MaximumStatorMoldBoltDiameter')
     ],
     [
         # M12 Bolt
         Cell('12',
+             alias='MaximumStatorMoldBoltDiameter')
+    ],
+    [
+        # Controls radius of screw holes for rotor mold and blade hub rotor plates.
+        # These are pilot holes for a 5mm diameter screw.
+        # TODO: Move this out of stator mold section and into a more appropriate place.
+        Cell('ScrewHoleRadius'),
+        Cell('MaximumDistanceBetweenOuterHolesAndStatorMold'),
+        Cell('MaximumDistanceBetweenInnerHolesAndStatorMold')
+    ],
+    [
+        Cell('=ScrewHoleDiameter / 2',
+             alias='ScrewHoleRadius'),
+        # Ensure holes are close enough to create
+        # pressure for the resin not to flow out.
+        Cell('=MaximumStatorMoldBoltDiameter * 2',
+             alias='MaximumDistanceBetweenOuterHolesAndStatorMold'),
+        Cell('=MaximumStatorMoldBoltDiameter * 1.5',
+             alias='MaximumDistanceBetweenInnerHolesAndStatorMold')
+    ],
+    [
+        Cell('TShapeSketchY'),
+        Cell('HShapeSketchY'),
+        Cell('SketchY')
+    ],
+    [
+        Cell('=-EarSize / 2',
+             alias='TShapeSketchY'),
+        Cell('0',
+             alias='HShapeSketchY'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeSketchY : HShapeSketchY',
+             alias='SketchY')
+    ],
+    [
+        # TODO: Rename to StatorMoldIslandHolesCircumradius?
+        Cell('IslandInnerRadius'),
+        Cell('EarAngle')
+    ],
+    [
+        Cell('=max(StatorInnerHoleRadius - MaximumDistanceBetweenInnerHolesAndStatorMold;' +
+             ' StatorInnerHoleRadius * 0.78)',
+             alias='IslandInnerRadius'),
+        Cell('=360 / NumberOfStatorHoles',
+             alias='EarAngle')
+    ],
+    [
+        Cell('LargeHoleAngle'),
+        Cell('StatorMoldHolesSketchAngle')
+    ],
+    [
+        # Divide by 4 because there are 3 bolts and 4 spaces between each "ear"
+        # for the T and H Shape Stator Mold.
+        Cell('=EarAngle / 4',
+             alias='LargeHoleAngle'),
+        Cell('=RotorDiskRadius < 187.5 ? 0 : (RotorDiskRadius < 275 ? 45 : 0)',
+             alias='StatorMoldHolesSketchAngle')
+    ],
+    [
+        Cell('StatorMoldIslandNumberOfBolts'),
+        Cell('StatorMoldIslandNumberOfScrewSectors'),
+        Cell('StatorMoldIslandScrewAngle')
+    ],
+    [
+        Cell('=StatorInnerHoleRadius < 110 ? 4 : (StatorInnerHoleRadius < 190 ? 6 : 12)',
+             alias='StatorMoldIslandNumberOfBolts'),
+        Cell('=StatorInnerHoleRadius < 110 ? 12 : (StatorInnerHoleRadius < 190 ? 18 : 36)',
+             alias='StatorMoldIslandNumberOfScrewSectors'),
+        Cell('=360deg / StatorMoldIslandNumberOfScrewSectors',
+             alias='StatorMoldIslandScrewAngle'),
+    ],
+    [
+        Cell('StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
+        Cell('UnroundedStatorMoldScrewLength'),
+        Cell('StatorMoldScrewLength')
+    ],
+    [
+        Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
+             alias='StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
+        Cell('=StatorThickness * 2',
+             alias='UnroundedStatorMoldScrewLength'),
+        # Round down to nearest multiple of 5
+        Cell('=UnroundedStatorMoldScrewLength - mod(UnroundedStatorMoldScrewLength; 5)',
+             alias='StatorMoldScrewLength')
+    ],
+    [
+        Cell('StatorMoldSurroundNumberOfBolts'),
+        Cell('StatorMoldSurroundNumberOfScrews'),
+        Cell('StatorMoldIslandNumberOfScrews')
+    ],
+    [
+        Cell('=RotorDiskRadius < 275 ? NumberOfStatorHoles * 4 : 24',
+             alias='StatorMoldSurroundNumberOfBolts'),
+        Cell('=4 * 2 * NumberOfStatorHoles',
+             alias='StatorMoldSurroundNumberOfScrews'),
+        Cell('=2 * StatorMoldIslandNumberOfPolarPatternScrewOccurrences',
+             alias='StatorMoldIslandNumberOfScrews')
+    ],
+    [
+        Cell('StatorMoldIslandNumberOfFasteners'),
+        Cell('StatorMoldIslandHolesCircumference'),
+        Cell('StatorMoldIslandSpaceBetweenFasteners')
+    ],
+    [
+        Cell('=StatorMoldIslandNumberOfBolts + StatorMoldIslandNumberOfScrews',
+             alias='StatorMoldIslandNumberOfFasteners'),
+        Cell('=2 * pi * IslandInnerRadius',
+             alias='StatorMoldIslandHolesCircumference'),
+        Cell('=StatorMoldIslandHolesCircumference / StatorMoldIslandNumberOfFasteners',
+             alias='StatorMoldIslandSpaceBetweenFasteners')
+    ],
+    [
+        Cell('ShouldDecreaseStatorMoldFastenerSizes'),
+        Cell('StatorMoldBoltDiameter'),
+        Cell('StatorMoldWoodScrewDiameter')
+    ],
+    [
+        Cell('=StatorMoldIslandSpaceBetweenFasteners < 30 ? 1 : 0',
+             alias='ShouldDecreaseStatorMoldFastenerSizes'),
+        # Decrease from maximum M12 to M10 bolt if space between center of fasteners is less than 30
+        Cell('=ShouldDecreaseStatorMoldFastenerSizes == 1 ? 10 : MaximumStatorMoldBoltDiameter',
              alias='StatorMoldBoltDiameter'),
-        Cell('20.78',  # C (MAX)
+        Cell('=ShouldDecreaseStatorMoldFastenerSizes == 1 ? 4 : WoodScrewDiameter',
+             alias='StatorMoldWoodScrewDiameter')
+    ],
+    [
+        Cell('StatorMoldScrewHoleDiameter'),
+        Cell('StatorMoldScrewHoleRadius')
+    ],
+    [
+        Cell('=StatorMoldWoodScrewDiameter == WoodScrewDiameter ? ScrewHoleDiameter : 3',
+             alias='StatorMoldScrewHoleDiameter'),
+        Cell('=StatorMoldScrewHoleDiameter / 2',
+             alias='StatorMoldScrewHoleRadius')
+    ],
+    # For metric hex bolt dimensions, see:
+    # https://www.atlrod.com/metric-hex-bolt-dimensions/
+    [
+        Cell('StatorMoldBoltWidthAcrossCorners'),
+        Cell('StatorMoldHexNutThickness')
+    ],
+    [
+        Cell('=StatorMoldBoltDiameter == 10 ? 18.48 : 20.78',  # C (MAX)
              alias='StatorMoldBoltWidthAcrossCorners'),
         # Hex nut thickness equations are derived from
         # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
@@ -337,126 +503,26 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('LocatingBoltDiameter'),
         Cell('UnroundedLocatingBoltLength'),
-        Cell('LocatingBoltLength'),
+        Cell('LocatingBoltLength')
     ],
     [
-        # M12 Bolt
-        Cell('12',
+        Cell('=StatorMoldBoltDiameter',
              alias='LocatingBoltDiameter'),
-        Cell('=WasherThickness * 2 + StatorThickness * 5 + StatorMoldHexNutThickness + MinimumDistanceStatorMoldBoltsExtendFromNuts',
+        Cell('=WasherThickness * 2 + StatorThickness * 5 + StatorMoldHexNutThickness +' +
+             ' MinimumDistanceStatorMoldBoltsExtendFromNuts',
              alias='UnroundedLocatingBoltLength'),
         Cell('=UnroundedLocatingBoltLength + 5 - mod(UnroundedLocatingBoltLength; 5)',
              alias='LocatingBoltLength')
     ],
     [
-        # Controls radius of screw holes for stator mold, rotor mold,
-        # and blade hub rotor plates.
-        # These appear to be pilot holes for a 5mm diameter screw.
-        Cell('ScrewHoleRadius'),
-        Cell('DistanceBetweenOuterHolesAndStatorMold'),
-        Cell('DistanceBetweenInnerHolesAndStatorMold')
+        Cell('StatorMoldSideLength'),
+        Cell('DistanceOfLocatingHoleFromCenter')
     ],
     [
-        Cell('=ScrewHoleDiameter / 2',
-             alias='ScrewHoleRadius'),
-        # Ensure holes are close enough to create
-        # pressure for the resin not to flow out.
-        Cell('=StatorMoldBoltDiameter * 2',
-             alias='DistanceBetweenOuterHolesAndStatorMold'),
-        Cell('=StatorMoldBoltDiameter * 1.5',
-             alias='DistanceBetweenInnerHolesAndStatorMold')
-    ],
-    [
-        Cell('TShapeSketchY'),
-        Cell('HShapeSketchY'),
-        Cell('SketchY')
-    ],
-    [
-        Cell('=-EarSize / 2',
-             alias='TShapeSketchY'),
-        Cell('0',
-             alias='HShapeSketchY'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeSketchY : HShapeSketchY',
-             alias='SketchY')
-    ],
-    [
-        # TODO: Rename to IslandHolesCircumradius?
-        Cell('IslandInnerRadius'),
-        Cell('EarAngle'),
-        Cell('StatorMoldSideLength')
-    ],
-    [
-        Cell('=StatorInnerHoleRadius - DistanceBetweenInnerHolesAndStatorMold',
-             alias='IslandInnerRadius'),
-        Cell('=360 / NumberOfStatorHoles',
-             alias='EarAngle'),
         Cell('=1.55 * 2 * StatorHolesCircumradius',
-             alias='StatorMoldSideLength')
-    ],
-    [
-        Cell('LargeHoleAngle'),
-        # TODO: Similar to IslandInnerRadius -> IslandHolesCircumradius rename above
-        # Should we rename LengthMiddleHoles to SurroundHolesCircumradius?
-        # StatorMoldSurroundHolesCircumradius
-        Cell('LengthMiddleHoles'),
-        Cell('StatorMoldHolesSketchAngle')
-    ],
-    [
-        # Divide by 4 because there are 3 bolts and 4 spaces between each "ear"
-        # for the T and H Shape Stator Mold.
-        Cell('=EarAngle / 4',
-             alias='LargeHoleAngle'),
-        Cell('=(RotorDiskRadius < 275 ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius) + DistanceBetweenOuterHolesAndStatorMold',
-             alias='LengthMiddleHoles'),
-        Cell('=RotorDiskRadius < 187.5 ? 0 : (RotorDiskRadius < 275 ? 45 : 0)',
-             alias='StatorMoldHolesSketchAngle')
-    ],
-    [
-        Cell('StatorMoldIslandNumberOfBolts'),
-        Cell('StatorMoldIslandNumberOfScrewSectors'),
-        Cell('StatorMoldIslandScrewAngle')
-    ],
-    [
-        Cell('=RotorDiskRadius < 187.5 ? 4 : (RotorDiskRadius < 275 ? 6 : 12)',
-             alias='StatorMoldIslandNumberOfBolts'),
-        Cell('=RotorDiskRadius < 187.5 ? 12 : (RotorDiskRadius < 275 ? 18 : 36)',
-             alias='StatorMoldIslandNumberOfScrewSectors'),
-        Cell('=360deg / StatorMoldIslandNumberOfScrewSectors',
-             alias='StatorMoldIslandScrewAngle'),
-    ],
-    [
-        Cell('StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
-        Cell('DistanceOfLocatingHoleFromCenter'),
-        Cell('StatorMoldSurroundNumberOfBolts')
-    ],
-    [
-        Cell('=(StatorMoldIslandNumberOfScrewSectors - StatorMoldIslandNumberOfBolts) / 2',
-             alias='StatorMoldIslandNumberOfPolarPatternScrewOccurrences'),
+             alias='StatorMoldSideLength'),
         Cell('=0.63559 * StatorMoldSideLength',
              alias='DistanceOfLocatingHoleFromCenter'),
-        Cell('=RotorDiskRadius < 275 ? NumberOfStatorHoles * 4 : 24',
-             alias='StatorMoldSurroundNumberOfBolts')
-    ],
-    [
-        Cell('UnroundedStatorMoldScrewLength'),
-        Cell('StatorMoldScrewLength')
-    ],
-    [
-        Cell('=StatorThickness * 2',
-             alias='UnroundedStatorMoldScrewLength'),
-        # Round down to nearest multiple of 5
-        Cell('=UnroundedStatorMoldScrewLength - mod(UnroundedStatorMoldScrewLength; 5)',
-             alias='StatorMoldScrewLength')
-    ],
-    [
-        Cell('StatorMoldSurroundNumberOfScrews'),
-        Cell('StatorMoldIslandNumberOfScrews')
-    ],
-    [
-        Cell('=4 * 2 * NumberOfStatorHoles',
-             alias='StatorMoldSurroundNumberOfScrews'),
-        Cell('=2 * StatorMoldIslandNumberOfPolarPatternScrewOccurrences',
-             alias='StatorMoldIslandNumberOfScrews')
     ],
     [
         Cell('LocatingBolt1X'),
@@ -487,6 +553,23 @@ alternator_cells: List[List[Cell]] = [
              alias='LocatingBolt3X'),
         Cell('=LocatingBolt1X + SketchY',
              alias='LocatingBolt3Y')
+    ],
+    [
+        Cell('StatorMoldSurroundHolesEdgeCircumradius'),
+        # TODO: Similar to IslandInnerRadius -> StatorMoldIslandHolesCircumradius rename above
+        # Should we rename LengthMiddleHoles to StatorMoldSurroundHolesCircumradius?
+        Cell('LengthMiddleHoles'),
+        Cell('DistanceBetweenOuterHolesAndStatorMold')
+    ],
+    [
+        Cell('=RotorDiskRadius < 275 ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius',
+             alias='StatorMoldSurroundHolesEdgeCircumradius'),
+        Cell('=min(StatorMoldSurroundHolesEdgeCircumradius + MaximumDistanceBetweenOuterHolesAndStatorMold;' +
+             ' StatorMoldSurroundHolesEdgeCircumradius * 1.13)',
+             alias='LengthMiddleHoles'),
+        # Used in Stator_Mold_Lid
+        Cell('=LengthMiddleHoles - StatorMoldSurroundHolesEdgeCircumradius',
+             alias='DistanceBetweenOuterHolesAndStatorMold')
     ],
     [
         Cell('Hexagonal Mold', styles=[Style.UNDERLINE])
