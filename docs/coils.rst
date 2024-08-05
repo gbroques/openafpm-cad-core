@@ -5,14 +5,14 @@ Coils
 * The number of coils is 3/4 the number of magnets.
 * Thus, the number of coils is a multiple of 3 between 3 and 24 inclusive.
 * RotorDiskRadius, MagnetWidth, and CoilLegWidth affect how many coils can fit in a stator.
-* Stator mounting holes are aligned between coils.
+* Stator mounting holes are aligned between coils by rotating coils by Angle / 2 (e.g. 20° for 9 coil T Shape).
 
-=====  ===============  ============  ==========  ======
-Shape  RotorDiskRadius  NumberMagnet  NumberCoil  Angle
-=====  ===============  ============  ==========  ======
+=====  ===============  ============  ==========  ====== =============
+Shape  RotorDiskRadius  NumberMagnet  NumberCoil  Angle  LidNotchAngle
+=====  ===============  ============  ==========  ====== =============
 T      102.96           20            15          24°
 T      115              8             6           60°
-T      150              12            9           40°
+T      150              12            9           40°    190°
 T      185              16            12          30°
 H      225              16            12          30°
 H      270              20            15          24°
@@ -20,6 +20,8 @@ Star   280              24            18          20°
 Star   315              28            21          17.14°
 Star   350              32            24          15°
 =====  ===============  ============  ==========  ======
+
+180° + (Angle / 2 / 2) = 190°
 
 
 "2N MWT Hoverboard 20 pole SIM 9033_18_05_24":
