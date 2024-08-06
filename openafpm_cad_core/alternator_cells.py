@@ -301,17 +301,16 @@ alternator_cells: List[List[Cell]] = [
         # with the middle of the space between two coils, and not with the center of one coil.
         # This provides more space when making the hole in the resin,
         # without having to worry about hitting a coil.
-        # This isn't strictly needed for Star Shape, but we rotate the coils anyways for consistency.
-        Cell('TAndStarShapeCoilsAngle'),
-        Cell('HShapeCoilsAngle'),
+        Cell('TShapeCoilsAngle'),
+        Cell('HAndStarShapeCoilsAngle'),
         Cell('CoilsAngle')
     ],
     [
         Cell('=360 / NumberOfCoils / 2',
-             alias='TAndStarShapeCoilsAngle'),
+             alias='TShapeCoilsAngle'),
         Cell('0',
-             alias='HShapeCoilsAngle'),
-        Cell('=RotorDiskRadius < 187.5 ? TAndStarShapeCoilsAngle : (RotorDiskRadius < 275 ? HShapeCoilsAngle : TAndStarShapeCoilsAngle)',
+             alias='HAndStarShapeCoilsAngle'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeCoilsAngle : HAndStarShapeCoilsAngle',
              alias='CoilsAngle')
     ],
     [
