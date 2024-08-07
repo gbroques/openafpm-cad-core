@@ -141,6 +141,62 @@ preset_by_name: Dict[str, dict] = {
             "HubHolesDiameter": 14
         }
     },
+    "H Shape tiny magnets": {
+        "description": (
+            "4.2 meter diameter wind turbine with H-shape frame. " +
+            "Based on 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott."
+        ),
+        "magnafpm": {
+            "RotorDiameter": 3600,
+            "RotorDiskRadius": 263.88,
+            "RotorDiskInnerRadius": 233.69,
+            "RotorDiskThickness": 10.0,
+            "MagnetLength": 30.0,
+            "MagnetWidth": 20.0,
+            "MagnetThickness": 10.0,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 28,
+            "StatorThickness": 13.0,
+            "CoilType": 2,
+            "CoilLegWidth": 26.94,
+            "CoilHoleWidthAtOuterRadius": 24.52,
+            "CoilHoleWidthAtInnerRadius": 15.55,
+            "MechanicalClearance": 3.0,
+            "InnerDistanceBetweenMagnets": 32.44,
+            "NumberOfCoilsPerPhase": 7.0,
+            "WireWeight": 6.7,
+            "WireDiameter": 1.7,
+            "NumberOfWiresInHand": 3.0,
+            "TurnsPerCoil": 28.0
+        },
+        "furling": {
+            "VerticalPlaneAngle": 15,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 600,
+            "BracketWidth": 50,
+            "BracketThickness": 6,
+            "BoomLength": 1800,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 9,
+            "VaneLength": 2000,
+            "VaneWidth": 900,
+            "Offset": 250
+        },
+        "user": {
+            "BladeWidth": 223,
+            "HubPitchCircleDiameter": 130,
+            "RotorDiskCentralHoleDiameter": 95,
+            "HolesDiameter": 14,
+            "MetalLengthL": 60,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 88.9,
+            "PipeThickness": 5,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 14
+        }
+    },
     "Star Shape": {
         "description": (
             "6 meter diameter wind turbine with six-pointed star-shape frame. " +
@@ -367,8 +423,8 @@ preset_by_name: Dict[str, dict] = {
             "StatorThickness": 8,
             "CoilType": 1,
             "CoilLegWidth": 11.29,
-            "CoilInnerWidth1": 10,
-            "CoilInnerWidth2": 10,
+            "CoilHoleWidthAtOuterRadius": 10,
+            "CoilHoleWidthAtInnerRadius": 10,
             "MechanicalClearance": 3,
             "InnerDistanceBetweenMagnets": 14.45,
             "NumberOfCoilsPerPhase": 5,
