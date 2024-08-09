@@ -17,6 +17,7 @@ T      185              16            12          30°    210°
 T      102.96           20            15          24°    198°
 T      120              24            18          20°    
 T      140              28            21          17.14°    
+T      140              32            24          15°    
 H      225              16            12          30°
 H      270              20            15          24°
 Star   280              24            18          20°
@@ -27,8 +28,10 @@ Star   350              32            24          15°
 
 150° to stator mounting hole in quadrant II.
 
-T Shape
-  Bolts are every 30° (e.g. 30, 60, 90, 120, 150, 180, 210)
+Bolts occur every:
+  T Shape - every 30° (e.g. 30, 60, 90, 120, 150, 180, 210)
+  H Shape - every 22.5° (e.g. 22.5, 45, 67.5, 90)
+  Star Shape - every 15° (e.g. 15, 30, 45, 60, 75, 90)
 
 T Shape 8 NumberMagnet
   150° + Angle = 210°
