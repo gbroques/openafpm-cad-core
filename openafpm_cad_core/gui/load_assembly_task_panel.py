@@ -8,6 +8,8 @@ from PySide import QtCore, QtGui
 
 from ..get_default_parameters import get_default_parameters, get_presets
 from ..load import Assembly, load_all, load_assembly
+from ..loadmat import loadmat
+from ..map_magnafpm_parameters import map_magnafpm_parameters
 from ..wind_turbine_shape import (WindTurbineShape,
                                   map_rotor_disk_radius_to_wind_turbine_shape)
 
@@ -15,6 +17,13 @@ __all__ = ['LoadAssemblyTaskPanel']
 
 ALL = 'All'
 DEFAULT_PRESET = WindTurbineShape.T.value
+
+
+class QHLine(QtGui.QFrame):
+    def __init__(self):
+        super(QHLine, self).__init__()
+        self.setFrameShape(QtGui.QFrame.HLine)
+        self.setFrameShadow(QtGui.QFrame.Sunken)
 
 
 class LoadAssemblyTaskPanel:
@@ -64,6 +73,34 @@ class LoadAssemblyTaskPanel:
         description_value_layout.addWidget(self.description_value)
         layout.addLayout(description_value_layout)
 
+        divider_layout = QtGui.QHBoxLayout()
+        h_line = QHLine()
+        divider_layout.addWidget(h_line)
+        layout.addLayout(divider_layout)
+
+        simulation_label_layout = QtGui.QHBoxLayout()
+        simulation_label = QtGui.QLabel('<strong>Simulation:</strong>', self.form)
+        self.simulation_value = QtGui.QLabel('', self.form)
+        self.simulation_value.setAlignment(QtCore.Qt.AlignVCenter)
+        self.simulation_value.setWordWrap(True)
+        simulation_label_layout.addWidget(simulation_label)
+        simulation_label_layout.addWidget(self.simulation_value)
+        layout.addLayout(simulation_label_layout)
+
+        select_button_description_label_layout = QtGui.QHBoxLayout()
+        select_button_description_label = QtGui.QLabel(
+            'Optionally select a MagnAFPM simulation file (.mat) to be merged into selected preset.', self.form)
+        select_button_description_label.setWordWrap(True)
+        select_button_description_label_layout.addWidget(select_button_description_label)
+        layout.addLayout(select_button_description_label_layout)
+
+        simulation_button_layout = QtGui.QHBoxLayout()
+        self.simulation_button_label = 'Select'
+        self.simulation_button = QtGui.QPushButton(self.simulation_button_label)
+        self.simulation_button.clicked.connect(self.select_simulation_file)
+        simulation_button_layout.addWidget(self.simulation_button)
+        layout.addLayout(simulation_button_layout)
+
     def create_turbine_value(self):
         default_text = get_turbine_value_text(DEFAULT_PRESET)
         label = QtGui.QLabel(default_text, self.form)
@@ -97,6 +134,16 @@ class LoadAssemblyTaskPanel:
         combo_box.addItems(items)
         return combo_box
 
+    def select_simulation_file(self):
+        if self.simulation_value.text() == '':
+            filepath, _ = QtGui.QFileDialog.getOpenFileName(
+                self.form, 'Open file', '', 'MagnAFPM simulation file (*.mat)')
+            self.simulation_value.setText(filepath)
+            self.simulation_button.setText('Clear')
+        else:
+            self.simulation_value.setText('')
+            self.simulation_button.setText(self.simulation_button_label)
+
     def accept(self):
         """
         Executed upon clicking "OK" button in FreeCAD Tasks panel.
@@ -104,14 +151,19 @@ class LoadAssemblyTaskPanel:
         preset = self.preset_combo_box.currentText()
         parameters = get_default_parameters(preset)
         assembly_text = self.assembly_combo_box.currentText()
+        magnafpm_parameters = parameters['magnafpm']
+        simulation_filepath = self.simulation_value.text()
+        if simulation_filepath != '':
+            magnafpm_parameters = map_magnafpm_parameters(loadmat(simulation_filepath))
+
         if assembly_text == ALL:
-            load_all(parameters['magnafpm'],
+            load_all(magnafpm_parameters,
                      parameters['furling'],
                      parameters['user'])
         else:
             assembly = Assembly(assembly_text)
             load_assembly(assembly,
-                          parameters['magnafpm'],
+                          magnafpm_parameters,
                           parameters['furling'],
                           parameters['user'])
         Gui.Control.closeDialog()
