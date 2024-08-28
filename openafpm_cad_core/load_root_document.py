@@ -9,7 +9,7 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 from .upsert_spreadsheet_document import upsert_spreadsheet_document
 
-__all__ = ['load_root_document', 'load_root_documents']
+__all__ = ['load_root_document', 'load_root_documents', 'load_document']
 
 
 def load_root_document(get_root_document_path: Callable[[Path], Path],
@@ -40,7 +40,7 @@ def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],
                                                        user_parameters)
     root_documents = []
     for get_root_document_path in get_root_document_paths:
-        document = load_document(get_root_document_path(documents_path))
+        document = load_document(get_root_document_path, recompute_all=False)
         root_documents.append(document)
 
     recompute_all_documents()
@@ -48,9 +48,12 @@ def load_root_documents(get_root_document_paths: List[Callable[[Path], Path]],
     return root_documents, spreadsheet_document
 
 
-def load_document(document_path: Path) -> Document:
-    document = App.openDocument(str(document_path))
+def load_document(get_root_document_path: Callable[[Path], Path], recompute_all: bool = True) -> Document:
+    documents_path = get_documents_path()
+    document = App.openDocument(str(get_root_document_path(documents_path)))
     recompute_document(document)
+    if recompute_all:
+        recompute_all_documents()
     return document
 
 

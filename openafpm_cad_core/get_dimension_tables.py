@@ -4,6 +4,9 @@ from typing import Any, Dict, List, Optional, Tuple, TypedDict
 from FreeCAD import Document
 from typing_extensions import NotRequired
 
+from .find_descendent_by_label import find_descendent_by_label
+from .find_object_by_label import find_object_by_label
+from .load import load_alernator
 from .load_spreadsheet_document import load_spreadsheet_document
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
@@ -93,6 +96,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     )
     tables.append(create_total_pipe_length_by_outer_diameter_table(spreadsheet_document))
     tables.append(create_studs_nuts_and_washers_table(spreadsheet_document))
+    tables.append(create_resin_table(spreadsheet_document))
     return tables
 
 
@@ -631,6 +635,47 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                 jacking_rods_length)),
             ('Jacking hole diameter', format_length(spreadsheet_document.Alternator.JackingHoleDiameter)),
             * rows
+        ]
+    )
+
+
+def create_resin_table(spreadsheet_document: Document) -> Element:
+    rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
+    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    # Multiply by scale factor to get same weight that recipe book suggests on page 63
+    # Verify in the two upcoming workshops: India and Habibi.
+    if wind_turbine_shape == WindTurbineShape.T:
+        resin_weight_scale_factor = 1.49
+    else:
+        resin_weight_scale_factor = 1.7
+
+    alternator_document = load_alernator()
+    stator = find_object_by_label(alternator_document, 'Stator')
+    stator_resin_cast = find_descendent_by_label(stator, 'ResinCast')
+    coils = find_descendent_by_label(stator, 'Coils')
+    rotor_back = find_object_by_label(alternator_document, 'Rotor_Back')
+    rotor_resin_cast = find_descendent_by_label(rotor_back, 'Rotor_ResinCast')
+    magnets = find_descendent_by_label(rotor_back, 'Rotor_Magnets')
+    stator_resin_volume = stator_resin_cast.Shape.Volume - coils.Shape.Volume
+    rotor_resin_volume = rotor_resin_cast.Shape.Volume - magnets.Shape.Volume
+    total_rotor_resin_volume = rotor_resin_volume * 2  # Assume double rotor topology
+    total_resin_volume = stator_resin_volume + total_rotor_resin_volume
+    # Density is 1.15 g/cm3 according to:
+    # https://www.strandek.co.uk/articles/what-is-vinyl-ester-resin/
+    # Divide by 1,000 twice to convert g/cm3 to kg/mm3
+    vinyl_ester_resin_density = 0.000001015  # kg/mm3
+    weight_of_resin = total_resin_volume * vinyl_ester_resin_density * resin_weight_scale_factor
+    return create_table(
+        'Resin',
+        [
+            (
+                'Estimated weight of vinyl ester resin',
+                round_and_format_weight(weight_of_resin, ndigits=2)
+            ),
+            (
+                'Estimated weight of talcum powder',
+                round_and_format_weight(round(weight_of_resin, ndigits=2) / 2)
+            )
         ]
     )
 

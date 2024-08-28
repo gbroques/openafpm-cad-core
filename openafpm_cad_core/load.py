@@ -5,13 +5,15 @@ from typing import List, Tuple
 import FreeCAD as App
 from FreeCAD import Document
 
-from .load_root_document import load_root_document, load_root_documents
+from .load_root_document import (load_document, load_root_document,
+                                 load_root_documents)
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 
 __all__ = [
     'load_all',
     'load_turbine',
+    'load_alernator',
     'load_assembly',
     'Assembly'
 ]
@@ -153,3 +155,11 @@ def load_blade_template(magnafpm_parameters: MagnafpmParameters,
 
 def get_blade_template_document_path(documents_path: Path) -> Path:
     return documents_path.joinpath('Blades', 'Blade_Template.FCStd')
+
+
+def load_alernator() -> Document:
+    return load_document(get_alternator_document_path)
+
+
+def get_alternator_document_path(documents_path: Path) -> Path:
+    return documents_path.joinpath('Alternator', 'Alternator.FCStd')
