@@ -3,6 +3,7 @@ from .close_all_documents import close_all_documents
 from .create_archive import create_archive
 from .exec_turbine_function import exec_turbine_function
 from .export_to_dxf import export_to_dxf
+from .find_descendent_by_label import find_descendent_by_label
 from .find_object_by_label import find_object_by_label
 from .get_default_parameters import get_default_parameters, get_presets
 from .get_dimension_tables import get_dimension_tables
@@ -25,6 +26,7 @@ __all__ = [
     'create_archive',
     'exec_turbine_function',
     'export_to_dxf',
+    'find_descendent_by_label',
     'find_object_by_label',
     'hash_parameters',
     'get_default_parameters',
