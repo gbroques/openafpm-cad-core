@@ -571,6 +571,16 @@ def create_various_parts_dimensions_table(spreadsheet_document: Document) -> Ele
     )
 
 
+def create_total_pipe_length_by_outer_diameter_table(spreadsheet_document: Document) -> Element:
+    pipe_outer_diameter_length_tuples = get_pipe_outer_diameter_length_tuples(spreadsheet_document)
+    pipe_outer_diameter_total_length_tuples = sum_length_by_diameter(pipe_outer_diameter_length_tuples)
+    rows = [
+        (f'{outer_diameter} mm outer diameter pipe length', format_length(length))
+        for outer_diameter, length in pipe_outer_diameter_total_length_tuples
+    ]
+    return create_table('Total pipe length by outer diameter', rows)
+
+
 def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Element:
     number_of_blade_assembly_fasteners = spreadsheet_document.Hub.NumberOfHoles * 2
     studs_diameter_length_tuples = get_studs_diameter_length_tuples(spreadsheet_document)
@@ -623,16 +633,6 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
             * rows
         ]
     )
-
-
-def create_total_pipe_length_by_outer_diameter_table(spreadsheet_document: Document) -> Element:
-    pipe_outer_diameter_length_tuples = get_pipe_outer_diameter_length_tuples(spreadsheet_document)
-    pipe_outer_diameter_total_length_tuples = sum_length_by_diameter(pipe_outer_diameter_length_tuples)
-    rows = [
-        (f'{outer_diameter} mm outer diameter pipe length', format_length(length))
-        for outer_diameter, length in pipe_outer_diameter_total_length_tuples
-    ]
-    return create_table('Total pipe length by outer diameter', rows)
 
 
 def sum_length_by_diameter(diameter_length_tuples: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
