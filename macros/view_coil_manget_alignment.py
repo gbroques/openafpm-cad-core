@@ -9,10 +9,6 @@ import FreeCADGui as Gui
 from openafpm_cad_core.app import find_object_by_label
 
 
-def find_object(objects: list, label: str):
-    return next(o for o in objects if o.Label == label)
-
-
 def find_descendent_by_label(obj, label: str):
     if obj.Label == label:
         return obj
