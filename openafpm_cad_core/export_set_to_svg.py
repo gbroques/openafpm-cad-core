@@ -175,11 +175,19 @@ def get_flat_object(obj: object,
 
 
 def get_thickness(obj: object) -> float:
-    bound_box = obj.Shape.optimalBoundingBox()
+    thickness = get_thickness_from_object(obj)
+    if obj.Label.startswith('Stator_CoilWinder_Spacer'):
+        thickness -= 1
+    return thickness
+
+
+def get_thickness_from_object(obj: object) -> float:
+    print(obj.Label)
+    bounding_box = obj.Shape.optimalBoundingBox()
     return min([
-        bound_box.XLength,
-        bound_box.YLength,
-        bound_box.ZLength
+        bounding_box.XLength,
+        bounding_box.YLength,
+        bounding_box.ZLength
     ])
 
 
