@@ -636,7 +636,8 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                 jacking_rods_length)),
             ('Jacking hole diameter', format_length(spreadsheet_document.Alternator.JackingHoleDiameter)),
             * rows
-        ]
+        ],
+        ['All except jacking studs are stainless steel']
     )
 
 
