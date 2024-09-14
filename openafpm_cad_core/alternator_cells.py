@@ -769,7 +769,7 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderNumberOfNutStacks'),
         Cell('=CoilWinderAssemblyThickness * NumberOfCoilsPerPhase + CoilWinderNutStackThickness * CoilWinderNumberOfNutStacks',
              alias='CoilWinderAssemblyThicknessTotal'),
-        Cell('=CoilWinderAssemblyThicknessTotal + CoilWinderHexNutThickness * 2 + DistanceThreadsExtendFromNuts * 2',
+        Cell('=CoilWinderAssemblyThicknessTotal + CoilWinderHexNutThickness * 2 + DistanceThreadsExtendFromNuts * 2 + WasherThickness * 2',
              alias='CoilWinderCenterRodLength')
     ],
     [
