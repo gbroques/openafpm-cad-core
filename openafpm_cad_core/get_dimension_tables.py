@@ -516,15 +516,16 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
              round_and_format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
             ('Island thickness', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldIslandThickness)),
+            # Assume double rotor topology
             ('Bolts (fully threaded)', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * 2,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter,
                 spreadsheet_document.Fastener.HubHolesBoltLength)),
             ('Nuts', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * 2,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             ('Screws', format_screw(
-                spreadsheet_document.Alternator.NumberOfRotorMoldScrews,
+                spreadsheet_document.Alternator.NumberOfRotorMoldScrews * 2,
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
         ],
