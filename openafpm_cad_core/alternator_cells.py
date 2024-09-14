@@ -208,14 +208,31 @@ alternator_cells: List[List[Cell]] = [
     [
         # Radius of the inner-most hole of stator.
         Cell('StatorInnerHoleRadius'),
-        Cell('NumberOfCoils')
+        Cell('NumberOfCoils'),
+        Cell('CoilAngle')
     ],
     [
         # TODO: RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk is equal to
         #       DistanceOfMagnetFromCenter which should be equal to RotorDiskInnerRadius
         Cell('=RotorDiskRadius - MagnetLength - OffsetToAlignCornersOfMagnetToDisk - CoilLegWidth',
              alias='StatorInnerHoleRadius'),
-        Cell('=NumberMagnet * 0.75', alias='NumberOfCoils')
+        Cell('=NumberMagnet * 0.75',
+             alias='NumberOfCoils'),
+        Cell('=360deg / NumberOfCoils',
+             alias='CoilAngle')
+    ],
+    [
+        Cell('TShapeApproximateDegreesBetweenTopLeftStatorMountingHoleAndLidNotch'),
+        Cell('TShapeNumberOfCoilsBetweenTopLeftStatorMountingHoleAndLidNotch'),
+        Cell('TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch')
+    ],
+    [
+        Cell('=45deg',
+             alias='TShapeApproximateDegreesBetweenTopLeftStatorMountingHoleAndLidNotch'),
+        Cell('=round(TShapeApproximateDegreesBetweenTopLeftStatorMountingHoleAndLidNotch / CoilAngle)',
+             alias='TShapeNumberOfCoilsBetweenTopLeftStatorMountingHoleAndLidNotch'),
+        Cell('=CoilAngle * TShapeNumberOfCoilsBetweenTopLeftStatorMountingHoleAndLidNotch',
+             alias='TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch')
     ],
     [
         # For spacing between outside edge of coil and stator mold surround.
@@ -600,6 +617,17 @@ alternator_cells: List[List[Cell]] = [
              alias='LineFromMiddleRightToTopRightCornerSlope'),
         Cell('=TopRightCornerY - LineFromMiddleRightToTopRightCornerSlope * TopRightCornerX',
              alias='LineFromMiddleRightToTopRightCornerYIntercept')
+    ],
+    [
+        Cell('StatorMoldSurroundBoltAngle'),
+        Cell('DoesLidNotchAlignWithBolt')
+    ],
+    [
+        Cell('=360deg / StatorMoldSurroundNumberOfBolts',
+             alias='StatorMoldSurroundBoltAngle'),
+        Cell('=mod(TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch; StatorMoldSurroundBoltAngle)' +
+             ' == 0 deg ? 1 : 0',
+             alias='DoesLidNotchAlignWithBolt')
     ],
     [
         Cell('CoilWinder', styles=[Style.UNDERLINE])
