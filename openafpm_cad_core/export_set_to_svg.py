@@ -182,7 +182,6 @@ def get_thickness(obj: object) -> float:
 
 
 def get_thickness_from_object(obj: object) -> float:
-    print(obj.Label)
     bounding_box = obj.Shape.optimalBoundingBox()
     return min([
         bounding_box.XLength,
