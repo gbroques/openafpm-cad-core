@@ -379,7 +379,7 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
                     spreadsheet_document.Spreadsheet.HolesDiameter)
             ),
         ],
-        [book_reference_template % 'page 32 bottom']
+        [book_reference_template % 'page 32 bottom', 'Vane bracket bolts, nuts, and washers are stainless steel']
     )
 
 
