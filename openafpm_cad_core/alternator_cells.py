@@ -626,8 +626,19 @@ alternator_cells: List[List[Cell]] = [
         Cell('=360deg / StatorMoldSurroundNumberOfBolts',
              alias='StatorMoldSurroundBoltAngle'),
         Cell('=mod(TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch; StatorMoldSurroundBoltAngle)' +
-             ' == 0 deg ? 1 : 0',
+             ' == 0 ? 1 : 0',
              alias='DoesLidNotchAlignWithBolt')
+    ],
+    [
+        # Hide bolt if lid notch aligns with it.
+        Cell('LargeInnerPolarPatternOccurrences'),
+        Cell('LargeInnerPolarPatternOverallAngle')
+    ],
+    [
+        Cell('=DoesLidNotchAlignWithBolt == 1 ? NumberOfStatorHoles - 1 : NumberOfStatorHoles',
+             alias='LargeInnerPolarPatternOccurrences'),
+        Cell('=DoesLidNotchAlignWithBolt == 1 ? 240 deg : 360 deg',
+             alias='LargeInnerPolarPatternOverallAngle')
     ],
     [
         Cell('CoilWinder', styles=[Style.UNDERLINE])
