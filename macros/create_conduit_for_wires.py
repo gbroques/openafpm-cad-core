@@ -25,7 +25,6 @@ def recompute_document(document):
     document.recompute(None, True, True)
 
 
-tube_diameter = 20
 documents_by_name = App.listDocuments()
 if not App.GuiUp:
     message = 'Gui must be up to run this macro.'
@@ -34,6 +33,7 @@ if not App.GuiUp:
 elif 'Stator_Mold_Assembly' not in documents_by_name:
     App.Console.PrintWarning('Stator_Mold_Assembly document must be open.')
 else:
+    main_document = documents_by_name['Master_of_Puppets']
     stator_mold_assembly_document = documents_by_name['Stator_Mold_Assembly']
     stator_mold_lid_document = documents_by_name['Stator_Mold_Lid']
 
@@ -60,7 +60,10 @@ else:
     rotor_resin_cast_link.Placement.Base.z = z - distance_between_layers * 0.5
     rotor_resin_cast_link.recompute()
 
+    should_decrease_tube_size = main_document.Alternator.ShouldDecreaseStatorMoldFastenerSizes
+
     tube = stator_mold_assembly_document.addObject('Part::Cylinder', 'Tube')
+    tube_diameter = 16 if should_decrease_tube_size == 1 else 20
     tube.Radius = tube_diameter / 2
     tube.Height = height
     tube.Placement.Base.x = x
