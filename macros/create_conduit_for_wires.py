@@ -52,8 +52,8 @@ else:
     rotor_resin_cast_link.setLink(rotor_resin_cast)
 
     height = stator_mold_lid_document.Spreadsheet.StatorThickness
-    x = -stator_mold_lid_document.Spreadsheet.DistancePocket
-    y = -stator_mold_lid_document.Spreadsheet.OffsetPocket
+    x = -stator_mold_lid_document.Spreadsheet.PocketX
+    y = -stator_mold_lid_document.Spreadsheet.PocketY
     z = stator_mold_assembly_document.Spreadsheet.LidZ
     distance_between_layers = stator_mold_assembly_document.Spreadsheet.DistanceBetweenLayers
 
