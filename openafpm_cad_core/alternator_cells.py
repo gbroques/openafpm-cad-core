@@ -589,6 +589,16 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenOuterHolesAndStatorMold')
     ],
     [
+        # Radius of electrical conduit, a tube used to protect and route the wires for the stator coils.
+        Cell('WireTubeDiameter'),
+        Cell('RadiusOfResinAroundWireTube')
+    ],
+    [
+        Cell('=ShouldDecreaseStatorMoldFastenerSizes == 1 ? 16 : 20',
+             alias='WireTubeDiameter'),
+        Cell('5', alias='RadiusOfResinAroundWireTube')
+    ],
+    [
         Cell('Hexagonal Mold', styles=[Style.UNDERLINE])
     ],
     #
