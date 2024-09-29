@@ -60,10 +60,8 @@ else:
     rotor_resin_cast_link.Placement.Base.z = z - distance_between_layers * 0.5
     rotor_resin_cast_link.recompute()
 
-    should_decrease_tube_size = main_document.Alternator.ShouldDecreaseStatorMoldFastenerSizes
-
     tube = stator_mold_assembly_document.addObject('Part::Cylinder', 'Tube')
-    tube_diameter = 16 if should_decrease_tube_size == 1 else 20
+    tube_diameter = main_document.Alternator.WireTubeDiameter
     tube.Radius = tube_diameter / 2
     tube.Height = height
     tube.Placement.Base.x = x
