@@ -594,7 +594,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('RadiusOfResinAroundWireTube')
     ],
     [
-        Cell('=ShouldDecreaseStatorMoldFastenerSizes == 1 ? 16 : 20',
+        Cell('16',
              alias='WireTubeDiameter'),
         Cell('5', alias='RadiusOfResinAroundWireTube')
     ],
