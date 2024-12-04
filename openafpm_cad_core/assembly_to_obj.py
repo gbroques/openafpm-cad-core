@@ -87,7 +87,7 @@ def keep_unresolved_for_stator_mold(obj: object, path: List[object]) -> bool:
 def keep_unresolved_for_coil_winder(obj: object, path: List[object]) -> bool:
     return any([
         obj.Label.startswith(pattern)
-        for pattern in ['Rods', 'Outer_Nut']
+        for pattern in ['Rods', 'Outer_Nut', 'Outer_Washer']
     ])
 
 
