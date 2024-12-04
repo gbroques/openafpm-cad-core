@@ -144,6 +144,22 @@ tail_cells: List[List[Cell]] = [
              alias='HingeInnerPipeRadius')
     ],
     [
+        Cell('CoverThickness'),
+        Cell('5',
+             alias='HingeInnerPipeCoverThickness')
+    ],
+    [
+        # Hide inner hinge pipe cover for T Shape
+        Cell('DisplayCover'),
+        Cell('=RotorDiskRadius < 187.5 ? 0 : 1',
+             alias='HingeInnerPipeDisplayCover')
+    ],
+    [
+        Cell('CoverOffset'),
+        Cell('=HingeInnerPipeDisplayCover == 1 ? HingeInnerPipeCoverThickness : 0',
+             alias='HingeInnerPipeCoverOffset')
+    ],
+    [
         Cell('Length'),
         # TODO: Should this be a ratio of YawPipeLength? Like:
         #       =0.85 * YawPipeLength
@@ -361,7 +377,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('Length'),
-        Cell('=HingeInnerPipeLength - h1 - h2 - DistanceBetweenJunctionAndOuterHinge',
+        Cell('=HingeInnerPipeLength - h1 - h2 - DistanceBetweenJunctionAndOuterHinge + HingeInnerPipeCoverOffset',
              alias='HingeOuterPipeLength')
     ],
     # Vane Bracket
@@ -411,7 +427,7 @@ tail_cells: List[List[Cell]] = [
         #                         | |    |  |
         #                         v |____|  V
         #
-        Cell('PipeHeightOffset'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength',
+        Cell('PipeHeightOffset'), Cell('=HingeInnerPipeLength - HingeOuterPipeLength + HingeInnerPipeCoverOffset',
                                        alias='PipeHeightOffset')
     ],
     [
