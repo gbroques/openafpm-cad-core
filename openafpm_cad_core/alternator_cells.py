@@ -234,6 +234,16 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch')
     ],
     [
+        Cell('HAndStarShapeLidNotchDegrees'),
+        Cell('LidNotchDegrees')
+    ],
+    [
+        Cell('=180deg + CoilAngle / 2',
+             alias='HAndStarShapeLidNotchDegrees'),
+        Cell('=RotorDiskRadius < 187.5 ? TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch : HAndStarShapeLidNotchDegrees',
+             alias='LidNotchDegrees')
+    ],
+    [
         # For spacing between outside edge of coil and stator mold surround.
         # Needs to be large enough to fit wires and tube around coils.
         # Typically a 20mm diameter tube is used, but a 16mm tube can be used in smaller designs.
@@ -325,7 +335,8 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=360 / NumberOfCoils / 2',
              alias='TShapeCoilsAngle'),
-        Cell('0',
+        # Align H and Star Shape coils to 180° instead of 90°
+        Cell('90',
              alias='HAndStarShapeCoilsAngle'),
         Cell('=RotorDiskRadius < 187.5 ? TShapeCoilsAngle : HAndStarShapeCoilsAngle',
              alias='CoilsAngle')
@@ -634,7 +645,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=360deg / StatorMoldSurroundNumberOfBolts',
              alias='StatorMoldSurroundBoltAngle'),
-        Cell('=mod(TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch; StatorMoldSurroundBoltAngle)' +
+        Cell('=mod(LidNotchDegrees; StatorMoldSurroundBoltAngle)' +
              ' == 0 ? 1 : 0',
              alias='DoesLidNotchAlignWithBolt')
     ],
