@@ -235,13 +235,18 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch')
     ],
     [
+        Cell('TShapeLidNotchDegrees'),
         Cell('HAndStarShapeLidNotchDegrees'),
         Cell('LidNotchDegrees')
     ],
     [
+        # 150° to stator mounting hole in quadrant II.
+        Cell('=150deg + TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch',
+             alias='TShapeLidNotchDegrees'),
+        # Assume coil is aligned with 180° for H and Star shape.
         Cell('=180deg + CoilAngle / 2',
              alias='HAndStarShapeLidNotchDegrees'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch : HAndStarShapeLidNotchDegrees',
+        Cell('=RotorDiskRadius < 187.5 ? TShapeLidNotchDegrees : HAndStarShapeLidNotchDegrees',
              alias='LidNotchDegrees')
     ],
     [
