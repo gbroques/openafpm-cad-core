@@ -321,7 +321,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Axis1 × Axis2')
     ],
     [
-        Cell('=vector(.Axis1.y * .Axis2.z - .Axis1.z * .Axis2.y; .Axis1.z * .Axis2.x - .Axis1.x * .Axis2.z; .Axis1.x * .Axis2.y - .Axis1.y * .Axis2.x)',
+        Cell('=vcross(Axis1; Axis2)',
              alias='Vg'),
         Cell('Cross Product', styles=[Style.ITALIC])
     ],
@@ -400,7 +400,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('Vh × NormalVectorOfMaximumFurlPlane')
     ],
     [
-        Cell('=vector(.Vh.y * .NormalVectorOfMaximumFurlPlane.z - .Vh.z * .NormalVectorOfMaximumFurlPlane.y; .Vh.z * .NormalVectorOfMaximumFurlPlane.x - .Vh.x * .NormalVectorOfMaximumFurlPlane.z; .Vh.x * .NormalVectorOfMaximumFurlPlane.y - .Vh.y * .NormalVectorOfMaximumFurlPlane.x)',
+        Cell('=vcross(Vh; NormalVectorOfMaximumFurlPlane)',
              alias='DirectionVector'),
         Cell('Cross Product', styles=[Style.ITALIC])
     ],
@@ -879,7 +879,7 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('LeftPerpendicularLowEndStopPlaneNormalVector × HighEndStopPlaneNormalVector')
     ],
     [
-        Cell('=vector(.LeftPerpendicularLowEndStopPlaneNormalVector.y * .HighEndStopPlaneNormalVector.z - .LeftPerpendicularLowEndStopPlaneNormalVector.z * .HighEndStopPlaneNormalVector.y; .LeftPerpendicularLowEndStopPlaneNormalVector.z * .HighEndStopPlaneNormalVector.x - .LeftPerpendicularLowEndStopPlaneNormalVector.x * .HighEndStopPlaneNormalVector.z; .LeftPerpendicularLowEndStopPlaneNormalVector.x * .HighEndStopPlaneNormalVector.y - .LeftPerpendicularLowEndStopPlaneNormalVector.y * .HighEndStopPlaneNormalVector.x)',
+        Cell('=vcross(LeftPerpendicularLowEndStopPlaneNormalVector; HighEndStopPlaneNormalVector)',
              alias='IntersectionVector'),
         Cell('Cross Product', styles=[Style.ITALIC]),
     ],
