@@ -65,6 +65,7 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 
 4. Reperform steps in the [Setup](#setup) section to recreate `openafpm-cad-core` conda environment.
 5. Regression test all functionality. (TODO: Write documentation for this)
+6. Update "Supported FreeCAD Versions" section in [README.md](./README.md).
 
 ## Generating OBJ Files for openafpm-cad-visualization
 
@@ -81,7 +82,7 @@ Currently, macros must be manually edited to remove multi-threading to avoid a p
 
 ## Supported FreeCAD Versions
 
-Currently tested with FreeCAD `21.2`.
+Currently tested with FreeCAD `1.0.0`.
 
 
 ## Links

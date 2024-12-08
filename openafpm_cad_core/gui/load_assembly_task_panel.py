@@ -117,11 +117,11 @@ class LoadAssemblyTaskPanel:
         combo_box = QtGui.QComboBox(self.form)
         items = get_presets()
         combo_box.addItems(items)
-        combo_box.activated[str].connect(
-            self.handle_preset_combo_box_activated)
+        combo_box.currentTextChanged[str].connect(
+            self.handle_preset_combo_box_current_text_changed)
         return combo_box
 
-    def handle_preset_combo_box_activated(self, selected_preset: str):
+    def handle_preset_combo_box_current_text_changed(self, selected_preset: str):
         turbine_value_text = get_turbine_value_text(selected_preset)
         description = get_description(selected_preset)
         self.turbine_value.setText(turbine_value_text)
