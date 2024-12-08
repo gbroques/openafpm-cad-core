@@ -1,6 +1,7 @@
 """
 Task panel to load wind turbine or related tools based on preset values.
 """
+import json
 from typing import Tuple
 
 import FreeCADGui as Gui
@@ -89,7 +90,7 @@ class LoadAssemblyTaskPanel:
 
         select_button_description_label_layout = QtGui.QHBoxLayout()
         select_button_description_label = QtGui.QLabel(
-            'Optionally select a MagnAFPM simulation file (.mat) to be merged into selected preset.', self.form)
+            'Optionally select a MagnAFPM simulation file (.mat) to be merged into selected preset or JSON file.', self.form)
         select_button_description_label.setWordWrap(True)
         select_button_description_label_layout.addWidget(select_button_description_label)
         layout.addLayout(select_button_description_label_layout)
@@ -137,8 +138,13 @@ class LoadAssemblyTaskPanel:
     def select_simulation_file(self):
         if self.simulation_value.text() == '':
             filepath, _ = QtGui.QFileDialog.getOpenFileName(
-                self.form, 'Open file', '', 'MagnAFPM simulation file (*.mat)')
+                self.form, 'Open file', '', 'MagnAFPM simulation or JSON file (*.mat, *.json)')
             self.simulation_value.setText(filepath)
+            if filepath.endswith('.json'):
+                with open(filepath) as f:
+                    parameters = json.load(f)
+                    preset = parameters['preset']
+                    self.preset_combo_box.setCurrentIndex(self.preset_combo_box.findText(preset))
             self.simulation_button.setText('Clear')
         else:
             self.simulation_value.setText('')
@@ -152,20 +158,29 @@ class LoadAssemblyTaskPanel:
         parameters = get_default_parameters(preset)
         assembly_text = self.assembly_combo_box.currentText()
         magnafpm_parameters = parameters['magnafpm']
+        furling_parameters = parameters['furling']
+        user_parameters = parameters['user']
         simulation_filepath = self.simulation_value.text()
         if simulation_filepath != '':
-            magnafpm_parameters = map_magnafpm_parameters(loadmat(simulation_filepath))
+            if simulation_filepath.endswith('.mat'):
+                magnafpm_parameters = map_magnafpm_parameters(loadmat(simulation_filepath))
+            else: # .json
+                with open(simulation_filepath) as f:
+                    parameters = json.load(f)
+                    magnafpm_parameters = parameters['magnafpm']
+                    furling_parameters = parameters['furling']
+                    user_parameters = parameters['user']
 
         if assembly_text == ALL:
             load_all(magnafpm_parameters,
-                     parameters['furling'],
-                     parameters['user'])
+                     furling_parameters,
+                     user_parameters)
         else:
             assembly = Assembly(assembly_text)
             load_assembly(assembly,
                           magnafpm_parameters,
-                          parameters['furling'],
-                          parameters['user'])
+                          furling_parameters,
+                          user_parameters)
         Gui.Control.closeDialog()
 
 
