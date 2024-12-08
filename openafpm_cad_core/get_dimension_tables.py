@@ -2,7 +2,11 @@
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from FreeCAD import Document
-from typing_extensions import NotRequired
+try:
+    # TODO: Remove this once freecad conda forge package includes python 3.11.
+    from typing import NotRequired
+except ImportError:
+    from typing_extensions import NotRequired
 
 from .find_descendent_by_label import find_descendent_by_label
 from .find_object_by_label import find_object_by_label
