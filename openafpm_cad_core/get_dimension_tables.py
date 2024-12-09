@@ -2,6 +2,7 @@
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from FreeCAD import Document
+
 try:
     # TODO: Remove this once freecad conda forge package includes python 3.11.
     from typing import NotRequired
@@ -32,6 +33,7 @@ class Element(TypedDict):
 
 book_reference_template = 'A Wind Turbine Recipe Book (2014 metric edition), %s'
 jacking_rods_length = 250  # in mm
+estimated_coil_winder_handle_length = 350 # 35cm
 
 
 def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
@@ -639,6 +641,11 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                 spreadsheet_document.Alternator.JackingRodDiameter,
                 jacking_rods_length)),
             ('Jacking hole diameter', format_length(spreadsheet_document.Alternator.JackingHoleDiameter)),
+            ('Threaded rod for coil winder',
+             format_fastener(
+                1,
+                 spreadsheet_document.Alternator.CoilWinderBoltDiameter,
+                 spreadsheet_document.Alternator.CoilWinderCenterRodLength + estimated_coil_winder_handle_length)),
             * rows
         ],
         ['All except jacking studs are stainless steel']
@@ -734,6 +741,10 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
             spreadsheet_document.Alternator.JackingRodDiameter,
             jacking_rods_length *
             spreadsheet_document.Alternator.NumberOfJackingHoles
+        ),
+        (
+             spreadsheet_document.Alternator.CoilWinderBoltDiameter,
+             spreadsheet_document.Alternator.CoilWinderCenterRodLength + estimated_coil_winder_handle_length
         )
     ]
 
