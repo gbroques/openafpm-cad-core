@@ -446,7 +446,7 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
                 if spreadsheet_document.Spreadsheet.CoilType != 3 else
                 spreadsheet_document.Alternator.CoilWinderDiskBottomHoleRadius * 2
             )),
-            ('Bolt diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderBoltDiameter)}'),
+            ('Threaded rod diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderCenterRodDiameter)}'),
             ('Pin diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderPinDiameter)}')
         ]
     )
@@ -644,7 +644,7 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
             ('Threaded rod for coil winder',
              format_fastener(
                 1,
-                 spreadsheet_document.Alternator.CoilWinderBoltDiameter,
+                 spreadsheet_document.Alternator.CoilWinderCenterRodDiameter,
                  spreadsheet_document.Alternator.CoilWinderCenterRodLength + estimated_coil_winder_handle_length)),
             * rows
         ],
@@ -743,7 +743,7 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
             spreadsheet_document.Alternator.NumberOfJackingHoles
         ),
         (
-             spreadsheet_document.Alternator.CoilWinderBoltDiameter,
+             spreadsheet_document.Alternator.CoilWinderCenterRodDiameter,
              spreadsheet_document.Alternator.CoilWinderCenterRodLength + estimated_coil_winder_handle_length
         )
     ]

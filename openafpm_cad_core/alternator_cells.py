@@ -631,8 +631,8 @@ alternator_cells: List[List[Cell]] = [
              alias='SmallestMagnetDimension')
     ],
     [
-        Cell('CoilWinderBoltDiameter', styles=[Style.UNDERLINE]),
-        Cell('Ensure 2 mm of plywood between bolt hole and tape notch.')
+        Cell('CoilWinderCenterRodDiameter', styles=[Style.UNDERLINE]),
+        Cell('Ensure 2 mm of plywood between center hole and tape notch.')
     ],
     [
         Cell('CwbRange4'),
@@ -655,16 +655,16 @@ alternator_cells: List[List[Cell]] = [
              alias='CwbRange1')
     ],
     [
-        Cell('CoilWinderBoltDiameter'),
+        Cell('CoilWinderCenterRodDiameter'),
         Cell('=SmallestMagnetDimension < 11 ? 3 : CwbRange1',
-             alias='CoilWinderBoltDiameter')
+             alias='CoilWinderCenterRodDiameter')
     ],
     [
         Cell('_________________'), Cell('_________________')
     ],
     [
         Cell('CoilWinderPinDiameter', styles=[Style.UNDERLINE]),
-        Cell('Ensure 2 mm of plywood between bolt hole and tape notch.')
+        Cell('Ensure 2 mm of plywood between center hole and tape notch.')
     ],
     [
         Cell('CwpRange1'),
@@ -680,20 +680,20 @@ alternator_cells: List[List[Cell]] = [
         Cell('_________________'), Cell('_________________')
     ],
     [
-        Cell('CoilWinderBoltRadius'),
+        Cell('CoilWinderCenterRodRadius'),
         Cell('CoilWinderHexNutThickness'),
         Cell('CoilWinderPinRadius')
     ],
     [
-        Cell('=CoilWinderBoltDiameter / 2',
-             alias='CoilWinderBoltRadius'),
+        Cell('=CoilWinderCenterRodDiameter / 2',
+             alias='CoilWinderCenterRodRadius'),
         # Hex nut thickness equations are derived from
         # plugging in BS 4190 Metric Hexagon Nut Black Thickness into
         # linear equation function finder.
         # http://www.worldfastener.com/bs-4190-metric-hexagon-nuts/
         # https://www.dcode.fr/function-equation-finder
         # Duplicated in Fastener cells & Fastener_HexNut document.
-        Cell('=1.64 * CoilWinderBoltRadius + 0.35',
+        Cell('=1.64 * CoilWinderCenterRodRadius + 0.35',
              alias='CoilWinderHexNutThickness'),
         Cell('=CoilWinderPinDiameter / 2',
              alias='CoilWinderPinRadius')
