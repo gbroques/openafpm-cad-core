@@ -557,6 +557,10 @@ tail_cells: List[List[Cell]] = [
                                                     alias='OuterTailHingeZPositionOffset')
     ],
     [
+        Cell('OffsetHorizontalPlaneAngle'), Cell('=90 + HorizontalPlaneAngle',
+                                                  alias='OffsetHorizontalPlaneAngle')
+    ],
+    [
         # Tail Position Before Rotation
         Cell('Point', styles=[Style.UNDERLINE])
     ],
@@ -631,7 +635,7 @@ tail_cells: List[List[Cell]] = [
         Cell('RotatedPoint')
     ],
     [
-        Cell('=180 - HorizontalPlaneAngle - DefaultTailAngle',
+        Cell('=OffsetHorizontalPlaneAngle - DefaultTailAngle',
              alias='TailRotationAngle'),
         Cell('=rotation(TailAxisVector; TailRotationAngle)',
              alias='TailRotationObject'),
@@ -667,11 +671,11 @@ tail_cells: List[List[Cell]] = [
     ],
     *create_placement_cells(name='TailAssembly',
                             base=(
-                                '=TailHingeJunctionChamfer * cos(180 - HorizontalPlaneAngle)',
-                                '=TailHingeJunctionChamfer * sin(-(180 - HorizontalPlaneAngle))',
+                                '=TailHingeJunctionChamfer * cos(OffsetHorizontalPlaneAngle)',
+                                '=TailHingeJunctionChamfer * sin(-OffsetHorizontalPlaneAngle)',
                                 '0'),
                             axis=('0', '0', '-1'),
-                            angle='=180 - HorizontalPlaneAngle'),
+                            angle='=OffsetHorizontalPlaneAngle'),
     *create_placement_cells(name='OuterTailHinge',
                             base=(
                                 '=OuterTailHingeXPosition',
