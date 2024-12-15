@@ -93,12 +93,12 @@ class TaskPanel:
         combo_box = QtGui.QComboBox(self.form)
         documents = list(App.listDocuments().keys())
         combo_box.addItems(documents)
-        combo_box.activated[str].connect(self.handle_combo_box_activated)
+        combo_box.currentTextChanged[str].connect(self.handle_combo_box_current_text_changed)
         index = documents.index(self.document.Name)
         combo_box.setCurrentIndex(index)
         return combo_box
 
-    def handle_combo_box_activated(self, selected_document: str):
+    def handle_combo_box_current_text_changed(self, selected_document: str):
         self.document = App.listDocuments()[selected_document]
 
     def accept(self):
