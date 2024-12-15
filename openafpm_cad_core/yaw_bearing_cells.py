@@ -105,6 +105,7 @@ of the Top piece meeting the Channel Sections of Alternator Frame.
 """
 from typing import List
 
+from .create_placement_cells import create_placement_cells
 from .spreadsheet import Alignment, Cell, Style
 
 __all__ = ['yaw_bearing_cells']
@@ -410,5 +411,18 @@ yaw_bearing_cells: List[List[Cell]] = [
              alias='ArcWireSupportLargeLength'),
         Cell('=RotorDiskRadius < 187.5 ? ArcWireSupportSmallLength : ArcWireSupportLargeLength',
              alias='ArcWireSupportLength')
-    ]
+    ],
+    # Placement
+    # ---------
+    [
+        Cell('Placement', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    # Local to YawBearing_Extended_Assembly document.
+    *create_placement_cells(name='ExtendedTop',
+                            base=(
+                                '=-YawPipeRadius',
+                                '=FlatMetalThickness',
+                                '=-HalfWidth'),
+                            axis=('0', '0', '1'),
+                            angle='0'),
 ]

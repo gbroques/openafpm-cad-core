@@ -70,11 +70,17 @@ wind_turbine_cells: List[List[Cell]] = [
              alias='StarShapeChannelSectionHeight')
     ],
     [
-        Cell('AlternatorTiltAngle')
+        Cell('AlternatorTiltAngle'),
+        Cell('AlternatorPlacement'),
+        Cell('FramePlacement')
     ],
     [
         Cell('=Alternator.AlternatorTiltAngle',
-             alias='AlternatorTiltAngle')
+             alias='AlternatorTiltAngle'),
+        Cell('=Alternator.AlternatorPlacement',
+             alias='AlternatorPlacement'),
+        Cell('=Alternator.FramePlacement',
+             alias='FramePlacement')
     ],
     [
         Cell('T Shape', styles=[Style.ITALIC])
@@ -101,6 +107,19 @@ wind_turbine_cells: List[List[Cell]] = [
              alias='SideWidth'),
         Cell('=YawBearing.LargeYawBearingXOffset',
              alias='LargeYawBearingXOffset'),
+    ],
+    [
+        Cell('ExtendedTopPlacement'),
+        Cell('MM'),
+        Cell('L'),
+    ],
+    [
+        Cell('=YawBearing.ExtendedTopPlacement',
+             alias='ExtendedTopPlacement'),
+        Cell('=YawBearing.MM',
+             alias='MM'),
+        Cell('=YawBearing.L',
+             alias='L'),
     ],
     [
         Cell('HighEndStop', styles=[Style.UNDERLINE])
@@ -316,5 +335,31 @@ wind_turbine_cells: List[List[Cell]] = [
                                 '=RotorDiskRadius < 187.5 ? SmallTailHingeZ : LargeTailHingeZ'),
                             # Equivalent to (0°, -90°, 270°) in yaw-pitch-roll.
                             axis=('0.58', '0.58', '0.58'),
-                            angle='=240deg')
+                            angle='=240deg'),
+    # Length from top of channel section to weld flat bar (H & Star shape)
+    # -----------------------------------------------------------------------
+    [
+        Cell('Length from top of channel section to weld flat bar (H & Star shape)', styles=[Style.UNDERLINE, Style.BOLD])
+    ],
+    [
+        Cell('GlobalChannelSectionTopPoint'),
+        Cell('=AlternatorLinkPlacement * AlternatorPlacement * FramePlacement * vector(-MetalLengthL; -ChannelSectionHeight / 2; 0)',
+             alias='GlobalChannelSectionTopPoint')
+    ],
+    [
+        Cell('GlobalChannelSectionMidPoint'),
+        # vector (L; 0; MM) local to YawBearing_Extended_Top document.
+        Cell('=YawBearingPlacement * ExtendedTopPlacement * vector(L; 0; MM)',
+             alias='GlobalChannelSectionBottomPoint')
+    ],
+    [
+        Cell('LengthFromTopOfChannelSectionToWeldTopBarVector'),
+        Cell('=GlobalChannelSectionTopPoint - GlobalChannelSectionBottomPoint',
+             alias='LengthFromTopOfChannelSectionToWeldTopBarVector')
+    ],
+    [
+        Cell('LengthFromTopOfChannelSectionToWeldTopBar'),
+        Cell('=LengthFromTopOfChannelSectionToWeldTopBarVector.Length',
+             alias='LengthFromTopOfChannelSectionToWeldTopBar')
+    ]
 ]

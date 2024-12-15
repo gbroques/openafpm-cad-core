@@ -306,6 +306,8 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
                 spreadsheet_document.YawBearing.SideWidth)),
             ('Side piece flat bar thickness', round_and_format_length(
                 spreadsheet_document.Spreadsheet.FlatMetalThickness)),
+            ('Length from top of channel section to weld flat bar', round_and_format_length(
+                spreadsheet_document.WindTurbine.LengthFromTopOfChannelSectionToWeldFlatBar)),
         ],
         [book_reference_template % 'page 29 left-hand side']
     )

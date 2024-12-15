@@ -1,6 +1,7 @@
 from typing import List
 
 from .spreadsheet import Alignment, Cell, Style
+from .create_placement_cells import create_placement_cells
 
 __all__ = ['alternator_cells']
 
@@ -1231,25 +1232,13 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('FrameLink', styles=[Style.UNDERLINE])
     ],
-    [
-        Cell('X',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('Y',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('Z',
-             horizontal_alignment=Alignment.RIGHT)
-    ],
-    [
-        Cell('0',
-             horizontal_alignment=Alignment.RIGHT,
-             alias='FrameX'),
-        Cell('0',
-             horizontal_alignment=Alignment.RIGHT,
-             alias='FrameY'),
-        Cell('=StatorThickness / 2 + MechanicalClearance + RotorThickness + DistanceBetweenFrameAndBackRotor + MetalLengthL',
-             horizontal_alignment=Alignment.RIGHT,
-             alias='FrameZ')
-    ],
+    *create_placement_cells(name='Frame',
+                            base=(
+                                '0',
+                                '0',
+                                '=StatorThickness / 2 + MechanicalClearance + RotorThickness + DistanceBetweenFrameAndBackRotor + MetalLengthL'),
+                            axis=('0', '0', '1'),
+                            angle='0'),
     [
         Cell('Alternator', styles=[Style.UNDERLINE, Style.BOLD])
     ],
