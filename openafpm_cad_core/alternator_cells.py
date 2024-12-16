@@ -250,6 +250,16 @@ alternator_cells: List[List[Cell]] = [
              alias='LidNotchDegrees')
     ],
     [
+        # Radius of electrical conduit, a tube used to protect and route the wires for the stator coils.
+        Cell('WireTubeDiameter'),
+        Cell('RadiusOfResinAroundWireTube')
+    ],
+    [
+        Cell('16',
+             alias='WireTubeDiameter'),
+        Cell('5', alias='RadiusOfResinAroundWireTube')
+    ],
+    [
         # For spacing between outside edge of coil and stator mold surround.
         # Needs to be large enough to fit wires and tube around coils.
         # Typically a 20mm diameter tube is used, but we assume a 16mm tube.
@@ -257,7 +267,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('OutsideCoilEdgeRadius')
     ],
     [
-        Cell('20',
+        Cell('=WireTubeDiameter + RadiusOfResinAroundWireTube',
              alias='SpaceBetweenCoilEdgeAndSurround'),
         Cell('=RotorDiskRadius + CoilLegWidth',
              alias='OutsideCoilEdgeRadius')
@@ -269,7 +279,9 @@ alternator_cells: List[List[Cell]] = [
         Cell('HexagonalStatorOuterCircumradius')
     ],
     [
-        Cell('=OutsideCoilEdgeRadius + SpaceBetweenCoilEdgeAndSurround',
+        # Take whichever is largest, CoilLegWidth or RotorResinMargin, to avoid overlapping tube for wires with rotor.
+        # 5 is the default value for RotorResinMargin.
+        Cell('=RotorDiskRadius + max(CoilLegWidth; RotorResinMargin) + SpaceBetweenCoilEdgeAndSurround + (RotorResinMargin - 5)',
              alias='StatorMoldSurroundEdgeRadius'),
         Cell('=StatorMoldSurroundEdgeRadius / cos(30)',
              alias='HexagonalStatorOuterCircumradius')
@@ -599,16 +611,6 @@ alternator_cells: List[List[Cell]] = [
         # Used in Stator_Mold_Lid
         Cell('=LengthMiddleHoles - StatorMoldSurroundHolesEdgeCircumradius',
              alias='DistanceBetweenOuterHolesAndStatorMold')
-    ],
-    [
-        # Radius of electrical conduit, a tube used to protect and route the wires for the stator coils.
-        Cell('WireTubeDiameter'),
-        Cell('RadiusOfResinAroundWireTube')
-    ],
-    [
-        Cell('16',
-             alias='WireTubeDiameter'),
-        Cell('5', alias='RadiusOfResinAroundWireTube')
     ],
     [
         Cell('Hexagonal Mold', styles=[Style.UNDERLINE])
