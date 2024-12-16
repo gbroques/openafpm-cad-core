@@ -138,7 +138,7 @@ class LoadAssemblyTaskPanel:
     def select_simulation_file(self):
         if self.simulation_value.text() == '':
             filepath, _ = QtGui.QFileDialog.getOpenFileName(
-                self.form, 'Open file', '', 'MagnAFPM simulation or JSON file (*.mat, *.json)')
+                self.form, 'Open file', '', 'MagnAFPM simulation or JSON file (*.mat *.json)')
             self.simulation_value.setText(filepath)
             if filepath.endswith('.json'):
                 with open(filepath) as f:
