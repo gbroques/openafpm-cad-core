@@ -252,16 +252,13 @@ alternator_cells: List[List[Cell]] = [
     [
         # For spacing between outside edge of coil and stator mold surround.
         # Needs to be large enough to fit wires and tube around coils.
-        # Typically a 20mm diameter tube is used, but a 16mm tube can be used in smaller designs.
+        # Typically a 20mm diameter tube is used, but we assume a 16mm tube.
         Cell('MaximumSpaceBetweenCoilEdgeAndSurround'),
-        Cell('SurroundEdgeSpacingFactor'),
         Cell('OutsideCoilEdgeRadius')
     ],
     [
         Cell('20',
-             alias='MaximumSpaceBetweenCoilEdgeAndSurround'),
-        Cell('1.12',
-             alias='SurroundEdgeSpacingFactor'),
+             alias='SpaceBetweenCoilEdgeAndSurround'),
         Cell('=RotorDiskRadius + CoilLegWidth',
              alias='OutsideCoilEdgeRadius')
     ],
@@ -272,8 +269,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('HexagonalStatorOuterCircumradius')
     ],
     [
-        Cell('=min(OutsideCoilEdgeRadius * SurroundEdgeSpacingFactor;' +
-             ' OutsideCoilEdgeRadius + MaximumSpaceBetweenCoilEdgeAndSurround)',
+        Cell('=OutsideCoilEdgeRadius + SpaceBetweenCoilEdgeAndSurround',
              alias='StatorMoldSurroundEdgeRadius'),
         Cell('=StatorMoldSurroundEdgeRadius / cos(30)',
              alias='HexagonalStatorOuterCircumradius')
