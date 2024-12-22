@@ -668,14 +668,14 @@ alternator_cells: List[List[Cell]] = [
              alias='BottomRightCornerY')
     ],
     [
-        Cell('LineFromMiddleRightToTopRightCornerSlope'),
-        Cell('LineFromMiddleRightToTopRightCornerYIntercept')
+        Cell('LineFromBottomRightToBottomLeftCornerSlope'),
+        Cell('LineFromBottomRightToBottomLeftCornerYIntercept')
     ],
     [
         Cell('=(BottomRightCornerY - BottomLeftCornerY) / (BottomRightCornerX - BottomLeftCornerX)',
-             alias='LineFromMiddleRightToTopRightCornerSlope'),
-        Cell('=BottomLeftCornerY - LineFromMiddleRightToTopRightCornerSlope * BottomLeftCornerX',
-             alias='LineFromMiddleRightToTopRightCornerYIntercept')
+             alias='LineFromBottomRightToBottomLeftCornerSlope'),
+        Cell('=BottomLeftCornerY - LineFromBottomRightToBottomLeftCornerSlope * BottomLeftCornerX',
+             alias='LineFromBottomRightToBottomLeftCornerYIntercept')
     ],
     [
         Cell('StatorMoldSurroundBoltAngle'),
