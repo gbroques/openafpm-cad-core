@@ -235,9 +235,22 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeDegreesBetweenTopLeftStatorMountingHoleAndLidNotch')
     ],
     [
+        Cell('StarShapeLidNotchApproximateDegrees'),
+        Cell('StarShapeNumberOfCoilsBetween180'),
+        Cell('StarShapeDegreesBetween180')
+    ],
+    [
+        Cell('=22.5deg',
+             alias='StarShapeLidNotchApproximateDegrees'),
+        Cell('=round(StarShapeLidNotchApproximateDegrees / CoilAngle - 0.5) + 0.5',
+             alias='StarShapeNumberOfCoilsBetween180'),
+        Cell('=CoilAngle * StarShapeNumberOfCoilsBetween180',
+             alias='StarShapeDegreesBetween180')
+    ],
+    [
         Cell('TShapeLidNotchDegrees'),
-        Cell('HAndStarShapeLidNotchDegrees'),
-        Cell('LidNotchDegrees')
+        Cell('HShapeLidNotchDegrees'),
+        Cell('StarShapeLidNotchDegrees')
     ],
     [
         # 150° to stator mounting hole in quadrant II.
@@ -245,19 +258,31 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeLidNotchDegrees'),
         # Assume coil is aligned with 180° for H and Star shape.
         Cell('=180deg + CoilAngle / 2',
-             alias='HAndStarShapeLidNotchDegrees'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeLidNotchDegrees : HAndStarShapeLidNotchDegrees',
-             alias='LidNotchDegrees')
+             alias='HShapeLidNotchDegrees'),
+        # Assume coil is aligned with 180° for H and Star shape.
+        Cell('=180deg + StarShapeDegreesBetween180',
+             alias='StarShapeLidNotchDegrees')
     ],
     [
+        Cell('LidNotchDegrees'),
         # Radius of electrical conduit, a tube used to protect and route the wires for the stator coils.
         Cell('WireTubeDiameter'),
         Cell('RadiusOfResinAroundWireTube')
     ],
     [
+        Cell('=RotorDiskRadius < 187.5 ? TShapeLidNotchDegrees : (RotorDiskRadius < 275 ? HShapeLidNotchDegrees : StarShapeLidNotchDegrees)',
+             alias='LidNotchDegrees'),
         Cell('16',
              alias='WireTubeDiameter'),
         Cell('5', alias='RadiusOfResinAroundWireTube')
+    ],
+    [
+        Cell('NumberOfBoltsLidNotchIsFrom180')
+    ],
+    [
+        Cell('=(LidNotchDegrees - 180 deg) / StatorMoldSurroundBoltAngle',
+             alias='NumberOfBoltsLidNotchIsFrom180')
+
     ],
     [
         # For spacing between outside edge of coil and stator mold surround.
@@ -623,23 +648,33 @@ alternator_cells: List[List[Cell]] = [
     #   \____/
     #
     [
-        Cell('TopRightCornerX'),
-        Cell('TopRightCornerY')
+        Cell('BottomLeftCornerX'),
+        Cell('BottomLeftCornerY')
     ],
     [
-        Cell('=LengthMiddleHoles * cos(60)',
-             alias='TopRightCornerX'),
-        Cell('=LengthMiddleHoles * sin(60)',
-             alias='TopRightCornerY')
+        Cell('=LengthMiddleHoles * cos(240)',
+             alias='BottomLeftCornerX'),
+        Cell('=LengthMiddleHoles * sin(240)',
+             alias='BottomLeftCornerY')
+    ],
+    [
+        Cell('BottomRightCornerX'),
+        Cell('BottomRightCornerY')
+    ],
+    [
+        Cell('=LengthMiddleHoles * cos(300)',
+             alias='BottomRightCornerX'),
+        Cell('=LengthMiddleHoles * sin(300)',
+             alias='BottomRightCornerY')
     ],
     [
         Cell('LineFromMiddleRightToTopRightCornerSlope'),
         Cell('LineFromMiddleRightToTopRightCornerYIntercept')
     ],
     [
-        Cell('=TopRightCornerY / (TopRightCornerX - LengthMiddleHoles)',
+        Cell('=(BottomRightCornerY - BottomLeftCornerY) / (BottomRightCornerX - BottomLeftCornerX)',
              alias='LineFromMiddleRightToTopRightCornerSlope'),
-        Cell('=TopRightCornerY - LineFromMiddleRightToTopRightCornerSlope * TopRightCornerX',
+        Cell('=BottomLeftCornerY - LineFromMiddleRightToTopRightCornerSlope * BottomLeftCornerX',
              alias='LineFromMiddleRightToTopRightCornerYIntercept')
     ],
     [
@@ -652,6 +687,39 @@ alternator_cells: List[List[Cell]] = [
         Cell('=mod(LidNotchDegrees; StatorMoldSurroundBoltAngle)' +
              ' == 0 ? 1 : 0',
              alias='DoesLidNotchAlignWithBolt')
+    ],
+    [
+        # Applies Star Shape only
+        Cell('DoesLidNotchAlignWithFirstBolt'),
+        Cell('DoesLidNotchAlignWithSecondBolt')
+    ],
+    [
+        Cell('=DoesLidNotchAlignWithBolt == 1 ? (NumberOfBoltsLidNotchIsFrom180 == 1 ? 1 : 0) : 0',
+             alias='DoesLidNotchAlignWithFirstBolt'),
+        Cell('=DoesLidNotchAlignWithBolt == 1 ? (NumberOfBoltsLidNotchIsFrom180 == 2 ? 1 : 0) : 0',
+             alias='DoesLidNotchAlignWithSecondBolt')
+    ],
+    [
+        # Applies Star Shape only
+        Cell('FirstOuterBoltHolePolarPatternNumberOfOccurrences'),
+        Cell('FirstOuterBoltHolePolarPatternAngle')
+    ],
+    [
+        Cell('=DoesLidNotchAlignWithFirstBolt == 1 ? 5 : 6',
+             alias='FirstOuterBoltHolePolarPatternNumberOfOccurrences'),
+        Cell('=DoesLidNotchAlignWithFirstBolt == 1 ? 240 deg : 360 deg',
+             alias='FirstOuterBoltHolePolarPatternAngle')
+    ],
+    [
+        # Applies Star Shape only
+        Cell('SecondOuterBoltHolePolarPatternNumberOfOccurrences'),
+        Cell('SecondOuterBoltHolePolarPatternAngle')
+    ],
+    [
+        Cell('=DoesLidNotchAlignWithSecondBolt == 1 ? 5 : 6',
+             alias='SecondOuterBoltHolePolarPatternNumberOfOccurrences'),
+        Cell('=DoesLidNotchAlignWithSecondBolt == 1 ? 240 deg : 360 deg',
+             alias='SecondOuterBoltHolePolarPatternAngle')
     ],
     [
         # Hide bolt if lid notch aligns with it.
