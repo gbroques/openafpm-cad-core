@@ -240,7 +240,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('StarShapeDegreesBetween180')
     ],
     [
-        Cell('=22.5deg',
+        Cell('=30deg',
              alias='StarShapeLidNotchApproximateDegrees'),
         Cell('=round(StarShapeLidNotchApproximateDegrees / CoilAngle - 0.5) + 0.5',
              alias='StarShapeNumberOfCoilsBetween180'),
