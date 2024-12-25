@@ -335,21 +335,20 @@ preset_by_name: Dict[str, dict] = {
         ),
         "inheritsFrom": "T Shape",
         "magnafpm": {
-            "RotorDiskRadius": 150.18,
-            "RotorDiskInnerRadius": 118.41,
-            "MagnetLength": 30,
-            "MagnetWidth": 46,
+            "RotorDiskRadius": 187.93,
+            "RotorDiskInnerRadius": 134.65,
+            "MagnetLength": 50,
+            "MagnetWidth": 70,
             "MagnetThickness": 10,
-            "NumberMagnet": 16,
+            "MagnetMaterial": "Neodymium",
             "CoilType": 3,
-            "CoilLegWidth": 17.33,
-            "CoilHoleWidthAtOuterRadius": 46,
-            "CoilHoleWidthAtInnerRadius": 8.0,
+            "CoilLegWidth": 12.38,
+            "CoilHoleWidthAtOuterRadius": 70,
+            "CoilHoleWidthAtInnerRadius": 8,
             "InnerDistanceBetweenMagnets": 0.5,
-            "NumberOfCoilsPerPhase": 4,
-            "WireWeight": 2.47,
+            "WireWeight": 2.28,
             "WireDiameter": 1.5,
-            "TurnsPerCoil": 35
+            "TurnsPerCoil": 25
         }
     }
 }

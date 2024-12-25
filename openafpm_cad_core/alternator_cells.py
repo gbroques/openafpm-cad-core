@@ -14,7 +14,7 @@ def generate_tape_notch_width_cells(n: int) -> List[List[Cell]]:
         cells.append(
             [
                 Cell(f'TnwRange{i}'),
-                Cell('=(LargestMagnetDimension - 2 * CoilWinderPinDiameter' +
+                Cell('=(CoilWinderVerticalDimension - 2 * CoilWinderPinDiameter' +
                      f' - MaximumCoilWinderDiskTapeNotchWidth + {i}) / 2' +
                      f' < MinimumSpaceBetweenPinsAndTapeNotch ? {true} : MaximumCoilWinderDiskTapeNotchWidth - {i}',
                      alias=f'TnwRange{i}')
@@ -763,32 +763,45 @@ alternator_cells: List[List[Cell]] = [
              alias='SmallestMagnetDimension')
     ],
     [
+        Cell('CoilWinderVerticalDimension'),
+        Cell('CoilWinderOuterHorizontalDimension'),
+        Cell('CoilWinderInnerHorizontalDimension')
+    ],
+    [
+        Cell('=MagnetWidth > MagnetLength ? (CoilType == 1 ? MagnetWidth : MagnetLength) : MagnetLength',
+             alias='CoilWinderVerticalDimension'),
+        Cell('=MagnetWidth > MagnetLength ? (CoilType == 1 ? MagnetLength : CoilHoleWidthAtOuterRadius) : CoilHoleWidthAtOuterRadius',
+             alias='CoilWinderOuterHorizontalDimension'),
+        Cell('=MagnetWidth > MagnetLength ? (CoilType == 1 ? MagnetLength : CoilHoleWidthAtInnerRadius) : CoilHoleWidthAtInnerRadius',
+             alias='CoilWinderInnerHorizontalDimension'),
+    ],
+    [
         Cell('CoilWinderCenterRodDiameter', styles=[Style.UNDERLINE]),
         Cell('Ensure 2 mm of plywood between center hole and tape notch.')
     ],
     [
         Cell('CwbRange4'),
-        Cell('=SmallestMagnetDimension < 19 ? 8 : 10',
+        Cell('=CoilWinderVerticalDimension < 19 ? 8 : 10',
              alias='CwbRange4')
     ],
     [
         Cell('CwbRange3'),
-        Cell('=SmallestMagnetDimension < 17 ? 6 : CwbRange4',
+        Cell('=CoilWinderVerticalDimension < 17 ? 6 : CwbRange4',
              alias='CwbRange3')
     ],
     [
         Cell('CwbRange2'),
-        Cell('=SmallestMagnetDimension < 15 ? 5 : CwbRange3',
+        Cell('=CoilWinderVerticalDimension < 15 ? 5 : CwbRange3',
              alias='CwbRange2')
     ],
     [
         Cell('CwbRange1'),
-        Cell('=SmallestMagnetDimension < 13 ? 4 : CwbRange2',
+        Cell('=CoilWinderVerticalDimension < 13 ? 4 : CwbRange2',
              alias='CwbRange1')
     ],
     [
         Cell('CoilWinderCenterRodDiameter'),
-        Cell('=SmallestMagnetDimension < 11 ? 3 : CwbRange1',
+        Cell('=CoilWinderVerticalDimension < 11 ? 3 : CwbRange1',
              alias='CoilWinderCenterRodDiameter')
     ],
     [
@@ -800,12 +813,12 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CwpRange1'),
-        Cell('=SmallestMagnetDimension < 14 ? 4 : 5',
+        Cell('=CoilWinderVerticalDimension < 14 ? 4 : 5',
              alias='CwpRange1')
     ],
     [
         Cell('CoilWinderPinDiameter'),
-        Cell('=SmallestMagnetDimension < 12 ? 3 : CwpRange1',
+        Cell('=CoilWinderVerticalDimension < 12 ? 3 : CwpRange1',
              alias='CoilWinderPinDiameter')
     ],
     [
@@ -872,8 +885,8 @@ alternator_cells: List[List[Cell]] = [
         Cell('=CoilType != 3 ? 4 : CoilHoleWidthAtInnerRadius / 2',
              alias='CoilWinderDiskBottomHoleRadius'),
         # TODO: Rename to RectangularRadialDistanceOfHolesFromCenter?
-        # Vertical may not make sense since coil winder parts are rotated by CoilWinderAngle.
-        Cell('=MagnetLength / 2 - CoilWinderPinRadius',
+        # Vertical may not make sense since coil winder parts are rotated by CoilWinderCoilsAngle.
+        Cell('=CoilWinderVerticalDimension / 2 - CoilWinderPinRadius',
              alias='RectangularVerticalDistanceOfHolesFromCenter'),
         Cell('4',
              alias='CoilWinderNumberOfSpacingNuts')
@@ -912,33 +925,27 @@ alternator_cells: List[List[Cell]] = [
              alias='CoilWinderPinLength')
     ],
     [
-        Cell('ShouldRotateCoilWinderParts'),
-        Cell('CoilWinderAngle'),
-        Cell('CoilWinderPinsMirrorNormalVector')
+        Cell('ShouldRotateCoil'),
+        Cell('CoilWinderCoilsAngle')
     ],
     [
         # Equivalent to AND boolean logic.
         # https://forum.freecad.org/viewtopic.php?p=690156#p690156
-        Cell('=MagnetWidth > MagnetLength ? (CoilType != 3 ? 1 : 0) : 0',
-             alias='ShouldRotateCoilWinderParts'),
-        # Rotate coil, pins, and spacer 90 deg if magnet width is greater than length.
-        Cell('=ShouldRotateCoilWinderParts == 1 ? 90 : 0',
-             alias='CoilWinderAngle'),
-        Cell('=ShouldRotateCoilWinderParts == 1 ? vector(0; 1; 0) : vector(1; 0; 0)',
-             alias='CoilWinderPinsMirrorNormalVector')
+        Cell('=MagnetWidth > MagnetLength ? (CoilType == 1 ? 1 : 0) : 0',
+             alias='ShouldRotateCoil'),
+        # Rotate coils 90 deg for rectangular coils when magnet width is greater than length .
+        Cell('=ShouldRotateCoil == 1 ? 90 : 0',
+             alias='CoilWinderCoilsAngle')
     ],
     [
         Cell('OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('RectangularLargestDistanceOfHolesFromCenter')
+        Cell('InnerHorizontalDistanceBetweenCenterOfSmallHoles')
     ],
     [
-        Cell('=CoilHoleWidthAtOuterRadius - CoilWinderPinDiameter',
+        Cell('=CoilWinderOuterHorizontalDimension - CoilWinderPinDiameter',
              alias='OuterHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('=CoilType != 3 ? (CoilHoleWidthAtInnerRadius - CoilWinderPinDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
-             alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles'),
-        Cell('=LargestMagnetDimension / 2 - CoilWinderPinRadius',
-             alias='RectangularLargestDistanceOfHolesFromCenter'),
+        Cell('=CoilType != 3 ? (CoilWinderInnerHorizontalDimension - CoilWinderPinDiameter) : OuterHorizontalDistanceBetweenCenterOfSmallHoles',
+             alias='InnerHorizontalDistanceBetweenCenterOfSmallHoles')
     ],
     [
         Cell('RotorDiskCircumference'),
