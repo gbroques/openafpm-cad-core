@@ -1144,14 +1144,11 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorMoldSideLength'),
-        Cell('NumberOfRotorMoldScrews'),
         Cell('PercentageOfMagnetThicknessCoveredByResin')
     ],
     [
         Cell('=RotorDiskRadius * 2 * 1.3333',
              alias='RotorMoldSideLength'),
-        Cell('=RotorDiskRadius < 187.5 ? 10 : 16',
-             alias='NumberOfRotorMoldScrews'),
         Cell('=MagnetMaterial == <<Ferrite>> ? 0.7 : 1.0',
              alias='PercentageOfMagnetThicknessCoveredByResin')
     ],
@@ -1204,6 +1201,16 @@ alternator_cells: List[List[Cell]] = [
              alias='MaxRotorMoldScrewHolesCircumradius'),
         Cell('=min(MaxRotorMoldScrewHolesCircumradius; RotorMoldSurroundRadius * 1.14)',
              alias='RotorMoldScrewHolesCircumradius'),
+    ],
+    [
+        Cell('ApproximateSpaceBetweenRotorMoldScrews'),
+        Cell('NumberOfRotorMoldScrews')
+    ],
+    [
+        Cell('120',
+             alias='ApproximateSpaceBetweenRotorMoldScrews'),
+        Cell('=round(2 * pi * RotorMoldScrewHolesCircumradius / ApproximateSpaceBetweenRotorMoldScrews)',
+             alias='NumberOfRotorMoldScrews')
     ],
     [
         Cell('MagnetJig', styles=[Style.UNDERLINE])
