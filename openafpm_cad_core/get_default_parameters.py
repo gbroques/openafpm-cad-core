@@ -279,6 +279,64 @@ preset_by_name: Dict[str, dict] = {
             "RotorResinMargin": 10
         }
     },
+    # https://www.openafpm.net/simulation/9011
+    "1.2N MWT Hoverboard 16 pole 24V": {
+        "description": (
+            "1.2 meter diameter wind turbine with T-shape frame and Neodymium magnets. " +
+            "Useful for testing small turbines and coil winder."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiameter": 1200,
+            "RotorDiskRadius": 80.05,
+            "RotorDiskInnerRadius": 54.89,
+            "RotorDiskThickness": 5,
+            "MagnetLength": 25,
+            "MagnetWidth": 10,
+            "MagnetThickness": 8,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 16,
+            "StatorThickness": 8,
+            "CoilType": 1,
+            "CoilLegWidth": 9.36,
+            "CoilHoleWidthAtOuterRadius": 10,
+            "CoilHoleWidthAtInnerRadius": 10,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 11.56,
+            "NumberOfCoilsPerPhase": 4,
+            "WireWeight": 0.46,
+            "WireDiameter": 0.71,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 103
+          },
+          "furling": {
+            "VerticalPlaneAngle": 15,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 150,
+            "BracketWidth": 20,
+            "BracketThickness": 5,
+            "BoomLength": 700,
+            "BoomPipeDiameter": 33.4,
+            "BoomPipeThickness": 3,
+            "VaneThickness": 6,
+            "VaneLength": 500,
+            "VaneWidth": 200,
+            "Offset": 69
+          },
+          "user": {
+            "BladeWidth": 140,
+            "HubPitchCircleDiameter": 50,
+            "RotorDiskCentralHoleDiameter": 35,
+            "HolesDiameter": 8,
+            "MetalLengthL": 40,
+            "MetalThicknessL": 5,
+            "FlatMetalThickness": 5,
+            "YawPipeDiameter": 48.3,
+            "PipeThickness": 3,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 8
+          }
+    },
     "Magnet Width > Length, Rectangular Coil": {
         "description": (
             "Turbine with magnet width greater than magnet length and rectangular coils. " +
