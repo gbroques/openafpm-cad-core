@@ -781,27 +781,27 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CwbRange4'),
-        Cell('=CoilWinderVerticalDimension < 19 ? 8 : 10',
+        Cell('=SmallestMagnetDimension < 19 ? 8 : 10',
              alias='CwbRange4')
     ],
     [
         Cell('CwbRange3'),
-        Cell('=CoilWinderVerticalDimension < 17 ? 6 : CwbRange4',
+        Cell('=SmallestMagnetDimension < 17 ? 6 : CwbRange4',
              alias='CwbRange3')
     ],
     [
         Cell('CwbRange2'),
-        Cell('=CoilWinderVerticalDimension < 15 ? 5 : CwbRange3',
+        Cell('=SmallestMagnetDimension < 15 ? 5 : CwbRange3',
              alias='CwbRange2')
     ],
     [
         Cell('CwbRange1'),
-        Cell('=CoilWinderVerticalDimension < 13 ? 4 : CwbRange2',
+        Cell('=SmallestMagnetDimension < 13 ? 4 : CwbRange2',
              alias='CwbRange1')
     ],
     [
         Cell('CoilWinderCenterRodDiameter'),
-        Cell('=CoilWinderVerticalDimension < 11 ? 3 : CwbRange1',
+        Cell('=SmallestMagnetDimension < 11 ? 3 : CwbRange1',
              alias='CoilWinderCenterRodDiameter')
     ],
     [
@@ -813,12 +813,12 @@ alternator_cells: List[List[Cell]] = [
     ],
     [
         Cell('CwpRange1'),
-        Cell('=CoilWinderVerticalDimension < 14 ? 4 : 5',
+        Cell('=SmallestMagnetDimension < 14 ? 4 : 5',
              alias='CwpRange1')
     ],
     [
         Cell('CoilWinderPinDiameter'),
-        Cell('=CoilWinderVerticalDimension < 12 ? 3 : CwpRange1',
+        Cell('=SmallestMagnetDimension < 12 ? 3 : CwpRange1',
              alias='CoilWinderPinDiameter')
     ],
     [
