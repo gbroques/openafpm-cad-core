@@ -990,10 +990,10 @@ alternator_cells: List[List[Cell]] = [
         Cell('Pr')  # Pin radius
     ],
     [
-        # Set to MagnetLength when rectanuglar or keyhole coil type to prevent
+        # Set to LargestMagnetDimension when rectanuglar or keyhole coil type to prevent
         # Stator_Coil_Triangular_Reduced & Stator_CoilWinder_Triangular_Spacer
         # from breaking.
-        Cell('=CoilType != 3 ? MagnetLength : MagnetWidth',
+        Cell('=CoilType != 3 ? LargestMagnetDimension : MagnetWidth',
              alias='Mw'),
         Cell('=MagnetLength',
              alias='Ml'),
