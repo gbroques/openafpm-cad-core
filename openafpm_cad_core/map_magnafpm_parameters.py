@@ -8,6 +8,7 @@ __all__ = ['map_magnafpm_parameters']
 def map_magnafpm_parameters(magnafpm: dict) -> MagnafpmParameters:
     return {
         'RotorDiameter': round(magnafpm['Rturb'] * 2000),
+        'RotorTopology': map_rotor_topology(int(magnafpm['rotor'])),
         'RotorDiskRadius': round(magnafpm['Rout'], ndigits=2),
         'RotorDiskInnerRadius': round(magnafpm['Rin'], ndigits=2),
         'RotorDiskThickness': magnafpm['hr'],
@@ -29,3 +30,15 @@ def map_magnafpm_parameters(magnafpm: dict) -> MagnafpmParameters:
         'NumberOfWiresInHand': magnafpm['No_wires_at_hand'],
         'TurnsPerCoil': magnafpm['Nc']
     }
+
+
+def map_rotor_topology(rotor: int) -> str:
+    rotor_topology_by_rotor = {
+        2: 'Double',
+        1: 'Single and metal disk',
+        0: 'Single'
+    }
+    if rotor not in rotor_topology_by_rotor:
+        raise ValueError(f'Unrecognized "rotor" option with value "{rotor}"')
+    else:
+        return rotor_topology_by_rotor[rotor]

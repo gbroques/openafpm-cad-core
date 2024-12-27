@@ -36,6 +36,7 @@ preset_by_name: Dict[str, dict] = {
         ),
         "magnafpm": {
             "RotorDiameter": 2400,
+            "RotorTopology": "Double",
             "RotorDiskRadius": 150,
             "RotorDiskInnerRadius": 103.25,
             "RotorDiskThickness": 10,
@@ -92,6 +93,7 @@ preset_by_name: Dict[str, dict] = {
         ),
         "magnafpm": {
             "RotorDiameter": 4200,
+            "RotorTopology": "Double",
             "RotorDiskRadius": 225,
             "RotorDiskInnerRadius": 178.50,
             "RotorDiskThickness": 10,
@@ -153,6 +155,7 @@ preset_by_name: Dict[str, dict] = {
         # https://www.openafpm.net/simulation/9102
         "magnafpm": {
             "RotorDiameter": 6000,
+            "RotorTopology": "Double",
             "RotorDiskRadius": 372.24,
             "RotorDiskInnerRadius": 313.99,
             "RotorDiskThickness": 10,

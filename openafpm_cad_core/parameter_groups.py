@@ -28,6 +28,19 @@ class MagnafpmParameters(TypedDict):
     Also referred to as the "turbine diameter".
     """
 
+    RotorTopology: str
+    """One of 'Double', 'Single and metal disk', and 'Single'.
+
+
+    Two magnet rotors sandwiching the stator is most common.
+
+    The single rotor is featured in the 1.2m diameter turbine,
+    and the single rotor with magnet disk is featured in the 1.8m
+    diameter design in "A Wind Turbine Recipe Book (2014)".
+
+    See "Rotor mounting options" section on the right-hand side of page 46 in "A Wind Turbine Recipe Book (2014)".
+    """
+
     RotorDiskRadius: float
     """Outer radius of rotor disk(s) for the generator."""
 
