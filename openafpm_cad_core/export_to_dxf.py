@@ -21,7 +21,7 @@ def export_to_dxf(magnafpm_parameters: MagnafpmParameters,
                   user_parameters: UserParameters) -> bytes:
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters, furling_parameters, user_parameters)
-    get_part_count = make_get_part_count(root_documents, magnafpm_parameters['NumberOfCoilsPerPhase'])
+    get_part_count = make_get_part_count(root_documents, magnafpm_parameters)
     export_set = get_dxf_export_set(root_documents)
     options = get_svg_style_options(magnafpm_parameters['RotorDiskRadius'])
     svg = export_set_to_svg(export_set, get_part_count, **options)

@@ -6,12 +6,16 @@ import FreeCAD as App
 from FreeCAD import Document
 
 from .find_object_by_label import find_object_by_label
+from .parameter_groups import MagnafpmParameters
 
 ASSEMBLY_TYPE_IDS = {'App::Part', 'App::Link', 'Part::Mirroring'}
 
 
 def make_get_part_count(root_documents: List[Document],
-                        number_of_coils_per_phase: int) -> Callable[[object], int]:
+                        magnafpm_parameters: MagnafpmParameters) -> Callable[[object], int]:
+    number_of_coils_per_phase = magnafpm_parameters['NumberOfCoilsPerPhase']
+    rotor_topology = magnafpm_parameters['RotorTopology']
+    number_of_rotors = 2 if rotor_topology == 'Double' else 1
     count_by_label_and_type_id = defaultdict(int)
 
     delimiter = ';'
@@ -29,9 +33,7 @@ def make_get_part_count(root_documents: List[Document],
         if label.startswith('Stator_CoilWinder'):
             count_by_label_and_type_id[label_and_type_id] *= number_of_coils_per_phase
         if label.startswith('Rotor_Mold'):
-            # Assume user wants 2 rotor molds since it's generally
-            # easier to cast both rotors at the same time.
-            count_by_label_and_type_id[label_and_type_id] *= 2
+            count_by_label_and_type_id[label_and_type_id] *= number_of_rotors
         # Subtract 2 from count of back rotor disk to account for Magnet Jig & Rotor Mold assemblies.
         if label.startswith('Rotor_Disk_Back'):
             count_by_label_and_type_id[label_and_type_id] -= 2
