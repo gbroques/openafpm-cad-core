@@ -124,6 +124,13 @@ alternator_cells: List[List[Cell]] = [
              alias='MagnetWidth')
     ],
     [
+        Cell('RotorTopology')
+    ],
+    [
+        Cell('=Spreadsheet.RotorTopology',
+             alias='RotorTopology')
+    ],
+    [
         Cell('Hub', styles=[Style.UNDERLINE])
         # -----------------------------------
     ],
@@ -1067,13 +1074,23 @@ alternator_cells: List[List[Cell]] = [
         Cell('RotorThickness'),
         # Switch to reduced weight rotor disks when RotorDiskRadius
         # exceeds this threshold.
-        Cell('WeightReductionRotorDiskRadiusThreshold')
+        Cell('WeightReductionRotorDiskRadiusThreshold'),
+        Cell('FrontRotorCount'),
     ],
     [
         Cell('=MagnetThickness + RotorDiskThickness',
              alias='RotorThickness'),
         Cell('230',
-             alias='WeightReductionRotorDiskRadiusThreshold')
+             alias='WeightReductionRotorDiskRadiusThreshold'),
+        Cell('=RotorTopology == <<Single>> ? 0 : 1',
+             alias='FrontRotorCount')
+    ],
+    [
+        Cell('FrontRotorThickness'),
+    ],
+    [
+        Cell('=RotorTopology == <<Single>> ? 0 : (RotorTopology == <<Single and metal disk>> ? RotorDiskThickness : RotorThickness)',
+             alias='FrontRotorThickness')
     ],
     [
         # Radius of the wooden island when casting the magnets of the rotor in resin
@@ -1232,7 +1249,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenFrameAndBackRotor + RotorThickness + MechanicalClearance + StatorThickness + WasherThickness',
              alias='StatorMountingStudsLength'),
-        Cell('=DistanceThreadsExtendFromNuts * 2 + HubHexNutThickness * 3 + MiddlePadThickness + RotorThickness * 2 + MechanicalClearance * 2 + StatorThickness + BladeAssemblyPlateThickness * 2 + WasherThickness * 2 + BladeThickness',
+        Cell('=DistanceThreadsExtendFromNuts * 2 + HubHexNutThickness * 3 + MiddlePadThickness + RotorThickness + MechanicalClearance * (FrontRotorCount + 1) + FrontRotorThickness + StatorThickness + BladeAssemblyPlateThickness * 2 + WasherThickness * 2 + BladeThickness',
              alias='HubStudsLength')
     ],
     [
@@ -1244,7 +1261,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('NumberOfWashersBetweenRotorDisks')
     ],
     [
-        Cell('=MagnetThickness * 2 + MechanicalClearance * 2 + StatorThickness',
+        Cell('=MagnetThickness + MechanicalClearance + StatorThickness + MechanicalClearance * FrontRotorCount + MagnetThickness * (RotorTopology == <<Double>> ? 1 : 0)',
              alias='DistanceBetweenRotorDisks'),
         Cell('=floor(DistanceBetweenRotorDisks / HubHexNutThickness)',
              alias='NumberOfNutsBetweenRotorDisks'),

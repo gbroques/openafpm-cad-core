@@ -340,6 +340,122 @@ preset_by_name: Dict[str, dict] = {
             "HubHolesDiameter": 8
           }
     },
+    "1.8m 46x30x10mm magnets": {
+        "description": (
+            "1.8 meter diameter wind turbine based on 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott. " +
+            "Useful for testing single rotor and metal disk rotor topology."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiameter": 1800,
+            "RotorTopology": "Single and metal disk",
+            "RotorDiskRadius": 129.36,
+            "RotorDiskInnerRadius": 82.48,
+            "RotorDiskThickness": 6,
+            "MagnetLength": 46,
+            "MagnetWidth": 30,
+            "MagnetThickness": 10,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 8,
+            "StatorThickness": 13,
+            "CoilType": 1,
+            "CoilLegWidth": 28.17,
+            "CoilHoleWidthAtOuterRadius": 30,
+            "CoilHoleWidthAtInnerRadius": 30,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 34.78,
+            "NumberOfCoilsPerPhase": 2,
+            "WireWeight": 3.07,
+            "WireDiameter": 1.32,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 147.0
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 300,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 800,
+            "BoomPipeDiameter": 48.3,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 6,
+            "VaneLength": 1000,
+            "VaneWidth": 400,
+            "Offset": 100
+        },
+        "user": {
+            "BladeWidth": 95,
+            "HubPitchCircleDiameter": 100,
+            "RotorDiskCentralHoleDiameter": 65,
+            "HolesDiameter": 12,
+            "MetalLengthL": 50,
+            "MetalThicknessL": 6,
+            "FlatMetalThickness": 10,
+            "YawPipeDiameter": 60.3,
+            "PipeThickness": 5,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 12
+        }
+    },
+    "1.2m 46x30x10mm magnets": {
+        "description": (
+            "1.2 meter diameter wind turbine based on 'A Wind Turbine Recipe Book (2014)' by Hugh Piggott. " +
+            "Useful for testing single rotor topology."
+        ),
+        "inheritsFrom": "T Shape",
+        "magnafpm": {
+            "RotorDiameter": 1200,
+            "RotorTopology": "Single",
+            "RotorDiskRadius": 112.14,
+            "RotorDiskInnerRadius": 65.13,
+            "RotorDiskThickness": 6,
+            "MagnetLength": 46,
+            "MagnetWidth": 30,
+            "MagnetThickness": 10,
+            "MagnetMaterial": "Neodymium",
+            "NumberMagnet": 8,
+            "StatorThickness": 10,
+            "CoilType": 1,
+            "CoilLegWidth": 19.08,
+            "CoilHoleWidthAtOuterRadius": 30,
+            "CoilHoleWidthAtInnerRadius": 30,
+            "MechanicalClearance": 3,
+            "InnerDistanceBetweenMagnets": 21.15,
+            "NumberOfCoilsPerPhase": 2,
+            "WireWeight": 1.41,
+            "WireDiameter": 0.9,
+            "NumberOfWiresInHand": 1,
+            "TurnsPerCoil": 164.0
+        },
+        "furling": {
+            "VerticalPlaneAngle": 20,
+            "HorizontalPlaneAngle": 55,
+            "BracketLength": 200,
+            "BracketWidth": 30,
+            "BracketThickness": 5,
+            "BoomLength": 700,
+            "BoomPipeDiameter": 33.4,
+            "BoomPipeThickness": 5,
+            "VaneThickness": 6,
+            "VaneLength": 500,
+            "VaneWidth": 200,
+            "Offset": 100
+        },
+        "user": {
+            "BladeWidth": 95,
+            "HubPitchCircleDiameter": 70,
+            "RotorDiskCentralHoleDiameter": 35,
+            "HolesDiameter": 8,
+            "MetalLengthL": 40,
+            "MetalThicknessL": 5,
+            "FlatMetalThickness": 5,
+            "YawPipeDiameter": 48.3,
+            "PipeThickness": 3,
+            "RotorResinMargin": 5,
+            "HubHolesDiameter": 8
+        }
+    },
     "Magnet Width > Length, Rectangular Coil": {
         "description": (
             "Turbine with magnet width greater than magnet length and rectangular coils. " +
