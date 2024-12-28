@@ -38,6 +38,12 @@ class MagnafpmParameters(TypedDict):
     and the single rotor with magnet disk is featured in the 1.8m
     diameter design in "A Wind Turbine Recipe Book (2014)".
 
+    The single rotor topologies for smaller designs is due to
+    using the same 46x30x10mm magnets used in larger designs.
+
+    A double rotor topology can be used in smaller designs by
+    using smaller magnets.
+
     See "Rotor mounting options" section on the right-hand side of page 46 in "A Wind Turbine Recipe Book (2014)".
     """
 
