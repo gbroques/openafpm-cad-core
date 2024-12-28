@@ -511,6 +511,7 @@ def calculate_number_of_stator_mold_bolts(spreadsheet_document: Document) -> int
 
 
 def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Element:
+    number_of_rotors = get_number_of_rotors(spreadsheet_document.Spreadsheet.RotorTopology)
     return create_table(
         'Rotor Mould Dimensions',
         [
@@ -524,16 +525,15 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
              round_and_format_length(spreadsheet_document.Alternator.RotorMoldSurroundThickness)),
             ('Island thickness', round_and_format_length(
                 spreadsheet_document.Alternator.RotorMoldIslandThickness)),
-            # Assume double rotor topology
             ('Bolts (fully threaded)', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * 2,
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * number_of_rotors,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter,
                 spreadsheet_document.Fastener.HubHolesBoltLength)),
             ('Nuts', format_fastener(
-                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * 2,
+                spreadsheet_document.Alternator.NumberOfRotorMoldBolts * number_of_rotors,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             ('Screws', format_screw(
-                spreadsheet_document.Alternator.NumberOfRotorMoldScrews * 2,
+                spreadsheet_document.Alternator.NumberOfRotorMoldScrews * number_of_rotors,
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
         ],
@@ -673,7 +673,8 @@ def create_resin_table(spreadsheet_document: Document) -> Element:
     magnets = find_descendent_by_label(rotor_back, 'Rotor_Magnets')
     stator_resin_volume = stator_resin_cast.Shape.Volume - coils.Shape.Volume
     rotor_resin_volume = rotor_resin_cast.Shape.Volume - magnets.Shape.Volume
-    total_rotor_resin_volume = rotor_resin_volume * 2  # Assume double rotor topology
+    number_of_rotors = get_number_of_rotors(spreadsheet_document.Spreadsheet.RotorTopology)
+    total_rotor_resin_volume = rotor_resin_volume * number_of_rotors
     total_resin_volume = stator_resin_volume + total_rotor_resin_volume
     # Density is 1.15 g/cm3 according to:
     # https://www.strandek.co.uk/articles/what-is-vinyl-ester-resin/
@@ -862,3 +863,7 @@ def format_screw(quantity: int, diameter: int, length: Optional[float] = None) -
         display += f' × {round_and_format_length(length)}'
     display += f' — {quantity} pieces'
     return display
+
+
+def get_number_of_rotors(rotor_topology: str) -> int:
+    return 2 if rotor_topology == 'Double' else 1
