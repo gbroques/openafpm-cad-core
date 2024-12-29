@@ -3,5 +3,4 @@
 
 include README.rst
 include LICENSE
-include openafpm_cad_core/default_parameters.json
 recursive-include openafpm_cad_core/documents/ *
