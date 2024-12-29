@@ -410,7 +410,7 @@ def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
     return create_table(
         'Magnets and Coils',
         [
-            ('Number of rotor disks', 2),
+            ('Number of rotor disks', get_number_of_rotors(spreadsheet_document.Spreadsheet.RotorTopology)),
             ('Magnets per rotor disk', spreadsheet_document.Spreadsheet.NumberMagnet),
             ('Magnet material', spreadsheet_document.Spreadsheet.MagnetMaterial),
             ('Magnet length', round_and_format_length(
