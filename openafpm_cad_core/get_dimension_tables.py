@@ -38,7 +38,8 @@ estimated_coil_winder_handle_length = 350 # 35cm
 
 def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
                          furling_parameters: FurlingParameters,
-                         user_parameters: UserParameters) -> List[Element]:
+                         user_parameters: UserParameters,
+                         img_path_prefix: str = '') -> List[Element]:
     spreadsheet_document = load_spreadsheet_document(magnafpm_parameters,
                                                      furling_parameters,
                                                      user_parameters)
@@ -58,7 +59,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         create_steel_disk_sizes_table(spreadsheet_document)
     )
     tables.append(
-        create_frame_dimensions_table(spreadsheet_document)
+        create_frame_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
         create_offset_table(spreadsheet_document)
@@ -66,36 +67,36 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     if wind_turbine_shape == WindTurbineShape.T:
         tables.append(
             create_alternator_frame_to_yaw_pipe_sizes_table(
-                spreadsheet_document)
+                spreadsheet_document, img_path_prefix)
         )
     else:
         tables.append(
-            create_frame_dimensions_flat_bar_table(spreadsheet_document)
+            create_frame_dimensions_flat_bar_table(spreadsheet_document, img_path_prefix)
         )
     tables.append(
-        create_steel_pipe_dimensions_for_tail_table(spreadsheet_document)
+        create_steel_pipe_dimensions_for_tail_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
-        create_tail_junction_dimensions_table(spreadsheet_document)
+        create_tail_junction_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
-        create_tail_vane_dimensions_table(spreadsheet_document)
+        create_tail_vane_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
         create_magnets_and_coils_table(spreadsheet_document)
     )
     tables.append(
-        create_coil_winder_dimensions_table(spreadsheet_document)
+        create_coil_winder_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
-        create_stator_mold_dimensions_table(spreadsheet_document)
+        create_stator_mold_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
-        create_rotor_mold_dimensions_table(spreadsheet_document)
+        create_rotor_mold_dimensions_table(spreadsheet_document, img_path_prefix)
     )
     tables.append(
         create_magnet_positioning_jig_dimensions_table(
-            spreadsheet_document)
+            spreadsheet_document, img_path_prefix)
     )
     tables.append(
         create_various_parts_dimensions_table(spreadsheet_document)
@@ -108,11 +109,13 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
 
 def create_table(header: str,
                  rows: List[Tuple[str, Any]],
-                 footer_rows: Optional[List[str]] = None) -> Element:
+                 footer_rows: Optional[List[str]] = None,
+                 img_src_and_alt: Optional[Tuple[str, str]] = None) -> Element:
+    col_span = 3 if img_src_and_alt else 2
     children = [
         thead([
             tr([
-                th(header, col_span=2)
+                th(header, col_span=col_span)
             ])
         ]),
         tbody([
@@ -122,10 +125,15 @@ def create_table(header: str,
             ]) for row in rows
         ])
     ]
+    if img_src_and_alt:
+        src, alt = img_src_and_alt
+        table_body = children[1]
+        first_row = table_body['children'][0]
+        first_row['children'].append(td(img(src, alt), row_span=len(rows)))
     if footer_rows:
         children.append(
             tfoot([
-                tr([td(row, col_span=2)])
+                tr([td(row, col_span=col_span)])
                 for row in footer_rows
             ])
         )
@@ -208,7 +216,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
     )
 
 
-def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_frame_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     header = 'Frame Dimensions'
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
@@ -236,7 +244,8 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                     spreadsheet_document.Alternator.X)),
                 *steel_angle_section_rows
             ],
-            [book_reference_template % 'page 26 right-hand side']
+            [book_reference_template % 'page 26 right-hand side'],
+            (img_path_prefix + 't-shape-frame.png', 'T shape frame')
         )
     elif wind_turbine_shape == WindTurbineShape.H:
         return create_table(
@@ -246,7 +255,8 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('H', round_and_format_length(spreadsheet_document.Alternator.HH)),
                 *steel_angle_section_rows
             ],
-            [book_reference_template % 'page 27 right-hand side']
+            [book_reference_template % 'page 27 right-hand side'],
+            (img_path_prefix + 'h-shape-frame.png', 'H shape frame')
         )
     else:
         return create_table(
@@ -257,11 +267,12 @@ def create_frame_dimensions_table(spreadsheet_document: Document) -> Element:
                 ('B', round_and_format_length(spreadsheet_document.Alternator.B)),
                 ('C', round_and_format_length(spreadsheet_document.Alternator.CC)),
                 *steel_angle_section_rows
-            ]
+            ],
+            img_src_and_alt=(img_path_prefix + 'star-shape-frame.png', 'Star shape frame')
         )
 
 
-def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Document) -> Element:
+def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     return create_table(
         'Alternator Frame to Yaw Pipe Sizes',
         [
@@ -271,7 +282,8 @@ def create_alternator_frame_to_yaw_pipe_sizes_table(spreadsheet_document: Docume
             ('J', round_and_format_length(spreadsheet_document.Alternator.j)),
             ('K', round_and_format_length(spreadsheet_document.Alternator.k))
         ],
-        [book_reference_template % 'page 28 right-hand side']
+        [book_reference_template % 'page 28 right-hand side'],
+        img_src_and_alt=(img_path_prefix + 't-shape-yaw-bearing-frame-junction.png', 'T shape yaw bearing frame junction')
     )
 
 
@@ -285,7 +297,7 @@ def create_offset_table(spreadsheet_document: Document) -> Element:
     )
 
 
-def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> Element:
+def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     return create_table(
         'Frame Dimensions, Flat Bar',
         [
@@ -309,11 +321,12 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document) -> El
             ('Length from top of channel section to weld flat bar', round_and_format_length(
                 spreadsheet_document.WindTurbine.LengthFromTopOfChannelSectionToWeldTopBar)),
         ],
-        [book_reference_template % 'page 29 left-hand side']
+        [book_reference_template % 'page 29 left-hand side'],
+        (img_path_prefix + 'top-of-extended-frame.png', 'Top of extended frame')
     )
 
 
-def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) -> Element:
+def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     return create_table(
         'Steel Pipe Dimensions for Tail',
         [
@@ -334,11 +347,12 @@ def create_steel_pipe_dimensions_for_tail_table(spreadsheet_document: Document) 
                 round_and_format_length(spreadsheet_document.Spreadsheet.PipeThickness)
             )
         ],
-        [book_reference_template % 'page 31 right-hand side']
+        [book_reference_template % 'page 31 right-hand side'],
+        (img_path_prefix + 'tail-boom-dimensions.png', 'Tail boom dimensions')
     )
 
 
-def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_tail_vane_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     number_of_vane_bracket_fasteners = 4
     return create_table(
         'Tail Vane Dimensions',
@@ -387,7 +401,8 @@ def create_tail_vane_dimensions_table(spreadsheet_document: Document) -> Element
                     spreadsheet_document.Spreadsheet.HolesDiameter)
             ),
         ],
-        [book_reference_template % 'page 32 bottom', 'Vane bracket bolts, nuts, and washers are stainless steel']
+        [book_reference_template % 'page 32 bottom', 'Vane bracket bolts, nuts, and washers are stainless steel'],
+        (img_path_prefix + 'tail-vane-dimensions.png', 'Tail vane dimensions')
     )
 
 
@@ -416,7 +431,7 @@ def create_magnets_and_coils_table(spreadsheet_document: Document) -> Element:
     )
 
 
-def create_tail_junction_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_tail_junction_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     return create_table(
         'Tail Junction Cross Piece Dimensions',
         [
@@ -429,11 +444,19 @@ def create_tail_junction_dimensions_table(spreadsheet_document: Document) -> Ele
             ),
             ('Position from end of yaw bearing pipe',
              round_and_format_length(spreadsheet_document.Tail.TailHingeJunctionHeight))
-        ]
+        ],
+        img_src_and_alt=(img_path_prefix + 'tail-hinge-junction-cover-top-dimensions.svg', 'Width of cross piece D')
     )
 
 
-def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_coil_winder_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
+    coil_type = spreadsheet_document.Spreadsheet.CoilType
+    if coil_type == 1:
+        img_src_and_alt = (img_path_prefix + 'rectangular-coil-winder-dimensions.svg', 'Rectangular coil winder dimensions')
+    elif coil_type == 2:
+        img_src_and_alt = (img_path_prefix + 'keyhole-coil-winder-dimensions.svg', 'Keyhole coil winder dimensions')
+    else:
+        img_src_and_alt = (img_path_prefix + 'triangular-coil-winder-dimensions.svg', 'Triangular coil winder dimensions')
     return create_table(
         'Coil Winder Dimensions',
         [
@@ -450,11 +473,12 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document) -> Eleme
             )),
             ('Threaded rod diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderCenterRodDiameter)}'),
             ('Pin diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderPinDiameter)}')
-        ]
+        ],
+        img_src_and_alt = img_src_and_alt
     )
 
 
-def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     number_of_locating_bolts = 3
@@ -499,7 +523,8 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document) -> Eleme
                  spreadsheet_document.Fastener.WoodScrewDiameter,
                  spreadsheet_document.Alternator.StatorMoldScrewLength))
         ],
-        [book_reference_template % 'page 40 left-hand side']
+        [book_reference_template % 'page 40 left-hand side'],
+        (img_path_prefix + 'stator-mould-dimensions.png', 'Stator mould dimensions')
     )
 
 
@@ -510,7 +535,7 @@ def calculate_number_of_stator_mold_bolts(spreadsheet_document: Document) -> int
     )
 
 
-def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_rotor_mold_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     number_of_rotors = get_number_of_rotors(spreadsheet_document.Spreadsheet.RotorTopology)
     return create_table(
         'Rotor Mould Dimensions',
@@ -537,11 +562,12 @@ def create_rotor_mold_dimensions_table(spreadsheet_document: Document) -> Elemen
                 spreadsheet_document.Fastener.WoodScrewDiameter,
                 spreadsheet_document.Alternator.RotorMoldScrewLength)),
         ],
-        [book_reference_template % 'page 42 left-hand side']
+        [book_reference_template % 'page 42 left-hand side'],
+        (img_path_prefix + 'rotor-mould-dimensions.png', 'Rotor mould dimensions')
     )
 
 
-def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Document) -> Element:
+def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     rows = [
         ('Number of magnets', spreadsheet_document.Spreadsheet.NumberMagnet),
         ('Smaller radius D', round_and_format_length(
@@ -567,7 +593,8 @@ def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Documen
     return create_table(
         'Magnet Positioning Jig Dimensions',
         rows,
-        [book_reference_template % 'page 42 & 43']
+        [book_reference_template % 'page 42 & 43'],
+        (img_path_prefix + 'magnet-positioning-jig-dimensions.png', 'Magnet positioning jig dimensions')
     )
 
 
@@ -814,9 +841,9 @@ def tr(children: List[Element]) -> Element:
     }
 
 
-def td(content: Any = None, col_span: Optional[int] = None) -> Element:
+def td(content: Any = None, col_span: Optional[int] = None, row_span: Optional[int] = None) -> Element:
     """https://developer.mozilla.org/en-US/docs/Web/HTML/Element/td"""
-    return tcell('td', content, col_span)
+    return tcell('td', content, col_span, row_span)
 
 
 def th(content: Any = None, col_span: Optional[int] = None) -> Element:
@@ -824,16 +851,35 @@ def th(content: Any = None, col_span: Optional[int] = None) -> Element:
     return tcell('th', content, col_span)
 
 
-def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None) -> Element:
+def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None, row_span: Optional[int] = None) -> Element:
     """https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement"""
     element: Element = {
         'tagName': tag_name,
-        'properties': {
+        'properties': {}
+    }
+    if isinstance(content, dict):
+        element['children'] = [content]
+    else:
+        element['properties'] = {
             'textContent': "" if content is None else str(content)
         }
-    }
+
     if col_span is not None:
         element['properties']['colSpan'] = col_span
+    if row_span is not None:
+        element['properties']['rowSpan'] = row_span
+    return element
+
+
+def img(src: str, alt: str) -> Element:
+    """https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement"""
+    element: Element = {
+        'tagName': 'img',
+        'properties': {
+            'src': src,
+            'alt': alt,
+        }
+    }
     return element
 
 

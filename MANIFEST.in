@@ -4,3 +4,4 @@
 include README.rst
 include LICENSE
 recursive-include openafpm_cad_core/documents/ *
+recursive-include openafpm_cad_core/img/ *
