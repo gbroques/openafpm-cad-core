@@ -643,14 +643,10 @@ high_end_stop_cells: List[List[Cell]] = [
     ],
     [
         Cell('Width', styles=[Style.UNDERLINE]),
-        Cell('Length', styles=[Style.UNDERLINE])
     ],
     [
         Cell('=HighEndStopWidthVector.Length',
-             alias='HighEndStopWidth'),
-        # Make high end stop extend YawPipeRadius * 2 in the X-direction.
-        Cell('=(YawPipeRadius * 2 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
-             alias='HighEndStopLength'),
+             alias='HighEndStopWidth')
     ],
     #
     # ASCII drawings of high end stop planes for understanding below aliases (e.g. UpperBottomLeftCorner).
@@ -754,6 +750,17 @@ high_end_stop_cells: List[List[Cell]] = [
         Cell('SafetyCatchZ'),
         Cell('=.SafetyCatchPosition.z + SafetyCatchZPadding',
              alias='SafetyCatchZ')
+    ],
+    [
+        Cell('HighEndStop', styles=[Style.BOLD, Style.UNDERLINE])
+    ],
+    [
+        Cell('Length', styles=[Style.UNDERLINE])
+    ],
+    [
+        # Extend high end stop about 1cm past safety catch in the X-direction.
+        Cell('=(SafetyCatchPosition.x + 10 - .FurledHighEndStopTailAssemblyPlacement.Base.x) / .HighEndStopBoomDirectionVector.x',
+             alias='HighEndStopLength'),
     ],
     # YawPipeLength
     # -------------
