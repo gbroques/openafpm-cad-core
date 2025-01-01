@@ -488,8 +488,6 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path
         img_src = img_path_prefix + 'h-shape-stator-mould-dimensions.png'
     else:
         img_src = img_path_prefix + 'star-shape-stator-mould-dimensions.png'
-    img_src_and_alt = (img_src, 'Stator mould dimensions')
-        
     return create_table(
         'Stator Mould Dimensions',
         [
@@ -534,7 +532,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path
                  spreadsheet_document.Alternator.StatorMoldScrewLength))
         ],
         [book_reference_template % 'page 40 left-hand side'],
-        (img_path_prefix + 'stator-mould-dimensions.png', 'Stator mould dimensions')
+        (img_src, 'Stator mould dimensions')
     )
 
 
