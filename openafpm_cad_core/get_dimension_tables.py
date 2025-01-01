@@ -482,13 +482,23 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
     number_of_locating_bolts = 3
+    if wind_turbine_shape == WindTurbineShape.T:
+        img_src = img_path_prefix + 't-shape-stator-mould-dimensions.png'
+    elif wind_turbine_shape == WindTurbineShape.H:
+        img_src = img_path_prefix + 'h-shape-stator-mould-dimensions.png'
+    else:
+        img_src = img_path_prefix + 'h-shape-stator-mould-dimensions.svg'
+    img_src_and_alt = (img_src, 'Stator mould dimensions')
+        
     return create_table(
         'Stator Mould Dimensions',
         [
             ('Mould side A', round_and_format_length(
                 spreadsheet_document.Alternator.StatorMoldSideLength)),
             ('Outer radius B', round_and_format_length(
-                spreadsheet_document.Alternator.StatorHolesCircumradius)),
+                spreadsheet_document.Alternator.StatorHolesCircumradius
+                if wind_turbine_shape != wind_turbine_shape.STAR else
+                spreadsheet_document.Alternator.HexagonalStatorOuterCircumradius)),
             ('Inner radius C', round_and_format_length(
                 spreadsheet_document.Alternator.StatorInnerHoleRadius)),
             (
