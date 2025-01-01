@@ -487,7 +487,7 @@ def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path
     elif wind_turbine_shape == WindTurbineShape.H:
         img_src = img_path_prefix + 'h-shape-stator-mould-dimensions.png'
     else:
-        img_src = img_path_prefix + 'h-shape-stator-mould-dimensions.svg'
+        img_src = img_path_prefix + 'star-shape-stator-mould-dimensions.png'
     img_src_and_alt = (img_src, 'Stator mould dimensions')
         
     return create_table(
