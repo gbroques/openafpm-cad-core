@@ -71,23 +71,52 @@ hub_cells: List[List[Cell]] = [
     ],
     [
         Cell('MetalLengthL'),
-        Cell('RotorDiskCentralHoleDiameter')
+        Cell('RotorDiskCentralHoleDiameter'),
+        Cell('RotorTopology')
     ],
     [
         Cell('=Spreadsheet.MetalLengthL',
              alias='MetalLengthL'),
         Cell('=Spreadsheet.RotorDiskCentralHoleDiameter',
-             alias='RotorDiskCentralHoleDiameter')
+             alias='RotorDiskCentralHoleDiameter'),
+        Cell('=Spreadsheet.RotorTopology',
+             alias='RotorTopology')
+    ],
+    [
+        Cell('StatorThickness'),
+        Cell('MagnetThickness'),
+        Cell('MechanicalClearance')
+    ],
+    [
+        Cell('=Spreadsheet.StatorThickness',
+             alias='StatorThickness'),
+        Cell('=Spreadsheet.MechanicalClearance',
+             alias='MechanicalClearance'),
+        Cell('=Spreadsheet.MagnetThickness',
+             alias='MagnetThickness')
+    ],
+    [
+        Cell('RotorDiskThickness')
+    ],
+    [
+        Cell('=Spreadsheet.RotorDiskThickness',
+             alias='RotorDiskThickness')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('HubHexNutThickness')
+        Cell('HubHexNutThickness'),
+        Cell('HexNutThickness'),
+        Cell('WasherThickness')
     ],
     [
         Cell('=Fastener.HubHexNutThickness',
-             alias='HubHexNutThickness')
+             alias='HubHexNutThickness'),
+        Cell('=Fastener.HexNutThickness',
+             alias='HexNutThickness'),
+        Cell('=Fastener.WasherThickness',
+             alias='WasherThickness')
     ],
     [
         Cell('Common', styles=[Style.UNDERLINE, Style.BOLD])
@@ -226,19 +255,29 @@ hub_cells: List[List[Cell]] = [
         Cell('StubAxleShaft', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('LengthOfTwoNuts'),
-        Cell('DistanceStubAxleShaftExtendsBeyondTheFrame'),
-        Cell('DistanceBetweenFrameAndBackRotor', styles=[Style.BOLD]),
-        Cell('Length', styles=[Style.BOLD])
+        Cell('NonSingleRotorDistanceBetweenFrameAndMiddlePad'),
+        Cell('DistanceBetweenStatorAndFrame'),
+        Cell('RotorThickness')
     ],
     [
         Cell('=HubHexNutThickness * 2',
-             alias='LengthOfTwoNuts'),
+            alias='NonSingleRotorDistanceBetweenFrameAndMiddlePad'),
+        Cell('=RotorTopology == <<Single>> ? HexNutThickness * 2 + WasherThickness + 5 : MiddlePadThickness + NonSingleRotorDistanceBetweenFrameAndMiddlePad + RotorThickness + MechanicalClearance',
+            alias='DistanceBetweenStatorAndFrame'),
+        Cell('=MagnetThickness + RotorDiskThickness',
+             alias='RotorThickness')
+    ],
+    [
+        Cell('DistanceStubAxleShaftExtendsBeyondTheFrame'),
+        Cell('DistanceBetweenFrameAndMiddlePad', styles=[Style.BOLD]),
+        Cell('Length', styles=[Style.BOLD])
+    ],
+    [
         Cell('20',
              alias='DistanceStubAxleShaftExtendsBeyondTheFrame'),
-        Cell('=MiddlePadThickness + LengthOfTwoNuts',
-             alias='DistanceBetweenFrameAndBackRotor'),
-        Cell('=DistanceBetweenFrameAndBackRotor + MetalLengthL + DistanceStubAxleShaftExtendsBeyondTheFrame',
+        Cell('=RotorTopology == <<Single>> ? DistanceBetweenStatorAndFrame + StatorThickness + MechanicalClearance + RotorThickness : NonSingleRotorDistanceBetweenFrameAndMiddlePad',
+             alias='DistanceBetweenFrameAndMiddlePad'),
+        Cell('=MiddlePadThickness + DistanceBetweenFrameAndMiddlePad + MetalLengthL + DistanceStubAxleShaftExtendsBeyondTheFrame',
              alias='StubAxleShaftLength')
     ]
 ]

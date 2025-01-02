@@ -135,13 +135,13 @@ alternator_cells: List[List[Cell]] = [
         # -----------------------------------
     ],
     [
-        Cell('DistanceBetweenFrameAndBackRotor'),
+        Cell('DistanceBetweenFrameAndMiddlePad'),
         Cell('NumberOfHoles'),
         Cell('HubHolesRadius')
     ],
     [
-        Cell('=Hub.DistanceBetweenFrameAndBackRotor',
-             alias='DistanceBetweenFrameAndBackRotor'),
+        Cell('=Hub.DistanceBetweenFrameAndMiddlePad',
+             alias='DistanceBetweenFrameAndMiddlePad'),
         Cell('=Hub.NumberOfHoles',
              alias='NumberOfHoles'),
         Cell('=Hub.HubHolesRadius',
@@ -150,15 +150,22 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('HubPitchCircleRadius'),
         Cell('MiddlePadThickness'),
-        Cell('RotorSidePadWidth')
+        Cell('RotorThickness')
     ],
     [
         Cell('=Hub.HubPitchCircleRadius',
              alias='HubPitchCircleRadius'),
         Cell('=Hub.MiddlePadThickness',
              alias='MiddlePadThickness'),
-        Cell('=Hub.RotorSidePadWidth',
-             alias='RotorSidePadWidth')
+        Cell('=Hub.RotorThickness',
+             alias='RotorThickness')
+    ],
+    [
+        Cell('DistanceBetweenStatorAndFrame')
+    ],
+    [
+        Cell('=Hub.DistanceBetweenStatorAndFrame',
+             alias='DistanceBetweenStatorAndFrame')
     ],
     [
         Cell('Fastener', styles=[Style.UNDERLINE])
@@ -1074,15 +1081,12 @@ alternator_cells: List[List[Cell]] = [
         Cell('____________'), Cell('____________')
     ],
     [
-        Cell('RotorThickness'),
         # Switch to reduced weight rotor disks when RotorDiskRadius
         # exceeds this threshold.
         Cell('WeightReductionRotorDiskRadiusThreshold'),
-        Cell('FrontRotorCount'),
+        Cell('FrontRotorCount')
     ],
     [
-        Cell('=MagnetThickness + RotorDiskThickness',
-             alias='RotorThickness'),
         Cell('230',
              alias='WeightReductionRotorDiskRadiusThreshold'),
         Cell('=RotorTopology == <<Single>> ? 0 : 1',
@@ -1246,12 +1250,9 @@ alternator_cells: List[List[Cell]] = [
         Cell('Calculated', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('DistanceBetweenStatorAndFrame'),
         Cell('StatorMountingStudsLength')
     ],
     [
-        Cell('=RotorTopology == <<Single>> ? HexNutThickness * 2 + WasherThickness + 5 : DistanceBetweenFrameAndBackRotor +  RotorThickness + MechanicalClearance',
-            alias='DistanceBetweenStatorAndFrame'),
         Cell('=DistanceThreadsExtendFromNuts * 2 + MetalThicknessL + HexNutThickness * 2 + DistanceBetweenStatorAndFrame + StatorThickness + WasherThickness',
              alias='StatorMountingStudsLength')
     ],
@@ -1260,7 +1261,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('HubStudsLength')
     ],
     [
-        Cell('=RotorTopology == <<Single>> ? RotorDiskThickness + RotorSidePadWidth : RotorThickness + FrontRotorThickness + MechanicalClearance * (FrontRotorCount + 1) + StatorThickness + HubHexNutThickness + WasherThickness',
+        Cell('=RotorTopology == <<Single>> ? RotorDiskThickness : RotorThickness + FrontRotorThickness + MechanicalClearance * (FrontRotorCount + 1) + StatorThickness + HubHexNutThickness + WasherThickness',
              alias='HubStudsRotorTopologyLength'),
         Cell('=DistanceThreadsExtendFromNuts * 2 + HubHexNutThickness * 2 + MiddlePadThickness + HubStudsRotorTopologyLength + BladeAssemblyPlateThickness * 2 + WasherThickness + BladeThickness',
              alias='HubStudsLength')
@@ -1276,7 +1277,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=MagnetThickness + MechanicalClearance + StatorThickness + MechanicalClearance * FrontRotorCount + MagnetThickness * (RotorTopology == <<Double>> ? 1 : 0)',
              alias='DistanceBetweenRotorDisks'),
-        Cell('=RotorTopology == <<Single>> ? 1 : floor(DistanceBetweenRotorDisks / HubHexNutThickness)',
+        Cell('=RotorTopology == <<Single>> ? 0 : floor(DistanceBetweenRotorDisks / HubHexNutThickness)',
              alias='NumberOfNutsBetweenRotorDisks'),
         Cell('=floor(DistanceBetweenRotorDisks % HubHexNutThickness / WasherThickness)',
              alias='NumberOfWashersBetweenRotorDisks')
