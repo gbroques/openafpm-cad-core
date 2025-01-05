@@ -1261,9 +1261,9 @@ alternator_cells: List[List[Cell]] = [
         Cell('HubStudsLength')
     ],
     [
-        Cell('=RotorTopology == <<Single>> ? RotorDiskThickness : RotorThickness + FrontRotorThickness + MechanicalClearance * (FrontRotorCount + 1) + StatorThickness + HubHexNutThickness + WasherThickness',
+        Cell('=RotorTopology == <<Single>> ? RotorDiskThickness + DistanceThreadsExtendFromNuts * 1 : RotorThickness + DistanceThreadsExtendFromNuts * 2 + FrontRotorThickness + MechanicalClearance * (FrontRotorCount + 1) + StatorThickness + HubHexNutThickness + WasherThickness',
              alias='HubStudsRotorTopologyLength'),
-        Cell('=DistanceThreadsExtendFromNuts * 2 + HubHexNutThickness * 2 + MiddlePadThickness + HubStudsRotorTopologyLength + BladeAssemblyPlateThickness * 2 + WasherThickness + BladeThickness',
+        Cell('=HubHexNutThickness * 2 + MiddlePadThickness + HubStudsRotorTopologyLength + BladeAssemblyPlateThickness * 2 + WasherThickness + BladeThickness',
              alias='HubStudsLength')
     ],
     [
