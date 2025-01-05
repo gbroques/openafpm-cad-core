@@ -67,12 +67,13 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 5. Regression test all functionality. (TODO: Write documentation for this)
 6. Update "Supported FreeCAD Versions" section in [README.md](./README.md).
 
-## Generating OBJ Files for openafpm-cad-visualization
+## Generating Files for openafpm-cad-visualization
 
 1. Activate the `openafpm-cad-core` conda environment.
 2. If `openafpm-cad-visualization` is cloned up a directory from this repository, then run:
 
        python macros/visualize.py ../openafpm-cad-visualization/public/
+       python macros/print_furl_transform.py > ../openafpm-cad-visualization/public/furlTransform.json
 
 ## Troubleshooting
 
