@@ -308,21 +308,7 @@ def create_frame_dimensions_flat_bar_table_top_view(spreadsheet_document: Docume
             ('L length of flat bar', round_and_format_length(
                 spreadsheet_document.YawBearing.L)),
             ('M width of flat bar', round_and_format_length(
-                spreadsheet_document.YawBearing.MM)),
-            ('Flat bar thickness', round_and_format_length(
-                spreadsheet_document.Spreadsheet.FlatMetalThickness)),
-            (
-                'Length of yaw bearing pipe',
-                round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)
-            ),
-            ('Side piece flat bar length', round_and_format_length(
-                spreadsheet_document.YawBearing.SideLength)),
-            ('Side piece flat bar width', round_and_format_length(
-                spreadsheet_document.YawBearing.SideWidth)),
-            ('Side piece flat bar thickness', round_and_format_length(
-                spreadsheet_document.Spreadsheet.FlatMetalThickness)),
-            ('Length from top of channel section to weld flat bar', round_and_format_length(
-                spreadsheet_document.WindTurbine.LengthFromTopOfChannelSectionToWeldTopBar)),
+                spreadsheet_document.YawBearing.MM))
         ],
         [book_reference_template % 'page 29 left-hand side'],
         (img_path_prefix + 'top-of-extended-frame.png', 'Top of extended frame')
