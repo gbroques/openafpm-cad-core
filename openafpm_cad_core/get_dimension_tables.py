@@ -71,7 +71,10 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
         )
     else:
         tables.append(
-            create_frame_dimensions_flat_bar_table(spreadsheet_document, img_path_prefix)
+            create_frame_dimensions_flat_bar_table_top_view(spreadsheet_document, img_path_prefix)
+        )
+        tables.append(
+            create_frame_dimensions_flat_bar_table_side_view(spreadsheet_document, img_path_prefix)
         )
     tables.append(
         create_steel_pipe_dimensions_for_tail_table(spreadsheet_document, img_path_prefix)
@@ -297,9 +300,9 @@ def create_offset_table(spreadsheet_document: Document) -> Element:
     )
 
 
-def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
+def create_frame_dimensions_flat_bar_table_top_view(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     return create_table(
-        'Frame Dimensions, Flat Bar',
+        'Frame Dimensions, Flat Bar Top View',
         [
             ('Offset', round_and_format_length(spreadsheet_document.Spreadsheet.Offset)),
             ('L length of flat bar', round_and_format_length(
@@ -323,6 +326,29 @@ def create_frame_dimensions_flat_bar_table(spreadsheet_document: Document, img_p
         ],
         [book_reference_template % 'page 29 left-hand side'],
         (img_path_prefix + 'top-of-extended-frame.png', 'Top of extended frame')
+    )
+
+
+def create_frame_dimensions_flat_bar_table_side_view(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
+    return create_table(
+        'Frame Dimensions, Flat Bar Side View',
+        [
+            ('N flat bar thickness', round_and_format_length(
+                spreadsheet_document.Spreadsheet.FlatMetalThickness)),
+            (
+                'O length of yaw bearing pipe',
+                round_and_format_length(spreadsheet_document.HighEndStop.YawPipeLength)
+            ),
+            ('P side piece flat bar length', round_and_format_length(
+                spreadsheet_document.YawBearing.SideLength)),
+            ('Q side piece flat bar width', round_and_format_length(
+                spreadsheet_document.YawBearing.SideWidth)),
+            ('R side piece flat bar thickness', round_and_format_length(
+                spreadsheet_document.Spreadsheet.FlatMetalThickness)),
+            ('S length from top of channel section to weld flat bar', round_and_format_length(
+                spreadsheet_document.WindTurbine.LengthFromTopOfChannelSectionToWeldTopBar)),
+        ],
+        img_src_and_alt=(img_path_prefix + 'side-of-extended-frame.svg', 'Side of extended frame')
     )
 
 
