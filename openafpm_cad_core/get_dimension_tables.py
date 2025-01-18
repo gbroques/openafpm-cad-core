@@ -113,7 +113,8 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
 def create_table(header: str,
                  rows: List[Tuple[str, Any]],
                  footer_rows: Optional[List[str]] = None,
-                 img_src_and_alt: Optional[Tuple[str, str]] = None) -> Element:
+                 img_src_and_alt: Optional[Tuple[str, str]] = None,
+                 img_style: Optional[str] = None) -> Element:
     col_span = 3 if img_src_and_alt else 2
     children = [
         thead([
@@ -132,7 +133,7 @@ def create_table(header: str,
         src, alt = img_src_and_alt
         table_body = children[1]
         first_row = table_body['children'][0]
-        first_row['children'].append(td(img(src, alt), row_span=len(rows)))
+        first_row['children'].append(td(img(src, alt, img_style), row_span=len(rows)))
     if footer_rows:
         children.append(
             tfoot([
@@ -486,7 +487,9 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document, img_path
             ('Threaded rod diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderCenterRodDiameter)}'),
             ('Pin diameter', f'M{round(spreadsheet_document.Alternator.CoilWinderPinDiameter)}')
         ],
-        img_src_and_alt = img_src_and_alt
+        img_src_and_alt = img_src_and_alt,
+        # Decrease size of coil winder dimensions, other images have a max-width of 480px by default
+        img_style='max-width: 330px'
     )
 
 
@@ -891,13 +894,14 @@ def tcell(tag_name: str, content: Any = None, col_span: Optional[int] = None, ro
     return element
 
 
-def img(src: str, alt: str) -> Element:
+def img(src: str, alt: str, style: str = '') -> Element:
     """https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement"""
     element: Element = {
         'tagName': 'img',
         'properties': {
             'src': src,
             'alt': alt,
+            'style': style
         }
     }
     return element
