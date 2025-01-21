@@ -145,7 +145,7 @@ tail_cells: List[List[Cell]] = [
     ],
     [
         Cell('CoverThickness'),
-        Cell('3',
+        Cell('5',
              alias='HingeInnerPipeCoverThickness')
     ],
     [
