@@ -1279,7 +1279,7 @@ alternator_cells: List[List[Cell]] = [
              alias='DistanceBetweenRotorDisks'),
         Cell('=RotorTopology == <<Single>> ? 0 : floor(DistanceBetweenRotorDisks / HubHexNutThickness)',
              alias='NumberOfNutsBetweenRotorDisks'),
-        Cell('=floor(DistanceBetweenRotorDisks % HubHexNutThickness / WasherThickness)',
+        Cell('=RotorTopology == <<Single>> ? 0 : floor(DistanceBetweenRotorDisks % HubHexNutThickness / WasherThickness)',
              alias='NumberOfWashersBetweenRotorDisks')
     ],
     [
