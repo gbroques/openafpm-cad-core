@@ -1,6 +1,12 @@
 # OpenAFPM CAD Core
 
-Repository containing [OpenAFPM](https://www.openafpm.net/) wind turbine model made with open-source CAD program [FreeCAD](https://www.freecad.org/).
+Repository containing [OpenAFPM](https://www.openafpm.net/) wind turbine CAD model, and models for tools aiding in the local construction of the wind turbine such as molds and jigs.
+
+The wind turbine design is based on ["*A Wind Turbine Recipe Book*" by Hugh Piggott](http://scoraigwind.co.uk/pdf-metric-edition-of-recipe-book-at-scribd/).
+
+All models are made with the open-source CAD program [FreeCAD](https://www.freecad.org/).
+
+Various functions (yet to be described) are exposed to support other projects. See [Related Repositories](#related-repositories).
 
 ## Installing Package
 
@@ -17,8 +23,8 @@ From the root of this repository:
 
 
 ## Related Repositories
-* [openafpm-cad-visualization](https://github.com/gbroques/openafpm-cad-visualization)
-* [openafpm-cad-desktop-app](https://github.com/gbroques/openafpm-cad-desktop-app)
+* [openafpm-cad-visualization](https://github.com/gbroques/openafpm-cad-visualization) - visualizes CAD models in a web browser.
+* [openafpm-cad-desktop-app](https://github.com/gbroques/openafpm-cad-desktop-app) - for **testing** `openafpm-cad-core` and `openafpm-cad-visualization`.
 
 
 ## Prerequisites
@@ -91,5 +97,4 @@ Currently tested with FreeCAD `1.0.0`.
 * [Wind Empowerment](https://windempowerment.com/)
 * [WISIONS of Sustainability](https://wisions.net/)
 * [Hugh Piggott's blog](http://scoraigwind.co.uk/)
-  * [A Wind Turbine Recipe Book (metric edition) by Hugh Piggott](http://scoraigwind.co.uk/pdf-metric-edition-of-recipe-book-at-scribd/)
 * [[Wikipedia] Wind turbine design](https://en.wikipedia.org/wiki/Wind_turbine_design)
