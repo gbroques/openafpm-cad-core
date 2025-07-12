@@ -23,6 +23,7 @@ From the root of this repository:
 
 
 ## Related Repositories
+* [openafpm_worker/MagnAFPM](https://gitlab.com/rurerg/openafpm/openafpm_worker/-/tree/master/MagnAFPM) - simulates AFPM generator and generates output for CAD model.
 * [openafpm-cad-visualization](https://github.com/gbroques/openafpm-cad-visualization) - visualizes CAD models in a web browser.
 * [openafpm-cad-desktop-app](https://github.com/gbroques/openafpm-cad-desktop-app) - for **testing** `openafpm-cad-core` and `openafpm-cad-visualization`.
 
