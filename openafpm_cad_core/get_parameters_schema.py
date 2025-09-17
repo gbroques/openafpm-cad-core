@@ -15,7 +15,7 @@ from .pipe_size import PipeSize
 from .wind_turbine_shape import (WindTurbineShape,
                                  map_rotor_disk_radius_to_wind_turbine_shape)
 
-MIN_NUMBER_MAGNET = 8
+MIN_NUMBER_MAGNET = 4
 MAX_NUMBER_MAGNET = 32
 
 
