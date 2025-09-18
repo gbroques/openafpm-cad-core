@@ -124,11 +124,14 @@ alternator_cells: List[List[Cell]] = [
              alias='MagnetWidth')
     ],
     [
-        Cell('RotorTopology')
+        Cell('RotorTopology'),
+        Cell('WindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.RotorTopology',
-             alias='RotorTopology')
+             alias='RotorTopology'),
+        Cell('=Spreadsheet.WindTurbineShape',
+             alias='WindTurbineShape')
     ],
     [
         Cell('Hub', styles=[Style.UNDERLINE])
@@ -287,7 +290,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('RadiusOfResinAroundWireTube')
     ],
     [
-        Cell('=RotorDiskRadius < 187.5 ? TShapeLidNotchDegrees : (RotorDiskRadius < 275 ? HShapeLidNotchDegrees : StarShapeLidNotchDegrees)',
+        Cell('=WindTurbineShape == <<T>> ? TShapeLidNotchDegrees : (WindTurbineShape == <<H>> ? HShapeLidNotchDegrees : StarShapeLidNotchDegrees)',
              alias='LidNotchDegrees'),
         Cell('16',
              alias='WireTubeDiameter'),
@@ -346,7 +349,7 @@ alternator_cells: List[List[Cell]] = [
              alias='HShapeStatorHolesCircumradius'),
         Cell('=OutsideCoilEdgeRadius + 0.5 * (HexagonalStatorOuterCircumradius - RotorDiskRadius - CoilLegWidth)',
              alias='StarShapeStatorHolesCircumradius'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeStatorHolesCircumradius : (RotorDiskRadius < 275 ? HShapeStatorHolesCircumradius : StarShapeStatorHolesCircumradius)',
+        Cell('=WindTurbineShape == <<T>> ? TShapeStatorHolesCircumradius : (WindTurbineShape == <<H>> ? HShapeStatorHolesCircumradius : StarShapeStatorHolesCircumradius)',
              alias='StatorHolesCircumradius')
     ],
     [
@@ -362,8 +365,8 @@ alternator_cells: List[List[Cell]] = [
              alias='HShapeNumberOfStatorHoles'),
         Cell('6',
              alias='StarShapeNumberOfStatorHoles'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeNumberOfStatorHoles : ' +
-             '(RotorDiskRadius < 275 ? HShapeNumberOfStatorHoles : StarShapeNumberOfStatorHoles)',
+        Cell('=WindTurbineShape == <<T>> ? TShapeNumberOfStatorHoles : ' +
+             '(WindTurbineShape == <<H>> ? HShapeNumberOfStatorHoles : StarShapeNumberOfStatorHoles)',
              alias='NumberOfStatorHoles')
     ],
     [
@@ -376,7 +379,7 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeEarSize'),
         Cell('35',
              alias='HShapeEarSize'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeEarSize : HShapeEarSize',
+        Cell('=WindTurbineShape == <<T>> ? TShapeEarSize : HShapeEarSize',
              alias='EarSize')
     ],
     [
@@ -394,7 +397,7 @@ alternator_cells: List[List[Cell]] = [
         # Align H and Star Shape coils to 180° instead of 90°
         Cell('90',
              alias='HAndStarShapeCoilsAngle'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeCoilsAngle : HAndStarShapeCoilsAngle',
+        Cell('=WindTurbineShape == <<T>> ? TShapeCoilsAngle : HAndStarShapeCoilsAngle',
              alias='CoilsAngle')
     ],
     [
@@ -447,7 +450,7 @@ alternator_cells: List[List[Cell]] = [
              alias='TShapeSketchY'),
         Cell('0',
              alias='HShapeSketchY'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeSketchY : HShapeSketchY',
+        Cell('=WindTurbineShape == <<T>> ? TShapeSketchY : HShapeSketchY',
              alias='SketchY')
     ],
     [
@@ -471,7 +474,7 @@ alternator_cells: List[List[Cell]] = [
         # for the T and H Shape Stator Mold.
         Cell('=EarAngle / 4',
              alias='LargeHoleAngle'),
-        Cell('=RotorDiskRadius < 187.5 ? 0 : (RotorDiskRadius < 275 ? 45 : 0)',
+        Cell('=WindTurbineShape == <<T>> ? 0 : (WindTurbineShape == <<H>> ? 45 : 0)',
              alias='StatorMoldHolesSketchAngle')
     ],
     [
@@ -507,7 +510,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('StatorMoldIslandNumberOfScrews')
     ],
     [
-        Cell('=RotorDiskRadius < 275 ? NumberOfStatorHoles * 4 : 24',
+        Cell('=WindTurbineShape == <<H>> ? NumberOfStatorHoles * 4 : 24',
              alias='StatorMoldSurroundNumberOfBolts'),
         Cell('=4 * 2 * NumberOfStatorHoles',
              alias='StatorMoldSurroundNumberOfScrews'),
@@ -645,7 +648,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('DistanceBetweenOuterHolesAndStatorMold')
     ],
     [
-        Cell('=RotorDiskRadius < 275 ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius',
+        Cell('=WindTurbineShape == <<H>> ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius',
              alias='StatorMoldSurroundHolesEdgeCircumradius'),
         Cell('=min(StatorMoldSurroundHolesEdgeCircumradius + MaximumDistanceBetweenOuterHolesAndStatorMold;' +
              ' StatorMoldSurroundHolesEdgeCircumradius * 1.13)',
@@ -1041,7 +1044,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('JackingRodDiameter')
     ],
     [
-        Cell('=RotorDiskRadius < 187.5 ? 4 : 3',
+        Cell('=WindTurbineShape == <<T>> ? 4 : 3',
              alias='NumberOfJackingHoles'),
         Cell('=min(HubHolesDiameter; 12)',
              alias='JackingRodDiameter')
@@ -1113,7 +1116,7 @@ alternator_cells: List[List[Cell]] = [
         # TODO: Duplicated with below InnerCircleResineRotor
         Cell('=RotorDiskRadius - MagnetLength - 25',
              alias='LargeIslandRadius'),
-        Cell('=RotorDiskRadius < 187.5 ? SmallIslandRadius : LargeIslandRadius',
+        Cell('=WindTurbineShape == <<T>> ? SmallIslandRadius : LargeIslandRadius',
              alias='IslandRadius')
     ],
     [
@@ -1210,7 +1213,7 @@ alternator_cells: List[List[Cell]] = [
              alias='UnroundedRotorMoldScrewLength'),
         Cell('=UnroundedRotorMoldScrewLength + - mod(UnroundedRotorMoldScrewLength; 5)',
              alias='RotorMoldScrewLength'),
-        Cell('=RotorDiskRadius < 187.5 ? NumberOfHoles / 2 : NumberOfHoles',
+        Cell('=WindTurbineShape == <<T>> ? NumberOfHoles / 2 : NumberOfHoles',
              alias='NumberOfRotorMoldBolts')
     ],
     [
@@ -1427,9 +1430,9 @@ alternator_cells: List[List[Cell]] = [
         Cell('Z'), Cell('Y'), Cell('X')
     ],
     [
-        Cell('=RotorDiskRadius < 187.5 ? -90 : -180', alias='AlternatorZ'),
-        Cell('=RotorDiskRadius < 187.5 ? 0 : 90', alias='AlternatorY'),
-        Cell('=RotorDiskRadius < 187.5 ? 90 : 0', alias='AlternatorX')
+        Cell('=WindTurbineShape == <<T>> ? -90 : -180', alias='AlternatorZ'),
+        Cell('=WindTurbineShape == <<T>> ? 0 : 90', alias='AlternatorY'),
+        Cell('=WindTurbineShape == <<T>> ? 90 : 0', alias='AlternatorX')
     ],
     [
         Cell('AlternatorRotation'),
