@@ -39,6 +39,11 @@ def get_cells_by_spreadsheet_name(magnafpm_parameters: MagnafpmParameters,
         'MagnAFPM': magnafpm_parameters,
         'Furling': furling_parameters,
         'User': user_parameters,
+        'Shape': {
+           'HShapeLowerBound': 187.5,
+           'StarShapeLowerBound': 275,
+           'WindTurbineShape': '=RotorDiskRadius < HShapeLowerBound ? <<T>> : (RotorDiskRadius < StarShapeLowerBound ? <<H>> : <<Star>>)'
+        },
     })
     return {
         'Spreadsheet': cells,
