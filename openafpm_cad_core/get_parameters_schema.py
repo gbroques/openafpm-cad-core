@@ -90,7 +90,14 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Magnet Material",
                         "description": get_description("magnafpm", "MagnetMaterial"),
                         "type": get_type("magnafpm", "MagnetMaterial"),
-                        "enum": ["Neodymium", "Ferrite"]
+                        "enum": [
+                            "Ferrite C8",
+                            "NdFeB N35",
+                            "NdFeB N40",
+                            "NdFeB N42",
+                            "NdFeB N45",
+                            "NdFeB N52"
+                        ]
                     },
                     "NumberMagnet": {
                         "title": "Number Magnet",

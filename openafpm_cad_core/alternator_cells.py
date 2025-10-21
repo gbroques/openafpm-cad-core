@@ -1176,7 +1176,7 @@ alternator_cells: List[List[Cell]] = [
     [
         Cell('=RotorDiskRadius * 2 * 1.3333',
              alias='RotorMoldSideLength'),
-        Cell('=MagnetMaterial == <<Ferrite>> ? 0.7 : 1.0',
+        Cell('=MagnetMaterial == <<Ferrite C8>> ? 0.7 : 1.0',
              alias='PercentageOfMagnetThicknessCoveredByResin')
     ],
     [

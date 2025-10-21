@@ -609,7 +609,7 @@ def create_magnet_positioning_jig_dimensions_table(spreadsheet_document: Documen
             spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
             spreadsheet_document.Spreadsheet.HubHolesDiameter)),
     ]
-    if spreadsheet_document.Spreadsheet.MagnetMaterial == 'Neodymium':
+    if spreadsheet_document.Spreadsheet.MagnetMaterial != 'Ferrite C8':
         rows.append(('Washers (standard)', format_fastener(
             spreadsheet_document.Alternator.NumberOfRotorMoldBolts,
             spreadsheet_document.Spreadsheet.HubHolesDiameter)))

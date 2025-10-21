@@ -15,7 +15,7 @@ def map_magnafpm_parameters(magnafpm: dict) -> MagnafpmParameters:
         'MagnetLength': magnafpm['la'],
         'MagnetWidth': magnafpm['wm'],
         'MagnetThickness': magnafpm['hm'],
-        'MagnetMaterial': 'Ferrite' if isclose(magnafpm['mag_density'], 5) else 'Neodymium',
+        'MagnetMaterial': map_bh_max_to_magnet_material(magnafpm['BHmax']),
         'NumberMagnet': int(magnafpm['magnet_num']),
         'StatorThickness': magnafpm['tw'],
         'CoilType': int(magnafpm['coil_type']),
@@ -42,3 +42,19 @@ def map_rotor_topology(rotor: int) -> str:
         raise ValueError(f'Unrecognized "rotor" option with value "{rotor}"')
     else:
         return rotor_topology_by_rotor[rotor]
+
+def map_bh_max_to_magnet_material(bh_max: int) -> str:
+    if bh_max == 30:
+        return 'Ferrite C8'
+    elif bh_max == 287:
+        return 'NdFeB N35'
+    elif bh_max == 326:
+        return 'NdFeB N40'
+    elif bh_max == 342:
+        return 'NdFeB N42'
+    elif bh_max == 366:
+        return 'NdFeB N45'
+    elif bh_max == 422:
+        return 'NdFeB N52'
+    else:
+        raise ValueError(f'Unable to map BHmax {bh_max} to MagnetMaterial')
