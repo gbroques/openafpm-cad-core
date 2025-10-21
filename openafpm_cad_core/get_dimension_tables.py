@@ -669,8 +669,8 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                 number_of_blade_assembly_fasteners,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             ('Rotor disk assembly nuts', format_fastener(
-                spreadsheet_document.Alternator.NumberOfNutsBetweenRotorDisks +
-                spreadsheet_document.Hub.NumberOfHoles,
+                (spreadsheet_document.Alternator.NumberOfNutsBetweenRotorDisks + 1)
+                    * spreadsheet_document.Hub.NumberOfHoles,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             ('Rotor disk assembly washers (standard)', format_fastener(
                 spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks,
