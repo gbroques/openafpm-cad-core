@@ -673,7 +673,8 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
                     * spreadsheet_document.Hub.NumberOfHoles,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             ('Rotor disk assembly washers (standard)', format_fastener(
-                spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks,
+                spreadsheet_document.Alternator.NumberOfWashersBetweenRotorDisks
+                    * spreadsheet_document.Hub.NumberOfHoles,
                 spreadsheet_document.Spreadsheet.HubHolesDiameter)),
             (
                 'Stator studs',
