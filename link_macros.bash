@@ -13,21 +13,18 @@ set -e
 
 is_linux()
 {
-    [ "$(uname --kernel-name)" = "Linux" ]
+    [ "$(uname -s)" = "Linux" ]
 }
 
 is_macOS()
 {
-     "$(uname --kernel-name)" = "Darwin" ]
+    [ "$(uname -s)" = "Darwin" ]
 }
 
 if is_linux; then
     macro_dir=`realpath ~/.local/share/FreeCAD/Macro`
 elif is_macOS; then
-    echo "Error: MacOS not supported. Please contribute changes on GitHub." >&2
-    echo "See default Macro directory for MacOS here:" >&2
-    echo "https://wiki.freecad.org/How_to_install_macros#Default_directory" >&2
-    exit 1
+    macro_dir=`realpath ~/Library/Application\ Support/FreeCAD/Macro`
 else # Windows
     echo "Error: Windows not supported. Please contribute changes on GitHub." >&2
     echo "See default Macro directory for Windows here:" >&2
@@ -42,7 +39,8 @@ IFS=$(echo -en "\n\b")
 for macro in $macros
 do
     filename=`basename $macro`
-    echo "ln --symbolic --force $(pwd)/$macro $macro_dir/$filename"
-    ln --symbolic --force $(pwd)/$macro $macro_dir/$filename
+    # Create a symbolic link and overwrite it if it already exists.
+    echo "ln -sf $(pwd)/$macro $macro_dir/$filename"
+    ln -sf $(pwd)/$macro $macro_dir/$filename
 done
 IFS=$SAVEIFS
