@@ -510,7 +510,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('StatorMoldIslandNumberOfScrews')
     ],
     [
-        Cell('=WindTurbineShape == <<H>> ? NumberOfStatorHoles * 4 : 24',
+        Cell('=WindTurbineShape == <<Star>> ? 24 : NumberOfStatorHoles * 4',
              alias='StatorMoldSurroundNumberOfBolts'),
         Cell('=4 * 2 * NumberOfStatorHoles',
              alias='StatorMoldSurroundNumberOfScrews'),
@@ -648,7 +648,7 @@ alternator_cells: List[List[Cell]] = [
         Cell('DistanceBetweenOuterHolesAndStatorMold')
     ],
     [
-        Cell('=WindTurbineShape == <<H>> ? StatorHolesCircumradius : HexagonalStatorOuterCircumradius',
+        Cell('=WindTurbineShape == <<Star>> ? HexagonalStatorOuterCircumradius : StatorHolesCircumradius',
              alias='StatorMoldSurroundHolesEdgeCircumradius'),
         Cell('=min(StatorMoldSurroundHolesEdgeCircumradius + MaximumDistanceBetweenOuterHolesAndStatorMold;' +
              ' StatorMoldSurroundHolesEdgeCircumradius * 1.13)',

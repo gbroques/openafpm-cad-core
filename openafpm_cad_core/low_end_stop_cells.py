@@ -18,7 +18,8 @@ low_end_stop_cells: List[List[Cell]] = [
     [
         Cell('RotorDiskRadius'),
         Cell('FlatMetalThickness'),
-        Cell('YawPipeDiameter')
+        Cell('YawPipeDiameter'),
+        Cell('WindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.RotorDiskRadius',
@@ -26,7 +27,9 @@ low_end_stop_cells: List[List[Cell]] = [
         Cell('=Spreadsheet.FlatMetalThickness',
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.YawPipeDiameter',
-             alias='YawPipeDiameter')
+             alias='YawPipeDiameter'),
+        Cell('=Spreadsheet.WindTurbineShape',
+             alias='WindTurbineShape')
     ],
     [
         Cell('VerticalPlaneAngle'),
@@ -356,7 +359,7 @@ low_end_stop_cells: List[List[Cell]] = [
         # Increasing MetalLengthL to 90 and VerticalPlaneAngle to 20 for Star Shape from default values
         # results in CanSideExtendToMiddleOfYawBearingPipe evaluating to True.
         #
-        Cell('=RotorDiskRadius < 187.5 ? 1.15 : (CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1)',
+        Cell('=WindTurbineShape == <<T>> ? 1.15 : (CanSideExtendToMiddleOfYawBearingPipe == True ? 1 : 1.1)',
              alias='LowEndStopLengthScaleFactor'),
         Cell('=.TangentPointLowEndStopLocal.Length * LowEndStopLengthScaleFactor',
              alias='LowEndStopLength')

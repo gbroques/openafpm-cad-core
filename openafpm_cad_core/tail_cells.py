@@ -18,7 +18,8 @@ tail_cells: List[List[Cell]] = [
     [
         Cell('RotorDiskRadius'),
         Cell('BracketLength'),
-        Cell('FlatMetalThickness')
+        Cell('FlatMetalThickness'),
+        Cell('WindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.RotorDiskRadius',
@@ -26,7 +27,9 @@ tail_cells: List[List[Cell]] = [
         Cell('=Spreadsheet.BracketLength',
              alias='BracketLength'),
         Cell('=Spreadsheet.FlatMetalThickness',
-             alias='FlatMetalThickness')
+             alias='FlatMetalThickness'),
+        Cell('=Spreadsheet.WindTurbineShape',
+             alias='WindTurbineShape')
     ],
     [
         Cell('YawPipeDiameter'),
@@ -151,7 +154,7 @@ tail_cells: List[List[Cell]] = [
     [
         # Hide inner hinge pipe cover for T Shape
         Cell('DisplayCover'),
-        Cell('=RotorDiskRadius < 187.5 ? 0 : 1',
+        Cell('=WindTurbineShape == <<T>> ? 0 : 1',
              alias='HingeInnerPipeDisplayCover')
     ],
     [
@@ -501,7 +504,7 @@ tail_cells: List[List[Cell]] = [
     [
         # Width of tail boom support along the slant of the outer tail hinge.
         Cell('TailBoomTriangularBraceWidth'),
-        Cell('=RotorDiskRadius < 187.5 ? TShapeTailBoomTriangularBraceWidth : DistanceOfOuterHingeBelowBoom',
+        Cell('=WindTurbineShape == <<T>> ? TShapeTailBoomTriangularBraceWidth : DistanceOfOuterHingeBelowBoom',
              alias='TailBoomTriangularBraceWidth')
     ],
     [

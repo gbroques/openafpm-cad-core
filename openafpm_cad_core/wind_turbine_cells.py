@@ -18,13 +18,16 @@ wind_turbine_cells: List[List[Cell]] = [
     ],
     [
         Cell('RotorDiskRadius'),
-        Cell('FlatMetalThickness')
+        Cell('FlatMetalThickness'),
+        Cell('WindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.RotorDiskRadius',
              alias='RotorDiskRadius'),
         Cell('=Spreadsheet.FlatMetalThickness',
-             alias='FlatMetalThickness')
+             alias='FlatMetalThickness'),
+        Cell('=Spreadsheet.WindTurbineShape',
+             alias='WindTurbineShape')
     ],
     [
         Cell('VerticalPlaneAngle'),
@@ -204,7 +207,7 @@ wind_turbine_cells: List[List[Cell]] = [
              alias='LargeYawBearingZPosition'),
         Cell('=LargeYawBearingZPosition - FrameZ + LargeYawBearingXOffset',
              alias='LargeYawBearingXPosition'),
-        Cell('=RotorDiskRadius < 187.5 ? SmallYawBearingX : LargeYawBearingX',
+        Cell('=WindTurbineShape == <<T>> ? SmallYawBearingX : LargeYawBearingX',
              alias='YawBearingXOffset'),
         Cell('=-sin(AlternatorTiltAngle) * YawBearingXOffset',
              alias='AlternatorLinkYOffset')
@@ -215,7 +218,7 @@ wind_turbine_cells: List[List[Cell]] = [
         Cell('StarShapeYawBearingY')
     ],
     [
-        Cell('=RotorDiskRadius < 275 ? HShapeChannelSectionHeight : StarShapeChannelSectionHeight',
+        Cell('=WindTurbineShape == <<Star>> ? StarShapeChannelSectionHeight : HShapeChannelSectionHeight',
              alias='ChannelSectionHeight'),
         Cell('=ChannelSectionHeight * 0.25',
              alias='HShapeYawBearingY'),
@@ -237,7 +240,7 @@ wind_turbine_cells: List[List[Cell]] = [
     [
         Cell('=LargeYawBearingXPosition',
              alias='LargeYawBearingX'),
-        Cell('=RotorDiskRadius < 275 ? HShapeYawBearingY : StarShapeYawBearingY',
+        Cell('=WindTurbineShape == <<Star>> ? StarShapeYawBearingY : HShapeYawBearingY',
              alias='LargeYawBearingY'),
         Cell('=LargeYawBearingZPosition',
              alias='LargeYawBearingZ'),
@@ -301,7 +304,7 @@ wind_turbine_cells: List[List[Cell]] = [
     ],
     [
         Cell('VerticalDistanceFromCenter'),
-        Cell('=RotorDiskRadius < 187.5 ? SmallVerticalDistanceFromCenter : LargeVerticalDistanceFromCenter',
+        Cell('=WindTurbineShape == <<T>> ? SmallVerticalDistanceFromCenter : LargeVerticalDistanceFromCenter',
              alias='VerticalDistanceFromCenter')
     ],
     [
@@ -317,10 +320,10 @@ wind_turbine_cells: List[List[Cell]] = [
     *create_placement_cells(name='YawBearing',
                             base=(
                                 '=YawBearingXOffset',
-                                '=RotorDiskRadius < 187.5 ? SmallYawBearingY : LargeYawBearingY',
-                                '=RotorDiskRadius < 187.5 ? SmallYawBearingZ : LargeYawBearingZ'),
+                                '=WindTurbineShape == <<T>> ? SmallYawBearingY : LargeYawBearingY',
+                                '=WindTurbineShape == <<T>> ? SmallYawBearingZ : LargeYawBearingZ'),
                             axis=('0', '1', '0'),
-                            angle='=RotorDiskRadius < 187.5 ? SmallYawBearingAngle : LargeYawBearingAngle'),
+                            angle='=WindTurbineShape == <<T>> ? SmallYawBearingAngle : LargeYawBearingAngle'),
     *create_placement_cells(name='AlternatorLink',
                             base=(
                                 '=YawBearingX - YawBearingX * cos(AlternatorTiltAngle) + AlternatorXoffset',
@@ -330,9 +333,9 @@ wind_turbine_cells: List[List[Cell]] = [
                             angle='=AlternatorTiltAngle'),
     *create_placement_cells(name='TailAssemblyLink',
                             base=(
-                                '=RotorDiskRadius < 187.5 ? SmallTailHingeX : LargeTailHingeX',
-                                '=RotorDiskRadius < 187.5 ? SmallTailHingeY : LargeTailHingeY',
-                                '=RotorDiskRadius < 187.5 ? SmallTailHingeZ : LargeTailHingeZ'),
+                                '=WindTurbineShape == <<T>> ? SmallTailHingeX : LargeTailHingeX',
+                                '=WindTurbineShape == <<T>> ? SmallTailHingeY : LargeTailHingeY',
+                                '=WindTurbineShape == <<T>> ? SmallTailHingeZ : LargeTailHingeZ'),
                             # Equivalent to (0°, -90°, 270°) in yaw-pitch-roll.
                             axis=('0.58', '0.58', '0.58'),
                             angle='=240deg'),
