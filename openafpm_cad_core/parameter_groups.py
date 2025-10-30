@@ -1,4 +1,3 @@
-
 """Module containing parameter group definitions.
 
 The wind turbine has many parameters which are organized into 3 broad categories.
@@ -7,9 +6,9 @@ The wind turbine has many parameters which are organized into 3 broad categories
 from typing import TypedDict
 
 __all__ = [
-    'MagnafpmParameters',
-    'FurlingParameters',
-    'UserParameters',
+    "MagnafpmParameters",
+    "FurlingParameters",
+    "UserParameters",
 ]
 
 
@@ -22,6 +21,7 @@ class MagnafpmParameters(TypedDict):
     * how electricity is generated
     * and (**magn**)etism.
     """
+
     RotorDiameter: float
     """The width of the circle swept by the rotating blades.
 
@@ -273,6 +273,14 @@ class FurlingParameters(TypedDict):
 
 class UserParameters(TypedDict):
     """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
+
+    WindTurbineShape: str
+    """The shape of the wind turbine: one of 'T', 'H', or 'Star'.
+
+    The shape of the turbine controls the topology of the model.
+
+    Its name is based on the shape of the frame.
+    """
 
     BladeWidth: float
     """The width of the blade near the root.

@@ -16,7 +16,6 @@ from .spreadsheet import Cell, populate_spreadsheet
 from .tail_cells import tail_cells
 from .wind_turbine_cells import wind_turbine_cells
 from .yaw_bearing_cells import yaw_bearing_cells
-from .wind_turbine_shape import H_SHAPE_LOWER_BOUND, STAR_SHAPE_LOWER_BOUND
 
 __all__ = ["upsert_spreadsheet_document"]
 
@@ -42,12 +41,7 @@ def get_cells_by_spreadsheet_name(
         {
             "MagnAFPM": magnafpm_parameters,
             "Furling": furling_parameters,
-            "User": user_parameters,
-            "Shape": {
-                "HShapeLowerBound": H_SHAPE_LOWER_BOUND,
-                "StarShapeLowerBound": STAR_SHAPE_LOWER_BOUND,
-                "WindTurbineShape": "=RotorDiskRadius < HShapeLowerBound ? <<T>> : (RotorDiskRadius < StarShapeLowerBound ? <<H>> : <<Star>>)",
-            },
+            "User": user_parameters
         }
     )
     return {
