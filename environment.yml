@@ -10,6 +10,9 @@ dependencies:
   # Check main label to see if there's a newer version:
   # https://anaconda.org/conda-forge/freecad/labels
   - freecad==1.0.0
+  # Pin Qt to FreeCAD compatiable version.
+  # We can possibly remove this when migrating to freecad 1.1.x
+  - qt6-main<6.8
   - sphinx==7.2.3
   - sphinx_rtd_theme==1.3.0
   - pip
