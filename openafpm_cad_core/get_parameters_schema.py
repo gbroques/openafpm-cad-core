@@ -54,6 +54,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "RotorTopology": {
                         "title": "Rotor Topology",
                         "description": get_description("magnafpm", "RotorTopology"),
+                        "type": get_type("magnafpm", "RotorTopology"),
                         "enum": ["Double", "Single and metal disk", "Single"],
                     },
                     "RotorDiskRadius": {
@@ -322,6 +323,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "WindTurbineShape": {
                         "title": "Wind Turbine Shape",
                         "description": get_description("user", "WindTurbineShape"),
+                        "type": get_type("user", "WindTurbineShape"),
                         "enum": [
                             WindTurbineShape.T.value.split()[0],
                             WindTurbineShape.H.value.split()[0],
