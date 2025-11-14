@@ -8,29 +8,35 @@ The algorithm is as follows:
 5. Concatenate all values together with a '-'.
 """
 
+import copy
 import string
 from typing import List, TypedDict
 
-from .parameter_groups import (FurlingParameters, MagnafpmParameters,
-                               UserParameters)
+from .parameter_groups import FurlingParameters, MagnafpmParameters, UserParameters
+from .get_parameters_schema import get_parameters_schema
 
 # https://en.wikipedia.org/wiki/Base62
 CHARSET = string.digits + string.ascii_uppercase + string.ascii_lowercase
-VALUE_DELIMITER = '-'
-DECIMAL_DELIMITER = '.'
-MAGNET_MATERIALS = ['Neodymium', 'Ferrite']
+VALUE_DELIMITER = "-"
+DECIMAL_DELIMITER = "."
 
-__all__ = ['hash_parameters', 'unhash_parameters']
+__all__ = ["hash_parameters", "unhash_parameters"]
 
 
-def hash_parameters(magnafpm_parameters: MagnafpmParameters,
-                    furling_parameters: FurlingParameters,
-                    user_parameters: UserParameters) -> str:
-    parameters_by_group = string_to_numeric({
-        'magnafpm': magnafpm_parameters,
-        'user': user_parameters,
-        'furling': furling_parameters
-    })
+def hash_parameters(
+    magnafpm_parameters: MagnafpmParameters,
+    furling_parameters: FurlingParameters,
+    user_parameters: UserParameters,
+) -> str:
+    schema = get_parameters_schema(magnafpm_parameters["RotorDiskRadius"])
+    parameters_by_group = convert_string_values_to_number(
+        {
+            "magnafpm": magnafpm_parameters,
+            "furling": furling_parameters,
+            "user": user_parameters,
+        },
+        schema,
+    )
     group_keys = get_group_keys()
     order = flatten(group_keys)
     items = []
@@ -42,18 +48,22 @@ def hash_parameters(magnafpm_parameters: MagnafpmParameters,
 
 
 def unhash_parameters(parameter_hash: str) -> dict:
-    parameters_by_group = {
-        'magnafpm': {},
-        'furling': {},
-        'user': {}
-    }
+    parameters_by_group = {"magnafpm": {}, "furling": {}, "user": {}}
     groups = parameters_by_group.keys()
     group_keys = get_group_keys()
     values = list(map(decode, parameter_hash.split(VALUE_DELIMITER)))
+    rotor_disk_radius = values[2]
+    schema = get_parameters_schema(rotor_disk_radius)
     i = 0
     for group, group_keys in zip(groups, group_keys):
+        group_properties = schema["properties"][group]["properties"]
         for key in group_keys:
-            parameters_by_group[group][key] = values[i]
+            parameter_properties = group_properties[key]
+            is_string = parameter_properties["type"] == "string"
+            value = values[i]
+            parameters_by_group[group][key] = (
+                parameter_properties["enum"][value] if is_string else value
+            )
             i += 1
     return parameters_by_group
 
@@ -79,7 +89,7 @@ def encode(num, alphabet=CHARSET):
     if num == 0:
         return alphabet[0]
     if isinstance(num, float):
-        left, right = (int(n) for n in str(num).split('.'))
+        left, right = (int(n) for n in str(num).split("."))
         return encode(left) + DECIMAL_DELIMITER + encode(right)
     arr = []
     base = len(alphabet)
@@ -87,7 +97,7 @@ def encode(num, alphabet=CHARSET):
         num, rem = divmod(num, base)
         arr.append(alphabet[rem])
     arr.reverse()
-    return ''.join(arr)
+    return "".join(arr)
 
 
 def decode(string, alphabet=CHARSET):
@@ -99,55 +109,26 @@ def decode(string, alphabet=CHARSET):
     base = len(alphabet)
     if DECIMAL_DELIMITER in string:
         left, right = string.split(DECIMAL_DELIMITER)
-        return int(decode(left)) + float('.' + str(decode(right)))
+        return int(decode(left)) + float("." + str(decode(right)))
     strlen = len(string)
     num = 0
 
     idx = 0
     for char in string:
-        power = (strlen - (idx + 1))
-        num += alphabet.index(char) * (base ** power)
+        power = strlen - (idx + 1)
+        num += alphabet.index(char) * (base**power)
         idx += 1
 
     return num
 
 
-def string_to_numeric(parameters_by_group: dict) -> dict:
-    numeric_converters_by_group = {
-        'magnafpm': {
-            'MagnetMaterial': magnet_material_to_numeric
-        },
-        'furling': {},
-        'user': {}
-    }
-    return convert_values(parameters_by_group, numeric_converters_by_group)
-
-
-def numeric_to_string(parameters_by_group: dict) -> dict:
-    string_converters_by_group = {
-        'magnafpm': {
-            'MagnetMaterial': magnet_material_from_numeric
-        },
-        'furling': {},
-        'user': {}
-    }
-    return convert_values(parameters_by_group, string_converters_by_group)
-
-
-def convert_values(parameters_by_group: dict, converters_by_group: dict) -> dict:
-    parameters_by_group_copy = parameters_by_group.copy()
+def convert_string_values_to_number(parameters_by_group: dict, schema: dict) -> dict:
+    parameters_by_group_copy = copy.deepcopy(parameters_by_group)
     for group, parameters in parameters_by_group_copy.items():
-        converters_by_key = converters_by_group[group]
+        group_properties = schema["properties"][group]["properties"]
         for key, value in parameters.items():
-            if key in converters_by_key:
-                to_numeric = converters_by_key[key]
-                parameters[key] = to_numeric(value)
+            parameter_properties = group_properties[key]
+            if parameter_properties["type"] == "string":
+                enum = parameter_properties["enum"]
+                parameters[key] = enum.index(value)
     return parameters_by_group_copy
-
-
-def magnet_material_to_numeric(magnet_material: str) -> int:
-    return MAGNET_MATERIALS.index(magnet_material)
-
-
-def magnet_material_from_numeric(magnet_material_int: int) -> str:
-    return MAGNET_MATERIALS[magnet_material_int]
