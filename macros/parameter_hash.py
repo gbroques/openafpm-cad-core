@@ -12,5 +12,7 @@ hash = hash_parameters(
     parameters['furling'],
     parameters['user'])
 
+print(f'Hash: {hash}')
+print(f'Length: {len(hash)}')
 unhashed_parameters = unhash_parameters(hash)
 print(f'Does hashing preserve equality? {parameters == unhashed_parameters}')
