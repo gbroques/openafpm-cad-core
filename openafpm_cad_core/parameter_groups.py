@@ -209,19 +209,19 @@ class FurlingParameters(TypedDict):
     — page 60, Glossary section of "A Wind Turbine Recipe Book (2014)".
     """
 
-    VerticalPlaneAngle: float  # TailHingeAngle?
+    VerticalPlaneAngle: int  # TailHingeAngle?
     """Angle between outer pipe of yaw-bearing and inner pipe of tail hinge (in degrees).
 
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    HorizontalPlaneAngle: float
+    HorizontalPlaneAngle: int
     """Angle of the alternator frame from a horizontal plane when welding the tail hinge (in degrees).
 
     See "The inclined hinge" section on pages 30 - 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    BoomLength: float  # BoomPipeLength
+    BoomLength: int  # BoomPipeLength
     """Length of tail boom pipe.
 
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
@@ -233,29 +233,29 @@ class FurlingParameters(TypedDict):
     See "Tail boom" section on page 31 of "A Wind Turbine Recipe Book (2014)".
     """
 
-    BoomPipeThickness: float
+    BoomPipeThickness: int
     """Thickness of tail boom pipe.
     """
 
-    VaneLength: float
+    VaneLength: int
     """Length of vane."""
 
-    VaneWidth: float
+    VaneWidth: int
     """Width of vane."""
 
-    VaneThickness: float
+    VaneThickness: int
     """Thickness of vane."""
 
-    BracketLength: float  # VaneBracketLength
+    BracketLength: int  # VaneBracketLength
     """Length of vane brackets."""
 
-    BracketWidth: float  # VaneBracketWidth
+    BracketWidth: int  # VaneBracketWidth
     """Width of vane brackets."""
 
-    BracketThickness: float  # VaneBracketThickness
+    BracketThickness: int  # VaneBracketThickness
     """Thickness of vane brackets."""
 
-    Offset: float  # AlternatorOffset?
+    Offset: int  # AlternatorOffset?
     """Distance from center of alternator to yaw-bearing for furling action.
 
     For T shape, ``Offset`` is used in calculation of ``X``.
