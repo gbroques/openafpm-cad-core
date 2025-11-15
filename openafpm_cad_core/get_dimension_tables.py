@@ -1,13 +1,7 @@
 """Module for retrieving dimensions to display in a tabular format."""
-from typing import Any, Dict, List, Optional, Tuple, TypedDict
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, NotRequired
 
 from FreeCAD import Document
-
-try:
-    # TODO: Remove this once freecad conda forge package includes python 3.11.
-    from typing import NotRequired
-except ImportError:
-    from typing_extensions import NotRequired
 
 from .find_descendent_by_label import find_descendent_by_label
 from .find_object_by_label import find_object_by_label
