@@ -134,15 +134,15 @@ yaw_bearing_cells: List[List[Cell]] = [
     [
         Cell('Offset'),
         Cell('RotorDiskRadius'),
-        Cell('WindTurbineShape')
+        Cell('CalculatedWindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.Offset',
              alias='Offset'),
         Cell('=Spreadsheet.RotorDiskRadius',
              alias='RotorDiskRadius'),
-        Cell('=Spreadsheet.WindTurbineShape',
-             alias='WindTurbineShape')
+        Cell('=Spreadsheet.CalculatedWindTurbineShape',
+             alias='CalculatedWindTurbineShape')
     ],
     [
         Cell('Alternator', styles=[Style.UNDERLINE])
@@ -162,7 +162,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('Pipe', styles=[Style.UNDERLINE, Style.BOLD])
     ],
     [
-        Cell('ScaleFactor'), Cell('=WindTurbineShape == <<T>> ? 0.95 : 0.9',
+        Cell('ScaleFactor'), Cell('=CalculatedWindTurbineShape == <<T>> ? 0.95 : 0.9',
                                   alias='YawPipeScaleFactor')
     ],
     [
@@ -180,7 +180,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         Cell('10', alias='YawBearingPlateCornerChamferLength')
     ],
     [
-        Cell('TopHoleRadius'), Cell('=WindTurbineShape == <<T>> ? 10 : 17.5',
+        Cell('TopHoleRadius'), Cell('=CalculatedWindTurbineShape == <<T>> ? 10 : 17.5',
                                     alias='YawBearingPlateTopHoleRadius')
     ],
     [
@@ -412,7 +412,7 @@ yaw_bearing_cells: List[List[Cell]] = [
         # https://mathworld.wolfram.com/IsoscelesRightTriangle.html
         Cell('=HalfWidth * sqrt(2) - YawBearingPlateTopHoleRadius - ArcWireSupportWidth / 2',
              alias='ArcWireSupportLargeLength'),
-        Cell('=WindTurbineShape == <<T>> ? ArcWireSupportSmallLength : ArcWireSupportLargeLength',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? ArcWireSupportSmallLength : ArcWireSupportLargeLength',
              alias='ArcWireSupportLength')
     ],
     # Placement
