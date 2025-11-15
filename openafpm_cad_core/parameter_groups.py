@@ -84,7 +84,7 @@ class MagnafpmParameters(TypedDict):
     """
 
     MagnetMaterial: str
-    """Material of magnet: 'Neodymium' or 'Ferrite'.
+    """Material and grade of the magnet.
 
     Neodymium magnets are more powerful than Ferrite magnets.
 
