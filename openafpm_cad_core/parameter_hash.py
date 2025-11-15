@@ -59,10 +59,10 @@ def unhash_parameters(parameter_hash: str) -> dict:
         group_properties = schema["properties"][group]["properties"]
         for key in group_keys:
             parameter_properties = group_properties[key]
-            is_string = parameter_properties["type"] == "string"
+            has_enum = "enum" in parameter_properties
             value = values[i]
             parameters_by_group[group][key] = (
-                parameter_properties["enum"][value] if is_string else value
+                parameter_properties["enum"][value] if has_enum else value
             )
             i += 1
     return parameters_by_group
@@ -128,7 +128,7 @@ def convert_string_values_to_number(parameters_by_group: dict, schema: dict) -> 
         group_properties = schema["properties"][group]["properties"]
         for key, value in parameters.items():
             parameter_properties = group_properties[key]
-            if parameter_properties["type"] == "string":
+            if "enum" in parameter_properties:
                 enum = parameter_properties["enum"]
                 parameters[key] = enum.index(value)
     return parameters_by_group_copy
