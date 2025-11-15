@@ -36,6 +36,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     spreadsheet_document = load_spreadsheet_document(magnafpm_parameters,
                                                      furling_parameters,
                                                      user_parameters)
+    alternator_document = load_alernator()
     rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
     wind_turbine_shape = WindTurbineShape.from_string(
         spreadsheet_document.Spreadsheet.CalculatedWindTurbineShape
@@ -101,7 +102,7 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
     )
     tables.append(create_total_pipe_length_by_outer_diameter_table(spreadsheet_document))
     tables.append(create_studs_nuts_and_washers_table(spreadsheet_document))
-    tables.append(create_resin_table(spreadsheet_document))
+    tables.append(create_resin_table(spreadsheet_document, alternator_document))
     return tables
 
 
@@ -704,7 +705,7 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
     )
 
 
-def create_resin_table(spreadsheet_document: Document) -> Element:
+def create_resin_table(spreadsheet_document: Document, alternator_document: Document) -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
     wind_turbine_shape = WindTurbineShape.from_string(
         spreadsheet_document.Spreadsheet.CalculatedWindTurbineShape
@@ -716,7 +717,6 @@ def create_resin_table(spreadsheet_document: Document) -> Element:
     else:
         resin_weight_scale_factor = 1.7
 
-    alternator_document = load_alernator()
     stator = find_object_by_label(alternator_document, 'Stator')
     stator_resin_cast = find_descendent_by_label(stator, 'ResinCast')
     coils = find_descendent_by_label(stator, 'Coils')
