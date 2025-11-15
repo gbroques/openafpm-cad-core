@@ -73,7 +73,7 @@ preset_by_name: Dict[str, dict] = {
             "Offset": 125
         },
         "user": {
-            "WindTurbineShape": "T",
+            "WindTurbineShape": "Calculated",
             "BladeWidth": 124,
             "HubPitchCircleDiameter": 100,
             "RotorDiskCentralHoleDiameter": 65,
@@ -131,7 +131,7 @@ preset_by_name: Dict[str, dict] = {
             "Offset": 250
         },
         "user": {
-            "WindTurbineShape": "H",
+            "WindTurbineShape": "Calculated",
             "BladeWidth": 223,
             "HubPitchCircleDiameter": 130,
             "RotorDiskCentralHoleDiameter": 95,
@@ -194,7 +194,7 @@ preset_by_name: Dict[str, dict] = {
             "Offset": 348
         },
         "user": {
-            "WindTurbineShape": "Star",
+            "WindTurbineShape": "Calculated",
             "BladeWidth": 322,
             "HubPitchCircleDiameter": 205,
             "RotorDiskCentralHoleDiameter": 163,
