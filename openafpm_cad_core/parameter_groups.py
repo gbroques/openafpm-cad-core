@@ -275,9 +275,11 @@ class UserParameters(TypedDict):
     """User parameters have default values, and may be overridden by individual users to satisfy unique needs."""
 
     WindTurbineShape: str
-    """The shape of the wind turbine: one of 'T', 'H', or 'Star'.
+    """The shape of the wind turbine: one of 'Calculated', 'T', 'H', or 'Star'.
 
     The shape of the turbine controls the topology of the model.
+
+    'Calculated' means the shape is determined from rotor disk radius.
 
     Its name is based on the shape of the frame.
     """

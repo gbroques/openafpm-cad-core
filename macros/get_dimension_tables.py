@@ -18,8 +18,8 @@ def print_dimension_tables(turbine_shape: WindTurbineShape) -> str:
 
     return json.dumps(get_dimension_tables(
         parameters['magnafpm'],
-        parameters['user'],
-        parameters['furling']), indent=2)
+        parameters['furling'],
+        parameters['user']), indent=2)
 
 
 if __name__ == '__main__':

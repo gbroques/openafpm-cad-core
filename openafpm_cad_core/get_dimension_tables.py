@@ -15,8 +15,7 @@ from .load import load_alernator
 from .load_spreadsheet_document import load_spreadsheet_document
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
-from .wind_turbine_shape import (WindTurbineShape,
-                                 map_rotor_disk_radius_to_wind_turbine_shape)
+from .wind_turbine_shape import WindTurbineShape
 
 __all__ = ['get_dimension_tables']
 
@@ -44,7 +43,9 @@ def get_dimension_tables(magnafpm_parameters: MagnafpmParameters,
                                                      furling_parameters,
                                                      user_parameters)
     rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    wind_turbine_shape = WindTurbineShape.from_string(
+        spreadsheet_document.Spreadsheet.CalculatedWindTurbineShape
+    )
     tables = []
     tables.append(
         create_dimension_of_hub_plywood_pieces_table(spreadsheet_document)
@@ -223,7 +224,7 @@ def create_steel_disk_sizes_table(spreadsheet_document: Document) -> Element:
 def create_frame_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     header = 'Frame Dimensions'
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    wind_turbine_shape = WindTurbineShape.from_string(spreadsheet_document.Spreadsheet.WindTurbineShape)
     steel_angle_section_rows = [
         ('Steel angle section width',
          round_and_format_length(spreadsheet_document.Spreadsheet.MetalLengthL)),
@@ -495,7 +496,7 @@ def create_coil_winder_dimensions_table(spreadsheet_document: Document, img_path
 
 def create_stator_mold_dimensions_table(spreadsheet_document: Document, img_path_prefix: str = '') -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    wind_turbine_shape = WindTurbineShape.from_string(spreadsheet_document.Spreadsheet.WindTurbineShape)
     number_of_locating_bolts = 3
     if wind_turbine_shape == WindTurbineShape.T:
         img_src = img_path_prefix + 't-shape-stator-mould-dimensions.png'
@@ -707,7 +708,7 @@ def create_studs_nuts_and_washers_table(spreadsheet_document: Document) -> Eleme
 
 def create_resin_table(spreadsheet_document: Document) -> Element:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    wind_turbine_shape = WindTurbineShape.from_string(spreadsheet_document.Spreadsheet.WindTurbineShape)
     # Multiply by scale factor to get same weight that recipe book suggests on page 63
     # Verify in the two upcoming workshops: India and Habibi.
     if wind_turbine_shape == WindTurbineShape.T:
@@ -805,7 +806,7 @@ def get_studs_diameter_length_tuples(spreadsheet_document: Document) -> List[Tup
 
 def sum_angle_bar_length(spreadsheet_document: Document) -> float:
     rotor_disk_radius = spreadsheet_document.Spreadsheet.RotorDiskRadius
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+    wind_turbine_shape = WindTurbineShape.from_string(spreadsheet_document.Spreadsheet.WindTurbineShape)
     if wind_turbine_shape == WindTurbineShape.T:
         return sum([
             round(spreadsheet_document.Alternator.TShapeTwoHoleEndBracketLength),

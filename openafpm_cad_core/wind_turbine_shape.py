@@ -27,6 +27,13 @@ class WindTurbineShape(Enum):
     STAR = 'Star Shape'
     """Largest wind turbine with a frame shaped like a six-pointed star."""
 
+    @staticmethod
+    def from_string(string: str):
+        return WindTurbineShape[string.upper()]
+
+    def to_string(self):
+        return self.value.split()[0]
+
 
 def map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius: float) -> WindTurbineShape:
     if rotor_disk_radius < H_SHAPE_LOWER_BOUND:

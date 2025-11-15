@@ -10,11 +10,13 @@ from .fastener_cells import get_fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
 from .low_end_stop_cells import low_end_stop_cells
-from .parameter_groups import FurlingParameters, MagnafpmParameters, UserParameters
+from .parameter_groups import (FurlingParameters, MagnafpmParameters,
+                               UserParameters)
 from .parameters_by_key_to_cells import parameters_by_key_to_cells
 from .spreadsheet import Cell, populate_spreadsheet
 from .tail_cells import tail_cells
 from .wind_turbine_cells import wind_turbine_cells
+from .wind_turbine_shape import map_rotor_disk_radius_to_wind_turbine_shape
 from .yaw_bearing_cells import yaw_bearing_cells
 
 __all__ = ["upsert_spreadsheet_document"]
@@ -37,11 +39,16 @@ def get_cells_by_spreadsheet_name(
     furling_parameters: FurlingParameters,
     user_parameters: UserParameters,
 ) -> Dict[str, List[List[Cell]]]:
+    rotor_disk_radius = magnafpm_parameters['RotorDiskRadius']
+    calculated_wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius).to_string()
     cells = parameters_by_key_to_cells(
         {
             "MagnAFPM": magnafpm_parameters,
             "Furling": furling_parameters,
-            "User": user_parameters
+            "User": user_parameters,
+            "Calculated": {
+                "CalculatedWindTurbineShape": f"=WindTurbineShape == <<Calculated>> ? <<{calculated_wind_turbine_shape}>> : WindTurbineShape"
+            }
         }
     )
     return {

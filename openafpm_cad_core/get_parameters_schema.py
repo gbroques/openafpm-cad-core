@@ -331,6 +331,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "description": get_description("user", "WindTurbineShape"),
                         "type": get_type("user", "WindTurbineShape"),
                         "enum": [
+                            "Calculated",
                             WindTurbineShape.T.value.split()[0],
                             WindTurbineShape.H.value.split()[0],
                             WindTurbineShape.STAR.value.split()[0],
