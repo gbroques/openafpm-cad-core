@@ -17,7 +17,9 @@ from .parameter_hash import hash_parameters, unhash_parameters
 from .preview_dxf_as_svg import preview_dxf_as_svg
 from .upsert_spreadsheet_document import upsert_spreadsheet_document
 from .wind_turbine_shape import (WindTurbineShape,
-                                 map_rotor_disk_radius_to_wind_turbine_shape)
+                                 map_rotor_disk_radius_to_wind_turbine_shape,
+                                 H_SHAPE_LOWER_BOUND,
+                                 STAR_SHAPE_LOWER_BOUND)
 
 __all__ = [
     'Assembly',
@@ -38,6 +40,8 @@ __all__ = [
     'loadmat',
     'map_magnafpm_parameters',
     'map_rotor_disk_radius_to_wind_turbine_shape',
+    'H_SHAPE_LOWER_BOUND',
+    'STAR_SHAPE_LOWER_BOUND',
     'preview_dxf_as_svg',
     'unhash_parameters',
     'upsert_spreadsheet_document',
