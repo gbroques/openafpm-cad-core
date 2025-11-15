@@ -3,7 +3,7 @@
 The algorithm is as follows:
 1. Order parameters based on parameter group definitions.
 2. Disregard keys, and only consider values.
-3. Convert string values into numeric values.
+3. Convert enum values into integer values.
 4. Base 62 encode numeric values while preserving decimal point '.' for float values.
 5. Concatenate all values together with a '-'.
 """
@@ -29,7 +29,7 @@ def hash_parameters(
     user_parameters: UserParameters,
 ) -> str:
     schema = get_parameters_schema(magnafpm_parameters["RotorDiskRadius"])
-    parameters_by_group = convert_string_values_to_number(
+    parameters_by_group = convert_enum_values_to_integers(
         {
             "magnafpm": magnafpm_parameters,
             "furling": furling_parameters,
@@ -122,7 +122,7 @@ def decode(string, alphabet=CHARSET):
     return num
 
 
-def convert_string_values_to_number(parameters_by_group: dict, schema: dict) -> dict:
+def convert_enum_values_to_integers(parameters_by_group: dict, schema: dict) -> dict:
     parameters_by_group_copy = copy.deepcopy(parameters_by_group)
     for group, parameters in parameters_by_group_copy.items():
         group_properties = schema["properties"][group]["properties"]
