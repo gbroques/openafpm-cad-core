@@ -225,7 +225,7 @@ preset_by_name: Dict[str, dict] = {
             "MagnetLength": 50,  # page 5
             "MagnetWidth": 50,  # page 5
             "MagnetThickness": 20,  # page 5
-            "MagnetMaterial": "Ferrite",  # page 3
+            "MagnetMaterial": "Ferrite C8",  # page 3
             "StatorThickness": 12,  # pages 69, 84, & 86
             "CoilType": 3,  # page 78
             "CoilLegWidth": 21.99,
@@ -262,7 +262,7 @@ preset_by_name: Dict[str, dict] = {
             "MagnetLength": 75,
             "MagnetWidth": 50,
             "MagnetThickness": 20,
-            "MagnetMaterial": "Ferrite",
+            "MagnetMaterial": "Ferrite C8",
             "NumberMagnet": 24,
             "StatorThickness": 14,
             "CoilType": 3,
