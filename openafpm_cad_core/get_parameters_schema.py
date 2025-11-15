@@ -97,14 +97,14 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "title": "Magnet Width",
                         "description": get_description("magnafpm", "MagnetWidth"),
                         "minimum": 5,
-                        "minimum": 150,
+                        "maximum": 150,
                         **get_numeric_type_and_multiple_of("magnafpm", "MagnetWidth"),
                     },
                     "MagnetThickness": {
                         "title": "Magnet Thickness",
                         "description": get_description("magnafpm", "MagnetThickness"),
                         "minimum": 2,
-                        "minimum": 50,
+                        "maximum": 50,
                         **get_numeric_type_and_multiple_of(
                             "magnafpm", "MagnetThickness"
                         ),
