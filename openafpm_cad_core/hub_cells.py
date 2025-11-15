@@ -60,7 +60,7 @@ hub_cells: List[List[Cell]] = [
         Cell('RotorDiskRadius'),
         Cell('HubPitchCircleDiameter'),
         Cell('HubHolesDiameter'),
-        Cell('WindTurbineShape')
+        Cell('CalculatedWindTurbineShape')
     ],
     [
         Cell('=Spreadsheet.RotorDiskRadius',
@@ -69,8 +69,8 @@ hub_cells: List[List[Cell]] = [
              alias='HubPitchCircleDiameter'),
         Cell('=Spreadsheet.HubHolesDiameter',
              alias='HubHolesDiameter'),
-        Cell('=Spreadsheet.WindTurbineShape',
-             alias='WindTurbineShape')
+        Cell('=Spreadsheet.CalculatedWindTurbineShape',
+             alias='CalculatedWindTurbineShape')
     ],
     [
         Cell('MetalLengthL'),
@@ -212,21 +212,21 @@ hub_cells: List[List[Cell]] = [
     [
         # Default Value Row
         Cell('Default Value'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeMiddlePadRadiusMargin : (WindTurbineShape == <<H>> ? HShapeMiddlePadRadiusMargin : StarShapeMiddlePadRadiusMargin)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeMiddlePadRadiusMargin : (CalculatedWindTurbineShape == <<H>> ? HShapeMiddlePadRadiusMargin : StarShapeMiddlePadRadiusMargin)',
              alias='MiddlePadRadiusMargin'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeProtrudingPadThickness : (WindTurbineShape == <<H>> ? HShapeProtrudingPadThickness : StarShapeProtrudingPadThickness)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeProtrudingPadThickness : (CalculatedWindTurbineShape == <<H>> ? HShapeProtrudingPadThickness : StarShapeProtrudingPadThickness)',
              alias='ProtrudingPadThickness'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeFrameSidePadRadius : (WindTurbineShape == <<H>> ? HShapeFrameSidePadRadius : StarShapeFrameSidePadRadius)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeFrameSidePadRadius : (CalculatedWindTurbineShape == <<H>> ? HShapeFrameSidePadRadius : StarShapeFrameSidePadRadius)',
              alias='FrameSidePadRadius'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeFrameSidePadWidth : (WindTurbineShape == <<H>> ? HShapeFrameSidePadWidth : StarShapeFrameSidePadWidth)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeFrameSidePadWidth : (CalculatedWindTurbineShape == <<H>> ? HShapeFrameSidePadWidth : StarShapeFrameSidePadWidth)',
              alias='FrameSidePadWidth'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeRotorSidePadRadius : (WindTurbineShape == <<H>> ? HShapeRotorSidePadRadius : StarShapeRotorSidePadRadius)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeRotorSidePadRadius : (CalculatedWindTurbineShape == <<H>> ? HShapeRotorSidePadRadius : StarShapeRotorSidePadRadius)',
              alias='DefaultRotorSidePadRadius'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeRotorSidePadWidth : (WindTurbineShape == <<H>> ? HShapeRotorSidePadWidth : StarShapeRotorSidePadWidth)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeRotorSidePadWidth : (CalculatedWindTurbineShape == <<H>> ? HShapeRotorSidePadWidth : StarShapeRotorSidePadWidth)',
              alias='RotorSidePadWidth'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeNumberOfHoles : (WindTurbineShape == <<H>> ? HShapeNumberOfHoles : StarShapeNumberOfHoles)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeNumberOfHoles : (CalculatedWindTurbineShape == <<H>> ? HShapeNumberOfHoles : StarShapeNumberOfHoles)',
              alias='NumberOfHoles'),
-        Cell('=WindTurbineShape == <<T>> ? TShapeStubAxleShaftRadius : (WindTurbineShape == <<H>> ? HShapeStubAxleShaftRadius : StarShapeStubAxleShaftRadius)',
+        Cell('=CalculatedWindTurbineShape == <<T>> ? TShapeStubAxleShaftRadius : (CalculatedWindTurbineShape == <<H>> ? HShapeStubAxleShaftRadius : StarShapeStubAxleShaftRadius)',
              alias='StubAxleShaftRadius')
     ],
     [
