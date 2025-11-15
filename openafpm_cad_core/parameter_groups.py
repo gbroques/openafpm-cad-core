@@ -53,14 +53,14 @@ class MagnafpmParameters(TypedDict):
     RotorDiskInnerRadius: float  # TODO: Rename to GeneratorInnerRadius?
     """Inner radius of the effective length of the generator."""
 
-    RotorDiskThickness: float
+    RotorDiskThickness: int
     """Thickness of rotor disk.
 
     See "Rotor Disk Thickness" section at:
         https://openafpm.net/design-tips
     """
 
-    MagnetLength: float  # TODO: Rename to MagnetRadialDimension?
+    MagnetLength: int  # TODO: Rename to MagnetRadialDimension?
     """Length of magnet.
 
     Not always the longest dimension of the magnet,
@@ -68,7 +68,7 @@ class MagnafpmParameters(TypedDict):
     (in terms of the rotor circle).
     """
 
-    MagnetWidth: float  # TODO: Rename to MagnetTangentialDimension?
+    MagnetWidth: int  # TODO: Rename to MagnetTangentialDimension?
     """Width of magnet.
 
     Not always shorter than MagnetLength,
@@ -76,7 +76,7 @@ class MagnafpmParameters(TypedDict):
     (in terms of the rotor circle).
     """
 
-    MagnetThickness: float
+    MagnetThickness: int
     """Thickness of magnet.
 
     See "Magnet Thickness" section at:
@@ -97,7 +97,7 @@ class MagnafpmParameters(TypedDict):
     NumberMagnet: int  # NumberOfMagnets, MagnetCount, NumberOfPoles?
     """Number of magnets per rotor disk."""
 
-    StatorThickness: float
+    StatorThickness: int
     """Thickness of stator."""
 
     CoilType: int

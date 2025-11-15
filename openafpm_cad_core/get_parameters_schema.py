@@ -47,7 +47,7 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "RotorDiameter": {
                         "title": "Rotor Diameter",
                         "description": get_description("magnafpm", "RotorDiameter"),
-                        "minimum": 0,
+                        "minimum": 1200,
                         "maximum": 7000,
                         **get_numeric_type_and_multiple_of("magnafpm", "RotorDiameter"),
                     },
@@ -80,7 +80,8 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "description": get_description(
                             "magnafpm", "RotorDiskThickness"
                         ),
-                        "minimum": 0,
+                        "minimum": 3,
+                        "maximum": 16,
                         **get_numeric_type_and_multiple_of(
                             "magnafpm", "RotorDiskThickness"
                         ),
@@ -88,19 +89,22 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "MagnetLength": {
                         "title": "Magnet Length",
                         "description": get_description("magnafpm", "MagnetLength"),
-                        "minimum": 0,
+                        "minimum": 5,
+                        "maximum": 150,
                         **get_numeric_type_and_multiple_of("magnafpm", "MagnetLength"),
                     },
                     "MagnetWidth": {
                         "title": "Magnet Width",
                         "description": get_description("magnafpm", "MagnetWidth"),
-                        "minimum": 0,
+                        "minimum": 5,
+                        "minimum": 150,
                         **get_numeric_type_and_multiple_of("magnafpm", "MagnetWidth"),
                     },
                     "MagnetThickness": {
                         "title": "Magnet Thickness",
                         "description": get_description("magnafpm", "MagnetThickness"),
-                        "minimum": 0,
+                        "minimum": 2,
+                        "minimum": 50,
                         **get_numeric_type_and_multiple_of(
                             "magnafpm", "MagnetThickness"
                         ),
@@ -127,7 +131,8 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                     "StatorThickness": {
                         "title": "Stator Thickness",
                         "description": get_description("magnafpm", "StatorThickness"),
-                        "minimum": 0,
+                        "minimum": 6,
+                        "maximum": 21,
                         **get_numeric_type_and_multiple_of(
                             "magnafpm", "StatorThickness"
                         ),
@@ -169,7 +174,8 @@ def get_parameters_schema(rotor_disk_radius: float) -> dict:
                         "description": get_description(
                             "magnafpm", "MechanicalClearance"
                         ),
-                        "minimum": 0,
+                        "minimum": 0.5,
+                        "maximum": 7,
                         **get_numeric_type_and_multiple_of(
                             "magnafpm", "MechanicalClearance"
                         ),
