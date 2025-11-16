@@ -2,7 +2,7 @@ from .assembly_to_obj import load_assembly_to_obj, get_assembly_to_obj
 from .close_all_documents import close_all_documents
 from .create_archive import create_archive
 from .exec_turbine_function import exec_turbine_function
-from .export_to_dxf import export_to_dxf
+from .dxf_archive import load_dxf_archive, get_dxf_archive
 from .find_descendent_by_label import find_descendent_by_label
 from .find_object_by_label import find_object_by_label
 from .get_default_parameters import get_default_parameters, get_presets
@@ -29,7 +29,8 @@ __all__ = [
     'close_all_documents',
     'create_archive',
     'exec_turbine_function',
-    'export_to_dxf',
+    'get_dxf_archive',
+    'load_dxf_archive',
     'find_descendent_by_label',
     'find_object_by_label',
     'hash_parameters',

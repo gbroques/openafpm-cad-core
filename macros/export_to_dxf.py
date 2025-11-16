@@ -1,13 +1,13 @@
 from typing import Union
 
 from openafpm_cad_core.app import (WindTurbineShape, exec_turbine_function,
-                                   export_to_dxf, get_default_parameters)
+                                   load_dxf_archive, get_default_parameters)
 
 
 def write_dxf_zip(turbine_shape: Union[WindTurbineShape, str]) -> str:
     parameters = get_default_parameters(turbine_shape)
 
-    zip_bytes = export_to_dxf(
+    zip_bytes = load_dxf_archive(
         parameters['magnafpm'],
         parameters['furling'],
         parameters['user'])

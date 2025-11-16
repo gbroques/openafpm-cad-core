@@ -16,11 +16,15 @@ from .parameter_groups import (FurlingParameters, MagnafpmParameters,
 from .make_get_part_count import make_get_part_count
 
 
-def export_to_dxf(magnafpm_parameters: MagnafpmParameters,
-                  furling_parameters: FurlingParameters,
-                  user_parameters: UserParameters) -> bytes:
+def load_dxf_archive(magnafpm_parameters: MagnafpmParameters,
+                     furling_parameters: FurlingParameters,
+                     user_parameters: UserParameters) -> bytes:
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters, furling_parameters, user_parameters)
+    return get_dxf_archive(root_documents, magnafpm_parameters)
+
+
+def get_dxf_archive(root_documents, magnafpm_parameters: MagnafpmParameters) -> bytes:
     get_part_count = make_get_part_count(root_documents, magnafpm_parameters)
     export_set = get_dxf_export_set(root_documents)
     options = get_svg_style_options(magnafpm_parameters['RotorDiskRadius'])
