@@ -16,21 +16,25 @@ from .make_archive import make_archive
 from .parameter_groups import (FurlingParameters, MagnafpmParameters,
                                UserParameters)
 
-__all__ = ['create_archive']
+__all__ = ['load_freecad_archive', 'get_freecad_archive']
 
 logger = logging.getLogger(__name__)
 # Uncomment below line for DEBUG logging
 # logging.basicConfig(level=logging.DEBUG)
 
 
-def create_archive(magnafpm_parameters: MagnafpmParameters,
-                   furling_parameters: FurlingParameters,
-                   user_parameters: UserParameters) -> bytes:
+def load_freecad_archive(magnafpm_parameters: MagnafpmParameters,
+                         furling_parameters: FurlingParameters,
+                         user_parameters: UserParameters) -> bytes:
     logger.debug('Loading all documents')
     root_documents, spreadsheet_document = load_all(
         magnafpm_parameters,
         furling_parameters,
         user_parameters)
+    return get_freecad_archive(root_documents, spreadsheet_document)
+
+
+def get_freecad_archive(root_documents, spreadsheet_document) -> bytes:
     wind_turbine_document = root_documents[0]
     document_source = Path(get_filename(wind_turbine_document)).parent
     temporary_unique_directory = Path(gettempdir()).joinpath(str(uuid1()))

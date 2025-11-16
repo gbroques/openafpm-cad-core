@@ -1,6 +1,6 @@
 from .assembly_to_obj import load_assembly_to_obj, get_assembly_to_obj
 from .close_all_documents import close_all_documents
-from .create_archive import create_archive
+from .freecad_archive import load_freecad_archive, get_freecad_archive
 from .exec_turbine_function import exec_turbine_function
 from .dxf_archive import load_dxf_archive, get_dxf_archive
 from .find_descendent_by_label import find_descendent_by_label
@@ -27,7 +27,8 @@ __all__ = [
     'load_assembly_to_obj',
     'get_assembly_to_obj',
     'close_all_documents',
-    'create_archive',
+    'get_freecad_archive',
+    'load_freecad_archive',
     'exec_turbine_function',
     'get_dxf_archive',
     'load_dxf_archive',
