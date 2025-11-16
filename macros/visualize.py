@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Tuple, Union
 
-from openafpm_cad_core.app import (Assembly, WindTurbineShape, assembly_to_obj,
+from openafpm_cad_core.app import (Assembly, WindTurbineShape, load_assembly_to_obj,
                                    get_default_parameters)
 
 
@@ -17,7 +17,7 @@ def write_obj_file(shape_assembly_path_triple: Tuple[WindTurbineShape, Assembly,
     turbine_dir = path.joinpath(slugify_enum(shape))
     turbine_dir.mkdir(exist_ok=True)
 
-    obj_file_contents = assembly_to_obj(
+    obj_file_contents = load_assembly_to_obj(
         assembly,
         parameters['magnafpm'],
         parameters['furling'],

@@ -1,11 +1,11 @@
 from openafpm_cad_core.app import (WindTurbineShape, exec_turbine_function,
-                                   get_default_parameters, preview_dxf_as_svg)
+                                   get_default_parameters, load_dxf_as_svg)
 
 
 def write_to_svg(turbine_shape: WindTurbineShape) -> str:
     parameters = get_default_parameters(turbine_shape)
 
-    svg = preview_dxf_as_svg(
+    svg = load_dxf_as_svg(
         parameters['magnafpm'],
         parameters['furling'],
         parameters['user'])

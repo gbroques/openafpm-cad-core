@@ -6,10 +6,9 @@ from FreeCAD import Console, Document, Placement
 
 from .find_object_by_label import find_object_by_label
 from .load import load_turbine
-from .parameter_groups import (FurlingParameters, MagnafpmParameters,
-                               UserParameters)
+from .parameter_groups import FurlingParameters, MagnafpmParameters, UserParameters
 
-__all__ = ['load_furl_transform']
+__all__ = ["load_furl_transform", "get_furl_transform"]
 
 
 class Transform(TypedDict):
@@ -40,50 +39,59 @@ class FurlTransform(TypedDict):
     """Series of 3D transformations needed to furl the tail."""
 
 
-def load_furl_transform(magnafpm_parameters: MagnafpmParameters,
-                        furling_parameters: FurlingParameters,
-                        user_parameters: UserParameters) -> FurlTransform:
-    root_document, spreadsheet_document = load_turbine(magnafpm_parameters,
-                                                       furling_parameters,
-                                                       user_parameters)
+def load_furl_transform(
+    magnafpm_parameters: MagnafpmParameters,
+    furling_parameters: FurlingParameters,
+    user_parameters: UserParameters,
+) -> FurlTransform:
+    wind_turbine_document, spreadsheet_document = load_turbine(
+        magnafpm_parameters, furling_parameters, user_parameters
+    )
+    return get_furl_transform(wind_turbine_document, spreadsheet_document)
+
+
+def get_furl_transform(
+    wind_turbine_document: Document, spreadsheet_document: Document
+) -> FurlTransform:
     return {
-        'maximum_angle': get_maximum_furl_angle(spreadsheet_document),
-        'transforms': get_furl_transforms(root_document)
+        "maximum_angle": get_maximum_furl_angle(spreadsheet_document),
+        "transforms": get_furl_transforms(wind_turbine_document),
     }
 
 
 def get_maximum_furl_angle(spreadsheet_document: Document, ndigits: int = 2) -> float:
-    return round(spreadsheet_document.HighEndStop.MaximumFurlAngle.Value, ndigits=ndigits)
+    return round(
+        spreadsheet_document.HighEndStop.MaximumFurlAngle.Value, ndigits=ndigits
+    )
 
 
 def get_furl_transforms(root_document: Document) -> List[Transform]:
     root_document_path = Path(root_document.FileName)
     documents_path = root_document_path.parent
-    tail_document_path = documents_path.joinpath('Tail', 'Tail.FCStd')
+    tail_document_path = documents_path.joinpath("Tail", "Tail.FCStd")
     tail_document = App.openDocument(str(tail_document_path))
-    tail = find_object_by_label(tail_document, 'Tail')
+    tail = find_object_by_label(tail_document, "Tail")
     if len(tail.InList) == 0:
-        Console.PrintWarning(f'{tail.Label} has no parents.\n')
+        Console.PrintWarning(f"{tail.Label} has no parents.\n")
         return None
     if len(tail.InList) > 1:
-        Console.PrintWarning(
-            f'{tail.Label} has more than 1 parent. Choosing 1st.\n')
+        Console.PrintWarning(f"{tail.Label} has more than 1 parent. Choosing 1st.\n")
     tail_parent = tail.InList[0]
     parent_placement = calculate_global_placement(tail_parent)
-    hinge_outer = find_object_by_label(tail_document, 'Hinge_Outer')
+    hinge_outer = find_object_by_label(tail_document, "Hinge_Outer")
     return [
-        placement_to_dict('parent', parent_placement),
-        placement_to_dict('tail', tail.Placement),
-        placement_to_dict('hinge', hinge_outer.Placement)
+        placement_to_dict("parent", parent_placement),
+        placement_to_dict("tail", tail.Placement),
+        placement_to_dict("hinge", hinge_outer.Placement),
     ]
 
 
 def placement_to_dict(name: str, placement: Placement) -> Transform:
     return {
-        'name': name,
-        'position': list(placement.Base),
-        'axis': list(placement.Rotation.Axis),
-        'angle': placement.Rotation.Angle
+        "name": name,
+        "position": list(placement.Base),
+        "axis": list(placement.Rotation.Axis),
+        "angle": placement.Rotation.Angle,
     }
 
 
@@ -98,9 +106,6 @@ def calculate_global_placement(child: object, placements: Placement = []) -> Pla
             global_placement *= placement
         return global_placement
     if num_in > 1:
-        Console.PrintWarning(
-            f'{child.Label} has more than 1 parent. Choosing 1st.\n')
+        Console.PrintWarning(f"{child.Label} has more than 1 parent. Choosing 1st.\n")
     parent = in_list[0]
-    return calculate_global_placement(
-        parent, placements
-    )
+    return calculate_global_placement(parent, placements)

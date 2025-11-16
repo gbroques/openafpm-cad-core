@@ -157,8 +157,8 @@ def get_blade_template_document_path(documents_path: Path) -> Path:
     return documents_path.joinpath('Blades', 'Blade_Template.FCStd')
 
 
-def load_alernator() -> Document:
-    return load_document(get_alternator_document_path)
+def load_alernator(recompute_all=False) -> Document:
+    return load_document(get_alternator_document_path, recompute_all=recompute_all)
 
 
 def get_alternator_document_path(documents_path: Path) -> Path:
