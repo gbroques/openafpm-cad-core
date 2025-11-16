@@ -80,7 +80,7 @@ The version of FreeCAD is defined in `environment.yml` within the root of this r
 2. If `openafpm-cad-visualization` is cloned up a directory from this repository, then run:
 
        python macros/visualize.py ../openafpm-cad-visualization/public/
-       python macros/print_furl_transform.py > ../openafpm-cad-visualization/public/furlTransform.json
+       python macros/furl_transform.py > ../openafpm-cad-visualization/public/furlTransform.json
 
 ## Troubleshooting
 
