@@ -6,6 +6,7 @@ from FreeCAD import Document
 
 from .alternator_cells import alternator_cells
 from .blade_cells import blade_cells
+from .close_all_documents import close_all_documents
 from .fastener_cells import get_fastener_cells
 from .high_end_stop_cells import high_end_stop_cells
 from .hub_cells import hub_cells
@@ -27,11 +28,16 @@ def upsert_spreadsheet_document(
     magnafpm_parameters: MagnafpmParameters,
     furling_parameters: FurlingParameters,
     user_parameters: UserParameters,
+    cancel_event=None,
 ) -> Document:
+    if cancel_event is not None and cancel_event.is_set():
+        close_all_documents()
+        raise InterruptedError("Operation was cancelled")
+        
     cells_by_spreadsheet_name = get_cells_by_spreadsheet_name(
         magnafpm_parameters, furling_parameters, user_parameters
     )
-    return upsert_document(path, cells_by_spreadsheet_name)
+    return upsert_document(path, cells_by_spreadsheet_name, cancel_event)
 
 
 def get_cells_by_spreadsheet_name(
@@ -66,13 +72,27 @@ def get_cells_by_spreadsheet_name(
 
 
 def upsert_document(
-    path: Path, cells_by_spreadsheet_name: Dict[str, List[List[Cell]]]
+    path: Path, cells_by_spreadsheet_name: Dict[str, List[List[Cell]]], cancel_event=None
 ) -> Document:
+    if cancel_event is not None and cancel_event.is_set():
+        close_all_documents()
+        raise InterruptedError("Operation was cancelled")
+        
     if path.exists():
         document = App.openDocument(str(path))
     else:
         document = App.newDocument(path.stem)
-    populate_spreadsheets(document, cells_by_spreadsheet_name)
+        
+    if cancel_event is not None and cancel_event.is_set():
+        close_all_documents()
+        raise InterruptedError("Operation was cancelled")
+        
+    populate_spreadsheets(document, cells_by_spreadsheet_name, cancel_event)
+    
+    if cancel_event is not None and cancel_event.is_set():
+        close_all_documents()
+        raise InterruptedError("Operation was cancelled")
+        
     document.recompute()
     if not path.exists():
         document.saveAs(str(path))
@@ -80,12 +100,21 @@ def upsert_document(
 
 
 def populate_spreadsheets(
-    document: Document, cells_by_spreadsheet_name: Dict[str, List[List[Cell]]]
+    document: Document, cells_by_spreadsheet_name: Dict[str, List[List[Cell]]], cancel_event=None
 ) -> None:
     for spreadsheet_name, cells in cells_by_spreadsheet_name.items():
+        if cancel_event is not None and cancel_event.is_set():
+            close_all_documents()
+            raise InterruptedError("Operation was cancelled")
+            
         sheet = document.getObject(spreadsheet_name)
         if sheet is None:
             sheet = document.addObject("Spreadsheet::Sheet", spreadsheet_name)
         else:
             sheet.clearAll()
-        populate_spreadsheet(sheet, cells)
+            
+        if cancel_event is not None and cancel_event.is_set():
+            close_all_documents()
+            raise InterruptedError("Operation was cancelled")
+            
+        populate_spreadsheet(sheet, cells, cancel_event)

@@ -45,6 +45,7 @@ def load_all(
     user_parameters: UserParameters,
     progress_callback=None,
     progress_range=(0, 100),
+    cancel_event=None,
 ) -> Tuple[List[Document], Document]:
     """Load all wind turbine CAD documents with optional progress reporting.
     
@@ -60,6 +61,7 @@ def load_all(
         user_parameters: User-defined construction parameters
         progress_callback: Optional callback function(stage_name: str, percent: int)
         progress_range: Tuple of (start_percent, end_percent) for progress scaling
+        cancel_event: Optional threading.Event to signal cancellation
         
     Returns:
         Tuple of (root_documents, spreadsheet_document)
@@ -97,6 +99,7 @@ def load_all(
         user_parameters,
         progress_callback,
         progress_range,
+        cancel_event,
     )
 
 
