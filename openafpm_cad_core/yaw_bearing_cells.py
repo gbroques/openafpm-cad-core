@@ -103,329 +103,298 @@ of the Top piece meeting the Channel Sections of Alternator Frame.
                                                Side
                                           (underneath Top)
 """
+
 from typing import List
 
 from .create_placement_cells import create_placement_cells
 from .spreadsheet import Alignment, Cell, Style
 
-__all__ = ['yaw_bearing_cells']
+__all__ = ["yaw_bearing_cells"]
 
 yaw_bearing_cells: List[List[Cell]] = [
+    [Cell("Inputs", styles=[Style.UNDERLINE, Style.BOLD])],
     [
-        Cell('Inputs', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('Spreadsheet', styles=[Style.UNDERLINE])
+        Cell("Spreadsheet", styles=[Style.UNDERLINE])
         # -------------------------------------------
     ],
     [
-        Cell('YawPipeDiameter'),
-        Cell('FlatMetalThickness'),
-        Cell('MetalLengthL'),
+        Cell("YawPipeDiameter"),
+        Cell("FlatMetalThickness"),
+        Cell("MetalLengthL"),
     ],
     [
-        Cell('=Spreadsheet.YawPipeDiameter',
-             alias='YawPipeDiameter'),
-        Cell('=Spreadsheet.FlatMetalThickness',
-             alias='FlatMetalThickness'),
-        Cell('=Spreadsheet.MetalLengthL',
-             alias='MetalLengthL')
+        Cell("=Spreadsheet.YawPipeDiameter", alias="YawPipeDiameter"),
+        Cell("=Spreadsheet.FlatMetalThickness", alias="FlatMetalThickness"),
+        Cell("=Spreadsheet.MetalLengthL", alias="MetalLengthL"),
     ],
+    [Cell("Offset"), Cell("RotorDiskRadius"), Cell("CalculatedWindTurbineShape")],
     [
-        Cell('Offset'),
-        Cell('RotorDiskRadius'),
-        Cell('CalculatedWindTurbineShape')
+        Cell("=Spreadsheet.Offset", alias="Offset"),
+        Cell("=Spreadsheet.RotorDiskRadius", alias="RotorDiskRadius"),
+        Cell(
+            "=Spreadsheet.CalculatedWindTurbineShape",
+            alias="CalculatedWindTurbineShape",
+        ),
     ],
+    [Cell("RotorDiameter"), Cell("=Spreadsheet.RotorDiameter", alias="RotorDiameter")],
     [
-        Cell('=Spreadsheet.Offset',
-             alias='Offset'),
-        Cell('=Spreadsheet.RotorDiskRadius',
-             alias='RotorDiskRadius'),
-        Cell('=Spreadsheet.CalculatedWindTurbineShape',
-             alias='CalculatedWindTurbineShape')
-    ],
-    [
-        Cell('Alternator', styles=[Style.UNDERLINE])
+        Cell("Alternator", styles=[Style.UNDERLINE])
         # ------------------------------------------
     ],
+    [Cell("AlternatorTiltAngle"), Cell("I")],
     [
-        Cell('AlternatorTiltAngle'),
-        Cell('I')
+        Cell("=Alternator.AlternatorTiltAngle", alias="AlternatorTiltAngle"),
+        Cell("=Master_of_Puppets#Alternator.I", alias="I"),
+    ],
+    [Cell("Pipe", styles=[Style.UNDERLINE, Style.BOLD])],
+    [
+        Cell("ScaleFactor"),
+        Cell(
+            "=CalculatedWindTurbineShape == <<T>> ? 0.95 : 0.9",
+            alias="YawPipeScaleFactor",
+        ),
     ],
     [
-        Cell('=Alternator.AlternatorTiltAngle',
-             alias='AlternatorTiltAngle'),
-        Cell('=Master_of_Puppets#Alternator.I',
-             alias='I')
-    ],
-    [
-        Cell('Pipe', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('ScaleFactor'), Cell('=CalculatedWindTurbineShape == <<T>> ? 0.95 : 0.9',
-                                  alias='YawPipeScaleFactor')
+        # Original Data Points:
+        # - Rotor D: 1.8m → Gen D: 260mm
+        # - Rotor D: 2.4m → Gen D: 300mm
+        # - Rotor D: 3.0m → Gen D: 350mm
+        # - ... up to 6.9m → 830mm
+        #
+        # Derivation Method:
+        # 1. Collect empirical data from existing designs (Recipe book, p105)
+        # 2. Apply exponential regression to find best-fit curve
+        # 3. Result: Gen Diameter = 174.97 × e^(0.23 × Rotor Diameter)
+        Cell("RotorDiameterToRotorDiskRadius"),
+        Cell("=(174.97 * exp(0.23 * (RotorDiameter / 1000))) / 2", alias="RotorDiskRadiusFromBladeRotorDiameter"),
     ],
     [
         # This is the "projected" yaw pipe length.
         # The actual yaw pipe length is calculated later in the HighEndStop spreadsheet
         # after the position of the safety catch is determined.
-        Cell('ProjectedLength'), Cell('=RotorDiskRadius * YawPipeScaleFactor * 2',
-                                      alias='YawPipeProjectedLength')
+        #
+        # Base on RotorDiskRadiusFromBladeRotorDiameter because the yaw pipe length should
+        # be associated to the blade rotor diameter, as the larger the diameter the blades
+        # the larger the yaw pipe needs to be to withstand the forces.
+        #
+        # For designs from the recipe book, RotorDiskRadiusFromBladeRotorDiameter is equivalent
+        # to RotorDiskRadius.
+        Cell("ProjectedLength"),
+        Cell(
+            "=RotorDiskRadiusFromBladeRotorDiameter * YawPipeScaleFactor * 2", alias="YawPipeProjectedLength"
+        ),
+    ],
+    [Cell("Plate", styles=[Style.UNDERLINE, Style.BOLD])],
+    [
+        Cell("CornerChamferLength"),
+        Cell("10", alias="YawBearingPlateCornerChamferLength"),
     ],
     [
-        Cell('Plate', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('CornerChamferLength'),
-        Cell('10', alias='YawBearingPlateCornerChamferLength')
-    ],
-    [
-        Cell('TopHoleRadius'), Cell('=CalculatedWindTurbineShape == <<T>> ? 10 : 17.5',
-                                    alias='YawBearingPlateTopHoleRadius')
+        Cell("TopHoleRadius"),
+        Cell(
+            "=CalculatedWindTurbineShape == <<T>> ? 10 : 17.5",
+            alias="YawBearingPlateTopHoleRadius",
+        ),
     ],
     [
         # Ensure Side piece (undeneath Top flat bar to stiffen it),
         # reaches the Channel Section of the Alternator due to Alternator tilt angle.
-        Cell('Extended Yaw Bearing (H & Star Shape)',
-             styles=[Style.UNDERLINE, Style.BOLD])
+        Cell(
+            "Extended Yaw Bearing (H & Star Shape)",
+            styles=[Style.UNDERLINE, Style.BOLD],
+        )
     ],
-    [
-        Cell('SideWidth'),
-        Cell('=YawPipeProjectedLength * 0.25',
-             alias='SideWidth')
-    ],
-    [
-        Cell('TopAngle'),
-        Cell('=45deg',
-             alias='TopAngle')
-    ],
+    [Cell("SideWidth"), Cell("=YawPipeProjectedLength * 0.25", alias="SideWidth")],
+    [Cell("TopAngle"), Cell("=45deg", alias="TopAngle")],
     [
         # Distance of triangle formed from Side piece and channel section of Frame
         # due to tilt of Alternator.
-        Cell('Gamma'),
-        Cell('=tan(AlternatorTiltAngle) * SideWidth',
-             alias='Gamma')
+        Cell("Gamma"),
+        Cell("=tan(AlternatorTiltAngle) * SideWidth", alias="Gamma"),
     ],
-    [
-        Cell('Delta'),
-        Cell('=cos(TopAngle) * FlatMetalThickness',
-             alias='Delta')
-    ],
-    [
-        Cell('Epsilon'),
-        Cell('=Delta * 2',
-             alias='Epsilon')
-    ],
+    [Cell("Delta"), Cell("=cos(TopAngle) * FlatMetalThickness", alias="Delta")],
+    [Cell("Epsilon"), Cell("=Delta * 2", alias="Epsilon")],
     [
         # Distance Top piece of Yaw Bearing is greater than where it meets the Frame of the Alternator.
-        Cell('TopFrameJunctionOverhangDistance'),
-        Cell('=Epsilon + Gamma',
-             alias='TopFrameJunctionOverhangDistance')
+        Cell("TopFrameJunctionOverhangDistance"),
+        Cell("=Epsilon + Gamma", alias="TopFrameJunctionOverhangDistance"),
     ],
     [
-        Cell('Mhypotenuse'),
-        Cell('=MetalLengthL * 2 + TopFrameJunctionOverhangDistance',
-             alias='Mhypotenuse')
+        Cell("Mhypotenuse"),
+        Cell(
+            "=MetalLengthL * 2 + TopFrameJunctionOverhangDistance", alias="Mhypotenuse"
+        ),
     ],
     [
-        Cell('YawPipeRadius'),
-        Cell('Madjacent'),
+        Cell("YawPipeRadius"),
+        Cell("Madjacent"),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
         # M is a reserved alias in FreeCAD.
         # TODO: Use standard prefix for this. Such as dimM for "dimension M"?
-        Cell('MM (M)')
+        Cell("MM (M)"),
     ],
     [
-        Cell('=YawPipeDiameter / 2',
-             alias='YawPipeRadius'),
-        Cell('=cos(TopAngle) * Mhypotenuse',
-             alias='Madjacent'),
+        Cell("=YawPipeDiameter / 2", alias="YawPipeRadius"),
+        Cell("=cos(TopAngle) * Mhypotenuse", alias="Madjacent"),
         # If M is less than the diameter of the Yaw Pipe, then set it to the diameter of the Yap Pipe.
-        Cell('=Madjacent < YawPipeDiameter ? YawPipeDiameter : Madjacent',
-             alias='MM')
+        Cell("=Madjacent < YawPipeDiameter ? YawPipeDiameter : Madjacent", alias="MM"),
     ],
+    [Cell("MMhypotenuse")],
+    [Cell("=hypot(MM; MM)", alias="MMhypotenuse")],
     [
-        Cell('MMhypotenuse')
-    ],
-    [
-        Cell('=hypot(MM; MM)',
-             alias='MMhypotenuse')
-    ],
-    [
-        Cell('AlternatorCenterRatio'),
+        Cell("AlternatorCenterRatio"),
         # See diagram on left-hand side of page 29 of "A Wind Turbine Recipe Book (2014)".
-        Cell('L'),
-        Cell('LargeYawBearingXOffset')
+        Cell("L"),
+        Cell("LargeYawBearingXOffset"),
     ],
     [
-        Cell('=(MetalLengthL * 2 - TopFrameJunctionOverhangDistance) / 2 / MMhypotenuse',
-             alias='AlternatorCenterRatio'),
-        Cell('=YawPipeRadius + (Offset / cos(TopAngle)) + (AlternatorCenterRatio * MM)',
-             alias='L'),
-        Cell('=TopFrameJunctionOverhangDistance / 2',
-             alias='LargeYawBearingXOffset')
+        Cell(
+            "=(MetalLengthL * 2 - TopFrameJunctionOverhangDistance) / 2 / MMhypotenuse",
+            alias="AlternatorCenterRatio",
+        ),
+        Cell(
+            "=YawPipeRadius + (Offset / cos(TopAngle)) + (AlternatorCenterRatio * MM)",
+            alias="L",
+        ),
+        Cell("=TopFrameJunctionOverhangDistance / 2", alias="LargeYawBearingXOffset"),
+    ],
+    [Cell("Side", styles=[Style.UNDERLINE, Style.BOLD])],
+    [Cell("CanSideExtendToMiddleOfYawBearingPipe")],
+    [
+        Cell(
+            "=(MM - YawPipeDiameter) / 2 > FlatMetalThickness ? True : False",
+            alias="CanSideExtendToMiddleOfYawBearingPipe",
+        )
+    ],
+    [Cell("HalfWidth"), Cell("=MM / 2", alias="HalfWidth")],
+    [
+        Cell("DistanceBetweenTopAndPipe"),
+        Cell("=HalfWidth - YawPipeRadius", alias="DistanceBetweenTopAndPipe"),
     ],
     [
-        Cell('Side', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('CanSideExtendToMiddleOfYawBearingPipe')
-    ],
-    [
-        Cell('=(MM - YawPipeDiameter) / 2 > FlatMetalThickness ? True : False',
-             alias='CanSideExtendToMiddleOfYawBearingPipe')
-    ],
-    [
-        Cell('HalfWidth'), Cell('=MM / 2',
-                                alias='HalfWidth')
-    ],
-    [
-        Cell('DistanceBetweenTopAndPipe'), Cell('=HalfWidth - YawPipeRadius',
-                                                alias='DistanceBetweenTopAndPipe')
-    ],
-    [
-        Cell('DistanceBetweenSideAndPipe'), Cell('=CanSideExtendToMiddleOfYawBearingPipe == True ? DistanceBetweenTopAndPipe - FlatMetalThickness : 0',
-                                                 alias='DistanceBetweenSideAndPipe')
+        Cell("DistanceBetweenSideAndPipe"),
+        Cell(
+            "=CanSideExtendToMiddleOfYawBearingPipe == True ? DistanceBetweenTopAndPipe - FlatMetalThickness : 0",
+            alias="DistanceBetweenSideAndPipe",
+        ),
     ],
     [
         # Protect against negative number for T Shape when Side is not tangent to Yaw Pipe.
-        Cell('AV'), Cell('=FlatMetalThickness - DistanceBetweenTopAndPipe > 0 ? FlatMetalThickness - DistanceBetweenTopAndPipe : FlatMetalThickness',
-                         alias='AV')
+        Cell("AV"),
+        Cell(
+            "=FlatMetalThickness - DistanceBetweenTopAndPipe > 0 ? FlatMetalThickness - DistanceBetweenTopAndPipe : FlatMetalThickness",
+            alias="AV",
+        ),
+    ],
+    [Cell("VO"), Cell("=YawPipeRadius - AV", alias="VO")],
+    [
+        Cell("X", horizontal_alignment=Alignment.RIGHT),
+        Cell("Y", horizontal_alignment=Alignment.RIGHT),
+        Cell("Z", horizontal_alignment=Alignment.RIGHT),
     ],
     [
-        Cell('VO'), Cell('=YawPipeRadius - AV',
-                         alias='VO')
+        Cell(
+            "=CanSideExtendToMiddleOfYawBearingPipe == False ? sqrt(YawPipeRadius ^ 2 - VO ^ 2) : 0",
+            alias="SideX",
+            horizontal_alignment=Alignment.RIGHT,
+        ),
+        Cell("=-SideWidth", alias="SideY", horizontal_alignment=Alignment.RIGHT),
+        Cell(
+            "=-HalfWidth + DistanceBetweenSideAndPipe",
+            alias="SideZ",
+            horizontal_alignment=Alignment.RIGHT,
+        ),
     ],
-    [
-        Cell('X',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('Y',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('Z',
-             horizontal_alignment=Alignment.RIGHT)
-    ],
-    [
-        Cell('=CanSideExtendToMiddleOfYawBearingPipe == False ? sqrt(YawPipeRadius ^ 2 - VO ^ 2) : 0',
-             alias='SideX',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('=-SideWidth',
-             alias='SideY',
-             horizontal_alignment=Alignment.RIGHT),
-        Cell('=-HalfWidth + DistanceBetweenSideAndPipe',
-             alias='SideZ',
-             horizontal_alignment=Alignment.RIGHT)
-    ],
-    [
-        Cell('SideLength', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
+    [Cell("SideLength", styles=[Style.UNDERLINE, Style.BOLD])],
     [
         # Short for (Adj)acent since this is used in a right triangle calculation later.
-        Cell('Adj'),
-        Cell('=L - MM - YawPipeRadius',
-             alias='Adj')
+        Cell("Adj"),
+        Cell("=L - MM - YawPipeRadius", alias="Adj"),
     ],
     # Variables for when side does NOT extend to middle of yaw bearing pipe
     # ---------------------------------------------------------------------
     [
-        Cell('DistanceSideExtendsFromFrameAtJunction'),
-        Cell('=TopFrameJunctionOverhangDistance - hypot(DistanceBetweenSideAndPipe; DistanceBetweenSideAndPipe)',
-             alias='DistanceSideExtendsFromFrameAtJunction')
+        Cell("DistanceSideExtendsFromFrameAtJunction"),
+        Cell(
+            "=TopFrameJunctionOverhangDistance - hypot(DistanceBetweenSideAndPipe; DistanceBetweenSideAndPipe)",
+            alias="DistanceSideExtendsFromFrameAtJunction",
+        ),
     ],
     [
-        Cell('Eta'),
-        Cell('=hypot(DistanceSideExtendsFromFrameAtJunction; DistanceSideExtendsFromFrameAtJunction)',
-             alias='Eta')
+        Cell("Eta"),
+        Cell(
+            "=hypot(DistanceSideExtendsFromFrameAtJunction; DistanceSideExtendsFromFrameAtJunction)",
+            alias="Eta",
+        ),
     ],
     [
         # Distance to extend side from top to frame
-        Cell('Theta'),
-        Cell('=Eta - FlatMetalThickness',
-             alias='Theta')
+        Cell("Theta"),
+        Cell("=Eta - FlatMetalThickness", alias="Theta"),
     ],
     # Variables for when side extends to middle of yaw bearing pipe
     # -------------------------------------------------------------
     [
         # Angle side about Y-axis slightly when MetalLengthL is at its maximum for H & Star Shape.
         # tan(SideYAngle) = opposite / adjacent
-        Cell('SideYAngle'),
-        Cell('=atan(DistanceBetweenSideAndPipe / Adj)',
-             alias='SideYAngle')
+        Cell("SideYAngle"),
+        Cell("=atan(DistanceBetweenSideAndPipe / Adj)", alias="SideYAngle"),
     ],
     [
         # Short for (Hyp)otenuse
-        Cell('Hyp'),
-        Cell('=hypot(DistanceBetweenSideAndPipe; Adj)',
-             alias='Hyp')
+        Cell("Hyp"),
+        Cell("=hypot(DistanceBetweenSideAndPipe; Adj)", alias="Hyp"),
     ],
     [
-        Cell('Iota'),
-        Cell('=FlatMetalThickness * tan(TopAngle - SideYAngle)',
-             alias='Iota')
+        Cell("Iota"),
+        Cell("=FlatMetalThickness * tan(TopAngle - SideYAngle)", alias="Iota"),
     ],
     [
-        Cell('Kappa'),
-        Cell('=FlatMetalThickness / sin(TopAngle + SideYAngle)',
-             alias='Kappa')
+        Cell("Kappa"),
+        Cell("=FlatMetalThickness / sin(TopAngle + SideYAngle)", alias="Kappa"),
     ],
+    [Cell("Lambda"), Cell("=TopFrameJunctionOverhangDistance - Kappa", alias="Lambda")],
+    [Cell("Zeta"), Cell("=Lambda / cos(TopAngle + SideYAngle)", alias="Zeta")],
     [
-        Cell('Lambda'),
-        Cell('=TopFrameJunctionOverhangDistance - Kappa',
-             alias='Lambda')
+        Cell("SideLength"),
+        Cell(
+            "=CanSideExtendToMiddleOfYawBearingPipe == True ? "
+            + "Hyp + Iota + Zeta : "
+            + "Adj - SideX + DistanceBetweenSideAndPipe + Theta",
+            alias="SideLength",
+        ),
     ],
+    [Cell("ArcWireSupport", styles=[Style.UNDERLINE, Style.BOLD])],
+    [Cell("Thickness"), Cell("Width"), Cell("Hole_y")],
     [
-        Cell('Zeta'),
-        Cell('=Lambda / cos(TopAngle + SideYAngle)',
-             alias='Zeta')
+        Cell("5", alias="ArcWireSupportThickness"),
+        Cell("=FlatMetalThickness", alias="ArcWireSupportWidth"),
+        Cell("=YawPipeRadius + I", alias="Hole_y"),
     ],
+    [Cell("SmallLength"), Cell("LargeLength"), Cell("Length")],
     [
-        Cell('SideLength'),
-        Cell('=CanSideExtendToMiddleOfYawBearingPipe == True ? ' +
-             'Hyp + Iota + Zeta : ' +
-             'Adj - SideX + DistanceBetweenSideAndPipe + Theta',
-             alias='SideLength')
-    ],
-    [
-        Cell('ArcWireSupport', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
-    [
-        Cell('Thickness'),
-        Cell('Width'),
-        Cell('Hole_y')
-    ],
-    [
-        Cell('5',
-             alias='ArcWireSupportThickness'),
-        Cell('=FlatMetalThickness',
-             alias='ArcWireSupportWidth'),
-        Cell('=YawPipeRadius + I',
-             alias='Hole_y')
-    ],
-    [
-        Cell('SmallLength'),
-        Cell('LargeLength'),
-        Cell('Length')
-    ],
-    [
-        Cell('=Hole_y - YawBearingPlateTopHoleRadius',
-             alias='ArcWireSupportSmallLength'),
+        Cell(
+            "=Hole_y - YawBearingPlateTopHoleRadius", alias="ArcWireSupportSmallLength"
+        ),
         # Hypotenuse of isosceles right triangle = a * sqrt(2)
         # https://mathworld.wolfram.com/IsoscelesRightTriangle.html
-        Cell('=HalfWidth * sqrt(2) - YawBearingPlateTopHoleRadius - ArcWireSupportWidth / 2',
-             alias='ArcWireSupportLargeLength'),
-        Cell('=CalculatedWindTurbineShape == <<T>> ? ArcWireSupportSmallLength : ArcWireSupportLargeLength',
-             alias='ArcWireSupportLength')
+        Cell(
+            "=HalfWidth * sqrt(2) - YawBearingPlateTopHoleRadius - ArcWireSupportWidth / 2",
+            alias="ArcWireSupportLargeLength",
+        ),
+        Cell(
+            "=CalculatedWindTurbineShape == <<T>> ? ArcWireSupportSmallLength : ArcWireSupportLargeLength",
+            alias="ArcWireSupportLength",
+        ),
     ],
     # Placement
     # ---------
-    [
-        Cell('Placement', styles=[Style.UNDERLINE, Style.BOLD])
-    ],
+    [Cell("Placement", styles=[Style.UNDERLINE, Style.BOLD])],
     # Local to YawBearing_Extended_Assembly document.
-    *create_placement_cells(name='ExtendedTop',
-                            base=(
-                                '=-YawPipeRadius',
-                                '=FlatMetalThickness',
-                                '=-HalfWidth'),
-                            axis=('0', '0', '1'),
-                            angle='0'),
+    *create_placement_cells(
+        name="ExtendedTop",
+        base=("=-YawPipeRadius", "=FlatMetalThickness", "=-HalfWidth"),
+        axis=("0", "0", "1"),
+        angle="0",
+    ),
 ]
