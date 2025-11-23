@@ -14,15 +14,13 @@ from .parameter_groups import FurlingParameters, MagnafpmParameters, UserParamet
 from .pipe_size import PipeSize
 from .wind_turbine_shape import (
     WindTurbineShape,
-    map_rotor_disk_radius_to_wind_turbine_shape,
 )
 
 MIN_NUMBER_MAGNET = 4
 MAX_NUMBER_MAGNET = 32
 
 
-def get_parameters_schema(rotor_disk_radius: float) -> dict:
-    wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(rotor_disk_radius)
+def get_parameters_schema(wind_turbine_shape: WindTurbineShape) -> dict:
     default_parameters = get_default_parameters(wind_turbine_shape)
     default_flat_metal_thickness = default_parameters["user"]["FlatMetalThickness"]
     default_rotor_disk_central_hole_diameter = default_parameters["user"][

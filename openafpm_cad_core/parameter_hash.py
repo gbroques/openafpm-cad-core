@@ -14,6 +14,7 @@ from typing import List, TypedDict
 
 from .parameter_groups import FurlingParameters, MagnafpmParameters, UserParameters
 from .get_parameters_schema import get_parameters_schema
+from .wind_turbine_shape import WindTurbineShape, map_rotor_disk_radius_to_wind_turbine_shape
 
 # https://en.wikipedia.org/wiki/Base62
 CHARSET = string.digits + string.ascii_uppercase + string.ascii_lowercase
@@ -28,7 +29,14 @@ def hash_parameters(
     furling_parameters: FurlingParameters,
     user_parameters: UserParameters,
 ) -> str:
-    schema = get_parameters_schema(magnafpm_parameters["RotorDiskRadius"])
+    wind_turbine_shape = user_parameters["WindTurbineShape"]
+    if wind_turbine_shape == "Calculated":
+        wind_turbine_shape = map_rotor_disk_radius_to_wind_turbine_shape(
+            magnafpm_parameters["RotorDiskRadius"]
+        )
+    else:
+        wind_turbine_shape = WindTurbineShape.from_string(wind_turbine_shape)
+    schema = get_parameters_schema(wind_turbine_shape)
     parameters_by_group = convert_enum_values_to_integers(
         {
             "magnafpm": magnafpm_parameters,
