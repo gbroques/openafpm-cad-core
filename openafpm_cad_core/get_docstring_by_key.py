@@ -1,6 +1,7 @@
 import ast
 import inspect
 from collections import OrderedDict
+from functools import lru_cache
 from typing import TypedDict
 
 __all__ = ['get_docstring_by_key']
@@ -22,6 +23,7 @@ class TypedDictKeyDocstringVistor(ast.NodeVisitor):
             self.docstring_by_key[key] = docstring
 
 
+@lru_cache(maxsize=None)
 def get_docstring_by_key(typed_dict: TypedDict) -> OrderedDict:
     source = inspect.getsource(typed_dict)
     tree = ast.parse(source)
