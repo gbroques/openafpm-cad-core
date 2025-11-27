@@ -17,13 +17,10 @@ wind_turbine_cells: List[List[Cell]] = [
         # -------------------------------------------
     ],
     [
-        Cell('RotorDiskRadius'),
         Cell('FlatMetalThickness'),
         Cell('CalculatedWindTurbineShape')
     ],
     [
-        Cell('=Spreadsheet.RotorDiskRadius',
-             alias='RotorDiskRadius'),
         Cell('=Spreadsheet.FlatMetalThickness',
              alias='FlatMetalThickness'),
         Cell('=Spreadsheet.CalculatedWindTurbineShape',
