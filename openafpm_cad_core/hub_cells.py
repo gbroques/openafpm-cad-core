@@ -57,14 +57,11 @@ hub_cells: List[List[Cell]] = [
         Cell('Spreadsheet', styles=[Style.UNDERLINE])
     ],
     [
-        Cell('RotorDiskRadius'),
         Cell('HubPitchCircleDiameter'),
         Cell('HubHolesDiameter'),
         Cell('CalculatedWindTurbineShape')
     ],
     [
-        Cell('=Spreadsheet.RotorDiskRadius',
-             alias='RotorDiskRadius'),
         Cell('=Spreadsheet.HubPitchCircleDiameter',
              alias='HubPitchCircleDiameter'),
         Cell('=Spreadsheet.HubHolesDiameter',
