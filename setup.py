@@ -1,7 +1,7 @@
 import io
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version = {}
 with open('openafpm_cad_core/_version.py') as fp:
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/gbroques/openafpm-cad-core',
     author='G Roques',
     version=version['__version__'],
-    packages=['openafpm_cad_core'],
+    packages=find_packages(),
     # Incude data files specified in MANIFEST.in file.
     include_package_data=True,
     install_requires=[
