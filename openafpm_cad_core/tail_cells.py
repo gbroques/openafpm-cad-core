@@ -54,6 +54,16 @@ tail_cells: List[List[Cell]] = [
         Cell('=Spreadsheet.BoomPipeDiameter',
              alias='BoomPipeDiameter')
     ],
+    [
+        Cell('YawBearing', styles=[Style.UNDERLINE])
+    ],
+    [
+        Cell('RotorDiskRadiusFromBladeRotorDiameter')
+    ],
+    [
+        Cell('=YawBearing.RotorDiskRadiusFromBladeRotorDiameter',
+             alias='RotorDiskRadiusFromBladeRotorDiameter')
+    ],
     # Calculated
     # ----------
     [
@@ -166,7 +176,7 @@ tail_cells: List[List[Cell]] = [
         Cell('Length'),
         # TODO: Should this be a ratio of YawPipeLength? Like:
         #       =0.85 * YawPipeLength
-        Cell('=0.8 * 2 * RotorDiskRadius',
+        Cell('=0.8 * 2 * RotorDiskRadiusFromBladeRotorDiameter',
              alias='HingeInnerPipeLength')
     ],
     [
