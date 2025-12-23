@@ -91,19 +91,19 @@ def create_section(
     z_top_end = thickness - drop_end
     z_bottom_right_end = max(0, z_top_end - thick_end)
     
-    width_end = wood_width - (wood_width - W) * (y_end / blade_radius)
+    chord_length = wood_width - (wood_width - W) * (y_end / blade_radius)
     z_bottom_end = thickness - thick_end
 
     # Only create the 4 vertices needed for the cross-section wire at y_end
-    v3 = FreeCAD.Vector(
-        W - width_end, y_end, z_bottom_right_end
+    v1 = FreeCAD.Vector(
+        W - chord_length, y_end, z_bottom_right_end
     )  # Trailing edge bottom
-    v4 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
-    v7 = FreeCAD.Vector(W - width_end, y_end, z_top_end)  # Trailing edge top
-    v8 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
+    v2 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
+    v3 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
+    v4 = FreeCAD.Vector(W - chord_length, y_end, z_top_end)  # Trailing edge top
 
     # Create cross-section wire
-    back_wire = Part.makePolygon([v4, v3, v7, v8, v4])
+    back_wire = Part.makePolygon([v2, v1, v4, v3, v2])
     return Part.show(back_wire, name)
 
 
