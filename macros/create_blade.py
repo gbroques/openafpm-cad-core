@@ -25,6 +25,10 @@ def load_airfoil_coordinates(filepath: Path) -> List[Tuple[float, float]]:
                     continue
     return coordinates
 
+def scale_airfoil_coordinates(coordinates: List[Tuple[float, float]], chord_length: float) -> List[Tuple[float, float]]:
+    """Scale airfoil coordinates by chord length"""
+    return [(x * chord_length, y * chord_length) for x, y in coordinates]
+
 def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
     """Create FreeCAD Wire from airfoil coordinates"""
     points = [FreeCAD.Vector(x, 0, y) for x, y in coordinates]
@@ -49,11 +53,12 @@ def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
 # Load airfoil coordinates and create wire
 # USNPS4 airfoil: http://airfoiltools.com/airfoil/details?airfoil=usnps4-il
 coordinates = load_airfoil_coordinates(Path(__file__).parent / 'USNPS4.dat')
-wire = create_airfoil_wire(coordinates)
+scaled_coordinates = scale_airfoil_coordinates(coordinates, 100.0)  # 100mm chord
+wire = create_airfoil_wire(scaled_coordinates)
 
 # Show in FreeCAD
 if not FreeCAD.ActiveDocument:
     FreeCAD.newDocument()
 
 Part.show(wire, "USNPS4_Airfoil")
-print(f"Created airfoil wire with {len(coordinates)} coordinates")
+print(f"Created airfoil wire with {len(scaled_coordinates)} coordinates, chord length: 100mm")
