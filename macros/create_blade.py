@@ -77,8 +77,20 @@ def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
         return Part.Wire([edge])
 
 
-# Helper function from create_root.py (simplified for wire creation only)
-def create_section(y_end, thick_end, z_top_end, z_bottom_right_end, name):
+def create_section(
+    y_end: float,
+    thick_end: float,
+    drop_end: float,
+    name: str,
+    W: float,
+    wood_width: float,
+    blade_radius: float,
+    thickness: float,
+) -> Part.Feature:
+    # Calculate z positions internally
+    z_top_end = thickness - drop_end
+    z_bottom_right_end = max(0, z_top_end - thick_end)
+    
     width_end = wood_width - (wood_width - W) * (y_end / blade_radius)
     z_bottom_end = thickness - thick_end
 
@@ -132,10 +144,17 @@ for i in range(1, num_sections):  # i=1,2,3,4,5 (y=200,400,600,800,1000,1200)
     y_end = (i + 1) * section_length
     thick_end = thicknesses[i]
     drop_end = drops[i]
-    z_top_end = thickness - drop_end
-    z_bottom_right_end = max(0, z_top_end - thick_end)
 
     # Create cross-section at y_end
-    create_section(y_end, thick_end, z_top_end, z_bottom_right_end, section_names[i-1])
+    create_section(
+        y_end,
+        thick_end,
+        drop_end,
+        section_names[i - 1],
+        W,
+        wood_width,
+        blade_radius,
+        thickness,
+    )
 
 print("Created blade section wires from station 5 to tip")
