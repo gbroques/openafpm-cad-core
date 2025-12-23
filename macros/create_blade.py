@@ -29,6 +29,18 @@ def scale_airfoil_coordinates(coordinates: List[Tuple[float, float]], chord_leng
     """Scale airfoil coordinates by chord length"""
     return [(x * chord_length, y * chord_length) for x, y in coordinates]
 
+def flip_airfoil_coordinates_vertically(coordinates: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+    """Flip airfoil coordinates vertically (negate y-values)"""
+    return [(x, -y) for x, y in coordinates]
+
+def flip_airfoil_coordinates_horizontally(coordinates: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+    """Flip airfoil coordinates horizontally (negate x-values)"""
+    return [(-x, y) for x, y in coordinates]
+
+def translate_airfoil_coordinates(coordinates: List[Tuple[float, float]], x_offset: float) -> List[Tuple[float, float]]:
+    """Translate airfoil coordinates along x-axis"""
+    return [(x + x_offset, y) for x, y in coordinates]
+
 def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
     """Create FreeCAD Wire from airfoil coordinates"""
     points = [FreeCAD.Vector(x, 0, y) for x, y in coordinates]
@@ -52,9 +64,13 @@ def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
 
 # Load airfoil coordinates and create wire
 # USNPS4 airfoil: http://airfoiltools.com/airfoil/details?airfoil=usnps4-il
+W = 50  # Distance from leading edge to center
 coordinates = load_airfoil_coordinates(Path(__file__).parent / 'USNPS4.dat')
-scaled_coordinates = scale_airfoil_coordinates(coordinates, 100.0)  # 100mm chord
-wire = create_airfoil_wire(scaled_coordinates)
+reflected_coordinates = flip_airfoil_coordinates_vertically(coordinates)
+flipped_coordinates = flip_airfoil_coordinates_horizontally(reflected_coordinates)
+scaled_coordinates = scale_airfoil_coordinates(flipped_coordinates, 100.0)  # 100mm chord
+translated_coordinates = translate_airfoil_coordinates(scaled_coordinates, W)
+wire = create_airfoil_wire(translated_coordinates)
 
 # Show in FreeCAD
 if not FreeCAD.ActiveDocument:
