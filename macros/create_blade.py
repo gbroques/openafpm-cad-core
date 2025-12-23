@@ -1,6 +1,7 @@
 from pathlib import Path
-from pprint import pprint
 from typing import List, Tuple
+import FreeCAD
+import Part
 
 def load_airfoil_coordinates(filepath: Path) -> List[Tuple[float, float]]:
     """Load airfoil coordinates from .dat file
@@ -24,7 +25,35 @@ def load_airfoil_coordinates(filepath: Path) -> List[Tuple[float, float]]:
                     continue
     return coordinates
 
-# Load airfoil coordinates
+def create_airfoil_wire(coordinates: List[Tuple[float, float]]) -> Part.Wire:
+    """Create FreeCAD Wire from airfoil coordinates"""
+    points = [FreeCAD.Vector(x, 0, y) for x, y in coordinates]
+    
+    # Check if airfoil is closed (first and last points match)
+    first_point = points[0]
+    last_point = points[-1]
+    is_closed = first_point.distanceToPoint(last_point) < 0.001
+    
+    # Create BSpline curve (not closed to preserve sharp trailing edge)
+    spline = Part.BSplineCurve()
+    spline.interpolate(points, False)  # False to avoid smoothing trailing edge
+    edge = spline.toShape()
+    
+    if not is_closed:
+        # Add sharp closing line from last point to first point
+        closing_line = Part.makeLine(last_point, first_point)
+        return Part.Wire([edge, closing_line])
+    else:
+        return Part.Wire([edge])
+
+# Load airfoil coordinates and create wire
+# USNPS4 airfoil: http://airfoiltools.com/airfoil/details?airfoil=usnps4-il
 coordinates = load_airfoil_coordinates(Path(__file__).parent / 'USNPS4.dat')
-pprint(coordinates)
-print(f"Loaded {len(coordinates)} airfoil coordinates")
+wire = create_airfoil_wire(coordinates)
+
+# Show in FreeCAD
+if not FreeCAD.ActiveDocument:
+    FreeCAD.newDocument()
+
+Part.show(wire, "USNPS4_Airfoil")
+print(f"Created airfoil wire with {len(coordinates)} coordinates")
