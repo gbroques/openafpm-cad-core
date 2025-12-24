@@ -228,13 +228,16 @@ def create_section(
     return Part.show(back_wire, name)
 
 
+# Main execution
+if not FreeCAD.ActiveDocument:
+    FreeCAD.newDocument()
+
 # Load airfoil coordinates
 # USNPS4 airfoil: http://airfoiltools.com/airfoil/details?airfoil=usnps4-il
-
-W = 50  # Distance from leading edge to center
 coordinates = load_airfoil_coordinates(Path(__file__).parent / "USNPS4.dat")
 
-# Copy blade section creation logic from create_root.py
+# Blade parameters
+W = 50  # Distance from leading edge to center
 blade_radius = 1200  # mm
 wood_width = 200  # root width
 thickness = 40  # z dimension
@@ -243,28 +246,6 @@ section_length = blade_radius / num_sections
 drops = [40, 32, 15, 7, 3, 1]  # mm
 thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 
-# Show in FreeCAD
-if not FreeCAD.ActiveDocument:
-    FreeCAD.newDocument()
-
-# Create blade sections from root triangle to tip (y=200 to y=1200)
-section_names = [
-    "Root_triangle",
-    "Section_5",
-    "Section_4",
-    "Section_3",
-    "Section_2",
-    "Tip",
-]
-section_length = blade_radius / num_sections
-drops = [40, 32, 15, 7, 3, 1]  # mm
-thicknesses = [27, 27, 19, 14, 9, 6]  # mm
-
-# Show in FreeCAD
-if not FreeCAD.ActiveDocument:
-    FreeCAD.newDocument()
-
-# Create blade sections from root triangle to tip (y=200 to y=1200)
 section_names = [
     "Root_triangle",
     "Section_5",
@@ -274,12 +255,12 @@ section_names = [
     "Tip",
 ]
 
-for i in range(0, num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
+# Create blade sections from root triangle to tip (y=200 to y=1200)
+for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
     y_end = (i + 1) * section_length
     thick_end = thicknesses[i]
     drop_end = drops[i]
 
-    # Create cross-section at y_end
     create_section(
         y_end,
         thick_end,
