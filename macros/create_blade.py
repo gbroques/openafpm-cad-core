@@ -198,9 +198,22 @@ def create_section(
 
     # Create airfoil wire
     rotation_angle = math.degrees(math.atan(drop_end / chord_length))
-    Part.show(create_airfoil_wire_at_section(
-        airfoil_coordinates, chord_length, y_end, W, thickness, rotation_angle, W, thickness
-    ), f"{name}_Airfoil")
+
+    # Skip airfoil creation for root triangle (y=200)
+    if y_end != 200:
+        Part.show(
+            create_airfoil_wire_at_section(
+                airfoil_coordinates,
+                chord_length,
+                y_end,
+                W,
+                thickness,
+                rotation_angle,
+                W,
+                thickness,
+            ),
+            f"{name}_Airfoil",
+        )
 
     # Only create the 4 vertices needed for the cross-section wire at y_end
     v1 = FreeCAD.Vector(
@@ -234,10 +247,34 @@ thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 if not FreeCAD.ActiveDocument:
     FreeCAD.newDocument()
 
-# Create blade sections from station 5 to tip (y=400 to y=1200)
-section_names = ["Section_5", "Section_4", "Section_3", "Section_2", "Tip"]
+# Create blade sections from root triangle to tip (y=200 to y=1200)
+section_names = [
+    "Root_triangle",
+    "Section_5",
+    "Section_4",
+    "Section_3",
+    "Section_2",
+    "Tip",
+]
+section_length = blade_radius / num_sections
+drops = [40, 32, 15, 7, 3, 1]  # mm
+thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 
-for i in range(1, num_sections):  # i=1,2,3,4,5 (y=200,400,600,800,1000,1200)
+# Show in FreeCAD
+if not FreeCAD.ActiveDocument:
+    FreeCAD.newDocument()
+
+# Create blade sections from root triangle to tip (y=200 to y=1200)
+section_names = [
+    "Root_triangle",
+    "Section_5",
+    "Section_4",
+    "Section_3",
+    "Section_2",
+    "Tip",
+]
+
+for i in range(0, num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
     y_end = (i + 1) * section_length
     thick_end = thicknesses[i]
     drop_end = drops[i]
@@ -247,7 +284,7 @@ for i in range(1, num_sections):  # i=1,2,3,4,5 (y=200,400,600,800,1000,1200)
         y_end,
         thick_end,
         drop_end,
-        section_names[i - 1],
+        section_names[i],
         W,
         wood_width,
         blade_radius,
@@ -255,4 +292,4 @@ for i in range(1, num_sections):  # i=1,2,3,4,5 (y=200,400,600,800,1000,1200)
         coordinates,
     )
 
-print("Created blade section wires and airfoils from station 5 to tip")
+print("Created blade section wires and airfoils from root triangle to tip")
