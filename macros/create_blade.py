@@ -158,7 +158,21 @@ def create_airfoil_wire_at_section(
         )
         xyz_coordinates = [(x, y_position, z) for x, z in rotated_coordinates]
 
-    # Step 6: Create wire
+    # Step 6: Create wire and measure leading edge overshoot
+    points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
+    spline = Part.BSplineCurve()
+    spline.interpolate(points, False)
+    temp_wire = Part.Wire([spline.toShape()])
+
+    # Measure leading edge overshoot
+    actual_leading_x = temp_wire.BoundBox.XMax
+    leading_overshoot = actual_leading_x - x_offset
+
+    # Shift all coordinates back by the overshoot amount
+    if leading_overshoot > 0:
+        xyz_coordinates = [(x - leading_overshoot, y, z) for x, y, z in xyz_coordinates]
+
+    # Create final wire with corrected coordinates
     points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
     spline = Part.BSplineCurve()
     spline.interpolate(points, False)
