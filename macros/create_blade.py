@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Tuple, Optional
 import FreeCAD
 import Part
+import Draft
 import math
 
 
@@ -189,6 +190,143 @@ def create_airfoil_wire_at_section(
         return Part.Wire([edge])
 
 
+def create_discretized_root_triangle(
+    y_end,
+    name,
+    W,
+    chord_length_x,
+    z_top_end,
+    z_bottom_right_end,
+    thickness,
+    thick_end,
+    num_discretization_points,
+    duplicate_end_point_offset=0.001,
+):
+    """Create discretized root triangle with 79 points + 2 duplicate endpoints = 81 points"""
+
+    print(
+        f"Root triangle parameters: z_top_end={z_top_end}, z_bottom_right_end={z_bottom_right_end}"
+    )
+
+    # Define the 4 quadrilateral vertices (same as cross-section wire)
+    z_bottom_end = thickness - thick_end
+    v1 = FreeCAD.Vector(
+        W - chord_length_x, y_end, z_bottom_right_end
+    )  # Trailing edge bottom
+    v2 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
+    v3 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
+    v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)  # Trailing edge top
+
+    print(f"Quadrilateral vertices: v1={v1}, v2={v2}, v3={v3}, v4={v4}")
+
+    # Create wire with Draft.make_fillet for rounded corners
+    # Create FreeCAD objects for the edges (will be deleted)
+    edge1_obj = Part.show(Part.makeLine(v1, v2), f"{name}_Edge1")
+    edge2_obj = Part.show(Part.makeLine(v2, v3), f"{name}_Edge2")
+    edge3_obj = Part.show(Part.makeLine(v3, v4), f"{name}_Edge3")
+
+    fillet_radius = 8.0
+
+    # First fillet: bottom corner
+    filleted_corner1 = Draft.make_fillet(
+        [edge1_obj, edge2_obj], radius=fillet_radius, delete=False
+    )
+
+    # Fillet produces 3 edges: [trimmed_edge1, rounded_corner, trimmed_edge2]
+    # The last edge (index 2) connects to v3
+    connecting_edge = filleted_corner1.Shape.Edges[2]
+
+    # Second fillet: top corner (delete intermediate objects automatically)
+    connecting_edge_obj = Part.show(connecting_edge, f"{name}_ConnectingEdge")
+    filleted_corner2 = Draft.make_fillet(
+        [connecting_edge_obj, edge3_obj], radius=fillet_radius, delete=True
+    )
+
+    # Combine edges: first two edges from corner1 + all edges from corner2
+    complete_edges = []
+    complete_edges.extend(filleted_corner1.Shape.Edges[:2])  # First two edges (exclude connecting edge)
+    complete_edges.extend(filleted_corner2.Shape.Edges)      # All edges from second fillet
+
+    # Create and show the final discretization wire
+    open_filleted_wire = Part.Wire(complete_edges)
+    Part.show(open_filleted_wire, f"{name}_Discretization_Wire")
+    print(
+        f"Created filleted discretization wire: {len(open_filleted_wire.Edges)} edges"
+    )
+
+    # Discretize the filleted wire into points matching airfoil coordinate count
+    discretized_points = open_filleted_wire.discretize(num_discretization_points)
+
+    # Convert to FreeCAD Vectors
+    points = [FreeCAD.Vector(p.x, p.y, p.z) for p in discretized_points]
+
+    print(f"Discretized {len(points)} points from open wire")
+
+    # Add duplicate endpoints with small offset
+    first_point = points[0]
+    second_point = points[1]
+    last_point = points[-1]
+    second_last_point = points[-2]
+
+    # Create duplicate first point slightly between first and second
+    duplicate_first = first_point + duplicate_end_point_offset * (second_point - first_point)
+
+    # Create duplicate last point slightly between last and second-to-last
+    duplicate_last = last_point + duplicate_end_point_offset * (second_last_point - last_point)
+
+    # Final 81 points: first + duplicate_first + middle points + duplicate_last + last
+    final_points = (
+        [points[0]] + [duplicate_first] + points[1:-1] + [duplicate_last] + [points[-1]]
+    )
+
+    # Create B-spline interpolation from the 81 points at same y position
+    # Create B-spline curve through the points using interpolation
+    try:
+        bspline = Part.BSplineCurve()
+        bspline.interpolate(final_points)
+        bspline_edge = Part.Edge(bspline)
+
+        # Add closing line from last point to first point (trailing edge)
+        first_point = final_points[0]
+        last_point = final_points[-1]
+        closing_line = Part.makeLine(last_point, first_point)
+
+        # Create closed wire
+        bspline_wire = Part.Wire([bspline_edge, closing_line])
+        Part.show(bspline_wire, f"{name}_BSpline_Closed")
+        print(f"Created closed B-spline wire from {len(final_points)} points at y=200")
+
+        # Delete intermediate objects
+        doc = FreeCAD.ActiveDocument
+        for obj_name in [
+            f"{name}_Edge1",
+            f"{name}_Edge2",
+            name,
+        ]:
+            try:
+                obj = doc.getObject(obj_name)
+                if obj:
+                    doc.removeObject(obj_name)
+            except:
+                pass
+
+        try:
+            if filleted_corner1:
+                doc.removeObject(filleted_corner1.Name)
+            if filleted_corner2:
+                doc.removeObject(filleted_corner2.Name)
+        except:
+            pass
+
+    except Exception as e:
+        print(f"Failed to create B-spline: {e}")
+
+    print(
+        f"Created discretized {name} with {len(final_points)} points ({num_discretization_points} + 2 duplicates)"
+    )
+    return final_points
+
+
 def create_section(
     y_end: float,
     thick_end: float,
@@ -215,18 +353,29 @@ def create_section(
 
     # Skip airfoil creation for root triangle (y=200)
     if y_end != 200:
-        Part.show(
-            create_airfoil_wire_at_section(
-                airfoil_coordinates,
-                chord_length,
-                y_end,
-                W,
-                thickness,
-                rotation_angle,
-                W,
-                thickness,
-            ),
-            f"{name}_Airfoil",
+        airfoil_wire = create_airfoil_wire_at_section(
+            airfoil_coordinates,
+            chord_length,
+            y_end,
+            W,
+            thickness,
+            rotation_angle,
+            W,
+            thickness,
+        )
+        Part.show(airfoil_wire, f"{name}_Airfoil")
+    else:
+        # Create discretized root triangle with points matching airfoil + 2 duplicates
+        create_discretized_root_triangle(
+            y_end,
+            name,
+            W,
+            chord_length_x,
+            z_top_end,
+            z_bottom_right_end,
+            thickness,
+            thick_end,
+            len(airfoil_coordinates),
         )
 
     # Only create the 4 vertices needed for the cross-section wire at y_end
@@ -257,7 +406,8 @@ wood_width = 200  # root width
 thickness = 40  # z dimension
 num_sections = 6
 section_length = blade_radius / num_sections
-drops = [40, 32, 15, 7, 3, 1]  # mm
+minimum_trailing_edge_thickness = 0.1  # mm
+drops = [40 - minimum_trailing_edge_thickness, 32, 15, 7, 3, 1]  # mm
 thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 
 section_names = [
@@ -288,3 +438,39 @@ for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
     )
 
 print("Created blade section wires and airfoils from root triangle to tip")
+
+# Create loft through all sections from root to tip
+try:
+    doc = FreeCAD.ActiveDocument
+
+    # Collect all sections in order from root to tip
+    sections = []
+    section_names = [
+        "Root_triangle_BSpline_Closed",
+        "Section_5_Airfoil",
+        "Section_4_Airfoil",
+        "Section_3_Airfoil",
+        "Section_2_Airfoil",
+        "Tip_Airfoil",
+    ]
+
+    for section_name in section_names:
+        obj = doc.getObject(section_name)
+        if obj:
+            sections.append(obj)
+            print(f"Added {section_name} to loft")
+        else:
+            print(f"Warning: {section_name} not found")
+
+    if len(sections) >= 2:
+        loft = doc.addObject("Part::Loft", "Complete_Blade_Loft")
+        loft.Sections = sections
+        loft.Solid = True
+        loft.Ruled = False
+        doc.recompute()
+        print(f"Created complete blade loft with {len(sections)} sections")
+    else:
+        print(f"Not enough sections found for loft: {len(sections)}")
+
+except Exception as e:
+    print(f"Failed to create complete loft: {e}")
