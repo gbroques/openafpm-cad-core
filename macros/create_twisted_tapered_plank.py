@@ -187,14 +187,15 @@ section_length = blade_radius / num_sections
 y_split = math.sqrt(R2**2 - W**2)
 
 # Calculate termination point where trailing edge bottom reaches z=0
-y5 = 400
-y4 = 600
-w5 = wood_width - (wood_width - W) * (y5 / blade_radius)
-w4 = wood_width - (wood_width - W) * (y4 / blade_radius)
+# Between Station 5 (y=400) and Station 4 (y=600)
+station_5_y = 400
+station_4_y = 600
+w5 = wood_width - (wood_width - W) * (station_5_y / blade_radius)
+w4 = wood_width - (wood_width - W) * (station_4_y / blade_radius)
 z5_unclamped = (thickness - drops[1]) - thicknesses[1]
 z4 = (thickness - drops[2]) - thicknesses[2]
 t_term = -z5_unclamped / (z4 - z5_unclamped)
-y_term = y5 + t_term * (y4 - y5)
+y_term = station_5_y + t_term * (station_4_y - station_5_y)
 x_term_width = w5 + t_term * (w4 - w5)
 x_term = W - x_term_width
 
@@ -207,6 +208,9 @@ for i in range(num_sections):
     
     thick_start = thicknesses[i - 1] if i > 0 else thickness
     thick_end = thicknesses[i]
+    
+    # Create sections with consistent naming
+    section_names = ["Root_a", "Root_b", "Section_5", "Section_4a", "Section_4b", "Section_3", "Section_2", "Section_1"]
     
     if i == 0:
         # Root_a: y=0 to y=y_split, flat bottom
@@ -249,7 +253,7 @@ for i in range(num_sections):
     
     if i == 1:  # Section_5: flat bottom
         section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
-                                    z_top_start, z_top_end, 0, 0, "Section_5", config)
+                                    z_top_start, z_top_end, 0, 0, section_names[2], config)
         blocks.append(section_obj)
     elif i == 2:  # Section_4: split at termination point
         thick_term = thicknesses[1] + t_term * (thicknesses[2] - thicknesses[1])
@@ -257,24 +261,28 @@ for i in range(num_sections):
         z_top_term = thickness - drop_term
         
         section_4a = create_section(y_start, y_term, thick_start, thick_term, drops[1], drop_term, 
-                                   z_top_start, z_top_term, 0, 0, "Section_4a", config)
+                                   z_top_start, z_top_term, 0, 0, section_names[3], config)
         blocks.append(section_4a)
         
         section_4b = create_section(y_term, y_end, thick_term, thick_end, drop_term, drops[2],
-                                   z_top_term, z_top_end, 0, z_bottom_right_end, "Section_4b", config)
+                                   z_top_term, z_top_end, 0, z_bottom_right_end, section_names[4], config)
         blocks.append(section_4b)
     else:
+        # Use proper section index (i+2 accounts for Root_a, Root_b offset)
+        section_name = section_names[min(i+2, len(section_names)-1)]
         section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
-                                    z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, f"Section_{7-i}", config)
+                                    z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, section_name, config)
         blocks.append(section_obj)
 
 wedge_obj = create_wedge_cutter(config)
 
-# Create wedges
+# Create wedges using named constants
+section_5_start = 200
+section_5_end = 400
 drop_at_term = drops[1] + t_term * (drops[2] - drops[1])
 root_b_wedge = create_leading_edge_wedge(y_split, section_length, thickness, thickness, "Root_b_wedge", y_split, y_term, x_term, t_term, config)
-section_5_wedge = create_leading_edge_wedge(200, 400, thickness - drops[0], thickness - drops[1], "Section_5_wedge", y_split, y_term, x_term, t_term, config)
-section_4a_wedge = create_leading_edge_wedge(400, y_term, thickness - drops[1], thickness - drop_at_term, "Section_4a_wedge", y_split, y_term, x_term, t_term, config)
+section_5_wedge = create_leading_edge_wedge(section_5_start, section_5_end, thickness - drops[0], thickness - drops[1], "Section_5_wedge", y_split, y_term, x_term, t_term, config)
+section_4a_wedge = create_leading_edge_wedge(section_5_end, y_term, thickness - drops[1], thickness - drop_at_term, "Section_4a_wedge", y_split, y_term, x_term, t_term, config)
 
 # Cut operations
 root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
