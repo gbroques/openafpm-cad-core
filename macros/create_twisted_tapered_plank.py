@@ -38,6 +38,7 @@ config = {
     # Blade parameters
     'blade_radius': 1200,  # mm
     'num_sections': 6,
+    'minimum_trailing_edge_thickness': 1,  # mm - minimum thickness at trailing edge
     
     # Drop values for 2400mm turbine (controls trailing edge angle)
     'drops': [40, 32, 15, 7, 3, 1],  # mm
@@ -85,7 +86,7 @@ def create_wedge_cutter(config: Dict[str, Any]) -> Any:
 
     v1 = Vector(W, section_length, thickness)
     v2 = Vector(W - root_width_front, 0, thickness)
-    v3 = Vector(W - root_width_rear, section_length, 0)
+    v3 = Vector(W - root_width_rear, section_length, config['minimum_trailing_edge_thickness'])  # Stop at minimum thickness
     v4 = Vector(W - root_width_rear, section_length, thickness)
 
     face1 = Part.Face(Part.makePolygon([v1, v2, v4, v1]))
@@ -206,10 +207,10 @@ def create_leading_edge_wedge(y_start: float, y_end: float, z_top_start: float, 
         z_leading_end = thickness - thick_term
     
     if "Root_b" in name and abs(z_leading_start) < 0.1 and abs(z_leading_end) < 0.1:
-        # 4-faced pyramid wedge
+        # 4-faced pyramid wedge with 1mm minimum thickness respect
         v1 = Vector(W, y_start, 0)
         v2 = Vector(W, y_end, 0)
-        v3 = Vector(x_end, y_end, 0)
+        v3 = Vector(x_end, y_end, 0)  # Bottom vertex at z=0
         v4 = Vector(x_start, y_start, 0)
         v5 = Vector(W, y_end, thickness - thicknesses[0])
         
@@ -300,17 +301,17 @@ for i in range(num_sections):
                                thickness, thickness, 0, 0, "Section_6a_block", config)
         blocks.append(root_a)
         
-        # Root_b: y=y_split to y=section_length, flat bottom
+        # Root_b: y=y_split to y=section_length, flat bottom with 1mm trailing edge
         width_start = wood_width - (wood_width - W) * (y_split / blade_radius)
         width_end = wood_width - (wood_width - W) * (section_length / blade_radius)
         
         v1 = Vector(W, y_split, 0)
         v2 = Vector(W - width_start, y_split, 0)
-        v3 = Vector(W - width_end, section_length, 0)
+        v3 = Vector(W - width_end, section_length, 0)  # Trailing edge bottom stays at z=0
         v4 = Vector(W, section_length, 0)
         v5 = Vector(W, y_split, thickness)
         v6 = Vector(W - width_start, y_split, thickness)
-        v7 = Vector(W - width_end, section_length, thickness)
+        v7 = Vector(W - width_end, section_length, thickness)  # Trailing edge top at full height z=40
         v8 = Vector(W, section_length, thickness)
         
         front = Part.Face(Part.makePolygon([v1, v2, v6, v5, v1]))
@@ -333,9 +334,30 @@ for i in range(num_sections):
     z_bottom_right_start = max(0, z_top_start - thick_start)
     z_bottom_right_end = max(0, z_top_end - thick_end)
     
-    if i == 1:  # Section_5: flat bottom
-        section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
-                                    z_top_start, z_top_end, 0, 0, section_names[2], config)
+    if i == 1:  # Section_5: custom geometry with leading edge at z=0, trailing edge at z=1
+        # Create Section_5 with custom vertices - leading edge at z=0, trailing edge 1mm thick
+        width_start = wood_width - (wood_width - W) * (y_start / blade_radius)
+        width_end = wood_width - (wood_width - W) * (y_end / blade_radius)
+        
+        v1 = Vector(W, y_start, 0)  # Leading edge start at z=0
+        v2 = Vector(W - width_start, y_start, 0)  # Trailing edge start bottom - at z=0
+        v3 = Vector(W - width_end, y_end, z_bottom_right_end)  # Trailing edge end
+        v4 = Vector(W, y_end, 0)  # Leading edge end at z=0
+        v5 = Vector(W, y_start, thickness)  # Leading edge start top
+        v6 = Vector(W - width_start, y_start, config['minimum_trailing_edge_thickness'])  # Trailing edge start top - minimum thickness above bottom
+        v7 = Vector(W - width_end, y_end, z_top_end)  # Trailing edge end top
+        v8 = Vector(W, y_end, thickness)  # Leading edge end top
+        
+        front = Part.Face(Part.makePolygon([v1, v2, v6, v5, v1]))
+        back = Part.Face(Part.makePolygon([v4, v3, v7, v8, v4]))
+        bottom = Part.makeRuledSurface(Part.makeLine(v1, v2), Part.makeLine(v4, v3))
+        left = Part.makeRuledSurface(Part.makeLine(v1, v4), Part.makeLine(v5, v8))
+        top = Part.makeRuledSurface(Part.makeLine(v5, v6), Part.makeLine(v8, v7))
+        right = Part.makeRuledSurface(Part.makeLine(v2, v3), Part.makeLine(v6, v7))
+        
+        shell = Part.Shell([bottom, top, front, back, left, right])
+        section = Part.Solid(shell)
+        section_obj = Part.show(section, section_names[2])
         blocks.append(section_obj)
     elif i == 2:  # Section_4: split at termination point
         thick_term = thicknesses[1] + t_term * (thicknesses[2] - thicknesses[1])
