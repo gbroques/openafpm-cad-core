@@ -24,40 +24,48 @@ config = {
     'thicknesses': [27, 27, 19, 14, 9, 6],  # mm
 }
 
-# Extract commonly used values
-W = config['W']
-X = config['X']
-R2 = config['R2']
-wood_width = config['wood_width']
-thickness = config['thickness']
-blade_radius = config['blade_radius']
-num_sections = config['num_sections']
-drops = config['drops']
-thicknesses = config['thicknesses']
-section_length = blade_radius / num_sections
+def setup_document():
+    """Setup FreeCAD document and create main container."""
+    if not FreeCAD.ActiveDocument:
+        FreeCAD.newDocument()
+    
+    doc = FreeCAD.ActiveDocument
+    blade_container = doc.addObject("App::Part", "TwistedTaperedPlank")
+    return doc, blade_container
 
-# Calculate root split point where cylinder intersects leading edge
-y_split = math.sqrt(R2**2 - W**2)
+def create_wedge_cutter(config):
+    """Create tetrahedral wedge for 45° ramp cutting."""
+    W = config['W']
+    wood_width = config['wood_width']
+    thickness = config['thickness']
+    blade_radius = config['blade_radius']
+    num_sections = config['num_sections']
+    section_length = blade_radius / num_sections
+    
+    root_width_front = wood_width
+    root_width_rear = wood_width - (wood_width - W) * (section_length / blade_radius)
 
-if not FreeCAD.ActiveDocument:
-    FreeCAD.newDocument()
+    v1 = Vector(W, section_length, thickness)
+    v2 = Vector(W - root_width_front, 0, thickness)
+    v3 = Vector(W - root_width_rear, section_length, 0)
+    v4 = Vector(W - root_width_rear, section_length, thickness)
 
-doc = FreeCAD.ActiveDocument
-blade_container = doc.addObject("App::Part", "TwistedTaperedPlank")
+    face1 = Part.Face(Part.makePolygon([v1, v2, v4, v1]))
+    face2 = Part.Face(Part.makePolygon([v1, v2, v3, v1]))
+    face3 = Part.Face(Part.makePolygon([v1, v3, v4, v1]))
+    face4 = Part.Face(Part.makePolygon([v2, v3, v4, v2]))
 
-# Calculate termination point where trailing edge bottom reaches z=0
-y5 = 400
-y4 = 600
-w5 = wood_width - (wood_width - W) * (y5 / blade_radius)
-w4 = wood_width - (wood_width - W) * (y4 / blade_radius)
-z5_unclamped = (thickness - drops[1]) - thicknesses[1]
-z4 = (thickness - drops[2]) - thicknesses[2]
-t_term = -z5_unclamped / (z4 - z5_unclamped)
-y_term = y5 + t_term * (y4 - y5)
-x_term_width = w5 + t_term * (w4 - w5)
-x_term = W - x_term_width
+    shell = Part.Shell([face1, face2, face3, face4])
+    wedge = Part.Solid(shell)
+    return Part.show(wedge, "Wedge_cutter")
 
-def create_section(y_start, y_end, thick_start, thick_end, drop_start, drop_end, z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, name):
+def create_section(y_start, y_end, thick_start, thick_end, drop_start, drop_end, z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, name, config):
+    """Create a blade section with specified parameters."""
+    W = config['W']
+    wood_width = config['wood_width']
+    thickness = config['thickness']
+    blade_radius = config['blade_radius']
+    
     width_start = wood_width - (wood_width - W) * (y_start / blade_radius)
     width_end = wood_width - (wood_width - W) * (y_end / blade_radius)
     
@@ -90,95 +98,12 @@ def create_section(y_start, y_end, thick_start, thick_end, drop_start, drop_end,
     section = Part.Solid(shell)
     return Part.show(section, name)
 
-# Create blade sections
-blocks = []
-
-for i in range(num_sections):
-    y_start = i * section_length
-    y_end = (i + 1) * section_length
+def create_leading_edge_wedge(y_start, y_end, z_top_start, z_top_end, name, y_split, y_term, x_term, t_term, config):
+    """Create leading edge wedge cutter."""
+    W = config['W']
+    thickness = config['thickness']
+    thicknesses = config['thicknesses']
     
-    thick_start = thicknesses[i - 1] if i > 0 else thickness
-    thick_end = thicknesses[i]
-    
-    if i == 0:
-        # Root_a: y=0 to y=y_split, flat bottom
-        root_a = create_section(0, y_split, thickness, thickness, 0, 0,
-                               thickness, thickness, 0, 0, "Root_a")
-        blocks.append(root_a)
-        
-        # Root_b: y=y_split to y=section_length, flat bottom
-        width_start = wood_width - (wood_width - W) * (y_split / blade_radius)
-        width_end = wood_width - (wood_width - W) * (section_length / blade_radius)
-        
-        v1 = Vector(W, y_split, 0)
-        v2 = Vector(W - width_start, y_split, 0)
-        v3 = Vector(W - width_end, section_length, 0)
-        v4 = Vector(W, section_length, 0)
-        v5 = Vector(W, y_split, thickness)
-        v6 = Vector(W - width_start, y_split, thickness)
-        v7 = Vector(W - width_end, section_length, thickness)
-        v8 = Vector(W, section_length, thickness)
-        
-        front = Part.Face(Part.makePolygon([v1, v2, v6, v5, v1]))
-        back = Part.Face(Part.makePolygon([v4, v3, v7, v8, v4]))
-        bottom = Part.makeRuledSurface(Part.makeLine(v1, v2), Part.makeLine(v4, v3))
-        left = Part.makeRuledSurface(Part.makeLine(v1, v4), Part.makeLine(v5, v8))
-        top = Part.makeRuledSurface(Part.makeLine(v5, v6), Part.makeLine(v8, v7))
-        right = Part.makeRuledSurface(Part.makeLine(v2, v3), Part.makeLine(v6, v7))
-        
-        shell_rb = Part.Shell([bottom, top, front, back, left, right])
-        root_b_solid = Part.Solid(shell_rb)
-        root_b = Part.show(root_b_solid, "Root_b")
-        blocks.append(root_b)
-        continue
-    
-    drop_start = drops[i - 1] if i > 0 else 0
-    drop_end = drops[i]
-    z_top_start = thickness - drop_start
-    z_top_end = thickness - drop_end
-    z_bottom_right_start = max(0, z_top_start - thick_start)
-    z_bottom_right_end = max(0, z_top_end - thick_end)
-    
-    if i == 1:  # Section_5: flat bottom
-        section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
-                                    z_top_start, z_top_end, 0, 0, "Section_5")
-        blocks.append(section_obj)
-    elif i == 2:  # Section_4: split at termination point
-        thick_term = thicknesses[1] + t_term * (thicknesses[2] - thicknesses[1])
-        drop_term = drops[1] + t_term * (drops[2] - drops[1])
-        z_top_term = thickness - drop_term
-        
-        section_4a = create_section(y_start, y_term, thick_start, thick_term, drops[1], drop_term, 
-                                   z_top_start, z_top_term, 0, 0, "Section_4a")
-        blocks.append(section_4a)
-        
-        section_4b = create_section(y_term, y_end, thick_term, thick_end, drop_term, drops[2],
-                                   z_top_term, z_top_end, 0, z_bottom_right_end, "Section_4b")
-        blocks.append(section_4b)
-    else:
-        section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
-                                    z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, f"Section_{7-i}")
-        blocks.append(section_obj)
-
-# Create tetrahedral wedge for 45° ramp
-root_width_front = wood_width
-root_width_rear = wood_width - (wood_width - W) * (section_length / blade_radius)
-
-v1 = Vector(W, section_length, thickness)
-v2 = Vector(W - root_width_front, 0, thickness)
-v3 = Vector(W - root_width_rear, section_length, 0)
-v4 = Vector(W - root_width_rear, section_length, thickness)
-
-face1 = Part.Face(Part.makePolygon([v1, v2, v4, v1]))
-face2 = Part.Face(Part.makePolygon([v1, v2, v3, v1]))
-face3 = Part.Face(Part.makePolygon([v1, v3, v4, v1]))
-face4 = Part.Face(Part.makePolygon([v2, v3, v4, v2]))
-
-shell = Part.Shell([face1, face2, face3, face4])
-wedge = Part.Solid(shell)
-wedge_obj = Part.show(wedge, "Wedge_cutter")
-
-def create_leading_edge_wedge(y_start, y_end, z_top_start, z_top_end, name):
     t_start = (y_start - y_split) / (y_term - y_split) if y_term != y_split else 0
     t_end = (y_end - y_split) / (y_term - y_split) if y_term != y_split else 0
     t_start = max(0, min(1, t_start))
@@ -243,11 +168,113 @@ def create_leading_edge_wedge(y_start, y_end, z_top_start, z_top_end, name):
         wedge_solid = Part.Solid(shell)
         return Part.show(wedge_solid, name)
 
+# Main execution
+doc, blade_container = setup_document()
+
+# Extract commonly used values
+W = config['W']
+X = config['X']
+R2 = config['R2']
+wood_width = config['wood_width']
+thickness = config['thickness']
+blade_radius = config['blade_radius']
+num_sections = config['num_sections']
+drops = config['drops']
+thicknesses = config['thicknesses']
+section_length = blade_radius / num_sections
+
+# Calculate root split point where cylinder intersects leading edge
+y_split = math.sqrt(R2**2 - W**2)
+
+# Calculate termination point where trailing edge bottom reaches z=0
+y5 = 400
+y4 = 600
+w5 = wood_width - (wood_width - W) * (y5 / blade_radius)
+w4 = wood_width - (wood_width - W) * (y4 / blade_radius)
+z5_unclamped = (thickness - drops[1]) - thicknesses[1]
+z4 = (thickness - drops[2]) - thicknesses[2]
+t_term = -z5_unclamped / (z4 - z5_unclamped)
+y_term = y5 + t_term * (y4 - y5)
+x_term_width = w5 + t_term * (w4 - w5)
+x_term = W - x_term_width
+
+# Create blade sections
+blocks = []
+
+for i in range(num_sections):
+    y_start = i * section_length
+    y_end = (i + 1) * section_length
+    
+    thick_start = thicknesses[i - 1] if i > 0 else thickness
+    thick_end = thicknesses[i]
+    
+    if i == 0:
+        # Root_a: y=0 to y=y_split, flat bottom
+        root_a = create_section(0, y_split, thickness, thickness, 0, 0,
+                               thickness, thickness, 0, 0, "Root_a", config)
+        blocks.append(root_a)
+        
+        # Root_b: y=y_split to y=section_length, flat bottom
+        width_start = wood_width - (wood_width - W) * (y_split / blade_radius)
+        width_end = wood_width - (wood_width - W) * (section_length / blade_radius)
+        
+        v1 = Vector(W, y_split, 0)
+        v2 = Vector(W - width_start, y_split, 0)
+        v3 = Vector(W - width_end, section_length, 0)
+        v4 = Vector(W, section_length, 0)
+        v5 = Vector(W, y_split, thickness)
+        v6 = Vector(W - width_start, y_split, thickness)
+        v7 = Vector(W - width_end, section_length, thickness)
+        v8 = Vector(W, section_length, thickness)
+        
+        front = Part.Face(Part.makePolygon([v1, v2, v6, v5, v1]))
+        back = Part.Face(Part.makePolygon([v4, v3, v7, v8, v4]))
+        bottom = Part.makeRuledSurface(Part.makeLine(v1, v2), Part.makeLine(v4, v3))
+        left = Part.makeRuledSurface(Part.makeLine(v1, v4), Part.makeLine(v5, v8))
+        top = Part.makeRuledSurface(Part.makeLine(v5, v6), Part.makeLine(v8, v7))
+        right = Part.makeRuledSurface(Part.makeLine(v2, v3), Part.makeLine(v6, v7))
+        
+        shell_rb = Part.Shell([bottom, top, front, back, left, right])
+        root_b_solid = Part.Solid(shell_rb)
+        root_b = Part.show(root_b_solid, "Root_b")
+        blocks.append(root_b)
+        continue
+    
+    drop_start = drops[i - 1] if i > 0 else 0
+    drop_end = drops[i]
+    z_top_start = thickness - drop_start
+    z_top_end = thickness - drop_end
+    z_bottom_right_start = max(0, z_top_start - thick_start)
+    z_bottom_right_end = max(0, z_top_end - thick_end)
+    
+    if i == 1:  # Section_5: flat bottom
+        section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
+                                    z_top_start, z_top_end, 0, 0, "Section_5", config)
+        blocks.append(section_obj)
+    elif i == 2:  # Section_4: split at termination point
+        thick_term = thicknesses[1] + t_term * (thicknesses[2] - thicknesses[1])
+        drop_term = drops[1] + t_term * (drops[2] - drops[1])
+        z_top_term = thickness - drop_term
+        
+        section_4a = create_section(y_start, y_term, thick_start, thick_term, drops[1], drop_term, 
+                                   z_top_start, z_top_term, 0, 0, "Section_4a", config)
+        blocks.append(section_4a)
+        
+        section_4b = create_section(y_term, y_end, thick_term, thick_end, drop_term, drops[2],
+                                   z_top_term, z_top_end, 0, z_bottom_right_end, "Section_4b", config)
+        blocks.append(section_4b)
+    else:
+        section_obj = create_section(y_start, y_end, thick_start, thick_end, 0, 0,
+                                    z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, f"Section_{7-i}", config)
+        blocks.append(section_obj)
+
+wedge_obj = create_wedge_cutter(config)
+
 # Create wedges
 drop_at_term = drops[1] + t_term * (drops[2] - drops[1])
-root_b_wedge = create_leading_edge_wedge(y_split, section_length, thickness, thickness, "Root_b_wedge")
-section_5_wedge = create_leading_edge_wedge(200, 400, thickness - drops[0], thickness - drops[1], "Section_5_wedge")
-section_4a_wedge = create_leading_edge_wedge(400, y_term, thickness - drops[1], thickness - drop_at_term, "Section_4a_wedge")
+root_b_wedge = create_leading_edge_wedge(y_split, section_length, thickness, thickness, "Root_b_wedge", y_split, y_term, x_term, t_term, config)
+section_5_wedge = create_leading_edge_wedge(200, 400, thickness - drops[0], thickness - drops[1], "Section_5_wedge", y_split, y_term, x_term, t_term, config)
+section_4a_wedge = create_leading_edge_wedge(400, y_term, thickness - drops[1], thickness - drop_at_term, "Section_4a_wedge", y_split, y_term, x_term, t_term, config)
 
 # Cut operations
 root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
