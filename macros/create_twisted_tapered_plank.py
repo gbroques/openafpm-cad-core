@@ -367,9 +367,6 @@ section_5_wedge = create_leading_edge_wedge(section_5_start, section_5_end, thic
 section_4a_wedge = create_leading_edge_wedge(section_5_end, y_term, thickness - drops[1], thickness - drop_at_term, "Section_4a_wedge", y_split, y_term, x_term, t_term, config)
 
 # Cut operations
-root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
-root_a_cut.Base = blocks[0]
-root_a_cut.Tool = wedge_obj
 # Cut operations
 root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
 root_a_cut.Base = blocks[0]
