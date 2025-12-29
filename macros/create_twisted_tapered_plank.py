@@ -21,6 +21,11 @@ import FreeCADGui as Gui
 import math
 from typing import Dict, Any, Tuple
 
+def validate_geometry(obj: Any, name: str) -> None:
+    """Validate FreeCAD geometry object."""
+    if hasattr(obj, 'Shape') and not obj.Shape.isValid():
+        print(f"Warning: {name} geometry may be invalid")
+
 # Turbine configuration
 config = {
     # 2400mm turbine blade root parameters
@@ -90,7 +95,9 @@ def create_wedge_cutter(config: Dict[str, Any]) -> Any:
 
     shell = Part.Shell([face1, face2, face3, face4])
     wedge = Part.Solid(shell)
-    return Part.show(wedge, "Wedge_cutter")
+    wedge_obj = Part.show(wedge, "Wedge_cutter")
+    validate_geometry(wedge_obj, "Wedge_cutter")
+    return wedge_obj
 
 def create_section(y_start: float, y_end: float, thick_start: float, thick_end: float, 
                   drop_start: float, drop_end: float, z_top_start: float, z_top_end: float, 
