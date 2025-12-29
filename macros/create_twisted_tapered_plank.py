@@ -292,12 +292,12 @@ for i in range(num_sections):
     thick_end = thicknesses[i]
     
     # Create sections with consistent naming
-    section_names = ["Root_a", "Root_b", "Section_5", "Section_4a", "Section_4b", "Section_3", "Section_2", "Section_1"]
+    section_names = ["Section_6a_block", "Section_6b_block", "Section_5_block", "Section_4a_block", "Section_4b", "Section_3", "Section_2", "Section_1"]
     
     if i == 0:
-        # Root_a: y=0 to y=y_split, flat bottom
+        # Section_6a: y=0 to y=y_split, flat bottom
         root_a = create_section(0, y_split, thickness, thickness, 0, 0,
-                               thickness, thickness, 0, 0, "Root_a", config)
+                               thickness, thickness, 0, 0, "Section_6a_block", config)
         blocks.append(root_a)
         
         # Root_b: y=y_split to y=section_length, flat bottom
@@ -322,7 +322,7 @@ for i in range(num_sections):
         
         shell_rb = Part.Shell([bottom, top, front, back, left, right])
         root_b_solid = Part.Solid(shell_rb)
-        root_b = Part.show(root_b_solid, "Root_b")
+        root_b = Part.show(root_b_solid, "Section_6b_block")
         blocks.append(root_b)
         continue
     
@@ -368,27 +368,27 @@ section_4a_wedge = create_leading_edge_wedge(section_5_end, y_term, thickness - 
 
 # Cut operations
 # Cut operations
-root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
-root_a_cut.Base = blocks[0]
-root_a_cut.Tool = wedge_obj
+Section_6a_intermediate = doc.addObject("Part::Cut", "Section_6a_intermediate")
+Section_6a_intermediate.Base = blocks[0]
+Section_6a_intermediate.Tool = wedge_obj
 
-# Two-step Root_b cutting
-root_b_step1 = doc.addObject("Part::Cut", "Root_b_step1")
-root_b_step1.Base = blocks[1]
-root_b_step1.Tool = wedge_obj
+# Two-step Section_6b cutting
+Section_6b_step1 = doc.addObject("Part::Cut", "Section_6b_step1")
+Section_6b_step1.Base = blocks[1]
+Section_6b_step1.Tool = wedge_obj
 
-root_b_cut = doc.addObject("Part::Cut", "Root_b_cut")
-root_b_cut.Base = root_b_step1
-root_b_cut.Tool = root_b_wedge
+Section_6b = doc.addObject("Part::Cut", "Section_6b")
+Section_6b.Base = Section_6b_step1
+Section_6b.Tool = root_b_wedge
 
 # Cut Section_5 and Section_4a
-section_5_cut = doc.addObject("Part::Cut", "Section_5_cut")
-section_5_cut.Base = blocks[2]
-section_5_cut.Tool = section_5_wedge
+Section_5 = doc.addObject("Part::Cut", "Section_5")
+Section_5.Base = blocks[2]
+Section_5.Tool = section_5_wedge
 
-section_4a_cut = doc.addObject("Part::Cut", "Section_4a_cut")
-section_4a_cut.Base = blocks[3]
-section_4a_cut.Tool = section_4a_wedge
+Section_4a = doc.addObject("Part::Cut", "Section_4a")
+Section_4a.Base = blocks[3]
+Section_4a.Tool = section_4a_wedge
 
 # Create 120° root cut
 tri_pts = [Vector(W, 0, 0), Vector(0, 0, 0), Vector(W, X, 0), Vector(W, 0, 0)]
@@ -396,9 +396,10 @@ tri_face = Part.Face(Part.makePolygon(tri_pts))
 root_wedge = tri_face.extrude(Vector(0, 0, thickness))
 root_wedge_obj = Part.show(root_wedge, "Root_120_cutter")
 
-final_root = doc.addObject("Part::Cut", "Final_root")
-final_root.Base = root_a_cut
-final_root.Tool = root_wedge_obj
+Section_6a = doc.addObject("Part::Cut", "Section_6a")
+Section_6a.Base = Section_6a_intermediate
+Section_6a.Tool = root_wedge_obj
+
 
 # Add R2 cylinder visualization
 cyl_obj = doc.addObject("Part::Cylinder", "R2_flat_area")
@@ -409,8 +410,8 @@ cyl_obj.Placement = FreeCAD.Placement(Vector(0, 0, 0), FreeCAD.Rotation(Vector(0
 # Hide intermediate objects and original sections
 if FreeCAD.GuiUp:
     # Hide intermediate cuts and tools
-    root_a_cut.ViewObject.Visibility = False
-    root_b_step1.ViewObject.Visibility = False
+    Section_6a_intermediate.ViewObject.Visibility = False
+    Section_6b_step1.ViewObject.Visibility = False
     wedge_obj.ViewObject.Visibility = False
     root_wedge_obj.ViewObject.Visibility = False
     
@@ -427,7 +428,7 @@ if FreeCAD.GuiUp:
 doc.recompute()
 
 # Add all final objects to container
-final_objects = [final_root, root_b_cut, section_5_cut, section_4a_cut]
+final_objects = [Section_6a, Section_6b, Section_5, Section_4a]
 remaining_sections = blocks[4:]  # Section_4b, Section_3, Section_2, Section_1
 for obj in final_objects + remaining_sections + [cyl_obj]:
     if obj:
