@@ -4,23 +4,37 @@ from FreeCAD import Vector
 import FreeCADGui as Gui
 import math
 
-# 2400mm turbine blade root parameters
-W = 50  # tip width, also distance from leading edge to center
-X = 87  # 120° root cut dimension
-R2 = 125  # radius of flat circular area on back
-wood_width = 200  # x dimension
-thickness = 40  # z dimension
+# Turbine configuration
+config = {
+    # 2400mm turbine blade root parameters
+    'W': 50,  # tip width, also distance from leading edge to center
+    'X': 87,  # 120° root cut dimension
+    'R2': 125,  # radius of flat circular area on back
+    'wood_width': 200,  # x dimension
+    'thickness': 40,  # z dimension
+    
+    # Blade parameters
+    'blade_radius': 1200,  # mm
+    'num_sections': 6,
+    
+    # Drop values for 2400mm turbine (controls trailing edge angle)
+    'drops': [40, 32, 15, 7, 3, 1],  # mm
+    
+    # Thickness values for 2400mm turbine (at leading edge)
+    'thicknesses': [27, 27, 19, 14, 9, 6],  # mm
+}
 
-# Blade parameters
-blade_radius = 1200  # mm
-num_sections = 6
+# Extract commonly used values
+W = config['W']
+X = config['X']
+R2 = config['R2']
+wood_width = config['wood_width']
+thickness = config['thickness']
+blade_radius = config['blade_radius']
+num_sections = config['num_sections']
+drops = config['drops']
+thicknesses = config['thicknesses']
 section_length = blade_radius / num_sections
-
-# Drop values for 2400mm turbine (controls trailing edge angle)
-drops = [40, 32, 15, 7, 3, 1]  # mm
-
-# Thickness values for 2400mm turbine (at leading edge)
-thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 
 # Calculate root split point where cylinder intersects leading edge
 y_split = math.sqrt(R2**2 - W**2)
