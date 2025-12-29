@@ -1,8 +1,25 @@
+"""
+Wind Turbine Twisted Tapered Plank Generator
+
+Creates a parameterized wind turbine blade with flat-bottom sections and leading edge transitions.
+Supports 45° ramp cutting and 120° root cut for proper turbine mounting.
+
+Usage:
+    python create_twisted_tapered_plank.py
+
+The script generates:
+- Root sections (Root_a, Root_b) with flat bottoms
+- Blade sections (Section_5, Section_4a/4b, Section_3, Section_2, Section_1)
+- Leading edge wedge cutters for smooth transitions
+- 45° ramp and 120° root cuts for mounting
+"""
+
 import FreeCAD
 import Part
 from FreeCAD import Vector
 import FreeCADGui as Gui
 import math
+from typing import Dict, Any, Tuple
 
 # Turbine configuration
 config = {
@@ -24,8 +41,12 @@ config = {
     'thicknesses': [27, 27, 19, 14, 9, 6],  # mm
 }
 
-def setup_document():
-    """Setup FreeCAD document and create main container."""
+def setup_document() -> Tuple[Any, Any]:
+    """Setup FreeCAD document and create main container.
+    
+    Returns:
+        Tuple[FreeCAD.Document, FreeCAD.DocumentObject]: Document and blade container
+    """
     if not FreeCAD.ActiveDocument:
         FreeCAD.newDocument()
     
@@ -33,8 +54,20 @@ def setup_document():
     blade_container = doc.addObject("App::Part", "TwistedTaperedPlank")
     return doc, blade_container
 
-def create_wedge_cutter(config):
-    """Create tetrahedral wedge for 45° ramp cutting."""
+def create_wedge_cutter(config: Dict[str, Any]) -> Any:
+    """Create tetrahedral wedge for 45° ramp cutting.
+    
+    Args:
+        config: Turbine configuration dictionary containing:
+            - W: tip width (mm)
+            - wood_width: maximum blade width (mm) 
+            - thickness: blade thickness (mm)
+            - blade_radius: total blade radius (mm)
+            - num_sections: number of blade sections
+    
+    Returns:
+        FreeCAD.DocumentObject: Tetrahedral wedge cutter for 45° ramp
+    """
     W = config['W']
     wood_width = config['wood_width']
     thickness = config['thickness']
@@ -59,8 +92,29 @@ def create_wedge_cutter(config):
     wedge = Part.Solid(shell)
     return Part.show(wedge, "Wedge_cutter")
 
-def create_section(y_start, y_end, thick_start, thick_end, drop_start, drop_end, z_top_start, z_top_end, z_bottom_right_start, z_bottom_right_end, name, config):
-    """Create a blade section with specified parameters."""
+def create_section(y_start: float, y_end: float, thick_start: float, thick_end: float, 
+                  drop_start: float, drop_end: float, z_top_start: float, z_top_end: float, 
+                  z_bottom_right_start: float, z_bottom_right_end: float, name: str, 
+                  config: Dict[str, Any]) -> Any:
+    """Create a blade section with specified parameters.
+    
+    Args:
+        y_start: Starting Y position along blade (mm)
+        y_end: Ending Y position along blade (mm)
+        thick_start: Leading edge thickness at start (mm)
+        thick_end: Leading edge thickness at end (mm)
+        drop_start: Trailing edge drop at start (mm)
+        drop_end: Trailing edge drop at end (mm)
+        z_top_start: Top surface Z at trailing edge start (mm)
+        z_top_end: Top surface Z at trailing edge end (mm)
+        z_bottom_right_start: Bottom surface Z at trailing edge start (mm)
+        z_bottom_right_end: Bottom surface Z at trailing edge end (mm)
+        name: Section name for FreeCAD object
+        config: Turbine configuration dictionary
+    
+    Returns:
+        FreeCAD.DocumentObject: Blade section solid
+    """
     W = config['W']
     wood_width = config['wood_width']
     thickness = config['thickness']
@@ -98,8 +152,29 @@ def create_section(y_start, y_end, thick_start, thick_end, drop_start, drop_end,
     section = Part.Solid(shell)
     return Part.show(section, name)
 
-def create_leading_edge_wedge(y_start, y_end, z_top_start, z_top_end, name, y_split, y_term, x_term, t_term, config):
-    """Create leading edge wedge cutter."""
+def create_leading_edge_wedge(y_start: float, y_end: float, z_top_start: float, z_top_end: float, 
+                             name: str, y_split: float, y_term: float, x_term: float, 
+                             t_term: float, config: Dict[str, Any]) -> Any:
+    """Create leading edge wedge cutter for smooth transitions.
+    
+    Creates either a 4-faced pyramid wedge (for Root_b) or 5-faced tapered wedge
+    (for other sections) to cut leading edge transitions from thick to flat bottom.
+    
+    Args:
+        y_start: Starting Y position (mm)
+        y_end: Ending Y position (mm)
+        z_top_start: Top surface Z at start (mm)
+        z_top_end: Top surface Z at end (mm)
+        name: Wedge name for FreeCAD object
+        y_split: Y position where root splits (mm)
+        y_term: Y position where trailing edge reaches z=0 (mm)
+        x_term: X position of termination point (mm)
+        t_term: Interpolation parameter for termination
+        config: Turbine configuration dictionary
+    
+    Returns:
+        FreeCAD.DocumentObject: Leading edge wedge cutter
+    """
     W = config['W']
     thickness = config['thickness']
     thicknesses = config['thicknesses']
