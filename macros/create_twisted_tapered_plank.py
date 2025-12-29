@@ -370,8 +370,10 @@ section_4a_wedge = create_leading_edge_wedge(section_5_end, y_term, thickness - 
 root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
 root_a_cut.Base = blocks[0]
 root_a_cut.Tool = wedge_obj
-if FreeCAD.GuiUp:
-    root_a_cut.ViewObject.Visibility = False
+# Cut operations
+root_a_cut = doc.addObject("Part::Cut", "Root_a_cut")
+root_a_cut.Base = blocks[0]
+root_a_cut.Tool = wedge_obj
 
 # Two-step Root_b cutting
 root_b_step1 = doc.addObject("Part::Cut", "Root_b_step1")
@@ -396,8 +398,6 @@ tri_pts = [Vector(W, 0, 0), Vector(0, 0, 0), Vector(W, X, 0), Vector(W, 0, 0)]
 tri_face = Part.Face(Part.makePolygon(tri_pts))
 root_wedge = tri_face.extrude(Vector(0, 0, thickness))
 root_wedge_obj = Part.show(root_wedge, "Root_120_cutter")
-if FreeCAD.GuiUp:
-    root_wedge_obj.ViewObject.Visibility = False
 
 final_root = doc.addObject("Part::Cut", "Final_root")
 final_root.Base = root_a_cut
@@ -409,11 +409,24 @@ cyl_obj.Radius = R2
 cyl_obj.Height = thickness
 cyl_obj.Placement = FreeCAD.Placement(Vector(0, 0, 0), FreeCAD.Rotation(Vector(0,0,1), 0))
 
+# Hide intermediate objects
+if FreeCAD.GuiUp:
+    root_a_cut.ViewObject.Visibility = False
+    root_b_step1.ViewObject.Visibility = False
+    wedge_obj.ViewObject.Visibility = False
+    root_wedge_obj.ViewObject.Visibility = False
+    for wedge in [root_b_wedge, section_5_wedge, section_4a_wedge]:
+        if wedge and hasattr(wedge, 'ViewObject'):
+            wedge.ViewObject.Visibility = False
+
 doc.recompute()
 
-# Add parts to container
-for section in blocks[1:]:
-    blade_container.addObject(section)
+# Add all final objects to container
+final_objects = [final_root, root_b_cut, section_5_cut, section_4a_cut]
+remaining_sections = blocks[4:]  # Section_4b, Section_3, Section_2, Section_1
+for obj in final_objects + remaining_sections + [cyl_obj]:
+    if obj:
+        blade_container.addObject(obj)
 
 if FreeCAD.GuiUp:
     Gui.SendMsgToActiveView("ViewFit")
