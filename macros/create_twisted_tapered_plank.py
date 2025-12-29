@@ -409,12 +409,20 @@ cyl_obj.Radius = R2
 cyl_obj.Height = thickness
 cyl_obj.Placement = FreeCAD.Placement(Vector(0, 0, 0), FreeCAD.Rotation(Vector(0,0,1), 0))
 
-# Hide intermediate objects
+# Hide intermediate objects and original sections
 if FreeCAD.GuiUp:
+    # Hide intermediate cuts and tools
     root_a_cut.ViewObject.Visibility = False
     root_b_step1.ViewObject.Visibility = False
     wedge_obj.ViewObject.Visibility = False
     root_wedge_obj.ViewObject.Visibility = False
+    
+    # Hide original sections that get cut
+    for i in [0, 1, 2, 3]:  # Root_a, Root_b, Section_5, Section_4a
+        if i < len(blocks) and hasattr(blocks[i], 'ViewObject'):
+            blocks[i].ViewObject.Visibility = False
+    
+    # Hide wedge cutters
     for wedge in [root_b_wedge, section_5_wedge, section_4a_wedge]:
         if wedge and hasattr(wedge, 'ViewObject'):
             wedge.ViewObject.Visibility = False
