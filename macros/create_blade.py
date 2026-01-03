@@ -32,6 +32,14 @@ def create_boundary_vertices(trailing_edge_x: float, W: float, thickness: float,
     return v_trailing, v_root_bottom, v_root_top, v_leading_top
 
 
+def find_z_zero_crossing_idx(poles: List) -> Optional[int]:
+    """Find index where airfoil crosses Z=0 (from negative to positive)"""
+    return next(
+        (i for i in range(len(poles) - 1) if poles[i].z < 0 and poles[i + 1].z >= 0),
+        None,
+    )
+
+
 def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
@@ -371,11 +379,10 @@ def create_hybrid_airfoil_section_6b(
     chord_length_x = calculate_chord_length(wood_width, W, y_position, blade_radius)
     trailing_edge_x = calculate_trailing_edge_x(W, chord_length_x)
 
-    # Create boundary vertices for bounds checking  
-    v_trailing = FreeCAD.Vector(W, y_position, 0.0)  # Leading edge at z=0
-    v_root_bottom = FreeCAD.Vector(trailing_edge_x, y_position, 0.0)  # Root cut bottom
-    v_root_top = FreeCAD.Vector(trailing_edge_x, y_position, thickness - drop_end)  # Root cut top
-    v_leading_top = FreeCAD.Vector(W, y_position, thickness)  # Leading edge top
+    # Create boundary vertices for bounds checking
+    v_trailing, v_root_bottom, v_root_top, v_leading_top = create_boundary_vertices(
+        trailing_edge_x, W, thickness, drop_end, y_position
+    )
 
     # Create closed wire for face
     closed_wire_for_face = Part.makePolygon(
@@ -402,10 +409,7 @@ def create_hybrid_airfoil_section_6b(
 
     # First, create the discretized wires for mapping
     # Calculate where airfoil crosses Z=0 by finding the crossing point dynamically
-    crossing_idx = next(
-        (i for i in range(len(poles) - 1) if poles[i].z < 0 and poles[i + 1].z >= 0),
-        None,
-    )
+    crossing_idx = find_z_zero_crossing_idx(poles)
 
     if crossing_idx is not None:
         p_before, p_after = poles[crossing_idx], poles[crossing_idx + 1]
