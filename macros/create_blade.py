@@ -241,39 +241,6 @@ def extract_leading_edge_points(
     return preserved_points
 
 
-def collect_loft_sections(doc: FreeCAD.Document) -> List[Part.Feature]:
-    """Collect all blade sections in order from root to tip.
-    
-    Args:
-        doc: FreeCAD document to search for sections in
-    
-    Returns:
-        List of FreeCAD objects representing blade sections
-    """
-    section_names = [
-        "Hybrid_Airfoil_y200",
-        "Hybrid_Airfoil_y250", 
-        "Hybrid_Airfoil_y300",
-        "Hybrid_Airfoil_y350",
-        "Section_5_Airfoil",
-        "Section_4_Airfoil", 
-        "Section_3_Airfoil",
-        "Section_2_Airfoil",
-        "Tip_Airfoil",
-    ]
-    
-    sections = []
-    for section_name in section_names:
-        obj = doc.getObject(section_name)
-        if obj:
-            sections.append(obj)
-            print(f"Added {section_name} to loft")
-        else:
-            print(f"Warning: {section_name} not found")
-    
-    return sections
-
-
 def create_blade_loft(sections: List[Part.Feature], doc: FreeCAD.Document) -> Optional[Part.Feature]:
     """Create a loft through all blade sections.
     
@@ -745,8 +712,13 @@ def create_hybrid_airfoil_section_6b(
     thickness: float,
     airfoil_coordinates: List[Tuple[float, float]],
     root_airfoil: Part.Feature,
-):
-    """Create hybrid airfoil: leading edge from airfoil, rest mapped to Section_6b wire"""
+    doc: FreeCAD.Document,
+) -> Part.Feature:
+    """Create hybrid airfoil: leading edge from airfoil, rest mapped to Section_6b wire.
+    
+    Returns:
+        FreeCAD Part::Feature object containing the hybrid airfoil wire
+    """
     fitted_airfoil = root_airfoil
 
     # Calculate chord length at this y position
@@ -930,7 +902,9 @@ def create_hybrid_airfoil_section_6b(
     # Close the trailing edge with a line (like other airfoils)
     hybrid_wire = create_closed_airfoil_wire(edge, hybrid_points)
 
-    Part.show(hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}")
+    # Create FreeCAD object
+    hybrid_obj = create_airfoil_object(hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}", doc)
+    
     print(
         f"Created smooth hybrid airfoil B-spline at y={y_position} with {len(hybrid_points)} points (closed with trailing edge line)"
     )
@@ -945,6 +919,8 @@ def create_hybrid_airfoil_section_6b(
         print(
             f"Hybrid_Airfoil_y{int(y_position)} B-spline has {len(poles)} control points"
         )
+    
+    return hybrid_obj
 
 
 # Blade parameters
@@ -970,6 +946,8 @@ section_names = [
 ]
 
 # Create blade sections from root triangle to tip (y=200 to y=1200)
+loft_sections = []
+
 for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
     y_end = (i + 1) * section_length
     thick_end = thicknesses[i]
@@ -994,7 +972,7 @@ for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
 
     # Create hybrid airfoil for Root_triangle section
     if i == 0:  # Root_triangle section at y=200
-        create_hybrid_airfoil_section_6b(
+        hybrid_obj = create_hybrid_airfoil_section_6b(
             y_end,
             thick_end,
             drop_end,
@@ -1004,15 +982,27 @@ for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
             thickness,
             coordinates,
             section_obj,  # Pass the airfoil object directly
+            doc,
         )
+        loft_sections.append(hybrid_obj)
+    else:
+        loft_sections.append(section_obj)
 
 print("Created blade section wires and airfoils from root triangle to tip")
 
 
 def create_interpolated_hybrid_section(
-    y_position, hybrid_control_points, section5_control_points, section_length
-):
-    """Create hybrid section by linear interpolation between control points"""
+    y_position: float, 
+    hybrid_control_points: List[FreeCAD.Vector], 
+    section5_control_points: List[FreeCAD.Vector], 
+    section_length: float,
+    doc: FreeCAD.Document,
+) -> Part.Feature:
+    """Create hybrid section by linear interpolation between control points.
+    
+    Returns:
+        FreeCAD Part::Feature object containing the interpolated hybrid airfoil
+    """
     # Calculate station positions from section_length
     station_6_y = 1 * section_length  # y=200 (Root_triangle/hybrid)
     station_5_y = 2 * section_length  # y=400 (Section_5)
@@ -1044,17 +1034,19 @@ def create_interpolated_hybrid_section(
     closing_line = Part.makeLine(last_point, first_point)
     wire = Part.Wire([edge, closing_line])
 
-    Part.show(wire, f"Hybrid_Airfoil_y{int(y_position)}")
+    # Create FreeCAD object
+    hybrid_obj = create_airfoil_object(wire, f"Hybrid_Airfoil_y{int(y_position)}", doc)
     print(f"Created interpolated hybrid at y={y_position} (weight={weight:.3f})")
-    return wire
+    return hybrid_obj
 
 
 # Create root hybrid at y=200
 
 
 # Get control points from hybrid y=200 and Section_5_Airfoil
-hybrid_y200 = doc.getObject("Hybrid_Airfoil_y200")
-section5_airfoil = doc.getObject("Section_5_Airfoil")
+# Use the objects we already created instead of searching by name
+hybrid_y200 = loft_sections[0]  # First section is the hybrid
+section5_airfoil = loft_sections[1]  # Second section is Section_5
 
 hybrid_control_points = None
 section5_control_points = None
@@ -1078,12 +1070,14 @@ if hybrid_control_points and section5_control_points:
             t = i / (number_of_station_5_to_6_transitions + 1)
             y_position = station_6_y + t * (station_5_y - station_6_y)
 
-            create_interpolated_hybrid_section(
+            interpolated_obj = create_interpolated_hybrid_section(
                 y_position,
                 hybrid_control_points,
                 section5_control_points,
                 section_length,
+                doc,
             )
+            loft_sections.append(interpolated_obj)
         print(
             f"Created interpolated hybrids using {len(hybrid_control_points)} control points"
         )
@@ -1095,5 +1089,4 @@ else:
     print("Could not extract control points for interpolation")
 
 # Create loft through all sections from root to tip
-sections = collect_loft_sections(doc)
-create_blade_loft(sections, doc)
+create_blade_loft(loft_sections, doc)
