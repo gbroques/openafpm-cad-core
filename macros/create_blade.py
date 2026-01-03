@@ -56,6 +56,26 @@ def discretize_wire_segment(start_point: FreeCAD.Vector, end_point: FreeCAD.Vect
     return [FreeCAD.Vector(p.x, p.y, p.z) for p in discretized]
 
 
+def create_bspline_from_points(points: List[FreeCAD.Vector]) -> Part.Edge:
+    """Create B-spline edge from list of points"""
+    spline = Part.BSplineCurve()
+    spline.interpolate(points, False)
+    return spline.toShape()
+
+
+def create_closed_airfoil_wire(bspline_edge: Part.Edge, points: List[FreeCAD.Vector]) -> Part.Wire:
+    """Create closed airfoil wire with trailing edge line if needed"""
+    first_point = points[0]
+    last_point = points[-1]
+    is_closed = first_point.distanceToPoint(last_point) < 0.001
+
+    if not is_closed:
+        closing_line = Part.makeLine(last_point, first_point)
+        return Part.Wire([bspline_edge, closing_line])
+    else:
+        return Part.Wire([bspline_edge])
+
+
 def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
@@ -606,20 +626,10 @@ def create_hybrid_airfoil_section_6b(
 
     # Create hybrid airfoil wire
     # Create B-spline interpolation through points
-    spline = Part.BSplineCurve()
-    spline.interpolate(hybrid_points, False)
-    edge = spline.toShape()
+    edge = create_bspline_from_points(hybrid_points)
 
     # Close the trailing edge with a line (like other airfoils)
-    first_point = hybrid_points[0]
-    last_point = hybrid_points[-1]
-    is_closed = first_point.distanceToPoint(last_point) < 0.001
-
-    if not is_closed:
-        closing_line = Part.makeLine(last_point, first_point)
-        hybrid_wire = Part.Wire([edge, closing_line])
-    else:
-        hybrid_wire = Part.Wire([edge])
+    hybrid_wire = create_closed_airfoil_wire(edge, hybrid_points)
 
     Part.show(hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}")
     print(
