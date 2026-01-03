@@ -6,6 +6,23 @@ import Draft
 import math
 
 
+def calculate_chord_length(
+    wood_width: float, W: float, y_position: float, blade_radius: float
+) -> float:
+    """Calculate chord length at given y position using linear taper"""
+    return wood_width - (wood_width - W) * (y_position / blade_radius)
+
+
+def calculate_station_position(station_number: int, section_length: float) -> float:
+    """Calculate y position for given station number"""
+    return station_number * section_length
+
+
+def calculate_trailing_edge_x(W: float, chord_length: float) -> float:
+    """Calculate trailing edge x position"""
+    return W - chord_length
+
+
 def load_airfoil_coordinates(filepath: Path) -> List[Tuple[float, float]]:
     """Load airfoil coordinates from .dat file
 
@@ -215,7 +232,7 @@ def create_section(
     z_top_end = thickness - drop_end
     z_bottom_right_end = max(0, z_top_end - thick_end)
 
-    chord_length_x = wood_width - (wood_width - W) * (y_end / blade_radius)
+    chord_length_x = calculate_chord_length(wood_width, W, y_end, blade_radius)
     z_bottom_end = thickness - thick_end
 
     # Calculate actual chord length accounting for z-drop (hypotenuse)
@@ -263,10 +280,14 @@ def create_section(
     station_6_y = 1 * section_length  # Station 6 (Root_triangle)
     if y_end == station_6_y:  # First section (Root_triangle)
         # Calculate station positions from blade parameters
-        station_5_y = 2 * section_length  # Station 5 (section 2)
-        station_4_y = 3 * section_length  # Station 4 (section 3)
-        w5 = wood_width - (wood_width - W) * (station_5_y / blade_radius)
-        w4 = wood_width - (wood_width - W) * (station_4_y / blade_radius)
+        station_5_y = calculate_station_position(
+            2, section_length
+        )  # Station 5 (section 2)
+        station_4_y = calculate_station_position(
+            3, section_length
+        )  # Station 4 (section 3)
+        w5 = calculate_chord_length(wood_width, W, station_5_y, blade_radius)
+        w4 = calculate_chord_length(wood_width, W, station_4_y, blade_radius)
 
         z5_unclamped = (thickness - drop_end) - thick_end
         z4 = (thickness - station4_drop) - station4_thick
@@ -316,8 +337,8 @@ def create_hybrid_airfoil_section_6b(
     fitted_airfoil = root_airfoil
 
     # Calculate chord length at this y position
-    chord_length_x = wood_width - (wood_width - W) * (y_position / blade_radius)
-    trailing_edge_x = W - chord_length_x
+    chord_length_x = calculate_chord_length(wood_width, W, y_position, blade_radius)
+    trailing_edge_x = calculate_trailing_edge_x(W, chord_length_x)
 
     # Create boundary vertices for bounds checking
     v_trailing = FreeCAD.Vector(W, y_position, 0.000)  # Leading edge at z=0
@@ -718,7 +739,10 @@ if hybrid_control_points and section5_control_points:
             y_position = station_6_y + t * (station_5_y - station_6_y)
 
             create_interpolated_hybrid_section(
-                y_position, hybrid_control_points, section5_control_points, section_length
+                y_position,
+                hybrid_control_points,
+                section5_control_points,
+                section_length,
             )
         print(
             f"Created interpolated hybrids using {len(hybrid_control_points)} control points"
