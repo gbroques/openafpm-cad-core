@@ -23,6 +23,37 @@ def calculate_trailing_edge_x(W: float, chord_length: float) -> float:
     return W - chord_length
 
 
+def create_boundary_vertices(trailing_edge_x: float, W: float, thickness: float, drop_end: float, y_position: float) -> Tuple[FreeCAD.Vector, FreeCAD.Vector, FreeCAD.Vector, FreeCAD.Vector]:
+    """Create boundary trapezoid vertices for hybrid airfoil mapping"""
+    v_trailing = FreeCAD.Vector(W, y_position, 0.0)  # Leading edge at z=0
+    v_root_bottom = FreeCAD.Vector(trailing_edge_x, y_position, 0.0)  # Trailing edge at z=0
+    v_root_top = FreeCAD.Vector(trailing_edge_x, y_position, thickness - drop_end)  # Trailing edge top
+    v_leading_top = FreeCAD.Vector(W, y_position, thickness)  # Leading edge top
+    return v_trailing, v_root_bottom, v_root_top, v_leading_top
+
+
+def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
+    """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
+    # Find Z=0 crossing
+    z_crossing_idx = None
+    for i in range(len(poles) - 1):
+        if poles[i].z < 0 and poles[i + 1].z >= 0:
+            z_crossing_idx = i
+            break
+    
+    # Find boundary crossing using slanted line equation
+    boundary_crossing_idx = None
+    for i in range(len(poles) - 1):
+        current_z = boundary_z_base + slope * (poles[i].x - trailing_edge_x)
+        next_z = boundary_z_base + slope * (poles[i + 1].x - trailing_edge_x)
+        
+        if poles[i].z < current_z and poles[i + 1].z >= next_z:
+            boundary_crossing_idx = i
+            break
+    
+    return z_crossing_idx, boundary_crossing_idx
+
+
 def load_airfoil_coordinates(filepath: Path) -> List[Tuple[float, float]]:
     """Load airfoil coordinates from .dat file
 
@@ -340,14 +371,10 @@ def create_hybrid_airfoil_section_6b(
     chord_length_x = calculate_chord_length(wood_width, W, y_position, blade_radius)
     trailing_edge_x = calculate_trailing_edge_x(W, chord_length_x)
 
-    # Create boundary vertices for bounds checking
-    v_trailing = FreeCAD.Vector(W, y_position, 0.000)  # Leading edge at z=0
-    v_root_bottom = FreeCAD.Vector(
-        trailing_edge_x, y_position, 0.000
-    )  # Root cut bottom
-    v_root_top = FreeCAD.Vector(
-        trailing_edge_x, y_position, minimum_trailing_edge_thickness
-    )  # Root cut top (minimum thickness)
+    # Create boundary vertices for bounds checking  
+    v_trailing = FreeCAD.Vector(W, y_position, 0.0)  # Leading edge at z=0
+    v_root_bottom = FreeCAD.Vector(trailing_edge_x, y_position, 0.0)  # Root cut bottom
+    v_root_top = FreeCAD.Vector(trailing_edge_x, y_position, thickness - drop_end)  # Root cut top
     v_leading_top = FreeCAD.Vector(W, y_position, thickness)  # Leading edge top
 
     # Create closed wire for face
