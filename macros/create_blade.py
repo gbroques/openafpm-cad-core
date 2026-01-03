@@ -606,10 +606,11 @@ def create_airfoil_wire_at_section(
     trailing_edge_idx = min(range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0])
     bottom_points = scaled_coordinates[trailing_edge_idx:]
     
-    # Middle 50% method for flatten angle calculation (best performance)
-    mid_start = len(bottom_points) // 4
-    mid_end = 3 * len(bottom_points) // 4
-    mid_points = bottom_points[mid_start:mid_end]
+    # Middle 80% method for flatten angle calculation (optimal performance: 0.137mm error)
+    exclude_each_side = 0.1  # Exclude 10% from each side = middle 80%
+    start_idx = int(len(bottom_points) * exclude_each_side)
+    end_idx = len(bottom_points) - start_idx
+    mid_points = bottom_points[start_idx:end_idx]
     x_coords = [x for x, z in mid_points]
     z_coords = [z for x, z in mid_points]
     slope, intercept = np.polyfit(x_coords, z_coords, 1)
@@ -1230,11 +1231,202 @@ def test_middle_50_method():
     
     # Print final bounds
     bbox = wire.BoundBox
+# Test different middle percentage ranges for optimal flatten angle
+def test_middle_percentage_ranges():
+    """Test various middle percentage ranges to find optimal flatten angle"""
+    
+    # Step 1: Scale FIRST
+    chord_length = 175.0
+    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
+    
+    # Find bottom surface points
+    trailing_edge_idx = min(range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0])
+    bottom_points = scaled_coordinates[trailing_edge_idx:]
+    
+    import numpy as np
+    
+    # Test different middle percentage ranges
+    percentages = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+    
+    # Also test just the two middle points
+    methods = []
+    
+    for pct in percentages:
+        # Calculate start and end indices for middle percentage
+        exclude_each_side = (100 - pct) / 2 / 100  # e.g., for 70%, exclude 15% each side
+        start_idx = int(len(bottom_points) * exclude_each_side)
+        end_idx = len(bottom_points) - start_idx
+        
+        if end_idx > start_idx:  # Ensure we have points to use
+            mid_points = bottom_points[start_idx:end_idx]
+            methods.append((f"Middle {pct}%", mid_points))
+    
+    # Test just the two middle points
+    mid_idx = len(bottom_points) // 2
+    if len(bottom_points) >= 2:
+        two_middle = bottom_points[mid_idx-1:mid_idx+1]
+        methods.append(("Two Middle Points", two_middle))
+    
+    # Test single middle point (for reference)
+    if len(bottom_points) >= 1:
+        single_middle = [bottom_points[mid_idx]]
+        # Can't do linear regression with 1 point, so use endpoints
+        trailing_pt = bottom_points[0]
+        leading_pt = bottom_points[-1]
+        slope_single = (leading_pt[1] - trailing_pt[1]) / (leading_pt[0] - trailing_pt[0])
+        methods.append(("Single Middle (fallback to endpoints)", None, slope_single))
+    
+    print(f"Testing {len(methods)} middle percentage methods:")
+    print(f"Bottom surface: {len(bottom_points)} total points")
+    print()
+    
+    best_error = float('inf')
+    best_method = None
+    
+    for i, method_data in enumerate(methods):
+        if len(method_data) == 3:  # Special case for single middle
+            name, _, slope = method_data
+            angle = -math.degrees(math.atan(slope))
+        else:
+            name, mid_points = method_data
+            
+            if len(mid_points) < 2:
+                print(f"--- Method {i+1}: {name} ---")
+                print("Skipped: Not enough points for regression")
+                print()
+                continue
+            
+            x_coords = [x for x, z in mid_points]
+            z_coords = [z for x, z in mid_points]
+            slope, _ = np.polyfit(x_coords, z_coords, 1)
+            angle = -math.degrees(math.atan(slope))
+        
+        print(f"--- Method {i+1}: {name} ---")
+        if len(method_data) != 3:
+            print(f"Using {len(mid_points)} points out of {len(bottom_points)} total")
+        print(f"Slope: {slope:.6f}")
+        print(f"Flatten angle: {angle:.6f} degrees")
+        
+        # Apply this flatten angle
+        min_z_point = min(scaled_coordinates, key=lambda p: p[1])
+        rotation_center_x, rotation_center_z = min_z_point
+        
+        flattened = rotate_airfoil_coordinates_about_point(
+            scaled_coordinates, rotation_center_x, rotation_center_z, angle
+        )
+        
+        # Apply Z shift
+        global_min_z = min(z for x, z in flattened)
+        z_shift = -global_min_z
+        aligned = [(x, z + z_shift) for x, z in flattened]
+        
+        # Check ACTUAL trailing edge error (last point)
+        last_point = aligned[-1]  # Last point in airfoil sequence
+        trailing_error = abs(last_point[1])  # Z value of last point
+        
+        print(f"Last point: ({last_point[0]:.3f}, {last_point[1]:.6f})")
+        print(f"Trailing edge error: {trailing_error:.6f}mm")
+        
+        if trailing_error < best_error:
+            best_error = trailing_error
+            best_method = (i+1, name)
+        
+        # Create visualization
+        points_3d = [FreeCAD.Vector(x, i*25, z) for x, z in aligned]
+        
+        spline = Part.BSplineCurve()
+        spline.interpolate(points_3d, False)
+        edge = spline.toShape()
+        
+        first_point = points_3d[0]
+        last_point_3d = points_3d[-1]
+        is_closed = first_point.distanceToPoint(last_point_3d) < 0.001
+        
+        if not is_closed:
+            closing_line = Part.makeLine(last_point_3d, first_point)
+            wire = Part.Wire([edge, closing_line])
+        else:
+            wire = Part.Wire([edge])
+        
+        Part.show(wire, f"Middle_{name.replace(' ', '_').replace('%', 'pct')}")
+        print()
+    
+# Test Middle 80% method implementation
+def test_middle_80_method():
+    """Test the optimal Middle 80% flatten angle method"""
+    
+    # Step 1: Scale FIRST
+    chord_length = 175.0
+    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
+    
+    # Step 2: Flatten using Middle 80% method
+    trailing_edge_idx = min(range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0])
+    bottom_points = scaled_coordinates[trailing_edge_idx:]
+    
+    # Middle 80% method for flatten angle calculation
+    exclude_each_side = 0.1  # Exclude 10% from each side = middle 80%
+    start_idx = int(len(bottom_points) * exclude_each_side)
+    end_idx = len(bottom_points) - start_idx
+    mid_points = bottom_points[start_idx:end_idx]
+    
+    import numpy as np
+    x_coords = [x for x, z in mid_points]
+    z_coords = [z for x, z in mid_points]
+    slope, intercept = np.polyfit(x_coords, z_coords, 1)
+    flatten_angle = -math.degrees(math.atan(slope))
+    
+    # Find global min Z point as rotation center
+    min_z_point = min(scaled_coordinates, key=lambda p: p[1])
+    rotation_center_x, rotation_center_z = min_z_point
+    
+    print(f"Middle 80% method (OPTIMAL):")
+    print(f"Bottom points: {len(bottom_points)} total, using {len(mid_points)} middle points")
+    print(f"Slope: {slope:.6f}")
+    print(f"Flatten angle: {flatten_angle:.6f} degrees")
+    print(f"Rotation center: ({rotation_center_x:.3f}, {rotation_center_z:.3f})")
+    
+    # Rotate about global min Z point
+    flattened_coordinates = rotate_airfoil_coordinates_about_point(
+        scaled_coordinates, rotation_center_x, rotation_center_z, flatten_angle
+    )
+    
+    # Apply positive Z shift to align bottom to X-axis
+    global_min_z = min(z for x, z in flattened_coordinates)
+    z_shift = -global_min_z
+    bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
+    
+    # Check trailing edge error - use the LAST point (actual trailing edge)
+    last_point = bottom_aligned_coordinates[-1]  # Last point in airfoil sequence
+    trailing_error = abs(last_point[1])  # Z value of last point
+    print(f"Last point (trailing edge): ({last_point[0]:.3f}, {last_point[1]:.6f})")
+    print(f"Trailing edge error: {trailing_error:.6f}mm")
+    
+    # Create visualization
+    points_3d = [FreeCAD.Vector(x, 0, z) for x, z in bottom_aligned_coordinates]
+    
+    spline = Part.BSplineCurve()
+    spline.interpolate(points_3d, False)
+    edge = spline.toShape()
+    
+    first_point = points_3d[0]
+    last_point_3d = points_3d[-1]
+    is_closed = first_point.distanceToPoint(last_point_3d) < 0.001
+    
+    if not is_closed:
+        closing_line = Part.makeLine(last_point_3d, first_point)
+        wire = Part.Wire([edge, closing_line])
+    else:
+        wire = Part.Wire([edge])
+    
+    Part.show(wire, "Middle_80_Optimal_Airfoil")
+    
+    # Print final bounds
+    bbox = wire.BoundBox
     print(f"Final bounds:")
     print(f"  X: {bbox.XMin:.3f} to {bbox.XMax:.3f} (length: {bbox.XLength:.3f}mm)")
     print(f"  Z: {bbox.ZMin:.3f} to {bbox.ZMax:.3f} (height: {bbox.ZLength:.3f}mm)")
 
-test_middle_50_method()
+test_middle_80_method()
 
 # Comment out section creation and loft for now
 # # Create blade sections from root triangle to tip (y=200 to y=1200)
