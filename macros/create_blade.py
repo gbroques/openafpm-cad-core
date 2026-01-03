@@ -122,6 +122,39 @@ def assemble_hybrid_points(preserved_points: List[FreeCAD.Vector], wire1_points:
     return hybrid_points
 
 
+def calculate_wedge_cut_position(section_length: float, blade_radius: float, wood_width: float, W: float, thickness: float, drop_end: float, thick_end: float, station4_drop: float, station4_thick: float, R2: float) -> float:
+    """Calculate wedge cut x position using connection line intersection logic"""
+    station_5_y = calculate_station_position(2, section_length)
+    station_4_y = calculate_station_position(3, section_length)
+    w5 = calculate_chord_length(wood_width, W, station_5_y, blade_radius)
+    w4 = calculate_chord_length(wood_width, W, station_4_y, blade_radius)
+
+    z5_unclamped = (thickness - drop_end) - thick_end
+    z4 = (thickness - station4_drop) - station4_thick
+    t_term = -z5_unclamped / (z4 - z5_unclamped)
+    y_term = station_5_y + t_term * (station_4_y - station_5_y)
+    x_term_width = w5 + t_term * (w4 - w5)
+    
+    # Calculate wedge cut using connection line intersection logic from twisted tapered plank
+    y_split = math.sqrt(R2**2 - W**2)  # Cylinder intersection with leading edge
+    x_term = W - x_term_width  # Termination x-coordinate
+    t_end = (section_length - y_split) / (y_term - y_split) if y_term != y_split else 0
+    t_end = max(0, min(1, t_end))
+    wedge_cut_x = W + t_end * (x_term - W)  # This gives ~24.41
+    
+    return wedge_cut_x
+
+
+def create_root_triangle_vertices(base_vertices: List[FreeCAD.Vector], wedge_cut_x: float, y_end: float) -> List[FreeCAD.Vector]:
+    """Create Root_triangle vertices with wedge cut"""
+    v2, v1, v4, v3 = base_vertices
+    v_wedge = FreeCAD.Vector(wedge_cut_x, y_end, 0)  # Wedge cut vertex at z=0
+    
+    # Create Root_triangle wire: v2 -> v_wedge -> v1 -> v4 -> v3 -> v2
+    # This connects: leading_edge_bottom -> wedge_cut -> root_cut_bottom -> trailing_edge_top -> leading_edge_top -> back
+    return [v2, v_wedge, v1, v4, v3, v2]
+
+
 def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
@@ -410,24 +443,16 @@ def create_section(
         w5 = calculate_chord_length(wood_width, W, station_5_y, blade_radius)
         w4 = calculate_chord_length(wood_width, W, station_4_y, blade_radius)
 
-        z5_unclamped = (thickness - drop_end) - thick_end
-        z4 = (thickness - station4_drop) - station4_thick
-        t_term = -z5_unclamped / (z4 - z5_unclamped)
-        y_term = station_5_y + t_term * (station_4_y - station_5_y)
-        x_term_width = w5 + t_term * (w4 - w5)
-        # Calculate wedge cut using connection line intersection logic from twisted tapered plank
-        # This is where the wedge connection line intersects at y=200
-        y_split = math.sqrt(R2**2 - W**2)  # Cylinder intersection with leading edge
-        x_term = W - x_term_width  # Termination x-coordinate
-        t_end = (y_end - y_split) / (y_term - y_split) if y_term != y_split else 0
-        t_end = max(0, min(1, t_end))
-        wedge_cut_x = W + t_end * (x_term - W)  # This gives ~24.41
+        # Calculate wedge cut position using helper function
+        wedge_cut_x = calculate_wedge_cut_position(
+            section_length, blade_radius, wood_width, W, thickness, 
+            drop_end, thick_end, station4_drop, station4_thick, R2
+        )
 
-        v_wedge = FreeCAD.Vector(wedge_cut_x, y_end, 0)  # Wedge cut vertex at z=0
-
-        # Create Root_triangle wire: v2 -> v_wedge -> v1 -> v4 -> v3 -> v2
-        # This connects: leading_edge_bottom -> wedge_cut -> root_cut_bottom -> trailing_edge_top -> leading_edge_top -> back
-        back_wire = Part.makePolygon([v2, v_wedge, v1, v4, v3, v2])
+        # Create Root_triangle vertices with wedge cut
+        base_vertices = [v2, v1, v4, v3]
+        triangle_vertices = create_root_triangle_vertices(base_vertices, wedge_cut_x, y_end)
+        back_wire = Part.makePolygon(triangle_vertices)
 
     Part.show(back_wire, name)
     return obj  # Return the airfoil object
