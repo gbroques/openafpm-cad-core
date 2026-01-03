@@ -76,6 +76,52 @@ def create_closed_airfoil_wire(bspline_edge: Part.Edge, points: List[FreeCAD.Vec
         return Part.Wire([bspline_edge])
 
 
+def create_boundary_check_function(trailing_edge_x: float, W: float, thickness: float, drop_end: float, chord_length_x: float):
+    """Create boundary checking function for point filtering"""
+    boundary_z_base = thickness - drop_end
+    slope = drop_end / chord_length_x
+    
+    def is_point_in_boundary_trapezoid(x, z):
+        """Check if point is inside boundary trapezoid using geometric logic"""
+        # Boundary X range: trailing_edge_x to W
+        if x < trailing_edge_x or x > W:
+            return False
+
+        # Boundary Z range: 0 to top_line
+        if z < 0.0:
+            return False
+
+        # Calculate top boundary using slanted line: z = boundary_z_base + slope * (x - trailing_edge_x)
+        top_z = boundary_z_base + slope * (x - trailing_edge_x)
+        if z > top_z:
+            return False
+
+        return True
+    
+    return is_point_in_boundary_trapezoid
+
+
+def extract_leading_edge_points(poles: List, leading_edge_start: int, leading_edge_end: int, boundary_check_fn) -> List[FreeCAD.Vector]:
+    """Extract leading edge points that fall within boundary trapezoid"""
+    preserved_points = []
+    for i, pole in enumerate(poles):
+        if (
+            leading_edge_start <= i <= leading_edge_end
+            and boundary_check_fn(pole.x, pole.z)
+        ):
+            preserved_points.append(pole)
+    return preserved_points
+
+
+def assemble_hybrid_points(preserved_points: List[FreeCAD.Vector], wire1_points: List[FreeCAD.Vector], wire2_points: List[FreeCAD.Vector]) -> List[FreeCAD.Vector]:
+    """Assemble final hybrid points from preserved and mapped points"""
+    hybrid_points = []
+    hybrid_points.extend(preserved_points)
+    hybrid_points.extend(wire1_points)
+    hybrid_points.extend(wire2_points)
+    return hybrid_points
+
+
 def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
