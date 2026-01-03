@@ -207,13 +207,13 @@ def create_airfoil_object(
 
     Args:
         wire: FreeCAD wire to create object from
-        name: Base name for the object (will have '_Airfoil' appended)
+        name: Complete name for the object (no suffix added)
         doc: FreeCAD document to create object in
 
     Returns:
         FreeCAD Part::Feature object containing the wire
     """
-    obj = doc.addObject("Part::Feature", f"{name}_Airfoil")
+    obj = doc.addObject("Part::Feature", name)
     obj.Shape = wire
     return obj
 
@@ -371,25 +371,59 @@ def create_root_triangle_cross_section(
 
 
 def assemble_hybrid_points(
-    preserved_points: List[FreeCAD.Vector],
+    poles: List[FreeCAD.Vector],
+    leading_edge_start: int,
+    leading_edge_end: int,
+    boundary_check_fn: Callable[[float, float], bool],
     wire1_points: List[FreeCAD.Vector],
     wire2_points: List[FreeCAD.Vector],
-) -> List[FreeCAD.Vector]:
-    """Assemble final hybrid points from preserved and mapped points.
+    y_position: float,
+) -> Tuple[List[FreeCAD.Vector], int, int]:
+    """Assemble hybrid points using original complex interleaving logic.
 
     Args:
-        preserved_points: Leading edge points to preserve from original airfoil
-        wire1_points: Points mapped to first discretized wire segment
-        wire2_points: Points mapped to second discretized wire segment
+        poles: Original airfoil control points
+        leading_edge_start: Start index of leading edge range
+        leading_edge_end: End index of leading edge range
+        boundary_check_fn: Function to check if point is within boundary
+        wire1_points: Points from first discretized wire segment
+        wire2_points: Points from second discretized wire segment
+        y_position: Y coordinate for the section
 
     Returns:
-        Combined list of all hybrid airfoil points
+        Tuple of (hybrid_points, leading_edge_preserved_count, mapped_points_count)
     """
     hybrid_points = []
-    hybrid_points.extend(preserved_points)
-    hybrid_points.extend(wire1_points)
-    hybrid_points.extend(wire2_points)
-    return hybrid_points
+    leading_edge_preserved = 0
+    mapped_points = 0
+
+    # Original point assembly logic - interleave points correctly
+    for i, pole in enumerate(poles):
+        if leading_edge_start <= i <= leading_edge_end and boundary_check_fn(
+            pole.x, pole.z
+        ):
+            # Keep leading edge points (blue ones)
+            hybrid_points.append(FreeCAD.Vector(pole.x, y_position, pole.z))
+            leading_edge_preserved += 1
+        else:
+            # Map to our new discretized split wires with adjusted mapping
+            if i < len(wire1_points):  # Map to Wire1 points
+                # Points 0-(wire1_count-1) map directly to Wire1 points
+                hybrid_points.append(wire1_points[i])
+                mapped_points += 1
+            elif i < leading_edge_start:
+                # Points 15-18 skip mapping to reduce total count
+                pass
+            else:
+                # Points after leading edge map to Wire2
+                post_preserved_index = i - (leading_edge_end + 1)
+                if post_preserved_index >= 0 and post_preserved_index < len(
+                    wire2_points
+                ):
+                    hybrid_points.append(wire2_points[post_preserved_index])
+                    mapped_points += 1
+
+    return hybrid_points, leading_edge_preserved, mapped_points
 
 
 def calculate_wedge_cut_position(
@@ -693,7 +727,7 @@ def create_section(
         thickness,
     )
     # Store wire directly without creating FreeCAD object
-    obj = create_airfoil_object(airfoil_wire, name, doc)
+    obj = create_airfoil_object(airfoil_wire, f"{name}_Airfoil", doc)
 
     # Check Section_5_Airfoil control points for consistency
     if name == "Section_5":
@@ -907,25 +941,25 @@ def create_hybrid_airfoil_section_6b(
         trailing_edge_x, W, thickness, drop_end, chord_length_x
     )
 
-    # Extract leading edge points that are within boundary
-    leading_edge_points = extract_leading_edge_points(
-        poles, leading_edge_start, leading_edge_end, is_point_in_boundary_trapezoid
+    # Assemble hybrid points using helper function with original complex logic
+    hybrid_points, leading_edge_preserved, mapped_points = assemble_hybrid_points(
+        poles,
+        leading_edge_start,
+        leading_edge_end,
+        is_point_in_boundary_trapezoid,
+        wire1_points,
+        wire2_points,
+        y_position,
     )
 
-    # Convert to FreeCAD vectors at correct y position
-    leading_edge_vectors = [
-        FreeCAD.Vector(point.x, y_position, point.z) for point in leading_edge_points
-    ]
-
-    # Assemble all hybrid points using helper function
-    hybrid_points = assemble_hybrid_points(
-        leading_edge_vectors, wire1_points, wire2_points
-    )
-    leading_edge_preserved = len(leading_edge_vectors)
-    mapped_points = len(wire1_points) + len(wire2_points)
-
-    # Find X boundaries of preserved leading edge points using helper function
-    preserved_points = [(i, point.x) for i, point in enumerate(leading_edge_points)]
+    # Find X boundaries of preserved leading edge points
+    preserved_points = []
+    for i, pole in enumerate(poles):
+        if (
+            leading_edge_start <= i <= leading_edge_end
+            and is_point_in_boundary_trapezoid(pole.x, pole.z)
+        ):
+            preserved_points.append((i, pole.x))
 
     if preserved_points:
         first_point = preserved_points[0]
@@ -1115,7 +1149,8 @@ if hybrid_control_points and section5_control_points:
         station_6_y = 1 * section_length  # Root_triangle position
         station_5_y = 2 * section_length  # Section_5 position
 
-        # Create parametric number of interpolated sections
+        # Create parametric number of interpolated sections and insert in correct order
+        interpolated_sections = []
         for i in range(1, number_of_station_5_to_6_transitions + 1):
             # Evenly distribute positions between station_6_y and station_5_y
             t = i / (number_of_station_5_to_6_transitions + 1)
@@ -1128,7 +1163,12 @@ if hybrid_control_points and section5_control_points:
                 section_length,
                 doc,
             )
-            loft_sections.append(interpolated_obj)
+            interpolated_sections.append(interpolated_obj)
+
+        # Insert interpolated sections in correct order: hybrid200, 250, 300, 350, section5, ...
+        # Current loft_sections: [hybrid200, section5, section4, section3, section2, tip]
+        # We need: [hybrid200, 250, 300, 350, section5, section4, section3, section2, tip]
+        loft_sections[1:1] = interpolated_sections  # Insert at position 1
         print(
             f"Created interpolated hybrids using {len(hybrid_control_points)} control points"
         )
