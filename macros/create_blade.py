@@ -698,6 +698,13 @@ def create_airfoil_wire_at_section(
     z_shift = -trailing_edge_z
     bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
 
+    # Preserve exact chord length - both endpoints should be at chord_length
+    # Rotation can introduce floating-point precision errors
+    if bottom_aligned_coordinates:
+        # Fix both endpoints (leading and trailing edges)
+        bottom_aligned_coordinates[0] = (chord_length, bottom_aligned_coordinates[0][1])
+        bottom_aligned_coordinates[-1] = (chord_length, bottom_aligned_coordinates[-1][1])
+
     # Show airfoil after scale, flattening, and Z adjustment
     points_3d = [
         FreeCAD.Vector(x, y_position, z) for x, z in bottom_aligned_coordinates
