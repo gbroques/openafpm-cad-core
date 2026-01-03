@@ -598,25 +598,27 @@ def create_airfoil_wire_at_section(
         rotation_center_x: X center for rotation (defaults to x_offset)
         rotation_center_z: Z center for rotation (defaults to z_offset)
     """
-    # Step 1: Flatten BEFORE scaling (on normalized coordinates)
+    # Step 1: Scale FIRST
+    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
+
+    # Step 2: Flatten AFTER scaling
     # Find bottom surface points (trailing edge to end)
-    trailing_edge_idx = min(range(len(coordinates)), key=lambda i: coordinates[i][0])
-    bottom_points = coordinates[trailing_edge_idx:]
+    trailing_edge_idx = min(range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0])
+    bottom_points = scaled_coordinates[trailing_edge_idx:]
     
-    # Linear regression on bottom surface
-    import numpy as np
-    x_coords = [x for x, z in bottom_points]
-    z_coords = [z for x, z in bottom_points]
-    slope, intercept = np.polyfit(x_coords, z_coords, 1)
+    # Use endpoints only for flatten angle calculation
+    trailing_pt = bottom_points[0]   # First point (trailing edge)
+    leading_pt = bottom_points[-1]   # Last point (leading edge)
+    slope = (leading_pt[1] - trailing_pt[1]) / (leading_pt[0] - trailing_pt[0])
     flatten_angle = -math.degrees(math.atan(slope))
     
     # Find global min Z point as rotation center
-    min_z_point = min(coordinates, key=lambda p: p[1])  # p[1] is Z in 2D
+    min_z_point = min(scaled_coordinates, key=lambda p: p[1])  # p[1] is Z in 2D
     rotation_center_x, rotation_center_z = min_z_point
     
     # Rotate about global min Z point
     flattened_coordinates = rotate_airfoil_coordinates_about_point(
-        coordinates, rotation_center_x, rotation_center_z, flatten_angle
+        scaled_coordinates, rotation_center_x, rotation_center_z, flatten_angle
     )
     
     # Apply positive Z shift to align bottom to X-axis
@@ -624,12 +626,9 @@ def create_airfoil_wire_at_section(
     z_shift = -global_min_z  # Make it positive
     bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
 
-    # Step 2: NOW scale the flattened, aligned coordinates
-    scaled_coordinates = scale_airfoil_coordinates(bottom_aligned_coordinates, chord_length)
-
     # Step 3: Apply flips
     reflected_coordinates = flip_airfoil_coordinates_vertically(
-        scaled_coordinates
+        bottom_aligned_coordinates
     )
     final_coordinates = flip_airfoil_coordinates_horizontally(reflected_coordinates)
     x_translated_coordinates = translate_airfoil_coordinates(
@@ -1026,154 +1025,126 @@ section_names = [
     "Tip",
 ]
 
-# Create blade sections from root triangle to tip (y=200 to y=1200)
-loft_sections = []
-
-for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
-    y_end = (i + 1) * section_length
-    thick_end = thicknesses[i]
-    drop_end = drops[i]
-
-    section_obj = create_section(
-        y_end,
-        thick_end,
-        drop_end,
-        section_names[i],
-        W,
-        wood_width,
-        blade_radius,
-        thickness,
-        coordinates,
-        section_length,
-        R2,
-        doc,
-        drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
-        thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
+# Test endpoints method for flatten angle
+def visualize_endpoints_flattening():
+    """Show airfoil with endpoints-only flatten angle calculation"""
+    
+    # Step 1: Scale FIRST
+    chord_length = 175.0
+    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
+    
+    # Step 2: Flatten using endpoints only
+    trailing_edge_idx = min(range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0])
+    bottom_points = scaled_coordinates[trailing_edge_idx:]
+    
+    # Use endpoints only for flatten angle calculation
+    trailing_pt = bottom_points[0]   # First point (trailing edge)
+    leading_pt = bottom_points[-1]   # Last point (leading edge)
+    slope = (leading_pt[1] - trailing_pt[1]) / (leading_pt[0] - trailing_pt[0])
+    flatten_angle = -math.degrees(math.atan(slope))
+    
+    # Find global min Z point as rotation center
+    min_z_point = min(scaled_coordinates, key=lambda p: p[1])
+    rotation_center_x, rotation_center_z = min_z_point
+    
+    print(f"Endpoints method:")
+    print(f"Trailing edge: ({trailing_pt[0]:.3f}, {trailing_pt[1]:.3f})")
+    print(f"Leading edge: ({leading_pt[0]:.3f}, {leading_pt[1]:.3f})")
+    print(f"Slope: {slope:.6f}")
+    print(f"Flatten angle: {flatten_angle:.6f} degrees")
+    print(f"Rotation center: ({rotation_center_x:.3f}, {rotation_center_z:.3f})")
+    
+    # Rotate about global min Z point
+    flattened_coordinates = rotate_airfoil_coordinates_about_point(
+        scaled_coordinates, rotation_center_x, rotation_center_z, flatten_angle
     )
-
-    # Create hybrid airfoil for Root_triangle section
-    if i == 0:  # Root_triangle section at y=200
-        hybrid_obj = create_hybrid_airfoil_section_6b(
-            y_end,
-            thick_end,
-            drop_end,
-            W,
-            wood_width,
-            blade_radius,
-            thickness,
-            coordinates,
-            section_obj,  # Pass the airfoil object directly
-            doc,
-        )
-        loft_sections.append(hybrid_obj)
-    else:
-        loft_sections.append(section_obj)
-
-print("Created blade section wires and airfoils from root triangle to tip")
-
-
-def create_interpolated_hybrid_section(
-    y_position: float,
-    hybrid_control_points: List[FreeCAD.Vector],
-    section5_control_points: List[FreeCAD.Vector],
-    section_length: float,
-    doc: FreeCAD.Document,
-) -> Part.Feature:
-    """Create hybrid section by linear interpolation between control points.
-
-    Returns:
-        FreeCAD Part::Feature object containing the interpolated hybrid airfoil
-    """
-    # Calculate station positions from section_length
-    station_6_y = 1 * section_length  # y=200 (Root_triangle/hybrid)
-    station_5_y = 2 * section_length  # y=400 (Section_5)
-
-    # station_6_y → weight=1.0 (full hybrid)
-    # station_5_y → weight=0.0 (full Section_5)
-    weight = (station_5_y - y_position) / (station_5_y - station_6_y)
-
-    interpolated_points = []
-    for i in range(len(hybrid_control_points)):
-        hybrid_pt = hybrid_control_points[i]
-        section5_pt = section5_control_points[i]
-
-        interp_pt = FreeCAD.Vector(
-            hybrid_pt.x * weight + section5_pt.x * (1 - weight),
-            y_position,  # Y is fixed
-            hybrid_pt.z * weight + section5_pt.z * (1 - weight),
-        )
-        interpolated_points.append(interp_pt)
-
-    # Create B-spline from interpolated points
+    
+    # Apply positive Z shift to align bottom to X-axis
+    global_min_z = min(z for x, z in flattened_coordinates)
+    z_shift = -global_min_z
+    bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
+    
+    # Check trailing edge error
+    trailing_after = None
+    min_x = min(x for x, z in bottom_aligned_coordinates)
+    for x, z in bottom_aligned_coordinates:
+        if abs(x - min_x) < 0.001:
+            if trailing_after is None or z < trailing_after[1]:
+                trailing_after = (x, z)
+    
+    trailing_error = trailing_after[1] if trailing_after else 0
+    print(f"Trailing edge Z after alignment: {trailing_error:.6f}mm")
+    print(f"Trailing edge error: {abs(trailing_error):.6f}mm")
+    
+    # Create visualization
+    points_3d = [FreeCAD.Vector(x, 0, z) for x, z in bottom_aligned_coordinates]
+    
     spline = Part.BSplineCurve()
-    spline.interpolate(interpolated_points, False)
+    spline.interpolate(points_3d, False)
     edge = spline.toShape()
-
-    # Close with trailing edge line
-    first_point = interpolated_points[0]
-    last_point = interpolated_points[-1]
-    closing_line = Part.makeLine(last_point, first_point)
-    wire = Part.Wire([edge, closing_line])
-
-    # Create FreeCAD object
-    hybrid_obj = create_airfoil_object(wire, f"Hybrid_Airfoil_y{int(y_position)}", doc)
-    print(f"Created interpolated hybrid at y={y_position} (weight={weight:.3f})")
-    return hybrid_obj
-
-
-# Create root hybrid at y=200
-
-
-# Get control points from hybrid y=200 and Section_5_Airfoil
-# Use the objects we already created instead of searching by name
-hybrid_y200 = loft_sections[0]  # First section is the hybrid
-section5_airfoil = loft_sections[1]  # Second section is Section_5
-
-hybrid_control_points = None
-section5_control_points = None
-
-if hybrid_y200:
-    hybrid_control_points = extract_bspline_control_points(hybrid_y200.Shape)
-
-if section5_airfoil:
-    section5_control_points = extract_bspline_control_points(section5_airfoil.Shape)
-
-# Create interpolated intermediate sections
-if hybrid_control_points and section5_control_points:
-    if len(hybrid_control_points) == len(section5_control_points):
-        # Calculate station positions
-        station_6_y = 1 * section_length  # Root_triangle position
-        station_5_y = 2 * section_length  # Section_5 position
-
-        # Create parametric number of interpolated sections and insert in correct order
-        interpolated_sections = []
-        for i in range(1, number_of_station_5_to_6_transitions + 1):
-            # Evenly distribute positions between station_6_y and station_5_y
-            t = i / (number_of_station_5_to_6_transitions + 1)
-            y_position = station_6_y + t * (station_5_y - station_6_y)
-
-            interpolated_obj = create_interpolated_hybrid_section(
-                y_position,
-                hybrid_control_points,
-                section5_control_points,
-                section_length,
-                doc,
-            )
-            interpolated_sections.append(interpolated_obj)
-
-        # Insert interpolated sections in correct order: hybrid200, 250, 300, 350, section5, ...
-        # Current loft_sections: [hybrid200, section5, section4, section3, section2, tip]
-        # We need: [hybrid200, 250, 300, 350, section5, section4, section3, section2, tip]
-        loft_sections[1:1] = interpolated_sections  # Insert at position 1
-        print(
-            f"Created interpolated hybrids using {len(hybrid_control_points)} control points"
-        )
+    
+    first_point = points_3d[0]
+    last_point = points_3d[-1]
+    is_closed = first_point.distanceToPoint(last_point) < 0.001
+    
+    if not is_closed:
+        closing_line = Part.makeLine(last_point, first_point)
+        wire = Part.Wire([edge, closing_line])
     else:
-        print(
-            f"Control point count mismatch: hybrid={len(hybrid_control_points)}, section5={len(section5_control_points)}"
-        )
-else:
-    print("Could not extract control points for interpolation")
+        wire = Part.Wire([edge])
+    
+    Part.show(wire, "Endpoints_Flattened_Airfoil")
+    
+    # Print final bounds
+    bbox = wire.BoundBox
+    print(f"Final bounds:")
+    print(f"  X: {bbox.XMin:.3f} to {bbox.XMax:.3f} (length: {bbox.XLength:.3f}mm)")
+    print(f"  Z: {bbox.ZMin:.3f} to {bbox.ZMax:.3f} (height: {bbox.ZLength:.3f}mm)")
 
-# Create loft through all sections from root to tip
-create_blade_loft(loft_sections, doc)
+visualize_endpoints_flattening()
+
+# Comment out section creation and loft for now
+# # Create blade sections from root triangle to tip (y=200 to y=1200)
+# loft_sections = []
+# 
+# for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
+#     y_end = (i + 1) * section_length
+#     thick_end = thicknesses[i]
+#     drop_end = drops[i]
+# 
+#     section_obj = create_section(
+#         y_end,
+#         thick_end,
+#         drop_end,
+#         section_names[i],
+#         W,
+#         wood_width,
+#         blade_radius,
+#         thickness,
+#         coordinates,
+#         section_length,
+#         R2,
+#         doc,
+#         drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
+#         thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
+#     )
+# 
+#     # Create hybrid airfoil for Root_triangle section
+#     if i == 0:  # Root_triangle section at y=200
+#         hybrid_obj = create_hybrid_airfoil_section_6b(
+#             y_end,
+#             thick_end,
+#             drop_end,
+#             W,
+#             wood_width,
+#             blade_radius,
+#             thickness,
+#             coordinates,
+#             section_obj,  # Pass the airfoil object directly
+#             doc,
+#         )
+#         loft_sections.append(hybrid_obj)
+#     else:
+#         loft_sections.append(section_obj)
+# 
+# print("Created blade section wires and airfoils from root triangle to tip")
