@@ -622,13 +622,13 @@ def create_hybrid_airfoil_section_6b(
     wire2_points = discretize_wire_segment(wire2_start, wire2_end, wire2_point_count)
 
     # Create boundary checking function
-    boundary_check_fn = create_boundary_check_function(
+    is_point_in_boundary_trapezoid = create_boundary_check_function(
         trailing_edge_x, W, thickness, drop_end, chord_length_x
     )
 
     # Extract leading edge points that are within boundary
     leading_edge_points = extract_leading_edge_points(
-        poles, leading_edge_start, leading_edge_end, boundary_check_fn
+        poles, leading_edge_start, leading_edge_end, is_point_in_boundary_trapezoid
     )
     
     # Convert to FreeCAD vectors at correct y position
