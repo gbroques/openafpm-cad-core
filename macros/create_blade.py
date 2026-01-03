@@ -24,37 +24,41 @@ def calculate_trailing_edge_x(W: float, chord_length: float) -> float:
 
 
 def create_boundary_vertices(
-    trailing_edge_x: float, 
-    W: float, 
-    thickness: float, 
-    drop_end: float, 
-    y_position: float
+    trailing_edge_x: float,
+    W: float,
+    thickness: float,
+    drop_end: float,
+    y_position: float,
 ) -> Tuple[FreeCAD.Vector, FreeCAD.Vector, FreeCAD.Vector, FreeCAD.Vector]:
     """Create boundary trapezoid vertices for hybrid airfoil mapping.
-    
+
     Args:
         trailing_edge_x: X coordinate of trailing edge
         W: Distance from leading edge to center
         thickness: Maximum Z thickness
         drop_end: Z drop at trailing edge
         y_position: Y position of the section
-        
+
     Returns:
         Tuple of (trailing, root_bottom, root_top, leading_top) vertices
     """
     v_trailing = FreeCAD.Vector(W, y_position, 0.0)  # Leading edge at z=0
-    v_root_bottom = FreeCAD.Vector(trailing_edge_x, y_position, 0.0)  # Trailing edge at z=0
-    v_root_top = FreeCAD.Vector(trailing_edge_x, y_position, thickness - drop_end)  # Trailing edge top
+    v_root_bottom = FreeCAD.Vector(
+        trailing_edge_x, y_position, 0.0
+    )  # Trailing edge at z=0
+    v_root_top = FreeCAD.Vector(
+        trailing_edge_x, y_position, thickness - drop_end
+    )  # Trailing edge top
     v_leading_top = FreeCAD.Vector(W, y_position, thickness)  # Leading edge top
     return v_trailing, v_root_bottom, v_root_top, v_leading_top
 
 
 def find_z_zero_crossing_idx(poles: List[FreeCAD.Vector]) -> Optional[int]:
     """Find index where airfoil crosses Z=0 (from negative to positive).
-    
+
     Args:
         poles: List of airfoil control points
-        
+
     Returns:
         Index of crossing point, or None if no crossing found
     """
@@ -65,17 +69,15 @@ def find_z_zero_crossing_idx(poles: List[FreeCAD.Vector]) -> Optional[int]:
 
 
 def calculate_wire_point_distribution(
-    wire1_length: float, 
-    wire2_length: float, 
-    total_points: int
+    wire1_length: float, wire2_length: float, total_points: int
 ) -> Tuple[int, int]:
     """Calculate proportional point distribution based on wire lengths.
-    
+
     Args:
         wire1_length: Length of first wire segment
         wire2_length: Length of second wire segment
         total_points: Total number of points to distribute
-        
+
     Returns:
         Tuple of (wire1_point_count, wire2_point_count)
     """
@@ -87,17 +89,15 @@ def calculate_wire_point_distribution(
 
 
 def discretize_wire_segment(
-    start_point: FreeCAD.Vector, 
-    end_point: FreeCAD.Vector, 
-    point_count: int
+    start_point: FreeCAD.Vector, end_point: FreeCAD.Vector, point_count: int
 ) -> List[FreeCAD.Vector]:
     """Discretize a wire segment into specified number of points.
-    
+
     Args:
         start_point: Starting point of the segment
         end_point: Ending point of the segment
         point_count: Number of points to generate along the segment
-        
+
     Returns:
         List of discretized points along the wire segment
     """
@@ -108,10 +108,10 @@ def discretize_wire_segment(
 
 def create_bspline_from_points(points: List[FreeCAD.Vector]) -> Part.Edge:
     """Create B-spline edge from list of points using interpolation.
-    
+
     Args:
         points: List of 3D points to interpolate through
-        
+
     Returns:
         FreeCAD edge representing the B-spline curve
     """
@@ -120,13 +120,15 @@ def create_bspline_from_points(points: List[FreeCAD.Vector]) -> Part.Edge:
     return spline.toShape()
 
 
-def create_closed_airfoil_wire(bspline_edge: Part.Edge, points: List[FreeCAD.Vector]) -> Part.Wire:
+def create_closed_airfoil_wire(
+    bspline_edge: Part.Edge, points: List[FreeCAD.Vector]
+) -> Part.Wire:
     """Create closed airfoil wire with trailing edge line if needed.
-    
+
     Args:
         bspline_edge: B-spline edge representing the main airfoil curve
         points: Original points used to create the B-spline
-        
+
     Returns:
         Closed FreeCAD wire (adds closing line if not already closed)
     """
@@ -142,27 +144,27 @@ def create_closed_airfoil_wire(bspline_edge: Part.Edge, points: List[FreeCAD.Vec
 
 
 def create_boundary_check_function(
-    trailing_edge_x: float, 
-    W: float, 
-    thickness: float, 
-    drop_end: float, 
-    chord_length_x: float
+    trailing_edge_x: float,
+    W: float,
+    thickness: float,
+    drop_end: float,
+    chord_length_x: float,
 ) -> Callable[[float, float], bool]:
     """Create boundary checking function for point filtering.
-    
+
     Args:
         trailing_edge_x: X coordinate of trailing edge
         W: Distance from leading edge to center
         thickness: Maximum Z thickness
         drop_end: Z drop at trailing edge
         chord_length_x: Chord length in X direction
-        
+
     Returns:
         Function that checks if (x, z) point is inside boundary trapezoid
     """
     boundary_z_base = thickness - drop_end
     slope = drop_end / chord_length_x
-    
+
     def is_point_in_boundary_trapezoid(x, z):
         """Check if point is inside boundary trapezoid using geometric logic"""
         # Boundary X range: trailing_edge_x to W
@@ -179,16 +181,16 @@ def create_boundary_check_function(
             return False
 
         return True
-    
+
     return is_point_in_boundary_trapezoid
 
 
 def extract_bspline_control_points(shape: Part.Shape) -> Optional[List[FreeCAD.Vector]]:
     """Extract B-spline control points from a shape's edges.
-    
+
     Args:
         shape: FreeCAD shape to extract control points from
-        
+
     Returns:
         List of control points if B-spline found, None otherwise
     """
@@ -198,14 +200,16 @@ def extract_bspline_control_points(shape: Part.Shape) -> Optional[List[FreeCAD.V
     return None
 
 
-def create_airfoil_object(wire: Part.Wire, name: str, doc: FreeCAD.Document) -> Part.Feature:
+def create_airfoil_object(
+    wire: Part.Wire, name: str, doc: FreeCAD.Document
+) -> Part.Feature:
     """Create a FreeCAD Part::Feature object from a wire.
-    
+
     Args:
         wire: FreeCAD wire to create object from
         name: Base name for the object (will have '_Airfoil' appended)
         doc: FreeCAD document to create object in
-        
+
     Returns:
         FreeCAD Part::Feature object containing the wire
     """
@@ -215,46 +219,47 @@ def create_airfoil_object(wire: Part.Wire, name: str, doc: FreeCAD.Document) -> 
 
 
 def extract_leading_edge_points(
-    poles: List[FreeCAD.Vector], 
-    leading_edge_start: int, 
-    leading_edge_end: int, 
-    boundary_check_fn: Callable[[float, float], bool]
+    poles: List[FreeCAD.Vector],
+    leading_edge_start: int,
+    leading_edge_end: int,
+    boundary_check_fn: Callable[[float, float], bool],
 ) -> List[FreeCAD.Vector]:
     """Extract leading edge points that fall within boundary trapezoid.
-    
+
     Args:
         poles: List of airfoil control points
         leading_edge_start: Start index of leading edge range
         leading_edge_end: End index of leading edge range
         boundary_check_fn: Function to check if point is within boundary
-        
+
     Returns:
         List of preserved leading edge points within boundary
     """
     preserved_points = []
     for i, pole in enumerate(poles):
-        if (
-            leading_edge_start <= i <= leading_edge_end
-            and boundary_check_fn(pole.x, pole.z)
+        if leading_edge_start <= i <= leading_edge_end and boundary_check_fn(
+            pole.x, pole.z
         ):
             preserved_points.append(pole)
     return preserved_points
 
 
-def create_blade_loft(sections: List[Part.Feature], doc: FreeCAD.Document) -> Optional[Part.Feature]:
+def create_blade_loft(
+    sections: List[Part.Feature], doc: FreeCAD.Document
+) -> Optional[Part.Feature]:
     """Create a loft through all blade sections.
-    
+
     Args:
         sections: List of blade section objects to loft through
         doc: FreeCAD document to create loft in
-        
+
     Returns:
         FreeCAD loft object if successful, None if failed
     """
     if len(sections) < 2:
         print(f"Not enough sections found for loft: {len(sections)}")
         return None
-        
+
     try:
         loft = doc.addObject("Part::Loft", "Complete_Blade_Loft")
         loft.Sections = sections
@@ -269,16 +274,16 @@ def create_blade_loft(sections: List[Part.Feature], doc: FreeCAD.Document) -> Op
 
 
 def create_cross_section_wire(
-    W: float, 
-    chord_length_x: float, 
-    y_end: float, 
-    z_bottom_right_end: float, 
-    z_bottom_end: float, 
-    thickness: float, 
-    z_top_end: float
+    W: float,
+    chord_length_x: float,
+    y_end: float,
+    z_bottom_right_end: float,
+    z_bottom_end: float,
+    thickness: float,
+    z_top_end: float,
 ) -> Part.Wire:
     """Create standard cross-section wire with 4 vertices.
-    
+
     Args:
         W: Distance from leading edge to center
         chord_length_x: Chord length in X direction
@@ -287,11 +292,13 @@ def create_cross_section_wire(
         z_bottom_end: Z coordinate of leading edge bottom
         thickness: Maximum Z thickness
         z_top_end: Z coordinate of trailing edge top
-        
+
     Returns:
         FreeCAD wire representing the cross-section
     """
-    v1 = FreeCAD.Vector(W - chord_length_x, y_end, z_bottom_right_end)  # Trailing edge bottom
+    v1 = FreeCAD.Vector(
+        W - chord_length_x, y_end, z_bottom_right_end
+    )  # Trailing edge bottom
     v2 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
     v3 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
     v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)  # Trailing edge top
@@ -299,24 +306,24 @@ def create_cross_section_wire(
 
 
 def create_root_triangle_cross_section(
-    W: float, 
-    chord_length_x: float, 
+    W: float,
+    chord_length_x: float,
     y_end: float,
-    z_bottom_right_end: float, 
+    z_bottom_right_end: float,
     z_bottom_end: float,
-    thickness: float, 
+    thickness: float,
     z_top_end: float,
-    section_length: float, 
-    blade_radius: float, 
+    section_length: float,
+    blade_radius: float,
     wood_width: float,
-    drop_end: float, 
-    thick_end: float, 
-    station4_drop: float, 
-    station4_thick: float, 
-    R2: float
+    drop_end: float,
+    thick_end: float,
+    station4_drop: float,
+    station4_thick: float,
+    R2: float,
 ) -> Part.Wire:
     """Create root triangle cross-section with wedge cut.
-    
+
     Args:
         W: Distance from leading edge to center
         chord_length_x: Chord length in X direction
@@ -333,7 +340,7 @@ def create_root_triangle_cross_section(
         station4_drop: Drop value at station 4
         station4_thick: Thickness value at station 4
         R2: Radius of flat circular area on back
-        
+
     Returns:
         FreeCAD wire representing the root triangle cross-section
     """
@@ -342,13 +349,21 @@ def create_root_triangle_cross_section(
     v2 = FreeCAD.Vector(W, y_end, z_bottom_end)
     v3 = FreeCAD.Vector(W, y_end, thickness)
     v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)
-    
+
     # Calculate wedge cut position
     wedge_cut_x = calculate_wedge_cut_position(
-        section_length, blade_radius, wood_width, W, thickness,
-        drop_end, thick_end, station4_drop, station4_thick, R2
+        section_length,
+        blade_radius,
+        wood_width,
+        W,
+        thickness,
+        drop_end,
+        thick_end,
+        station4_drop,
+        station4_thick,
+        R2,
     )
-    
+
     # Create triangle vertices with wedge cut
     base_vertices = [v2, v1, v4, v3]
     triangle_vertices = create_root_triangle_vertices(base_vertices, wedge_cut_x, y_end)
@@ -356,17 +371,17 @@ def create_root_triangle_cross_section(
 
 
 def assemble_hybrid_points(
-    preserved_points: List[FreeCAD.Vector], 
-    wire1_points: List[FreeCAD.Vector], 
-    wire2_points: List[FreeCAD.Vector]
+    preserved_points: List[FreeCAD.Vector],
+    wire1_points: List[FreeCAD.Vector],
+    wire2_points: List[FreeCAD.Vector],
 ) -> List[FreeCAD.Vector]:
     """Assemble final hybrid points from preserved and mapped points.
-    
+
     Args:
         preserved_points: Leading edge points to preserve from original airfoil
         wire1_points: Points mapped to first discretized wire segment
         wire2_points: Points mapped to second discretized wire segment
-        
+
     Returns:
         Combined list of all hybrid airfoil points
     """
@@ -377,7 +392,18 @@ def assemble_hybrid_points(
     return hybrid_points
 
 
-def calculate_wedge_cut_position(section_length: float, blade_radius: float, wood_width: float, W: float, thickness: float, drop_end: float, thick_end: float, station4_drop: float, station4_thick: float, R2: float) -> float:
+def calculate_wedge_cut_position(
+    section_length: float,
+    blade_radius: float,
+    wood_width: float,
+    W: float,
+    thickness: float,
+    drop_end: float,
+    thick_end: float,
+    station4_drop: float,
+    station4_thick: float,
+    R2: float,
+) -> float:
     """Calculate wedge cut x position using connection line intersection logic"""
     station_5_y = calculate_station_position(2, section_length)
     station_4_y = calculate_station_position(3, section_length)
@@ -389,28 +415,32 @@ def calculate_wedge_cut_position(section_length: float, blade_radius: float, woo
     t_term = -z5_unclamped / (z4 - z5_unclamped)
     y_term = station_5_y + t_term * (station_4_y - station_5_y)
     x_term_width = w5 + t_term * (w4 - w5)
-    
+
     # Calculate wedge cut using connection line intersection logic from twisted tapered plank
     y_split = math.sqrt(R2**2 - W**2)  # Cylinder intersection with leading edge
     x_term = W - x_term_width  # Termination x-coordinate
     t_end = (section_length - y_split) / (y_term - y_split) if y_term != y_split else 0
     t_end = max(0, min(1, t_end))
     wedge_cut_x = W + t_end * (x_term - W)  # This gives ~24.41
-    
+
     return wedge_cut_x
 
 
-def create_root_triangle_vertices(base_vertices: List[FreeCAD.Vector], wedge_cut_x: float, y_end: float) -> List[FreeCAD.Vector]:
+def create_root_triangle_vertices(
+    base_vertices: List[FreeCAD.Vector], wedge_cut_x: float, y_end: float
+) -> List[FreeCAD.Vector]:
     """Create Root_triangle vertices with wedge cut"""
     v2, v1, v4, v3 = base_vertices
     v_wedge = FreeCAD.Vector(wedge_cut_x, y_end, 0)  # Wedge cut vertex at z=0
-    
+
     # Create Root_triangle wire: v2 -> v_wedge -> v1 -> v4 -> v3 -> v2
     # This connects: leading_edge_bottom -> wedge_cut -> root_cut_bottom -> trailing_edge_top -> leading_edge_top -> back
     return [v2, v_wedge, v1, v4, v3, v2]
 
 
-def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
+def find_crossing_indices(
+    poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float
+) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
     z_crossing_idx = None
@@ -418,17 +448,17 @@ def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, tra
         if poles[i].z < 0 and poles[i + 1].z >= 0:
             z_crossing_idx = i
             break
-    
+
     # Find boundary crossing using slanted line equation
     boundary_crossing_idx = None
     for i in range(len(poles) - 1):
         current_z = boundary_z_base + slope * (poles[i].x - trailing_edge_x)
         next_z = boundary_z_base + slope * (poles[i + 1].x - trailing_edge_x)
-        
+
         if poles[i].z < current_z and poles[i + 1].z >= next_z:
             boundary_crossing_idx = i
             break
-    
+
     return z_crossing_idx, boundary_crossing_idx
 
 
@@ -672,17 +702,36 @@ def create_section(
             print(f"Section_5_Airfoil B-spline has {len(poles)} control points")
 
     # Create cross-section wire
-    station_6_y = calculate_station_position(1, section_length)  # Root_triangle position
+    station_6_y = calculate_station_position(
+        1, section_length
+    )  # Root_triangle position
     if y_end == station_6_y:  # First section (Root_triangle)
         back_wire = create_root_triangle_cross_section(
-            W, chord_length_x, y_end, z_bottom_right_end, z_bottom_end,
-            thickness, z_top_end, section_length, blade_radius, wood_width,
-            drop_end, thick_end, station4_drop, station4_thick, R2
+            W,
+            chord_length_x,
+            y_end,
+            z_bottom_right_end,
+            z_bottom_end,
+            thickness,
+            z_top_end,
+            section_length,
+            blade_radius,
+            wood_width,
+            drop_end,
+            thick_end,
+            station4_drop,
+            station4_thick,
+            R2,
         )
     else:
         back_wire = create_cross_section_wire(
-            W, chord_length_x, y_end, z_bottom_right_end, z_bottom_end,
-            thickness, z_top_end
+            W,
+            chord_length_x,
+            y_end,
+            z_bottom_right_end,
+            z_bottom_end,
+            thickness,
+            z_top_end,
         )
 
     Part.show(back_wire, name)
@@ -715,7 +764,7 @@ def create_hybrid_airfoil_section_6b(
     doc: FreeCAD.Document,
 ) -> Part.Feature:
     """Create hybrid airfoil: leading edge from airfoil, rest mapped to Section_6b wire.
-    
+
     Returns:
         FreeCAD Part::Feature object containing the hybrid airfoil wire
     """
@@ -862,21 +911,21 @@ def create_hybrid_airfoil_section_6b(
     leading_edge_points = extract_leading_edge_points(
         poles, leading_edge_start, leading_edge_end, is_point_in_boundary_trapezoid
     )
-    
+
     # Convert to FreeCAD vectors at correct y position
     leading_edge_vectors = [
         FreeCAD.Vector(point.x, y_position, point.z) for point in leading_edge_points
     ]
-    
+
     # Assemble all hybrid points using helper function
-    hybrid_points = assemble_hybrid_points(leading_edge_vectors, wire1_points, wire2_points)
+    hybrid_points = assemble_hybrid_points(
+        leading_edge_vectors, wire1_points, wire2_points
+    )
     leading_edge_preserved = len(leading_edge_vectors)
     mapped_points = len(wire1_points) + len(wire2_points)
 
     # Find X boundaries of preserved leading edge points using helper function
-    preserved_points = [
-        (i, point.x) for i, point in enumerate(leading_edge_points)
-    ]
+    preserved_points = [(i, point.x) for i, point in enumerate(leading_edge_points)]
 
     if preserved_points:
         first_point = preserved_points[0]
@@ -903,8 +952,10 @@ def create_hybrid_airfoil_section_6b(
     hybrid_wire = create_closed_airfoil_wire(edge, hybrid_points)
 
     # Create FreeCAD object
-    hybrid_obj = create_airfoil_object(hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}", doc)
-    
+    hybrid_obj = create_airfoil_object(
+        hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}", doc
+    )
+
     print(
         f"Created smooth hybrid airfoil B-spline at y={y_position} with {len(hybrid_points)} points (closed with trailing edge line)"
     )
@@ -919,7 +970,7 @@ def create_hybrid_airfoil_section_6b(
         print(
             f"Hybrid_Airfoil_y{int(y_position)} B-spline has {len(poles)} control points"
         )
-    
+
     return hybrid_obj
 
 
@@ -992,14 +1043,14 @@ print("Created blade section wires and airfoils from root triangle to tip")
 
 
 def create_interpolated_hybrid_section(
-    y_position: float, 
-    hybrid_control_points: List[FreeCAD.Vector], 
-    section5_control_points: List[FreeCAD.Vector], 
+    y_position: float,
+    hybrid_control_points: List[FreeCAD.Vector],
+    section5_control_points: List[FreeCAD.Vector],
     section_length: float,
     doc: FreeCAD.Document,
 ) -> Part.Feature:
     """Create hybrid section by linear interpolation between control points.
-    
+
     Returns:
         FreeCAD Part::Feature object containing the interpolated hybrid airfoil
     """
