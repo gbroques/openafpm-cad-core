@@ -684,13 +684,13 @@ def create_airfoil_wire_at_section(
     slope, intercept = np.polyfit(x_coords, z_coords, 1)
     flatten_angle = -math.degrees(math.atan(slope))
 
-    # Find global min Z point as rotation center
+    # Find global min Z point for flattening rotation center
     min_z_point = min(scaled_coordinates, key=lambda p: p[1])  # p[1] is Z in 2D
-    rotation_center_x, rotation_center_z = min_z_point
+    flatten_rotation_center_x, flatten_rotation_center_z = min_z_point
 
-    # Rotate about global min Z point
+    # Rotate about global min Z point for flattening
     flattened_coordinates = rotate_airfoil_coordinates_about_point(
-        scaled_coordinates, rotation_center_x, rotation_center_z, flatten_angle
+        scaled_coordinates, flatten_rotation_center_x, flatten_rotation_center_z, flatten_angle
     )
 
     # Apply Z shift using trailing edge for optimal closure
@@ -701,30 +701,10 @@ def create_airfoil_wire_at_section(
     # Preserve exact chord length - both endpoints should be at chord_length
     # Rotation can introduce floating-point precision errors
     if bottom_aligned_coordinates:
-        # Fix both endpoints (leading and trailing edges)
+        # Fix both endpoints (leading and trailing edges) to exact chord_length
         bottom_aligned_coordinates[0] = (chord_length, bottom_aligned_coordinates[0][1])
         bottom_aligned_coordinates[-1] = (chord_length, bottom_aligned_coordinates[-1][1])
-
-    # Show airfoil after scale, flattening, and Z adjustment
-    points_3d = [
-        FreeCAD.Vector(x, y_position, z) for x, z in bottom_aligned_coordinates
-    ]
-    spline = Part.BSplineCurve()
-    spline.interpolate(points_3d, False)
-    edge = spline.toShape()
-
-    first_point = points_3d[0]
-    last_point_3d = points_3d[-1]
-    is_closed = first_point.distanceToPoint(last_point_3d) < 0.001
-
-    if not is_closed:
-        closing_line = Part.makeLine(last_point_3d, first_point)
-        wire = Part.Wire([edge, closing_line])
-    else:
-        wire = Part.Wire([edge])
-
-    Part.show(wire, f"Airfoil_Scaled_Flattened_y{y_position}")
-
+        
     # Check trailing edge alignment
     last_point = bottom_aligned_coordinates[-1]
     trailing_error = abs(last_point[1])
@@ -746,8 +726,8 @@ def create_airfoil_wire_at_section(
 
     # Step 5: Apply additional rotation if specified
     if rotation_angle != 0.0:
-        center_x = rotation_center_x if rotation_center_x is not None else x_offset
-        center_z = rotation_center_z if rotation_center_z is not None else z_offset
+        center_x = rotation_center_x  # Use passed parameter directly
+        center_z = rotation_center_z  # Use passed parameter directly
         # Convert back to 2D for rotation, then back to 3D
         xz_coordinates = [(x, z) for x, _, z in xyz_coordinates]
         rotated_coordinates = rotate_airfoil_coordinates_about_point(
@@ -755,21 +735,7 @@ def create_airfoil_wire_at_section(
         )
         xyz_coordinates = [(x, y_position, z) for x, z in rotated_coordinates]
 
-    # Step 6: Create wire and measure leading edge overshoot
-    points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
-    spline = Part.BSplineCurve()
-    spline.interpolate(points, False)
-    temp_wire = Part.Wire([spline.toShape()])
-
-    # Measure leading edge overshoot
-    actual_leading_x = temp_wire.BoundBox.XMax
-    leading_overshoot = actual_leading_x - x_offset
-
-    # Shift all coordinates back by the overshoot amount
-    if leading_overshoot > 0:
-        xyz_coordinates = [(x - leading_overshoot, y, z) for x, y, z in xyz_coordinates]
-
-    # Create final wire with corrected coordinates
+    # Create final wire directly
     points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
     spline = Part.BSplineCurve()
     spline.interpolate(points, False)
@@ -809,22 +775,28 @@ def create_section(
     chord_length_x = calculate_chord_length(wood_width, W, y_end, blade_radius)
     z_bottom_end = thickness - thick_end
 
-    # Calculate actual chord length accounting for z-drop (hypotenuse)
-    chord_length = math.sqrt(chord_length_x**2 + drop_end**2)
+    # Use X-axis chord length for proper positioning
+    chord_length = chord_length_x
 
     # Create airfoil wire
-    rotation_angle = math.degrees(math.atan(drop_end / chord_length))
+    rotation_angle = math.degrees(math.atan(drop_end / chord_length_x))
 
+    # Position airfoil so bottom trailing edge aligns with section boundary
+    # Calculate actual trailing edge X position for this section
+    trailing_edge_x = W - chord_length_x
+    z_bottom_trailing = thickness - drop_end  # Z at trailing edge from boundary
+    
     airfoil_wire = create_airfoil_wire_at_section(
         airfoil_coordinates,
-        chord_length,  # Use 3D chord length
+        chord_length,  # Use X-axis chord length
         y_end,
-        W,
-        thickness,
-        rotation_angle,
-        W,
-        thickness,
+        trailing_edge_x + chord_length_x,  # Position so trailing edge ends up at trailing_edge_x
+        z_bottom_trailing,  # Bottom trailing edge at boundary Z
+        rotation_angle,  # Rotate to match boundary slope
+        trailing_edge_x,  # Rotation center at actual trailing edge X
+        z_bottom_trailing,  # Rotation center at boundary Z
     )
+    
     # Store wire directly without creating FreeCAD object
     obj = create_airfoil_object(airfoil_wire, f"{name}_Airfoil", doc)
 
@@ -982,8 +954,10 @@ def create_hybrid_airfoil_section_6b(
             z_cross = p_before.z + t_cross * (p_after.z - p_before.z)
         else:
             x_cross = p_before.x
+            z_cross = p_before.z  # Use the point's Z coordinate
     else:
         x_cross = trailing_edge_x
+        z_cross = boundary_z_base  # Use boundary Z at trailing edge
 
     # Create split points
     split1_point = FreeCAD.Vector(x_at_z0, y_position, 0.0)
@@ -1693,63 +1667,114 @@ def compare_rotation_centers():
         print()
 
 
-# Clean implementation using ADAPTIVE method: Stable slope region detection
+# Create blade sections from root triangle to tip (y=200 to y=1200)
+loft_sections = []
 
-# Remove analysis code for clean implementation
+for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
+    y_end = (i + 1) * section_length
+    thick_end = thicknesses[i]
+    drop_end = drops[i]
 
-# Test the ADAPTIVE approach with a single airfoil
-test_wire = create_airfoil_wire_at_section(
-    coordinates=coordinates,
-    chord_length=175.0,
-    y_position=0.0,
-    x_offset=0.0,
-    z_offset=0.0,
-    rotation_angle=0.0,
-)
-print("Created test airfoil with Middle 80% flattening method")
+    section_obj = create_section(
+        y_end,
+        thick_end,
+        drop_end,
+        section_names[i],
+        W,
+        wood_width,
+        blade_radius,
+        thickness,
+        coordinates,
+        section_length,
+        R2,
+        doc,
+        drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
+        thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
+    )
 
-# Comment out section creation and loft for now
-# # Create blade sections from root triangle to tip (y=200 to y=1200)
-# loft_sections = []
-#
-# for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
-#     y_end = (i + 1) * section_length
-#     thick_end = thicknesses[i]
-#     drop_end = drops[i]
-#
-#     section_obj = create_section(
-#         y_end,
-#         thick_end,
-#         drop_end,
-#         section_names[i],
-#         W,
-#         wood_width,
-#         blade_radius,
-#         thickness,
-#         coordinates,
-#         section_length,
-#         R2,
-#         doc,
-#         drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
-#         thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
-#     )
-#
-#     # Create hybrid airfoil for Root_triangle section
-#     if i == 0:  # Root_triangle section at y=200
-#         hybrid_obj = create_hybrid_airfoil_section_6b(
-#             y_end,
-#             thick_end,
-#             drop_end,
-#             W,
-#             wood_width,
-#             blade_radius,
-#             thickness,
-#             coordinates,
-#             section_obj,  # Pass the airfoil object directly
-#             doc,
-#         )
-#         loft_sections.append(hybrid_obj)
-#     else:
-#         loft_sections.append(section_obj)
-#
-# print("Created blade section wires and airfoils from root triangle to tip")
+    # Create hybrid airfoil for Root_triangle section and intermediate sections
+    if i == 0:  # Root_triangle section at y=200
+        hybrid_obj = create_hybrid_airfoil_section_6b(
+            y_end,
+            thick_end,
+            drop_end,
+            W,
+            wood_width,
+            blade_radius,
+            thickness,
+            coordinates,
+            section_obj,  # Pass the airfoil object directly
+            doc,
+        )
+        loft_sections.append(hybrid_obj)
+    elif y_end in [250.0, 300.0, 350.0]:  # Intermediate hybrid sections
+        hybrid_obj = create_hybrid_airfoil_section_6b(
+            y_end,
+            thick_end,
+            drop_end,
+            W,
+            wood_width,
+            blade_radius,
+            thickness,
+            coordinates,
+            section_obj,  # Pass the airfoil object directly
+            doc,
+        )
+        loft_sections.append(hybrid_obj)
+    else:
+        loft_sections.append(section_obj)
+
+print("Created blade section wires and airfoils from root triangle to tip")
+
+# Create intermediate hybrid sections at y=250, 300, 350 and insert in correct order
+intermediate_positions = [250.0, 300.0, 350.0]
+intermediate_sections = []
+
+for y_pos in intermediate_positions:
+    # Calculate parameters for intermediate position
+    i_interp = (y_pos / section_length) - 1  # Interpolation factor
+    thick_interp = thicknesses[0] + (thicknesses[1] - thicknesses[0]) * (i_interp / 1.0)
+    drop_interp = drops[0] + (drops[1] - drops[0]) * (i_interp / 1.0)
+    
+    section_obj = create_section(
+        y_pos,
+        thick_interp,
+        drop_interp,
+        f"Intermediate_{int(y_pos)}",
+        W,
+        wood_width,
+        blade_radius,
+        thickness,
+        coordinates,
+        section_length,
+        R2,
+        doc,
+    )
+    
+    hybrid_obj = create_hybrid_airfoil_section_6b(
+        y_pos,
+        thick_interp,
+        drop_interp,
+        W,
+        wood_width,
+        blade_radius,
+        thickness,
+        coordinates,
+        section_obj,
+        doc,
+    )
+    intermediate_sections.append(hybrid_obj)
+
+# Insert intermediate sections in correct order: Root(200), 250, 300, 350, then rest
+final_loft_sections = [loft_sections[0]]  # Root at y=200
+final_loft_sections.extend(intermediate_sections)  # Add 250, 300, 350
+final_loft_sections.extend(loft_sections[1:])  # Add rest (400, 600, 800, 1000, 1200)
+
+# Create loft from all sections
+if final_loft_sections:
+    loft = doc.addObject("Part::Loft", "Blade_Loft")
+    loft.Sections = final_loft_sections
+    loft.Solid = True
+    loft.Ruled = False
+    doc.recompute()
+    print(f"Created blade loft with {len(final_loft_sections)} sections")
