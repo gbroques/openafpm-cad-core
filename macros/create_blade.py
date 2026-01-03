@@ -40,6 +40,22 @@ def find_z_zero_crossing_idx(poles: List) -> Optional[int]:
     )
 
 
+def calculate_wire_point_distribution(wire1_length: float, wire2_length: float, total_points: int) -> Tuple[int, int]:
+    """Calculate proportional point distribution based on wire lengths"""
+    total_wire_length = wire1_length + wire2_length
+    wire1_ratio = wire1_length / total_wire_length if total_wire_length > 0 else 0.5
+    wire1_point_count = max(2, round(total_points * wire1_ratio))
+    wire2_point_count = max(2, total_points - wire1_point_count)
+    return wire1_point_count, wire2_point_count
+
+
+def discretize_wire_segment(start_point: FreeCAD.Vector, end_point: FreeCAD.Vector, point_count: int) -> List[FreeCAD.Vector]:
+    """Discretize a wire segment into specified number of points"""
+    wire = Part.makeLine(start_point, end_point)
+    discretized = wire.discretize(point_count)
+    return [FreeCAD.Vector(p.x, p.y, p.z) for p in discretized]
+
+
 def find_crossing_indices(poles: List, boundary_z_base: float, slope: float, trailing_edge_x: float) -> Tuple[Optional[int], Optional[int]]:
     """Find Z=0 crossing and boundary crossing indices in airfoil poles"""
     # Find Z=0 crossing
@@ -502,26 +518,17 @@ def create_hybrid_airfoil_section_6b(
 
     wire1_length = wire1_start.distanceToPoint(wire1_end)
     wire2_length = wire2_start.distanceToPoint(wire2_end)
-    total_wire_length = wire1_length + wire2_length
 
     # Distribute mapped points proportionally based on wire lengths
-    wire1_ratio = wire1_length / total_wire_length if total_wire_length > 0 else 0.5
-    wire1_point_count = max(2, round(mapped_points * wire1_ratio))
-    wire2_point_count = max(2, mapped_points - wire1_point_count)
+    wire1_point_count, wire2_point_count = calculate_wire_point_distribution(
+        wire1_length, wire2_length, mapped_points
+    )
 
     # Create and discretize Wire 1: from trailing edge bottom to split1_point
-    wire1_points = []
-    for i in range(wire1_point_count):
-        t = i / (wire1_point_count - 1) if wire1_point_count > 1 else 0
-        point = wire1_start + t * (wire1_end - wire1_start)
-        wire1_points.append(point)
+    wire1_points = discretize_wire_segment(wire1_start, wire1_end, wire1_point_count)
 
     # Create and discretize Wire 2: from split2_point to trailing edge top
-    wire2_points = []
-    for i in range(wire2_point_count):
-        t = i / (wire2_point_count - 1) if wire2_point_count > 1 else 0
-        point = wire2_start + t * (wire2_end - wire2_start)
-        wire2_points.append(point)
+    wire2_points = discretize_wire_segment(wire2_start, wire2_end, wire2_point_count)
 
     # Use geometric bounds checking instead of isInside() function
     def is_point_in_boundary_trapezoid(x, z):
