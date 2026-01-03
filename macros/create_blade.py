@@ -198,17 +198,17 @@ def extract_bspline_control_points(shape: Part.Shape) -> Optional[List[FreeCAD.V
     return None
 
 
-def create_airfoil_object(wire: Part.Wire, name: str) -> Part.Feature:
+def create_airfoil_object(wire: Part.Wire, name: str, doc: FreeCAD.Document) -> Part.Feature:
     """Create a FreeCAD Part::Feature object from a wire.
     
     Args:
         wire: FreeCAD wire to create object from
         name: Base name for the object (will have '_Airfoil' appended)
+        doc: FreeCAD document to create object in
         
     Returns:
         FreeCAD Part::Feature object containing the wire
     """
-    doc = FreeCAD.ActiveDocument
     obj = doc.addObject("Part::Feature", f"{name}_Airfoil")
     obj.Shape = wire
     return obj
@@ -241,13 +241,15 @@ def extract_leading_edge_points(
     return preserved_points
 
 
-def collect_loft_sections() -> List[Part.Feature]:
+def collect_loft_sections(doc: FreeCAD.Document) -> List[Part.Feature]:
     """Collect all blade sections in order from root to tip.
+    
+    Args:
+        doc: FreeCAD document to search for sections in
     
     Returns:
         List of FreeCAD objects representing blade sections
     """
-    doc = FreeCAD.ActiveDocument
     section_names = [
         "Hybrid_Airfoil_y200",
         "Hybrid_Airfoil_y250", 
@@ -272,11 +274,12 @@ def collect_loft_sections() -> List[Part.Feature]:
     return sections
 
 
-def create_blade_loft(sections: List[Part.Feature]) -> Optional[Part.Feature]:
+def create_blade_loft(sections: List[Part.Feature], doc: FreeCAD.Document) -> Optional[Part.Feature]:
     """Create a loft through all blade sections.
     
     Args:
         sections: List of blade section objects to loft through
+        doc: FreeCAD document to create loft in
         
     Returns:
         FreeCAD loft object if successful, None if failed
@@ -286,7 +289,6 @@ def create_blade_loft(sections: List[Part.Feature]) -> Optional[Part.Feature]:
         return None
         
     try:
-        doc = FreeCAD.ActiveDocument
         loft = doc.addObject("Part::Loft", "Complete_Blade_Loft")
         loft.Sections = sections
         loft.Solid = True
@@ -666,6 +668,7 @@ def create_section(
     airfoil_coordinates: List[Tuple[float, float]],
     section_length: float,
     R2: float,
+    doc: FreeCAD.Document,
     station4_drop: Optional[float] = None,
     station4_thick: Optional[float] = None,
 ) -> Part.Feature:
@@ -693,7 +696,7 @@ def create_section(
         thickness,
     )
     # Store wire directly without creating FreeCAD object
-    obj = create_airfoil_object(airfoil_wire, name)
+    obj = create_airfoil_object(airfoil_wire, name, doc)
 
     # Check Section_5_Airfoil control points for consistency
     if name == "Section_5":
@@ -722,6 +725,9 @@ def create_section(
 # Main execution
 if not FreeCAD.ActiveDocument:
     FreeCAD.newDocument()
+
+# Get document reference for all operations
+doc = FreeCAD.ActiveDocument
 
 # Load airfoil coordinates
 # USNPS4 airfoil: http://airfoiltools.com/airfoil/details?airfoil=usnps4-il
@@ -981,6 +987,7 @@ for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
         coordinates,
         section_length,
         R2,
+        doc,
         drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
         thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
     )
@@ -1046,7 +1053,6 @@ def create_interpolated_hybrid_section(
 
 
 # Get control points from hybrid y=200 and Section_5_Airfoil
-doc = FreeCAD.ActiveDocument
 hybrid_y200 = doc.getObject("Hybrid_Airfoil_y200")
 section5_airfoil = doc.getObject("Section_5_Airfoil")
 
@@ -1089,5 +1095,5 @@ else:
     print("Could not extract control points for interpolation")
 
 # Create loft through all sections from root to tip
-sections = collect_loft_sections()
-create_blade_loft(sections)
+sections = collect_loft_sections(doc)
+create_blade_loft(sections, doc)
