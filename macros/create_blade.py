@@ -621,62 +621,30 @@ def create_hybrid_airfoil_section_6b(
     # Create and discretize Wire 2: from split2_point to trailing edge top
     wire2_points = discretize_wire_segment(wire2_start, wire2_end, wire2_point_count)
 
-    # Use geometric bounds checking instead of isInside() function
-    def is_point_in_boundary_trapezoid(x, z):
-        """Check if point is inside boundary trapezoid using geometric logic"""
-        # Boundary X range: trailing_edge_x to W
-        if x < trailing_edge_x or x > W:
-            return False
+    # Create boundary checking function
+    boundary_check_fn = create_boundary_check_function(
+        trailing_edge_x, W, thickness, drop_end, chord_length_x
+    )
 
-        # Boundary Z range: 0 to top_line
-        if z < 0.0:
-            return False
+    # Extract leading edge points that are within boundary
+    leading_edge_points = extract_leading_edge_points(
+        poles, leading_edge_start, leading_edge_end, boundary_check_fn
+    )
+    
+    # Convert to FreeCAD vectors at correct y position
+    leading_edge_vectors = [
+        FreeCAD.Vector(point.x, y_position, point.z) for point in leading_edge_points
+    ]
+    
+    # Assemble all hybrid points using helper function
+    hybrid_points = assemble_hybrid_points(leading_edge_vectors, wire1_points, wire2_points)
+    leading_edge_preserved = len(leading_edge_vectors)
+    mapped_points = len(wire1_points) + len(wire2_points)
 
-        # Top boundary line: Z = trailing_edge_z + slope * (X - trailing_edge_x)
-        # Calculate slope from trailing edge to leading top
-        trailing_edge_z = thickness - drop_end  # Actual trailing edge height
-        leading_top_z = thickness
-        slope = (leading_top_z - trailing_edge_z) / (W - trailing_edge_x)
-        top_z = trailing_edge_z + slope * (x - trailing_edge_x)
-        if z > top_z:
-            return False
-
-        return True
-
-    for i, pole in enumerate(poles):
-        if (
-            leading_edge_start <= i <= leading_edge_end
-            and is_point_in_boundary_trapezoid(pole.x, pole.z)
-        ):
-            # Keep leading edge points (blue ones)
-            hybrid_points.append(FreeCAD.Vector(pole.x, y_position, pole.z))
-            leading_edge_preserved += 1
-        else:
-            # Map to our new discretized split wires with adjusted mapping
-            if i < len(wire1_points):  # Map to Wire1 points
-                # Points 0-(wire1_count-1) map directly to Wire1 points
-                hybrid_points.append(wire1_points[i])
-                mapped_points += 1
-            elif i < leading_edge_start:
-                # Points 15-18 skip mapping to reduce total count
-                pass
-            else:
-                # Points after leading edge map to Wire2
-                post_preserved_index = i - (leading_edge_end + 1)
-                if post_preserved_index >= 0 and post_preserved_index < len(
-                    wire2_points
-                ):
-                    hybrid_points.append(wire2_points[post_preserved_index])
-                    mapped_points += 1
-
-    # Find X boundaries of preserved leading edge points
-    preserved_points = []
-    for i, pole in enumerate(poles):
-        if (
-            leading_edge_start <= i <= leading_edge_end
-            and is_point_in_boundary_trapezoid(pole.x, pole.z)
-        ):
-            preserved_points.append((i, pole.x))
+    # Find X boundaries of preserved leading edge points using helper function
+    preserved_points = [
+        (i, point.x) for i, point in enumerate(leading_edge_points)
+    ]
 
     if preserved_points:
         first_point = preserved_points[0]
