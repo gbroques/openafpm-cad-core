@@ -101,6 +101,22 @@ def create_boundary_check_function(trailing_edge_x: float, W: float, thickness: 
     return is_point_in_boundary_trapezoid
 
 
+def extract_bspline_control_points(shape: Part.Shape) -> Optional[List]:
+    """Extract B-spline control points from a shape's edges"""
+    for edge in shape.Edges:
+        if hasattr(edge.Curve, "getPoles"):
+            return edge.Curve.getPoles()
+    return None
+
+
+def create_airfoil_object(wire: Part.Wire, name: str) -> Part.Feature:
+    """Create a FreeCAD Part::Feature object from a wire"""
+    doc = FreeCAD.ActiveDocument
+    obj = doc.addObject("Part::Feature", f"{name}_Airfoil")
+    obj.Shape = wire
+    return obj
+
+
 def extract_leading_edge_points(poles: List, leading_edge_start: int, leading_edge_end: int, boundary_check_fn) -> List[FreeCAD.Vector]:
     """Extract leading edge points that fall within boundary trapezoid"""
     preserved_points = []
@@ -111,6 +127,93 @@ def extract_leading_edge_points(poles: List, leading_edge_start: int, leading_ed
         ):
             preserved_points.append(pole)
     return preserved_points
+
+
+def collect_loft_sections() -> List[Part.Feature]:
+    """Collect all blade sections in order from root to tip"""
+    doc = FreeCAD.ActiveDocument
+    section_names = [
+        "Hybrid_Airfoil_y200",
+        "Hybrid_Airfoil_y250", 
+        "Hybrid_Airfoil_y300",
+        "Hybrid_Airfoil_y350",
+        "Section_5_Airfoil",
+        "Section_4_Airfoil", 
+        "Section_3_Airfoil",
+        "Section_2_Airfoil",
+        "Tip_Airfoil",
+    ]
+    
+    sections = []
+    for section_name in section_names:
+        obj = doc.getObject(section_name)
+        if obj:
+            sections.append(obj)
+            print(f"Added {section_name} to loft")
+        else:
+            print(f"Warning: {section_name} not found")
+    
+    return sections
+
+
+def create_blade_loft(sections: List[Part.Feature]) -> Optional[Part.Feature]:
+    """Create a loft through all blade sections"""
+    if len(sections) < 2:
+        print(f"Not enough sections found for loft: {len(sections)}")
+        return None
+        
+    try:
+        doc = FreeCAD.ActiveDocument
+        loft = doc.addObject("Part::Loft", "Complete_Blade_Loft")
+        loft.Sections = sections
+        loft.Solid = True
+        loft.Ruled = False
+        doc.recompute()
+        print(f"Created complete blade loft with {len(sections)} sections")
+        return loft
+    except Exception as e:
+        print(f"Failed to create complete loft: {e}")
+        return None
+
+
+def create_cross_section_wire(
+    W: float, chord_length_x: float, y_end: float, 
+    z_bottom_right_end: float, z_bottom_end: float, 
+    thickness: float, z_top_end: float
+) -> Part.Wire:
+    """Create standard cross-section wire with 4 vertices"""
+    v1 = FreeCAD.Vector(W - chord_length_x, y_end, z_bottom_right_end)  # Trailing edge bottom
+    v2 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
+    v3 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
+    v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)  # Trailing edge top
+    return Part.makePolygon([v2, v1, v4, v3, v2])
+
+
+def create_root_triangle_cross_section(
+    W: float, chord_length_x: float, y_end: float,
+    z_bottom_right_end: float, z_bottom_end: float,
+    thickness: float, z_top_end: float,
+    section_length: float, blade_radius: float, wood_width: float,
+    drop_end: float, thick_end: float, station4_drop: float, 
+    station4_thick: float, R2: float
+) -> Part.Wire:
+    """Create root triangle cross-section with wedge cut"""
+    # Create base vertices
+    v1 = FreeCAD.Vector(W - chord_length_x, y_end, z_bottom_right_end)
+    v2 = FreeCAD.Vector(W, y_end, z_bottom_end)
+    v3 = FreeCAD.Vector(W, y_end, thickness)
+    v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)
+    
+    # Calculate wedge cut position
+    wedge_cut_x = calculate_wedge_cut_position(
+        section_length, blade_radius, wood_width, W, thickness,
+        drop_end, thick_end, station4_drop, station4_thick, R2
+    )
+    
+    # Create triangle vertices with wedge cut
+    base_vertices = [v2, v1, v4, v3]
+    triangle_vertices = create_root_triangle_vertices(base_vertices, wedge_cut_x, y_end)
+    return Part.makePolygon(triangle_vertices)
 
 
 def assemble_hybrid_points(preserved_points: List[FreeCAD.Vector], wire1_points: List[FreeCAD.Vector], wire2_points: List[FreeCAD.Vector]) -> List[FreeCAD.Vector]:
@@ -379,6 +482,7 @@ def create_section(
     thickness: float,
     airfoil_coordinates: List[Tuple[float, float]],
     section_length: float,
+    R2: float,
     station4_drop: Optional[float] = None,
     station4_thick: Optional[float] = None,
 ) -> Part.Feature:
@@ -406,53 +510,27 @@ def create_section(
         thickness,
     )
     # Store wire directly without creating FreeCAD object
-    doc = FreeCAD.ActiveDocument
-    obj = doc.addObject("Part::Feature", f"{name}_Airfoil")
-    obj.Shape = airfoil_wire
+    obj = create_airfoil_object(airfoil_wire, name)
 
     # Check Section_5_Airfoil control points for consistency
     if name == "Section_5":
-        # Check B-spline control points
-        for edge in airfoil_wire.Edges:
-            if hasattr(edge.Curve, "getPoles"):
-                poles = edge.Curve.getPoles()
-                print(f"Section_5_Airfoil B-spline has {len(poles)} control points")
-                break
-
-    # Only create the 4 vertices needed for the cross-section wire at y_end
-    v1 = FreeCAD.Vector(
-        W - chord_length_x, y_end, z_bottom_right_end
-    )  # Trailing edge bottom
-    v2 = FreeCAD.Vector(W, y_end, z_bottom_end)  # Leading edge bottom
-    v3 = FreeCAD.Vector(W, y_end, thickness)  # Leading edge top
-    v4 = FreeCAD.Vector(W - chord_length_x, y_end, z_top_end)  # Trailing edge top
+        poles = extract_bspline_control_points(airfoil_wire)
+        if poles:
+            print(f"Section_5_Airfoil B-spline has {len(poles)} control points")
 
     # Create cross-section wire
-    back_wire = Part.makePolygon([v2, v1, v4, v3, v2])
-
-    # Root_triangle has an extra vertex for wedge cut
-    station_6_y = 1 * section_length  # Station 6 (Root_triangle)
+    station_6_y = calculate_station_position(1, section_length)  # Root_triangle position
     if y_end == station_6_y:  # First section (Root_triangle)
-        # Calculate station positions from blade parameters
-        station_5_y = calculate_station_position(
-            2, section_length
-        )  # Station 5 (section 2)
-        station_4_y = calculate_station_position(
-            3, section_length
-        )  # Station 4 (section 3)
-        w5 = calculate_chord_length(wood_width, W, station_5_y, blade_radius)
-        w4 = calculate_chord_length(wood_width, W, station_4_y, blade_radius)
-
-        # Calculate wedge cut position using helper function
-        wedge_cut_x = calculate_wedge_cut_position(
-            section_length, blade_radius, wood_width, W, thickness, 
+        back_wire = create_root_triangle_cross_section(
+            W, chord_length_x, y_end, z_bottom_right_end, z_bottom_end,
+            thickness, z_top_end, section_length, blade_radius, wood_width,
             drop_end, thick_end, station4_drop, station4_thick, R2
         )
-
-        # Create Root_triangle vertices with wedge cut
-        base_vertices = [v2, v1, v4, v3]
-        triangle_vertices = create_root_triangle_vertices(base_vertices, wedge_cut_x, y_end)
-        back_wire = Part.makePolygon(triangle_vertices)
+    else:
+        back_wire = create_cross_section_wire(
+            W, chord_length_x, y_end, z_bottom_right_end, z_bottom_end,
+            thickness, z_top_end
+        )
 
     Part.show(back_wire, name)
     return obj  # Return the airfoil object
@@ -497,17 +575,10 @@ def create_hybrid_airfoil_section_6b(
     )
 
     # Get airfoil control points
-    bspline_edge = None
-    for edge in fitted_airfoil.Shape.Edges:
-        if hasattr(edge.Curve, "getPoles"):
-            bspline_edge = edge
-            break
-
-    if not bspline_edge:
+    poles = extract_bspline_control_points(fitted_airfoil.Shape)
+    if not poles:
         print("No B-spline found in airfoil")
         return
-
-    poles = bspline_edge.Curve.getPoles()
 
     # Create hybrid points
     hybrid_points = []
@@ -680,13 +751,11 @@ def create_hybrid_airfoil_section_6b(
     print(f"  Chord length: {chord_length_x:.1f}mm")
 
     # Check B-spline control points
-    for edge in hybrid_wire.Edges:
-        if hasattr(edge.Curve, "getPoles"):
-            poles = edge.Curve.getPoles()
-            print(
-                f"Hybrid_Airfoil_y{int(y_position)} B-spline has {len(poles)} control points"
-            )
-            break
+    poles = extract_bspline_control_points(hybrid_wire)
+    if poles:
+        print(
+            f"Hybrid_Airfoil_y{int(y_position)} B-spline has {len(poles)} control points"
+        )
 
 
 # Blade parameters
@@ -728,6 +797,7 @@ for i in range(num_sections):  # i=0,1,2,3,4,5 (y=200,400,600,800,1000,1200)
         thickness,
         coordinates,
         section_length,
+        R2,
         drops[2] if i == 0 else None,  # Station 4 drop for Root_triangle
         thicknesses[2] if i == 0 else None,  # Station 4 thickness for Root_triangle
     )
@@ -801,16 +871,10 @@ hybrid_control_points = None
 section5_control_points = None
 
 if hybrid_y200:
-    for edge in hybrid_y200.Shape.Edges:
-        if hasattr(edge.Curve, "getPoles"):
-            hybrid_control_points = edge.Curve.getPoles()
-            break
+    hybrid_control_points = extract_bspline_control_points(hybrid_y200.Shape)
 
 if section5_airfoil:
-    for edge in section5_airfoil.Shape.Edges:
-        if hasattr(edge.Curve, "getPoles"):
-            section5_control_points = edge.Curve.getPoles()
-            break
+    section5_control_points = extract_bspline_control_points(section5_airfoil.Shape)
 
 # Create interpolated intermediate sections
 if hybrid_control_points and section5_control_points:
@@ -842,40 +906,5 @@ else:
     print("Could not extract control points for interpolation")
 
 # Create loft through all sections from root to tip
-try:
-    doc = FreeCAD.ActiveDocument
-
-    # Collect all sections in order from root to tip
-    sections = []
-    section_names = [
-        "Hybrid_Airfoil_y200",
-        "Hybrid_Airfoil_y250",
-        "Hybrid_Airfoil_y300",
-        "Hybrid_Airfoil_y350",
-        "Section_5_Airfoil",
-        "Section_4_Airfoil",
-        "Section_3_Airfoil",
-        "Section_2_Airfoil",
-        "Tip_Airfoil",
-    ]
-
-    for section_name in section_names:
-        obj = doc.getObject(section_name)
-        if obj:
-            sections.append(obj)
-            print(f"Added {section_name} to loft")
-        else:
-            print(f"Warning: {section_name} not found")
-
-    if len(sections) >= 2:
-        loft = doc.addObject("Part::Loft", "Complete_Blade_Loft")
-        loft.Sections = sections
-        loft.Solid = True
-        loft.Ruled = False
-        doc.recompute()
-        print(f"Created complete blade loft with {len(sections)} sections")
-    else:
-        print(f"Not enough sections found for loft: {len(sections)}")
-
-except Exception as e:
-    print(f"Failed to create complete loft: {e}")
+sections = collect_loft_sections()
+create_blade_loft(sections)
