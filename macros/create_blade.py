@@ -598,42 +598,38 @@ def create_airfoil_wire_at_section(
         rotation_center_x: X center for rotation (defaults to x_offset)
         rotation_center_z: Z center for rotation (defaults to z_offset)
     """
-    # Step 1: Scale first (before flattening)
-    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
-
-    # Step 2: Flatten using all bottom points on scaled airfoil
-    # Find all bottom surface points from trailing edge to end
-    trailing_edge_idx = min(
-        range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0]
-    )
-    all_bottom_points = scaled_coordinates[trailing_edge_idx:]
-
-    # Use NumPy for linear regression on all bottom points
+    # Step 1: Flatten BEFORE scaling (on normalized coordinates)
+    # Find bottom surface points (trailing edge to end)
+    trailing_edge_idx = min(range(len(coordinates)), key=lambda i: coordinates[i][0])
+    bottom_points = coordinates[trailing_edge_idx:]
+    
+    # Linear regression on bottom surface
     import numpy as np
-
-    x_coords = [x for x, z in all_bottom_points]
-    z_coords = [z for x, z in all_bottom_points]
+    x_coords = [x for x, z in bottom_points]
+    z_coords = [z for x, z in bottom_points]
     slope, intercept = np.polyfit(x_coords, z_coords, 1)
     flatten_angle = -math.degrees(math.atan(slope))
-
-    bottom_most_point = min(scaled_coordinates, key=lambda p: p[1])
-
-    # Use airfoil centroid as rotation center
-    centroid_x = sum(x for x, z in scaled_coordinates) / len(scaled_coordinates)
-    centroid_z = sum(z for x, z in scaled_coordinates) / len(scaled_coordinates)
-
+    
+    # Find global min Z point as rotation center
+    min_z_point = min(coordinates, key=lambda p: p[1])  # p[1] is Z in 2D
+    rotation_center_x, rotation_center_z = min_z_point
+    
+    # Rotate about global min Z point
     flattened_coordinates = rotate_airfoil_coordinates_about_point(
-        scaled_coordinates, centroid_x, centroid_z, flatten_angle
+        coordinates, rotation_center_x, rotation_center_z, flatten_angle
     )
-
-    # Recalculate z_shift after rotation to fix vertical positioning
-    rotated_min_z = min(z for x, z in flattened_coordinates)
-    z_shift = -rotated_min_z
+    
+    # Apply positive Z shift to align bottom to X-axis
+    global_min_z = min(z for x, z in flattened_coordinates)
+    z_shift = -global_min_z  # Make it positive
     bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
+
+    # Step 2: NOW scale the flattened, aligned coordinates
+    scaled_coordinates = scale_airfoil_coordinates(bottom_aligned_coordinates, chord_length)
 
     # Step 3: Apply flips
     reflected_coordinates = flip_airfoil_coordinates_vertically(
-        bottom_aligned_coordinates
+        scaled_coordinates
     )
     final_coordinates = flip_airfoil_coordinates_horizontally(reflected_coordinates)
     x_translated_coordinates = translate_airfoil_coordinates(
@@ -891,8 +887,8 @@ def create_hybrid_airfoil_section_6b(
     split2_point = FreeCAD.Vector(x_cross, y_position, z_cross)
 
     # Use dynamically found crossing indices as leading edge range
-    leading_edge_start = crossing_idx
-    leading_edge_end = boundary_crossing_idx
+    leading_edge_start = crossing_idx if crossing_idx is not None else 0
+    leading_edge_end = boundary_crossing_idx if boundary_crossing_idx is not None else len(poles) - 1
 
     # Calculate how many points will be preserved (leading edge points in boundary)
     preserved_points = 0
