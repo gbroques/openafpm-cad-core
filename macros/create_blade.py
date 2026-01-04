@@ -2156,6 +2156,254 @@ unified_obj, edge_count, hybrid_bspline = create_filleted_wire(
 print(f"Created unified filleted wire with {edge_count} edges, radius=4mm")
 print(f"Created hybrid section at y={y_hybrid:.2f}mm")
 
+# Discretize the 4 specific segments from the actual filleted wire
+filleted_edges = unified_obj.Shape.Edges
+
+print(f"Filleted wire has {len(filleted_edges)} edges:")
+for i, edge in enumerate(filleted_edges):
+    start_pt = edge.firstVertex().Point
+    end_pt = edge.lastVertex().Point
+    edge_length = edge.Length
+    edge_type = "Line" if hasattr(edge.Curve, 'Direction') else "Curve"
+    print(f"  Edge {i}: {edge_type}, Length={edge_length:.3f}mm")
+    print(f"    Start: ({start_pt.x:.3f}, {start_pt.y:.3f}, {start_pt.z:.3f})")
+    print(f"    End: ({end_pt.x:.3f}, {end_pt.y:.3f}, {end_pt.z:.3f})")
+
+# Calculate lengths of each segment
+seg1_length = filleted_edges[1].Length  # Bottom straight
+seg2_length = filleted_edges[2].Length  # Filleted curve
+seg3_length = filleted_edges[3].Length  # Vertical straight  
+seg4_length = filleted_edges[4].Length  # Filleted curve
+
+total_length = seg1_length + seg2_length + seg3_length + seg4_length
+
+print(f"Segment lengths:")
+print(f"  Seg 1 (bottom): {seg1_length:.3f}mm")
+print(f"  Seg 2 (fillet): {seg2_length:.3f}mm")
+print(f"  Seg 3 (vertical): {seg3_length:.3f}mm") 
+print(f"  Seg 4 (fillet): {seg4_length:.3f}mm")
+print(f"  Total: {total_length:.3f}mm")
+
+# Apply curve weighting (6x for filleted segments, 2x for vertical)
+weighted_seg1 = seg1_length * 0.8  # Straight bottom - reduce weight
+weighted_seg2 = seg2_length * 6.0  # Curved - 6x weight
+weighted_seg3 = seg3_length * 2.0  # Vertical straight - 2x weight
+weighted_seg4 = seg4_length * 6.0  # Curved - 6x weight
+
+total_weighted = weighted_seg1 + weighted_seg2 + weighted_seg3 + weighted_seg4
+
+# Distribute 25 points proportionally (minimum 3 points per segment)
+base_points = 25 - 4 * 3  # Reserve 3 points per segment = 13 extra points to distribute
+points_seg1 = 3 + max(0, int(base_points * weighted_seg1 / total_weighted))
+points_seg2 = 3 + max(0, int(base_points * weighted_seg2 / total_weighted))
+points_seg3 = 3 + max(0, int(base_points * weighted_seg3 / total_weighted))
+points_seg4 = 3 + max(0, int(base_points * weighted_seg4 / total_weighted))
+
+# Adjust to ensure exactly 25 points total
+total_assigned = points_seg1 + points_seg2 + points_seg3 + points_seg4
+remaining = 25 - total_assigned
+
+# Distribute remaining points to segments with highest weights
+weights = [(weighted_seg1, 1), (weighted_seg2, 2), (weighted_seg3, 3), (weighted_seg4, 4)]
+weights.sort(reverse=True)
+
+for i in range(remaining):
+    segment_idx = weights[i % 4][1]
+    if segment_idx == 1:
+        points_seg1 += 1
+    elif segment_idx == 2:
+        points_seg2 += 1
+    elif segment_idx == 3:
+        points_seg3 += 1
+    elif segment_idx == 4:
+        points_seg4 += 1
+
+print(f"Point distribution (weighted by length + curve bonus):")
+print(f"  Seg 1: {points_seg1} points")
+print(f"  Seg 2: {points_seg2} points")
+print(f"  Seg 3: {points_seg3} points")
+print(f"  Seg 4: {points_seg4} points")
+
+# Discretize with calculated point counts
+points_seg1_disc = filleted_edges[1].discretize(Number=points_seg1)
+points_seg2_disc = filleted_edges[2].discretize(Number=points_seg2)
+points_seg3_disc = filleted_edges[3].discretize(Number=points_seg3)
+points_seg4_disc = filleted_edges[4].discretize(Number=points_seg4)
+
+# Combine all points (remove duplicates at connections)
+rect_25_points_filleted = []
+rect_25_points_filleted.extend(points_seg1_disc[:-1])  # Exclude last (14-1=13)
+rect_25_points_filleted.extend(points_seg2_disc[:-1])  # Exclude last (3-1=2)  
+rect_25_points_filleted.extend(points_seg3_disc[:-1])  # Exclude last (5-1=4)
+rect_25_points_filleted.extend(points_seg4_disc)       # Include all (3)
+
+actual_total = len(rect_25_points_filleted)
+print(f"Actual points after combination: {actual_total} (expected: 13+2+4+3=22)")
+
+# If we need exactly 25, add more points to the longest segment
+if actual_total < 25:
+    needed = 25 - actual_total
+    print(f"Need {needed} more points, adding to segment 1")
+    # Re-discretize segment 1 with more points
+    points_seg1_disc = filleted_edges[1].discretize(Number=points_seg1 + needed)
+    
+    # Recombine
+    rect_25_points_filleted = []
+    rect_25_points_filleted.extend(points_seg1_disc[:-1])  # Exclude last
+    rect_25_points_filleted.extend(points_seg2_disc[:-1])  # Exclude last
+    rect_25_points_filleted.extend(points_seg3_disc[:-1])  # Exclude last
+    rect_25_points_filleted.extend(points_seg4_disc)       # Include all
+
+print(f"Discretized 4 filleted segments into {len(rect_25_points_filleted)} points at y={y_hybrid:.2f}mm")
+
+# Visualize the 25 points as colored spheres
+rect_group = doc.addObject("App::DocumentObjectGroup", f"Filleted_Points_y{y_hybrid}")
+
+for i, point in enumerate(rect_25_points_filleted):
+    sphere = doc.addObject("Part::Sphere", f"Filleted_Point_{i}")
+    sphere.Radius = 0.6  # Small spheres
+    sphere.Placement.Base = point
+    if FreeCAD.GuiUp:
+        sphere.ViewObject.ShapeColor = (0.0, 1.0, 1.0)  # Cyan color
+    rect_group.addObject(sphere)
+
+print(f"Created {len(rect_25_points_filleted)} spheres for filleted geometry points at y={y_hybrid:.2f}mm")
+
+# Now discretize the remaining edges (0, 5, 6) to get 79-25=54 points
+remaining_points_needed = 79 - 25
+
+# Calculate lengths of remaining edges
+edge0_length = filleted_edges[0].Length  # Wedge cut start → Preserved point
+edge5_length = filleted_edges[5].Length  # Wedge cut end → Another point
+edge6_length = filleted_edges[6].Length  # Final edge
+
+remaining_total_length = edge0_length + edge5_length + edge6_length
+
+print(f"Remaining edges for {remaining_points_needed} points:")
+print(f"  Edge 0: {edge0_length:.3f}mm")
+print(f"  Edge 5: {edge5_length:.3f}mm") 
+print(f"  Edge 6: {edge6_length:.3f}mm")
+print(f"  Total: {remaining_total_length:.3f}mm")
+
+# Distribute remaining points proportionally by length
+points_edge0 = max(3, int(remaining_points_needed * edge0_length / remaining_total_length))
+points_edge5 = max(3, int(remaining_points_needed * edge5_length / remaining_total_length))
+points_edge6 = max(3, int(remaining_points_needed * edge6_length / remaining_total_length))
+
+# Adjust to ensure exactly 54 points total
+total_remaining_assigned = points_edge0 + points_edge5 + points_edge6
+if total_remaining_assigned != remaining_points_needed:
+    diff = remaining_points_needed - total_remaining_assigned
+    # Add to longest edge
+    if edge6_length >= max(edge0_length, edge5_length):
+        points_edge6 += diff
+    elif edge0_length >= edge5_length:
+        points_edge0 += diff
+    else:
+        points_edge5 += diff
+
+print(f"Remaining point distribution:")
+print(f"  Edge 0: {points_edge0} points")
+print(f"  Edge 5: {points_edge5} points")
+print(f"  Edge 6: {points_edge6} points")
+
+# Discretize remaining edges
+points_edge0_disc = filleted_edges[0].discretize(Number=points_edge0)
+points_edge5_disc = filleted_edges[5].discretize(Number=points_edge5)
+points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6)
+
+# Combine remaining points (remove duplicates at connections)
+remaining_54_points = []
+remaining_54_points.extend(points_edge0_disc[:-1])  # Exclude last
+remaining_54_points.extend(points_edge5_disc[:-1])  # Exclude last
+remaining_54_points.extend(points_edge6_disc)       # Include all
+
+actual_remaining = len(remaining_54_points)
+if actual_remaining < remaining_points_needed:
+    needed = remaining_points_needed - actual_remaining
+    print(f"Need {needed} more points for remaining edges, adding to longest edge")
+    # Re-discretize longest edge with more points
+    points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6 + needed)
+    
+    # Recombine
+    remaining_54_points = []
+    remaining_54_points.extend(points_edge0_disc[:-1])  # Exclude last
+    remaining_54_points.extend(points_edge5_disc[:-1])  # Exclude last
+    remaining_54_points.extend(points_edge6_disc)       # Include all
+
+print(f"Discretized remaining edges into {len(remaining_54_points)} points")
+
+# Visualize the 54 remaining points as different colored spheres
+remaining_group = doc.addObject("App::DocumentObjectGroup", f"Remaining_Points_y{y_hybrid}")
+
+for i, point in enumerate(remaining_54_points):
+    sphere = doc.addObject("Part::Sphere", f"Remaining_Point_{i}")
+    sphere.Radius = 1.0  # Same size as other spheres
+    sphere.Placement.Base = point
+    if FreeCAD.GuiUp:
+        sphere.ViewObject.ShapeColor = (1.0, 0.0, 1.0)  # Magenta color
+    remaining_group.addObject(sphere)
+
+print(f"Created {len(remaining_54_points)} spheres (radius=1.0) for remaining geometry points")
+
+# Total verification
+total_points = len(rect_25_points_filleted) + len(remaining_54_points)
+print(f"Total points: {len(rect_25_points_filleted)} + {len(remaining_54_points)} = {total_points} (target: 79)")
+
+# Now interpolate the 25 cyan points with 25 preserved points from y=200
+# Get the B-spline control points from the airfoil at y=200
+root_airfoil_bspline = root_section.Shape.Edges[0].Curve  # Get the B-spline curve
+control_points = []
+for i in range(root_airfoil_bspline.NbPoles):
+    pole = root_airfoil_bspline.getPole(i + 1)  # FreeCAD uses 1-based indexing
+    control_points.append(pole)
+
+print(f"Airfoil B-spline has {len(control_points)} control points")
+
+# Extract the preserved control points (indices 19-43 from the B-spline poles)
+airfoil_25_control_points = control_points[19:44]  # indices 19-43 inclusive
+
+print(f"Interpolating 25 cyan points with 25 B-spline control points from y=200")
+
+# Debug: Show what we're interpolating
+print(f"B-spline control points (indices 19-43):")
+for i in range(min(5, len(airfoil_25_control_points))):
+    pt = airfoil_25_control_points[i]
+    print(f"  Control {i}: ({pt.x:.3f}, {pt.y:.3f}, {pt.z:.3f})")
+
+# Linear interpolation between filleted points and airfoil control points (X,Z only)
+# Use t parameter for interpolation weight (0.0 = all filleted, 1.0 = all airfoil)
+t = 0.5  # 50% airfoil influence, 50% filleted influence (balanced blend)
+
+interpolated_25_points = []
+for i in range(25):
+    filleted_pt = rect_25_points_filleted[i]  # Cyan point at y=157.28
+    airfoil_pt = airfoil_25_control_points[i]    # B-spline control point from y=200
+    
+    # Parametric interpolation: (1-t)*filleted + t*airfoil
+    interp_x = (1 - t) * filleted_pt.x + t * airfoil_pt.x
+    interp_y = y_hybrid  # Keep at y=157.28
+    interp_z = (1 - t) * filleted_pt.z + t * airfoil_pt.z
+    
+    interpolated_25_points.append(FreeCAD.Vector(interp_x, interp_y, interp_z))
+    
+    # Debug first few points
+    if i < 5:
+        print(f"Interp {i}: t={t:.1f}, Filleted({filleted_pt.x:.3f}, {filleted_pt.z:.3f}) + Control({airfoil_pt.x:.3f}, {airfoil_pt.z:.3f}) = Result({interp_x:.3f}, {interp_z:.3f})")
+
+# Visualize the 25 interpolated points as new colored spheres
+interp_group = doc.addObject("App::DocumentObjectGroup", f"Interpolated_25_Points_y{y_hybrid}")
+
+for i, point in enumerate(interpolated_25_points):
+    sphere = doc.addObject("Part::Sphere", f"Interp_25_Point_{i}")
+    sphere.Radius = 0.8  # Medium size
+    sphere.Placement.Base = point
+    if FreeCAD.GuiUp:
+        sphere.ViewObject.ShapeColor = (1.0, 0.5, 0.0)  # Orange color
+    interp_group.addObject(sphere)
+
+print(f"Created {len(interpolated_25_points)} orange spheres for interpolated points at y={y_hybrid:.2f}mm")
+
 # Create transition loft (without hybrid section for now)
 transition_sections = [cylinder_bspline, root_section]
 
