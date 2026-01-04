@@ -21,6 +21,9 @@ import FreeCADGui as Gui
 import math
 from typing import Dict, Any, Tuple
 
+# Debug flag to control visualization objects
+DEBUG = False
+
 def validate_geometry(obj: Any, name: str) -> None:
     """Validate FreeCAD geometry object."""
     if hasattr(obj, 'Shape') and not obj.Shape.isValid():
@@ -403,10 +406,11 @@ Section_6a.Tool = root_wedge_obj
 
 
 # Add R2 cylinder visualization
-cyl_obj = doc.addObject("Part::Cylinder", "R2_flat_area")
-cyl_obj.Radius = R2
-cyl_obj.Height = thickness
-cyl_obj.Placement = FreeCAD.Placement(Vector(0, 0, 0), FreeCAD.Rotation(Vector(0,0,1), 0))
+if DEBUG:
+    cyl_obj = doc.addObject("Part::Cylinder", "R2_flat_area")
+    cyl_obj.Radius = R2
+    cyl_obj.Height = thickness
+    cyl_obj.Placement = FreeCAD.Placement(Vector(0, 0, 0), FreeCAD.Rotation(Vector(0,0,1), 0))
 
 # Hide intermediate objects and original sections
 if FreeCAD.GuiUp:
