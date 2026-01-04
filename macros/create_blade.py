@@ -987,49 +987,36 @@ def create_hybrid_airfoil_section_6b(
     else:
         x_at_z0 = 0
 
-    # Calculate where points cross the slanted boundary line dynamically
+    # Simple approach: boundary crossing is just before original global Y minimum
+    original_global_y_min_idx = min(
+        range(len(airfoil_coordinates)), key=lambda i: airfoil_coordinates[i][1]
+    )
+    boundary_crossing_idx = original_global_y_min_idx - 1
+
+    # Still need these variables for interpolation calculation
     trailing_edge_x = W - chord_length_x  # Calculate -125 equivalent
     boundary_z_base = thickness - drop_end  # Z-height at trailing edge
     slope = drop_end / chord_length_x  # Calculate slope from actual parameters
 
-    # Find crossing with slanted boundary: z = boundary_z_base + slope * (x - trailing_edge_x)
-    boundary_crossing_idx = next(
-        (
-            i
-            for i in range(len(poles) - 1)
-            if (poles[i].z - (boundary_z_base + slope * (poles[i].x - trailing_edge_x)))
-            * (
-                poles[i + 1].z
-                - (boundary_z_base + slope * (poles[i + 1].x - trailing_edge_x))
-            )
-            < 0
-        ),
-        None,
+    p_before, p_after = (
+        poles[boundary_crossing_idx],
+        poles[boundary_crossing_idx + 1],
     )
+    boundary_z_before = boundary_z_base + slope * (p_before.x - trailing_edge_x)
+    boundary_z_after = boundary_z_base + slope * (p_after.x - trailing_edge_x)
 
-    if boundary_crossing_idx is not None:
-        p_before, p_after = (
-            poles[boundary_crossing_idx],
-            poles[boundary_crossing_idx + 1],
+    if (
+        abs((p_after.z - boundary_z_after) - (p_before.z - boundary_z_before))
+        > 1e-10
+    ):
+        t_cross = (p_before.z - boundary_z_before) / (
+            (p_before.z - boundary_z_before) - (p_after.z - boundary_z_after)
         )
-        boundary_z_before = boundary_z_base + slope * (p_before.x - trailing_edge_x)
-        boundary_z_after = boundary_z_base + slope * (p_after.x - trailing_edge_x)
-
-        if (
-            abs((p_after.z - boundary_z_after) - (p_before.z - boundary_z_before))
-            > 1e-10
-        ):
-            t_cross = (p_before.z - boundary_z_before) / (
-                (p_before.z - boundary_z_before) - (p_after.z - boundary_z_after)
-            )
-            x_cross = p_before.x + t_cross * (p_after.x - p_before.x)
-            z_cross = p_before.z + t_cross * (p_after.z - p_before.z)
-        else:
-            x_cross = p_before.x
-            z_cross = p_before.z  # Use the point's Z coordinate
+        x_cross = p_before.x + t_cross * (p_after.x - p_before.x)
+        z_cross = p_before.z + t_cross * (p_after.z - p_before.z)
     else:
-        x_cross = trailing_edge_x
-        z_cross = boundary_z_base  # Use boundary Z at trailing edge
+        x_cross = p_before.x
+        z_cross = p_before.z  # Use the point's Z coordinate
 
     # Create split points
     split1_point = FreeCAD.Vector(x_at_z0, y_position, 0.0)
@@ -1037,9 +1024,7 @@ def create_hybrid_airfoil_section_6b(
 
     # Use dynamically found crossing indices as leading edge range
     leading_edge_start = crossing_idx if crossing_idx is not None else 0
-    leading_edge_end = (
-        boundary_crossing_idx if boundary_crossing_idx is not None else len(poles) - 1
-    )
+    leading_edge_end = boundary_crossing_idx
 
     # Calculate how many points will be preserved (leading edge points in boundary)
     preserved_points = 0
