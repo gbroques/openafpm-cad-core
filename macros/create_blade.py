@@ -5,6 +5,9 @@ import Part
 import Draft
 import math
 
+# Debug flag to control section boundary visibility
+DEBUG = False
+
 
 def find_stable_region(
     bottom_points: list[tuple[float, float]], start_idx: int, min_length: int = 5
@@ -267,7 +270,7 @@ def extract_bspline_control_points(shape: Part.Shape) -> Optional[List[FreeCAD.V
 
 
 def create_airfoil_object(
-    wire: Part.Wire, name: str, doc: FreeCAD.Document
+    wire: Part.Wire, name: str, doc: FreeCAD.Document, show: bool = True
 ) -> Part.Feature:
     """Create a FreeCAD Part::Feature object from a wire.
 
@@ -275,12 +278,15 @@ def create_airfoil_object(
         wire: FreeCAD wire to create object from
         name: Complete name for the object (no suffix added)
         doc: FreeCAD document to create object in
+        show: Whether to show the object in the document (default: True)
 
     Returns:
         FreeCAD Part::Feature object containing the wire
     """
     obj = doc.addObject("Part::Feature", name)
     obj.Shape = wire
+    if not show and FreeCAD.GuiUp:
+        obj.ViewObject.Visibility = False
     return obj
 
 
@@ -870,7 +876,7 @@ def create_section(
     )
 
     # Store wire directly without creating FreeCAD object
-    obj = create_airfoil_object(airfoil_wire, f"{name}_Airfoil", doc)
+    obj = create_airfoil_object(airfoil_wire, f"{name}_Airfoil", doc, DEBUG)
 
     # Check Section_5_Airfoil control points for consistency
     if name == "Section_5":
@@ -911,7 +917,8 @@ def create_section(
             z_top_end,
         )
 
-    Part.show(back_wire, name)
+    if DEBUG:
+        Part.show(back_wire, name)
     return obj  # Return the airfoil object
 
 
@@ -1005,10 +1012,7 @@ def create_hybrid_airfoil_section_6b(
     boundary_z_before = boundary_z_base + slope * (p_before.x - trailing_edge_x)
     boundary_z_after = boundary_z_base + slope * (p_after.x - trailing_edge_x)
 
-    if (
-        abs((p_after.z - boundary_z_after) - (p_before.z - boundary_z_before))
-        > 1e-10
-    ):
+    if abs((p_after.z - boundary_z_after) - (p_before.z - boundary_z_before)) > 1e-10:
         t_cross = (p_before.z - boundary_z_before) / (
             (p_before.z - boundary_z_before) - (p_after.z - boundary_z_after)
         )
@@ -1119,7 +1123,7 @@ def create_hybrid_airfoil_section_6b(
 
     # Create FreeCAD object
     hybrid_obj = create_airfoil_object(
-        hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}", doc
+        hybrid_wire, f"Hybrid_Airfoil_y{int(y_position)}", doc, DEBUG
     )
 
     print(
