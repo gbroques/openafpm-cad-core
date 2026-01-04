@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import List, Tuple, Optional, Callable
+from typing import List, Tuple, Optional, Callable, Any
 import FreeCAD
 import Part
 import Draft
 import math
+import numpy as np
 
 # Debug flag to control section boundary visibility
 DEBUG = False
@@ -687,8 +688,6 @@ def create_airfoil_wire_at_section(
     )
     bottom_points = scaled_coordinates[trailing_edge_idx:]
 
-    import numpy as np
-
     global_z_min_idx = min(range(len(bottom_points)), key=lambda i: bottom_points[i][1])
     start_idx, end_idx = find_stable_region(bottom_points, global_z_min_idx)
     mid_points = bottom_points[start_idx:end_idx]
@@ -1203,8 +1202,6 @@ def test_multiple_flatten_approaches():
     )
     bottom_points = scaled_coordinates[trailing_edge_idx:]
 
-    import numpy as np
-
     # Method 1: All bottom points (original)
     x_coords_all = [x for x, z in bottom_points]
     z_coords_all = [z for x, z in bottom_points]
@@ -1345,8 +1342,6 @@ def test_middle_50_method():
     mid_end = 3 * len(bottom_points) // 4
     mid_points = bottom_points[mid_start:mid_end]
 
-    import numpy as np
-
     x_coords = [x for x, z in mid_points]
     z_coords = [z for x, z in mid_points]
     slope, intercept = np.polyfit(x_coords, z_coords, 1)
@@ -1416,8 +1411,6 @@ def test_middle_percentage_ranges():
         range(len(scaled_coordinates)), key=lambda i: scaled_coordinates[i][0]
     )
     bottom_points = scaled_coordinates[trailing_edge_idx:]
-
-    import numpy as np
 
     # Test different middle percentage ranges
     percentages = [10, 20, 30, 40, 50, 60, 70, 80, 90]
@@ -1550,8 +1543,6 @@ def test_middle_80_method():
     end_idx = len(bottom_points) - start_idx
     mid_points = bottom_points[start_idx:end_idx]
 
-    import numpy as np
-
     x_coords = [x for x, z in mid_points]
     z_coords = [z for x, z in mid_points]
     slope, intercept = np.polyfit(x_coords, z_coords, 1)
@@ -1672,8 +1663,6 @@ def compare_rotation_centers():
     start_idx = int(len(bottom_points) * exclude_each_side)
     end_idx = len(bottom_points) - start_idx
     mid_points = bottom_points[start_idx:end_idx]
-
-    import numpy as np
 
     x_coords = [x for x, z in mid_points]
     z_coords = [z for x, z in mid_points]
@@ -1852,6 +1841,176 @@ for y_pos in intermediate_positions:
 final_loft_sections = [loft_sections[0]]  # Root at y=200
 final_loft_sections.extend(intermediate_sections)  # Add 250, 300, 350
 final_loft_sections.extend(loft_sections[1:])  # Add rest (400, 600, 800, 1000, 1200)
+
+
+def create_wedge_cut_wire(
+    R2: float,
+    W: float,
+    thickness: float,
+    wood_width: float,
+    section_length: float,
+    blade_radius: float,
+    drops: List[float],
+) -> Tuple[List[FreeCAD.Vector], float]:
+    """Calculate vertices for cylinder intersection wire with wedge cut geometry.
+
+    Args:
+        R2: Cylinder radius for intersection calculation
+        W: Leading edge width parameter
+        thickness: Blade thickness
+        wood_width: Total wood width
+        section_length: Length of blade section
+        blade_radius: Total blade radius
+        drops: List of thickness drops at different positions
+
+    Returns:
+        Tuple of (ordered vertices list, y_split intersection position)
+    """
+    y_split = math.sqrt(R2**2 - W**2)
+
+    # Calculate wedge cut intersection points
+    root_width_rear = wood_width - (wood_width - W) * (section_length / blade_radius)
+    v2_wedge = (-wood_width + W, 0, thickness)
+    v1_wedge = (W, section_length, thickness)
+    v3_wedge = (W - root_width_rear, section_length, thickness - drops[0])
+
+    t = y_split / section_length
+    x_v2v1 = v2_wedge[0] + (v1_wedge[0] - v2_wedge[0]) * t
+    x_v2v3 = v2_wedge[0] + (v3_wedge[0] - v2_wedge[0]) * t
+    z_v2v3 = v2_wedge[2] + (v3_wedge[2] - v2_wedge[2]) * t
+
+    return [
+        FreeCAD.Vector(x_v2v3, y_split, 0),  # rect_v1
+        FreeCAD.Vector(W, y_split, 0),  # rect_v2
+        FreeCAD.Vector(W, y_split, thickness),  # rect_v3
+        FreeCAD.Vector(x_v2v1, y_split, thickness),  # rect_v4
+        FreeCAD.Vector(x_v2v3, y_split, z_v2v3),  # rect_v5
+    ], y_split
+
+
+def create_filleted_wire(
+    doc: FreeCAD.Document,
+    vertices: List[FreeCAD.Vector],
+    fillet_vertices: List[FreeCAD.Vector],
+    radius: float = 2.0,
+) -> Tuple[Any, int]:
+    """Create filleted wire with proper handling of consecutive fillets."""
+    # Create lines for all edges
+    lines = []
+    for i in range(len(vertices)):
+        next_i = (i + 1) % len(vertices)
+        line = Draft.make_line(vertices[i], vertices[next_i])
+        lines.append(line)
+    doc.recompute()
+
+    fillet_indices = [vertices.index(v) for v in fillet_vertices]
+    print(f"Fillet indices: {fillet_indices}")
+
+    # For consecutive fillets [0,1,2], process in order: 0, then 2, then 1 using fillet edges
+    result_edges = []
+
+    # Step 1: Create fillet at vertex 0 (edges 4,0)
+    fillet_0 = Draft.make_fillet([lines[4], lines[0]], radius, delete=True)
+    doc.recompute()
+    result_edges.extend(fillet_0.Shape.Edges)
+    print(f"Fillet 0: {len(fillet_0.Shape.Edges)} edges")
+
+    # Step 2: Create fillet at vertex 2 (edges 1,2)
+    fillet_2 = Draft.make_fillet([lines[1], lines[2]], radius, delete=True)
+    doc.recompute()
+    result_edges.extend(fillet_2.Shape.Edges)
+    print(f"Fillet 2: {len(fillet_2.Shape.Edges)} edges")
+
+    # Step 3: Create fillet at vertex 1 using last edge of fillet_0 and first edge of fillet_2
+    last_edge_0 = fillet_0.Shape.Edges[-1]
+    first_edge_2 = fillet_2.Shape.Edges[0]
+
+    # Create temporary lines from these edges
+    temp_line_1 = Draft.make_line(
+        last_edge_0.firstVertex().Point, last_edge_0.lastVertex().Point
+    )
+    temp_line_2 = Draft.make_line(
+        first_edge_2.firstVertex().Point, first_edge_2.lastVertex().Point
+    )
+    doc.recompute()
+
+    fillet_1 = Draft.make_fillet([temp_line_1, temp_line_2], radius, delete=True)
+    doc.recompute()
+
+    if fillet_1:
+        # Remove the connecting edges and insert fillet_1 edges
+        fillet_0_edges = fillet_0.Shape.Edges[:-1]  # All but last edge
+        fillet_1_edges = fillet_1.Shape.Edges
+        fillet_2_edges = fillet_2.Shape.Edges[1:]  # All but first edge
+
+        result_edges = (
+            list(fillet_0_edges) + list(fillet_1_edges) + list(fillet_2_edges)
+        )
+        print(f"Fillet 1: {len(fillet_1.Shape.Edges)} edges")
+
+    # Add unfilleted edge 3
+    result_edges.append(lines[3].Shape.Edges[0])
+
+    print(f"Total edges: {len(result_edges)}")
+
+    # Create unified wire
+    unified_wire = Part.Wire(result_edges)
+    unified_obj = doc.addObject("Part::Feature", "Unified_Filleted_Rectangle")
+    unified_obj.Shape = unified_wire
+
+    # Cleanup intermediate objects
+    try:
+        doc.removeObject(lines[3].Name)
+        doc.removeObject(fillet_0.Name)
+        doc.removeObject(fillet_2.Name)
+        if fillet_1:
+            doc.removeObject(fillet_1.Name)
+    except:
+        pass
+
+    doc.recompute()
+    return unified_obj, len(result_edges)
+
+
+def create_cylinder_intersection_rectangle(
+    doc: FreeCAD.Document,
+    R2: float,
+    W: float,
+    thickness: float,
+    wood_width: float,
+    section_length: float,
+    blade_radius: float,
+    drops: List[float],
+) -> None:
+    """Create filleted rectangle at cylinder intersection with wedge cut geometry.
+
+    Args:
+        doc: FreeCAD document object
+        R2: Cylinder radius for intersection calculation
+        W: Leading edge width parameter
+        thickness: Blade thickness
+        wood_width: Total wood width
+        section_length: Length of blade section
+        blade_radius: Total blade radius
+        drops: List of thickness drops at different positions
+    """
+    vertices, y_split = create_wedge_cut_wire(
+        R2, W, thickness, wood_width, section_length, blade_radius, drops
+    )
+
+    # Fillet corners at vertices 0, 1, 2 (bottom-left, bottom-right, top-right)
+    fillet_vertices = [vertices[0], vertices[1], vertices[2]]
+
+    unified_obj, edge_count = create_filleted_wire(
+        doc, vertices, fillet_vertices, radius=2
+    )
+    print(f"Created unified filleted wire with {edge_count} edges, radius=2mm")
+    print(f"Created cylinder intersection rectangle at y={y_split:.2f}mm")
+
+
+create_cylinder_intersection_rectangle(
+    doc, R2, W, thickness, wood_width, section_length, blade_radius, drops
+)
 
 # Create loft from all sections
 if final_loft_sections:
