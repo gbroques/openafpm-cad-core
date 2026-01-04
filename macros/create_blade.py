@@ -651,6 +651,7 @@ def create_airfoil_wire_at_section(
     rotation_angle: float = 0.0,
     rotation_center_x: Optional[float] = None,
     rotation_center_z: Optional[float] = None,
+    drop_end: float = 0.0,
 ) -> Part.Wire:
     """Create airfoil wire at specified blade section
 
@@ -664,8 +665,9 @@ def create_airfoil_wire_at_section(
         rotation_center_x: X center for rotation (defaults to x_offset)
         rotation_center_z: Z center for rotation (defaults to z_offset)
     """
-    # Step 1: Scale FIRST
-    scaled_coordinates = scale_airfoil_coordinates(coordinates, chord_length)
+    # Step 1: Scale by hypotenuse of chord_length and drop_end
+    hypotenuse_length = math.sqrt(chord_length**2 + drop_end**2)
+    scaled_coordinates = scale_airfoil_coordinates(coordinates, hypotenuse_length)
 
     # Step 2: Flatten AFTER scaling
     # Find bottom surface points (trailing edge to end)
@@ -690,7 +692,10 @@ def create_airfoil_wire_at_section(
 
     # Rotate about global min Z point for flattening
     flattened_coordinates = rotate_airfoil_coordinates_about_point(
-        scaled_coordinates, flatten_rotation_center_x, flatten_rotation_center_z, flatten_angle
+        scaled_coordinates,
+        flatten_rotation_center_x,
+        flatten_rotation_center_z,
+        flatten_angle,
     )
 
     # Apply Z shift using trailing edge for optimal closure
@@ -698,13 +703,15 @@ def create_airfoil_wire_at_section(
     z_shift = -trailing_edge_z
     bottom_aligned_coordinates = [(x, z + z_shift) for x, z in flattened_coordinates]
 
-    # Preserve exact chord length - both endpoints should be at chord_length
+    # Preserve exact hypotenuse length for trailing edge only
     # Rotation can introduce floating-point precision errors
     if bottom_aligned_coordinates:
-        # Fix both endpoints (leading and trailing edges) to exact chord_length
-        bottom_aligned_coordinates[0] = (chord_length, bottom_aligned_coordinates[0][1])
-        bottom_aligned_coordinates[-1] = (chord_length, bottom_aligned_coordinates[-1][1])
-        
+        # Fix only trailing edge (last point) to exact hypotenuse length
+        bottom_aligned_coordinates[-1] = (
+            hypotenuse_length,
+            bottom_aligned_coordinates[-1][1],
+        )
+
     # Check trailing edge alignment
     last_point = bottom_aligned_coordinates[-1]
     trailing_error = abs(last_point[1])
@@ -715,14 +722,11 @@ def create_airfoil_wire_at_section(
         bottom_aligned_coordinates
     )
     final_coordinates = flip_airfoil_coordinates_horizontally(reflected_coordinates)
-    x_translated_coordinates = translate_airfoil_coordinates(
-        final_coordinates, x_offset
-    )
-
     # Step 4: Convert to 3D and apply z_offset
-    xyz_coordinates = [
-        (x, y_position, z + z_offset) for x, z in x_translated_coordinates
-    ]
+    xyz_coordinates = [(x, y_position, z + z_offset) for x, z in final_coordinates]
+
+    # Step 5: Translate in X direction (now in 3D)
+    xyz_coordinates = [(x + x_offset, y, z) for x, y, z in xyz_coordinates]
 
     # Step 5: Apply additional rotation if specified
     if rotation_angle != 0.0:
@@ -735,11 +739,75 @@ def create_airfoil_wire_at_section(
         )
         xyz_coordinates = [(x, y_position, z) for x, z in rotated_coordinates]
 
-    # Create final wire directly
+    # Create test B-spline to measure overshoot
+    points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
+    test_spline = Part.BSplineCurve()
+    test_spline.interpolate(points, False)
+    test_edge = test_spline.toShape()
+
+    # Calculate precise B-spline overshoot beyond leading edge boundary
+
+    # Get the actual curve's bounding box
+    bbox = test_edge.BoundBox
+    max_x_bbox = bbox.XMax
+    overshoot_bbox = max_x_bbox - W
+
+    print(
+        f"Airfoil at y={y_position}: BoundBox max X = {max_x_bbox:.6f}mm, overshoot = {overshoot_bbox:.6f}mm"
+    )
+
+    # Apply predictive overshoot correction if needed
+    if overshoot_bbox > 0.001:  # Only correct if overshoot > 1 micron
+        # Use conservative pullback approach - B-splines don't scale linearly
+        pullback_distance = overshoot_bbox * 1.001  # Minimal 0.1% margin
+        trailing_edge_3d = xyz_coordinates[-1]  # Last point (trailing edge)
+
+        # Find the leading edge (point with maximum X)
+        leading_edge_idx = max(
+            range(len(xyz_coordinates)), key=lambda i: xyz_coordinates[i][0]
+        )
+        leading_edge_3d = xyz_coordinates[leading_edge_idx]
+
+        corrected_xyz_coordinates = []
+        for i, (x, y, z) in enumerate(xyz_coordinates):
+            if i == len(xyz_coordinates) - 1:  # Keep trailing edge fixed
+                corrected_xyz_coordinates.append((x, y, z))
+            else:
+                # Calculate how far this point is from trailing edge to leading edge
+                total_chord = leading_edge_3d[0] - trailing_edge_3d[0]
+                point_distance = x - trailing_edge_3d[0]
+
+                if total_chord > 0:
+                    # Scale the pullback based on position along chord
+                    position_ratio = point_distance / total_chord
+                    pullback_amount = pullback_distance * position_ratio
+                    new_x = x - pullback_amount
+                else:
+                    new_x = x
+
+                corrected_xyz_coordinates.append((new_x, y, z))
+
+        xyz_coordinates = corrected_xyz_coordinates
+
+    # Create final B-spline with corrected coordinates
     points = [FreeCAD.Vector(x, y, z) for x, y, z in xyz_coordinates]
     spline = Part.BSplineCurve()
     spline.interpolate(points, False)
     edge = spline.toShape()
+
+    # Verify correction by measuring final overshoot
+    final_bbox = edge.BoundBox
+    final_overshoot = final_bbox.XMax - W
+    discretized = edge.discretize(1000)  # Get 1000 points along the actual edge
+    max_x_discrete = max(pt.x for pt in discretized)
+    overshoot_discrete = max_x_discrete - W
+
+    print(
+        f"Airfoil at y={y_position}: BoundBox max X = {final_bbox.XMax:.6f}mm, overshoot = {final_overshoot:.6f}mm"
+    )
+    print(
+        f"Airfoil at y={y_position}: Discretized max X = {max_x_discrete:.6f}mm, overshoot = {overshoot_discrete:.6f}mm"
+    )
 
     first_point = points[0]
     last_point = points[-1]
@@ -778,6 +846,9 @@ def create_section(
     # Use X-axis chord length for proper positioning
     chord_length = chord_length_x
 
+    # Calculate hypotenuse for scaling and positioning
+    hypotenuse_length = math.sqrt(chord_length_x**2 + drop_end**2)
+
     # Create airfoil wire
     rotation_angle = math.degrees(math.atan(drop_end / chord_length_x))
 
@@ -785,18 +856,19 @@ def create_section(
     # Calculate actual trailing edge X position for this section
     trailing_edge_x = W - chord_length_x
     z_bottom_trailing = thickness - drop_end  # Z at trailing edge from boundary
-    
+
     airfoil_wire = create_airfoil_wire_at_section(
         airfoil_coordinates,
         chord_length,  # Use X-axis chord length
         y_end,
-        trailing_edge_x + chord_length_x,  # Position so trailing edge ends up at trailing_edge_x
+        trailing_edge_x + hypotenuse_length,  # Use corrected hypotenuse for positioning
         z_bottom_trailing,  # Bottom trailing edge at boundary Z
         rotation_angle,  # Rotate to match boundary slope
         trailing_edge_x,  # Rotation center at actual trailing edge X
         z_bottom_trailing,  # Rotation center at boundary Z
+        drop_end,  # Add drop_end parameter
     )
-    
+
     # Store wire directly without creating FreeCAD object
     obj = create_airfoil_object(airfoil_wire, f"{name}_Airfoil", doc)
 
@@ -1735,7 +1807,7 @@ for y_pos in intermediate_positions:
     i_interp = (y_pos / section_length) - 1  # Interpolation factor
     thick_interp = thicknesses[0] + (thicknesses[1] - thicknesses[0]) * (i_interp / 1.0)
     drop_interp = drops[0] + (drops[1] - drops[0]) * (i_interp / 1.0)
-    
+
     section_obj = create_section(
         y_pos,
         thick_interp,
@@ -1750,7 +1822,7 @@ for y_pos in intermediate_positions:
         R2,
         doc,
     )
-    
+
     hybrid_obj = create_hybrid_airfoil_section_6b(
         y_pos,
         thick_interp,
