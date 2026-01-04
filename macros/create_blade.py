@@ -1118,6 +1118,31 @@ def create_hybrid_airfoil_section_6b(
         print(f"  Last point: index {last_point[0]}, X = {last_point[1]:.3f}")
         print(f"  X range: {min_x:.3f} to {max_x:.3f} (span: {max_x - min_x:.3f}mm)")
 
+        # Create group for preserved points visualization (only for y=200)
+        if y_position == 200.0:
+            preserved_group = doc.addObject("App::DocumentObjectGroup", f"Preserved_Points_y{y_position}")
+            
+            # Create colored spheres for each preserved point
+            for i, (pole_idx, pole_x) in enumerate(preserved_points):
+                pole = poles[pole_idx]
+                sphere = doc.addObject("Part::Sphere", f"Preserved_Point_{pole_idx}")
+                sphere.Radius = 1.0  # 1mm radius
+                sphere.Placement.Base = FreeCAD.Vector(pole.x, y_position, pole.z)
+                
+                # Color spheres only if GUI is available
+                if FreeCAD.GuiUp:
+                    # Color spheres: red for first, blue for last, green for middle
+                    if i == 0:
+                        sphere.ViewObject.ShapeColor = (1.0, 0.0, 0.0)  # Red
+                    elif i == len(preserved_points) - 1:
+                        sphere.ViewObject.ShapeColor = (0.0, 0.0, 1.0)  # Blue
+                    else:
+                        sphere.ViewObject.ShapeColor = (0.0, 1.0, 0.0)  # Green
+                    
+                preserved_group.addObject(sphere)
+            
+            print(f"Created {len(preserved_points)} colored spheres for preserved points")
+
     print(
         f"Leading edge preserved: {leading_edge_preserved}, Mapped points: {mapped_points}"
     )
@@ -1843,6 +1868,37 @@ final_loft_sections.extend(intermediate_sections)  # Add 250, 300, 350
 final_loft_sections.extend(loft_sections[1:])  # Add rest (400, 600, 800, 1000, 1200)
 
 
+def calculate_wedge_cut_vertices_at_y(
+    y_position: float,
+    R2: float,
+    W: float,
+    thickness: float,
+    wood_width: float,
+    section_length: float,
+    blade_radius: float,
+    drops: List[float],
+) -> List[FreeCAD.Vector]:
+    """Calculate wedge cut vertices for any y position using the same formula."""
+    # Calculate wedge cut intersection points
+    root_width_rear = wood_width - (wood_width - W) * (section_length / blade_radius)
+    v2_wedge = (-wood_width + W, 0, thickness)
+    v1_wedge = (W, section_length, thickness)
+    v3_wedge = (W - root_width_rear, section_length, thickness - drops[0])
+
+    t = y_position / section_length
+    x_v2v1 = v2_wedge[0] + (v1_wedge[0] - v2_wedge[0]) * t
+    x_v2v3 = v2_wedge[0] + (v3_wedge[0] - v2_wedge[0]) * t
+    z_v2v3 = v2_wedge[2] + (v3_wedge[2] - v2_wedge[2]) * t
+
+    return [
+        FreeCAD.Vector(x_v2v3, y_position, 0),      # vertex 0
+        FreeCAD.Vector(W, y_position, 0),           # vertex 1
+        FreeCAD.Vector(W, y_position, thickness),   # vertex 2
+        FreeCAD.Vector(x_v2v1, y_position, thickness), # vertex 3
+        FreeCAD.Vector(x_v2v3, y_position, z_v2v3), # vertex 4
+    ]
+
+
 def create_wedge_cut_wire(
     R2: float,
     W: float,
@@ -1897,9 +1953,13 @@ def create_filleted_wire(
     """Create filleted wire by incrementally building edge list."""
     filleted_edges = []
 
-    for i in range(len(vertices)):
+    # Process vertices dynamically based on vertex count
+    # For 5 vertices: 0->1->2->3->4 (connect 3 to 4, not back to 0)
+    # For 6 vertices: 0->1->2->3->4->5 (connect 4 to 5, not back to 0)
+    num_vertices = len(vertices)
+    for i in range(num_vertices - 1):  # Process all vertices except the last
         curr_vertex = vertices[i]
-        next_vertex = vertices[(i + 1) % len(vertices)]
+        next_vertex = vertices[i + 1]
 
         if curr_vertex in fillet_vertices:
             prev_vertex = vertices[i - 1]
@@ -1955,16 +2015,50 @@ def create_filleted_wire(
                 f"WARNING: Gap between edges {i} and {i + 1}: {curr_end.distanceToPoint(next_start):.6f}mm"
             )
 
-    # Create wire
+    # Create wire from filleted edges (open wire - no closure required)
     wire = Part.Wire(filleted_edges)
     obj = doc.addObject("Part::Feature", "Unified_Filleted_Rectangle")
     obj.Shape = wire
+    
+    # Discretize wire into 79 points and create B-spline
+    discretized_points = []
+    
+    # Use discretize method to get evenly spaced points
+    discretized_points = wire.discretize(Number=79)  # Back to 79 points
+    
+    # Create B-spline from discretized points (open curve - no wedge cut edge)
+    bspline = Part.BSplineCurve()
+    bspline.interpolate(discretized_points, False)  # Open curve without wedge cut edge
+    
+    # Manually close B-spline with the vertical edge (wedge cut edge)
+    # With preserved point inserted, vertex 5 is the wedge cut end, vertex 0 is wedge cut start
+    if len(vertices) == 6:  # Hybrid with preserved point
+        vertical_edge = Part.LineSegment(vertices[5], vertices[0]).toShape()
+    else:  # Original 5-vertex case
+        vertical_edge = Part.LineSegment(vertices[4], vertices[0]).toShape()
+    
+    # Create closed wire by combining B-spline and vertical edge
+    try:
+        closed_edges = [bspline.toShape(), vertical_edge]
+        closed_wire = Part.Wire(closed_edges)
+        print("Successfully created closed wire with vertical edge")
+    except Exception as e:
+        print(f"Wire creation with vertical edge failed: {e}")
+        # Try just the B-spline as open curve
+        closed_wire = bspline.toShape()
+    
+    bspline_obj = doc.addObject("Part::Feature", "Filleted_Rectangle_BSpline")
+    bspline_obj.Shape = closed_wire  # Use closed wire instead of just B-spline
+    
+    # Check control points of the B-spline curve
+    bspline_curve = bspline_obj.Shape.Edges[0].Curve  # Get the B-spline curve from first edge
+    print(f"Filleted_Rectangle_BSpline has {bspline_curve.NbPoles} control points")
+    
+    print(f"Discretized filleted rectangle into {len(discretized_points)} points")
+    print(f"Created B-spline from discretized points")
 
     doc.recompute()
-    return obj, len(filleted_edges)
-
-    doc.recompute()
-    return obj, len(current_edges)
+    return obj, len(filleted_edges), bspline_obj
 
 
 def create_cylinder_intersection_rectangle(
@@ -1993,21 +2087,87 @@ def create_cylinder_intersection_rectangle(
         R2, W, thickness, wood_width, section_length, blade_radius, drops
     )
 
-    # Fillet corners at vertices 0, 1, 2 (bottom-left, bottom-right, top-right)
-    fillet_vertices = [vertices[0], vertices[1], vertices[2]]
+    print(f"Wedge cut vertices:")
+    for i, v in enumerate(vertices):
+        print(f"  Vertex {i}: {v}")
+    
+    # The wedge cut edge is from vertex 4 to vertex 0 (the diagonal cut)
+    print(f"Wedge cut edge: from vertex 4 {vertices[4]} to vertex 0 {vertices[0]}")
 
-    unified_obj, edge_count = create_filleted_wire(
-        doc, vertices, fillet_vertices, radius=2
+    # Fillet corners at vertices 1, 2 only (avoid vertices 0 and 4 for sharp corners)
+    fillet_vertices = [vertices[1], vertices[2]]
+
+    unified_obj, edge_count, bspline_obj = create_filleted_wire(
+        doc, vertices, fillet_vertices, radius=4
     )
-    print(f"Created unified filleted wire with {edge_count} edges, radius=2mm")
+    print(f"Created unified filleted wire with {edge_count} edges, radius=4mm")
     print(f"Created cylinder intersection rectangle at y={y_split:.2f}mm")
+    
+    return bspline_obj
 
 
-create_cylinder_intersection_rectangle(
+cylinder_bspline = create_cylinder_intersection_rectangle(
     doc, R2, W, thickness, wood_width, section_length, blade_radius, drops
 )
 
-# Create loft from all sections
+# Create intermediate hybrid section at y=157.28mm
+root_section = final_loft_sections[0]  # Root airfoil at y=200
+
+# Get discretized points from both sections
+rect_points = cylinder_bspline.Shape.discretize(Number=79)
+airfoil_points = root_section.Shape.discretize(Number=79)
+
+# Create same wire at y=157.28 following same procedure as 114.56
+y_hybrid = 157.28
+vertices_hybrid = calculate_wedge_cut_vertices_at_y(
+    y_hybrid, R2, W, thickness, wood_width, section_length, blade_radius, drops
+)
+
+print(f"Hybrid vertices at y={y_hybrid}:")
+for i, v in enumerate(vertices_hybrid):
+    print(f"  Vertex {i}: {v}")
+
+print(f"Wedge cut edge: from vertex 4 {vertices_hybrid[4]} to vertex 0 {vertices_hybrid[0]}")
+
+# Add the first preserved point from y=200 airfoil at z=0
+# This point has X=-39.174 and should be inserted between bottom vertices
+preserved_point_x = -39.174  # From y=200 airfoil analysis
+preserved_point = FreeCAD.Vector(preserved_point_x, y_hybrid, 0.0)
+
+# Insert preserved point between vertex 0 and vertex 1 (both at z=0)
+# New vertex order: 0 -> preserved -> 1 -> 2 -> 3 -> 4
+vertices_with_preserved = [
+    vertices_hybrid[0],      # vertex 0: wedge cut start
+    preserved_point,         # new: preserved point
+    vertices_hybrid[1],      # vertex 1: leading edge bottom
+    vertices_hybrid[2],      # vertex 2: leading edge top  
+    vertices_hybrid[3],      # vertex 3: trailing edge top
+    vertices_hybrid[4],      # vertex 4: wedge cut end
+]
+
+print(f"Added preserved point at X={preserved_point_x}, creating {len(vertices_with_preserved)} vertices")
+
+# Fillet corners at vertices 2, 3 only (avoid vertices 0, 1, 5 for sharp corners)
+fillet_vertices = [vertices_with_preserved[2], vertices_with_preserved[3]]
+
+unified_obj, edge_count, hybrid_bspline = create_filleted_wire(
+    doc, vertices_with_preserved, fillet_vertices, radius=4
+)
+print(f"Created unified filleted wire with {edge_count} edges, radius=4mm")
+print(f"Created hybrid section at y={y_hybrid:.2f}mm")
+
+# Create transition loft (without hybrid section for now)
+transition_sections = [cylinder_bspline, root_section]
+
+transition_loft = doc.addObject("Part::Loft", "Cylinder_To_Root_Loft")
+transition_loft.Sections = transition_sections
+transition_loft.Solid = True
+transition_loft.Ruled = False
+doc.recompute()
+print(f"Created hybrid section at y=157.28mm for inspection")
+print(f"Created transition loft between y=114.56mm and y=200mm with {len(transition_sections)} sections")
+
+# Create loft from all sections (excluding cylinder intersection B-spline)
 if final_loft_sections:
     loft = doc.addObject("Part::Loft", "Blade_Loft")
     loft.Sections = final_loft_sections
