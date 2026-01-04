@@ -1894,69 +1894,74 @@ def create_filleted_wire(
     fillet_vertices: List[FreeCAD.Vector],
     radius: float = 2.0,
 ) -> Tuple[Any, int]:
-    """Create filleted wire by tracking edges and using delete=True."""
-    # Create all lines
-    lines = [
-        Draft.make_line(vertices[i], vertices[(i + 1) % len(vertices)])
-        for i in range(len(vertices))
-    ]
-    doc.recompute()
+    """Create filleted wire by incrementally building edge list."""
+    filleted_edges = []
 
-    # Track current edges for each position
-    current_edges = [line.Shape.Edges[0] for line in lines]
-    fillet_indices = [vertices.index(v) for v in fillet_vertices]
+    for i in range(len(vertices)):
+        curr_vertex = vertices[i]
+        next_vertex = vertices[(i + 1) % len(vertices)]
 
-    # Process fillets in order, adjusting indices as we insert arcs
-    offset = 0  # Track how many arcs we've inserted
-    for vertex_idx in fillet_indices:
-        prev_idx = (vertex_idx - 1) % len(vertices) + offset
-        curr_idx = vertex_idx + offset
+        if curr_vertex in fillet_vertices:
+            prev_vertex = vertices[i - 1]
 
-        print(f"\n--- Processing fillet at vertex {vertex_idx} ---")
+            # Check if we can reuse the last edge
+            if filleted_edges and filleted_edges[-1].lastVertex().Point.isEqual(
+                curr_vertex, 1e-6
+            ):
+                # Use last edge for first line
+                prev_line = Draft.make_line(
+                    filleted_edges[-1].firstVertex().Point,
+                    filleted_edges[-1].lastVertex().Point,
+                )
+            else:
+                # Create new line from previous vertex
+                prev_line = Draft.make_line(prev_vertex, curr_vertex)
 
-        # Get current edges
-        prev_edge = current_edges[prev_idx]
-        curr_edge = current_edges[curr_idx]
+            # Create line to next vertex
+            next_line = Draft.make_line(curr_vertex, next_vertex)
+            doc.recompute()
 
-        # Create draft lines from edges
-        prev_line = Draft.make_line(
-            prev_edge.firstVertex().Point, prev_edge.lastVertex().Point
-        )
-        curr_line = Draft.make_line(
-            curr_edge.firstVertex().Point, curr_edge.lastVertex().Point
-        )
-        doc.recompute()
+            # Create fillet
+            fillet = Draft.make_fillet([prev_line, next_line], radius, delete=True)
+            doc.recompute()
 
-        # Create fillet (returns 3 edges: truncated_prev, arc, truncated_curr)
-        fillet = Draft.make_fillet([prev_line, curr_line], radius, delete=True)
-        doc.recompute()
+            # Add fillet edges, replacing last edge if we reused it
+            if filleted_edges and filleted_edges[-1].lastVertex().Point.isEqual(
+                curr_vertex, 1e-6
+            ):
+                filleted_edges[-1] = fillet.Shape.Edges[
+                    0
+                ]  # Replace with truncated edge
+                filleted_edges.extend(fillet.Shape.Edges[1:])  # Add arc and next edge
+            else:
+                filleted_edges.extend(fillet.Shape.Edges)
 
-        print(f"Fillet at vertex {vertex_idx}: {len(fillet.Shape.Edges)} edges")
+            doc.removeObject(fillet.Name)
 
-        # Update current_edges with fillet results
-        fillet_edges = fillet.Shape.Edges
-        current_edges[prev_idx] = fillet_edges[0]  # Truncated previous edge
-        current_edges[curr_idx] = fillet_edges[2]  # Truncated current edge
+        else:
+            # Only add regular line edge if next vertex won't be filleted
+            if next_vertex not in fillet_vertices:
+                line = Draft.make_line(curr_vertex, next_vertex)
+                doc.recompute()
+                filleted_edges.append(line.Shape.Edges[0])
+                doc.removeObject(line.Name)
 
-        # Insert arc between them
-        current_edges.insert(curr_idx, fillet_edges[1])
-        offset += 1  # We added one arc, so shift future indices
+    # Check edge continuity
+    for i in range(len(filleted_edges)):
+        curr_end = filleted_edges[i].lastVertex().Point
+        next_start = filleted_edges[(i + 1) % len(filleted_edges)].firstVertex().Point
+        if not curr_end.isEqual(next_start, 1e-6):
+            print(
+                f"WARNING: Gap between edges {i} and {i + 1}: {curr_end.distanceToPoint(next_start):.6f}mm"
+            )
 
-        # Cleanup fillet object
-        doc.removeObject(fillet.Name)
-
-    # Cleanup original lines
-    for line in lines:
-        doc.removeObject(line.Name)
-
-    print(f"Total edges: {len(current_edges)}")
-
-    # Create final wire and check if closed
-    wire = Part.Wire(current_edges)
-    print(f"Wire is closed: {wire.isClosed()}")
-
+    # Create wire
+    wire = Part.Wire(filleted_edges)
     obj = doc.addObject("Part::Feature", "Unified_Filleted_Rectangle")
     obj.Shape = wire
+
+    doc.recompute()
+    return obj, len(filleted_edges)
 
     doc.recompute()
     return obj, len(current_edges)
