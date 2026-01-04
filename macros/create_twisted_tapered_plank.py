@@ -43,8 +43,8 @@ config = {
     'num_sections': 6,
     
     # Drop values for 2400mm turbine (controls trailing edge angle)
-    # drops[0] reduced from 40 to 39 to create 1mm minimum trailing edge thickness
-    'drops': [39, 32, 15, 7, 3, 1],  # mm
+    # drops[0] reduced from 40 to 38.8 to create 1.2mm minimum trailing edge thickness
+    'drops': [38.8, 32, 15, 7, 3, 1],  # mm
     
     # Thickness values for 2400mm turbine (at leading edge)
     'thicknesses': [27, 27, 19, 14, 9, 6],  # mm
