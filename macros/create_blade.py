@@ -1894,7 +1894,22 @@ def create_filleted_wire(
     fillet_vertices: List[FreeCAD.Vector],
     radius: float = 2.0,
 ) -> Tuple[Any, int]:
-    """Create filleted wire with proper handling of consecutive fillets."""
+    """Create filleted wire from vertices with proper handling of consecutive fillets.
+    
+    Uses a two-phase approach for consecutive fillets:
+    1. Creates fillets at non-adjacent vertices first (even indices: 0, 2, 4...)
+    2. Creates remaining fillets using connecting edges from phase 1 fillets
+    3. Reconstructs edges avoiding overlaps: first[:-1] + middle + last[1:]
+    
+    Args:
+        doc: FreeCAD document object
+        vertices: Ordered list of vertices defining the wire polygon
+        fillet_vertices: List of vertices where fillets should be applied
+        radius: Fillet radius in mm
+        
+    Returns:
+        Tuple of (unified wire object, total edge count)
+    """
     # Create lines for all edges
     lines = []
     for i in range(len(vertices)):
@@ -1906,52 +1921,108 @@ def create_filleted_wire(
     fillet_indices = [vertices.index(v) for v in fillet_vertices]
     print(f"Fillet indices: {fillet_indices}")
 
-    # For consecutive fillets [0,1,2], process in order: 0, then 2, then 1 using fillet edges
+    # Create fillets at non-adjacent vertices first
+    fillets = {}
+
+    # Step 1: Create fillets at even-indexed positions (0, 2, 4, ...)
+    for i in range(0, len(fillet_indices), 2):
+        vertex_idx = fillet_indices[i]
+        prev_edge_idx = (vertex_idx - 1) % len(vertices)
+        curr_edge_idx = vertex_idx
+
+        fillet = Draft.make_fillet(
+            [lines[prev_edge_idx], lines[curr_edge_idx]], radius, delete=True
+        )
+        doc.recompute()
+        fillets[vertex_idx] = fillet
+        print(f"Fillet {vertex_idx}: {len(fillet.Shape.Edges)} edges")
+
+    # Step 2: Create fillets at odd-indexed positions (1, 3, 5, ...) using connecting edges
+    for i in range(1, len(fillet_indices), 2):
+        vertex_idx = fillet_indices[i]
+        prev_vertex_idx = fillet_indices[i - 1]
+        next_vertex_idx = (
+            fillet_indices[(i + 1) % len(fillet_indices)]
+            if i + 1 < len(fillet_indices)
+            else fillet_indices[0]
+        )
+
+        if prev_vertex_idx in fillets and next_vertex_idx in fillets:
+            last_edge = fillets[prev_vertex_idx].Shape.Edges[-1]
+            first_edge = fillets[next_vertex_idx].Shape.Edges[0]
+
+            temp_line_1 = Draft.make_line(
+                last_edge.firstVertex().Point, last_edge.lastVertex().Point
+            )
+            temp_line_2 = Draft.make_line(
+                first_edge.firstVertex().Point, first_edge.lastVertex().Point
+            )
+            doc.recompute()
+
+            fillet = Draft.make_fillet([temp_line_1, temp_line_2], radius, delete=True)
+            doc.recompute()
+            fillets[vertex_idx] = fillet
+            print(f"Fillet {vertex_idx}: {len(fillet.Shape.Edges)} edges")
+
+    # Step 3: Reconstruct edges handling consecutive fillets generically
     result_edges = []
 
-    # Step 1: Create fillet at vertex 0 (edges 4,0)
-    fillet_0 = Draft.make_fillet([lines[4], lines[0]], radius, delete=True)
-    doc.recompute()
-    result_edges.extend(fillet_0.Shape.Edges)
-    print(f"Fillet 0: {len(fillet_0.Shape.Edges)} edges")
-
-    # Step 2: Create fillet at vertex 2 (edges 1,2)
-    fillet_2 = Draft.make_fillet([lines[1], lines[2]], radius, delete=True)
-    doc.recompute()
-    result_edges.extend(fillet_2.Shape.Edges)
-    print(f"Fillet 2: {len(fillet_2.Shape.Edges)} edges")
-
-    # Step 3: Create fillet at vertex 1 using last edge of fillet_0 and first edge of fillet_2
-    last_edge_0 = fillet_0.Shape.Edges[-1]
-    first_edge_2 = fillet_2.Shape.Edges[0]
-
-    # Create temporary lines from these edges
-    temp_line_1 = Draft.make_line(
-        last_edge_0.firstVertex().Point, last_edge_0.lastVertex().Point
+    # Check if fillets are consecutive
+    sorted_indices = sorted(fillet_indices)
+    is_consecutive = all(
+        sorted_indices[i + 1] - sorted_indices[i] == 1
+        for i in range(len(sorted_indices) - 1)
     )
-    temp_line_2 = Draft.make_line(
-        first_edge_2.firstVertex().Point, first_edge_2.lastVertex().Point
-    )
-    doc.recompute()
 
-    fillet_1 = Draft.make_fillet([temp_line_1, temp_line_2], radius, delete=True)
-    doc.recompute()
+    if is_consecutive and len(fillet_indices) >= 2:
+        # Handle consecutive fillets: first[:-1] + middle + last[1:] + unfilleted
+        for i, fillet_idx in enumerate(sorted_indices):
+            fillet_edges = fillets[fillet_idx].Shape.Edges
 
-    if fillet_1:
-        # Remove the connecting edges and insert fillet_1 edges
-        fillet_0_edges = fillet_0.Shape.Edges[:-1]  # All but last edge
-        fillet_1_edges = fillet_1.Shape.Edges
-        fillet_2_edges = fillet_2.Shape.Edges[1:]  # All but first edge
+            if i == 0:  # First fillet: exclude last edge
+                result_edges.extend(fillet_edges[:-1])
+            elif i == len(sorted_indices) - 1:  # Last fillet: exclude first edge
+                result_edges.extend(fillet_edges[1:])
+            else:  # Middle fillets: use all edges
+                result_edges.extend(fillet_edges)
 
-        result_edges = (
-            list(fillet_0_edges) + list(fillet_1_edges) + list(fillet_2_edges)
-        )
-        print(f"Fillet 1: {len(fillet_1.Shape.Edges)} edges")
-
-    # Add unfilleted edge 3
-    result_edges.append(lines[3].Shape.Edges[0])
+        # Add unfilleted edges
+        for i in range(len(vertices)):
+            if i not in [
+                j
+                for fillet_idx in fillet_indices
+                for j in [(fillet_idx - 1) % len(vertices), fillet_idx]
+            ]:
+                result_edges.append(lines[i].Shape.Edges[0])
+    else:
+        # Non-consecutive fillets: use all edges
+        for i in range(len(vertices)):
+            if i in fillets:
+                result_edges.extend(fillets[i].Shape.Edges)
+            elif i not in [
+                j
+                for fillet_idx in fillet_indices
+                for j in [(fillet_idx - 1) % len(vertices), fillet_idx]
+            ]:
+                result_edges.append(lines[i].Shape.Edges[0])
 
     print(f"Total edges: {len(result_edges)}")
+
+    # Check edge continuity
+    for i in range(len(result_edges)):
+        current_edge = result_edges[i]
+        next_edge = result_edges[(i + 1) % len(result_edges)]
+
+        current_end = current_edge.lastVertex().Point
+        next_start = next_edge.firstVertex().Point
+        gap = current_end.distanceToPoint(next_start)
+
+        print(
+            f"Edge {i}: {current_end} -> Edge {i + 1}: {next_start}, gap: {gap:.6f}mm"
+        )
+
+        if gap > 0.01:  # 0.01mm tolerance
+            print(f"WARNING: Gap detected between edges {i} and {i + 1}: {gap:.6f}mm")
 
     # Create unified wire
     unified_wire = Part.Wire(result_edges)
@@ -1959,14 +2030,22 @@ def create_filleted_wire(
     unified_obj.Shape = unified_wire
 
     # Cleanup intermediate objects
-    try:
-        doc.removeObject(lines[3].Name)
-        doc.removeObject(fillet_0.Name)
-        doc.removeObject(fillet_2.Name)
-        if fillet_1:
-            doc.removeObject(fillet_1.Name)
-    except:
-        pass
+    for i, line in enumerate(lines):
+        if i not in [
+            j
+            for fillet_idx in fillet_indices
+            for j in [(fillet_idx - 1) % len(vertices), fillet_idx]
+        ]:
+            try:
+                doc.removeObject(line.Name)
+            except:
+                pass
+
+    for fillet in fillets.values():
+        try:
+            doc.removeObject(fillet.Name)
+        except:
+            pass
 
     doc.recompute()
     return unified_obj, len(result_edges)
