@@ -478,22 +478,27 @@ def assemble_hybrid_points(
             hybrid_points.append(FreeCAD.Vector(pole.x, y_position, pole.z))
             leading_edge_preserved += 1
         else:
-            # Map to our new discretized split wires with adjusted mapping
-            if i < len(wire1_points):  # Map to Wire1 points
-                # Points 0-(wire1_count-1) map directly to Wire1 points
-                hybrid_points.append(wire1_points[i])
-                mapped_points += 1
-            elif i < leading_edge_start:
-                # Points 15-18 skip mapping to reduce total count
-                pass
-            else:
-                # Points after leading edge map to Wire2
-                post_preserved_index = i - (leading_edge_end + 1)
-                if post_preserved_index >= 0 and post_preserved_index < len(
-                    wire2_points
-                ):
-                    hybrid_points.append(wire2_points[post_preserved_index])
+            # Smart mapping: use wire1 for points below Z=0, preserve natural curve for points above Z=0
+            if pole.z < 0.0:
+                # Use boundary mapping (wire1/wire2) for points below Z=0
+                if i < len(wire1_points):  # Map to Wire1 points
+                    hybrid_points.append(wire1_points[i])
                     mapped_points += 1
+                elif i < leading_edge_start:
+                    # Points 15-18 skip mapping to reduce total count
+                    pass
+                else:
+                    # Points after leading edge map to Wire2
+                    post_preserved_index = i - (leading_edge_end + 1)
+                    if post_preserved_index >= 0 and post_preserved_index < len(
+                        wire2_points
+                    ):
+                        hybrid_points.append(wire2_points[post_preserved_index])
+                        mapped_points += 1
+            else:
+                # Preserve natural airfoil curve for points above Z=0
+                hybrid_points.append(FreeCAD.Vector(pole.x, y_position, pole.z))
+                leading_edge_preserved += 1
 
     return hybrid_points, leading_edge_preserved, mapped_points
 
@@ -817,6 +822,13 @@ def create_airfoil_wire_at_section(
 
     first_point = points[0]
     last_point = points[-1]
+
+    # Measure trailing edge thickness (distance between first and last points)
+    trailing_edge_thickness = first_point.distanceToPoint(last_point)
+    print(
+        f"Airfoil at y={y_position}: Trailing edge thickness = {trailing_edge_thickness:.3f}mm"
+    )
+
     is_closed = first_point.distanceToPoint(last_point) < 0.001
 
     if not is_closed:
@@ -1134,6 +1146,16 @@ def create_hybrid_airfoil_section_6b(
     )
     print(f"  Chord length: {chord_length_x:.1f}mm")
 
+    # Measure trailing edge thickness (distance between first and last points)
+    first_point = hybrid_points[0]
+    last_point = hybrid_points[-1]
+    trailing_edge_thickness = math.sqrt(
+        (first_point[0] - last_point[0]) ** 2
+        + (first_point[1] - last_point[1]) ** 2
+        + (first_point[2] - last_point[2]) ** 2
+    )
+    print(f"  Trailing edge thickness: {trailing_edge_thickness:.3f}mm")
+
     # Check B-spline control points
     poles = extract_bspline_control_points(hybrid_wire)
     if poles:
@@ -1153,7 +1175,7 @@ R2 = 125  # radius of flat circular area on back
 num_sections = 6
 section_length = blade_radius / num_sections
 number_of_station_5_to_6_transitions = 3  # Number of interpolated hybrid sections
-minimum_trailing_edge_thickness = 1  # mm
+minimum_trailing_edge_thickness = 1.2  # mm
 drops = [40 - minimum_trailing_edge_thickness, 32, 15, 7, 3, 1]  # mm
 thicknesses = [27, 27, 19, 14, 9, 6]  # mm
 
