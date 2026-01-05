@@ -385,6 +385,196 @@ def get_preserved_points_y200(
     return preserved_points
 
 
+def discretize_filleted_wire_edges(filleted_edges, target_points=55):
+    """
+    Discretize edges 0, 5, 6 from filleted wire with proportional point distribution.
+    
+    Args:
+        filleted_edges: List of edges from filleted wire
+        target_points: Total points needed (default 55 for 79-25+1)
+    
+    Returns:
+        Tuple of (edge0_points, edge5_points, edge6_points) excluding overlaps
+    """
+    # Calculate lengths of remaining edges
+    edge0_length = filleted_edges[0].Length  # Wedge cut start → Preserved point
+    edge5_length = filleted_edges[5].Length  # Wedge cut end → Another point
+    edge6_length = filleted_edges[6].Length  # Final edge
+    
+    remaining_total_length = edge0_length + edge5_length + edge6_length
+    
+    # Distribute points proportionally by length
+    points_edge0 = max(3, int(target_points * edge0_length / remaining_total_length))
+    points_edge5 = max(3, int(target_points * edge5_length / remaining_total_length))
+    points_edge6 = max(3, int(target_points * edge6_length / remaining_total_length))
+    
+    # Adjust to ensure exactly target_points total
+    total_assigned = points_edge0 + points_edge5 + points_edge6
+    if total_assigned != target_points:
+        diff = target_points - total_assigned
+        # Add to longest edge
+        if edge6_length >= max(edge0_length, edge5_length):
+            points_edge6 += diff
+        elif edge0_length >= edge5_length:
+            points_edge0 += diff
+        else:
+            points_edge5 += diff
+    
+    # Discretize edges
+    points_edge0_disc = filleted_edges[0].discretize(Number=points_edge0)
+    points_edge5_disc = filleted_edges[5].discretize(Number=points_edge5)
+    points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6)
+    
+    # Combine points excluding overlaps
+    remaining_points = []
+    remaining_points.extend(points_edge0_disc[:-1])  # Exclude last (overlap with cyan)
+    remaining_points.extend(points_edge5_disc[1:])   # Exclude first (overlap with cyan)
+    remaining_points.extend(points_edge6_disc)       # Include all
+    
+    # Adjust if needed
+    if len(remaining_points) < target_points:
+        needed = target_points - len(remaining_points)
+        points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6 + needed)
+        
+        # Recombine
+        remaining_points = []
+        remaining_points.extend(points_edge0_disc[:-1])
+        remaining_points.extend(points_edge5_disc[1:])
+        remaining_points.extend(points_edge6_disc)
+    
+    return points_edge0_disc[:-1], points_edge5_disc[1:], points_edge6_disc
+
+
+def interpolate_filleted_with_preserved_points(filleted_points, doc, y_position, t=0.5):
+    """
+    Interpolate filleted points with preserved airfoil points from y=200.
+    
+    Args:
+        filleted_points: List of 25 filleted points to interpolate
+        doc: FreeCAD document
+        y_position: Y coordinate for interpolated points
+        t: Interpolation parameter (0.0=all filleted, 1.0=all airfoil)
+    
+    Returns:
+        List of 25 interpolated points
+    """
+    # Find preserved points from existing hybrid airfoil
+    preserved_points_y200 = []
+    for obj in doc.Objects:
+        if hasattr(obj, 'Name') and 'Preserved_Points_y200' in obj.Name:
+            for child in obj.Group:
+                if hasattr(child, 'Placement') and 'Preserved_Point_' in child.Name:
+                    point = child.Placement.Base
+                    try:
+                        index = int(child.Name.split('_')[-1])
+                        preserved_points_y200.append((index, point.x))
+                    except ValueError:
+                        pass
+            break
+    
+    # Sort by index to maintain order
+    preserved_points_y200.sort(key=lambda x: x[0])
+    
+    # Find root section (should be the first in final_loft_sections or look for Hybrid_Airfoil_y200)
+    root_section = None
+    for obj in doc.Objects:
+        if hasattr(obj, 'Name') and ('Hybrid_Airfoil_y200' in obj.Name or 'Root_Section' in obj.Name):
+            root_section = obj
+            break
+    
+    # If not found, try to find any object with y200 in the name
+    if not root_section:
+        for obj in doc.Objects:
+            if hasattr(obj, 'Name') and 'y200' in obj.Name and hasattr(obj, 'Shape'):
+                root_section = obj
+                break
+    
+    if not root_section:
+        raise ValueError("Root section not found for interpolation")
+    
+    root_bspline = root_section.Shape.Edge1.Curve
+    poles = [root_bspline.getPole(i + 1) for i in range(root_bspline.NbPoles)]
+    
+    # Extract preserved points for interpolation
+    airfoil_25_control_points = []
+    for i, (pole_idx, x_coord) in enumerate(preserved_points_y200[:25]):
+        preserved_point = FreeCAD.Vector(x_coord, 200.0, 0.0)
+        pole = poles[pole_idx]
+        preserved_point.z = pole.z
+        airfoil_25_control_points.append(preserved_point)
+    
+    # Pad with remaining poles if needed
+    while len(airfoil_25_control_points) < 25:
+        remaining_idx = len(preserved_points_y200) + len(airfoil_25_control_points) - len(preserved_points_y200)
+        if remaining_idx < len(poles):
+            airfoil_25_control_points.append(poles[remaining_idx])
+    
+    # Linear interpolation between filleted and airfoil points
+    interpolated_points = []
+    for i in range(25):
+        filleted_pt = filleted_points[i]
+        airfoil_pt = airfoil_25_control_points[i]
+        
+        # Parametric interpolation: (1-t)*filleted + t*airfoil
+        interp_x = (1 - t) * filleted_pt.x + t * airfoil_pt.x
+        interp_y = y_position
+        interp_z = (1 - t) * filleted_pt.z + t * airfoil_pt.z
+        
+        interpolated_points.append(FreeCAD.Vector(interp_x, interp_y, interp_z))
+    
+    return interpolated_points
+
+
+def create_combined_orange_magenta_wire(filleted_edges, rect_25_points_filleted, doc, y_position, name_suffix=""):
+    """
+    Create Combined_Orange_Magenta_Wire by combining discretized filleted edges with interpolated points.
+    
+    Args:
+        filleted_edges: List of edges from filleted wire
+        rect_25_points_filleted: 25 filleted points from edges 1-4
+        doc: FreeCAD document
+        y_position: Y coordinate for the wire
+        name_suffix: Optional suffix for object names
+    
+    Returns:
+        FreeCAD Part::Feature object containing the combined wire
+    """
+    # Discretize remaining edges (0, 5, 6) for magenta points
+    edge0_points, edge5_points, edge6_points = discretize_filleted_wire_edges(filleted_edges, target_points=55)
+    
+    # Interpolate filleted points with preserved airfoil points for orange points
+    interpolated_25_points = interpolate_filleted_with_preserved_points(
+        rect_25_points_filleted, doc, y_position, t=0.5
+    )
+    
+    # Combine points in correct edge order: magenta (edge 0) + orange (edges 1-4) + magenta (edges 5-6)
+    # Note: Need to exclude first point of edge6_points to avoid duplicate (original logic)
+    edges_5_6_points = edge5_points + edge6_points[1:]  # Exclude first point of edge 6
+    combined_79_points = edge0_points + interpolated_25_points + edges_5_6_points
+    
+    print(f"Combining: {len(edge0_points)} magenta (edge 0) + {len(interpolated_25_points)} orange (edges 1-4) + {len(edges_5_6_points)} magenta (edges 5-6) = {len(combined_79_points)} points")
+    
+    # Create B-spline from combined points
+    combined_edge = create_bspline_from_points(combined_79_points)
+    
+    # Create trailing edge line to close the wire
+    first_point = combined_79_points[0]
+    last_point = combined_79_points[-1]
+    trailing_edge_line = Part.makeLine(last_point, first_point)
+    
+    # Create closed wire from B-spline + trailing edge
+    combined_wire = Part.Wire([combined_edge, trailing_edge_line])
+    
+    # Create FreeCAD object for the combined wire
+    wire_name = f"Combined_Orange_Magenta_Wire_y{y_position}{name_suffix}"
+    combined_bspline_obj = doc.addObject("Part::Feature", wire_name)
+    combined_bspline_obj.Shape = combined_wire
+    
+    print(f"Created closed B-spline wire with {len(combined_79_points)} points + trailing edge")
+    
+    return combined_bspline_obj
+
+
 def create_blade_loft(
     sections: List[Part.Feature], doc: FreeCAD.Document
 ) -> Optional[Part.Feature]:
@@ -2290,219 +2480,10 @@ if actual_total < 25:
 
 print(f"Discretized 4 filleted segments into {len(rect_25_points_filleted)} points at y={y_hybrid:.2f}mm")
 
-# Now discretize the remaining edges (0, 5, 6) to get 79-25=54 points, +1 for removed duplicate
-remaining_points_needed = 79 - 25 + 1  # Add 1 to compensate for removed duplicate
-
-# Calculate lengths of remaining edges
-edge0_length = filleted_edges[0].Length  # Wedge cut start → Preserved point
-edge5_length = filleted_edges[5].Length  # Wedge cut end → Another point
-edge6_length = filleted_edges[6].Length  # Final edge
-
-remaining_total_length = edge0_length + edge5_length + edge6_length
-
-print(f"Remaining edges for {remaining_points_needed} points:")
-print(f"  Edge 0: {edge0_length:.3f}mm")
-print(f"  Edge 5: {edge5_length:.3f}mm") 
-print(f"  Edge 6: {edge6_length:.3f}mm")
-print(f"  Total: {remaining_total_length:.3f}mm")
-
-# Distribute remaining points proportionally by length
-points_edge0 = max(3, int(remaining_points_needed * edge0_length / remaining_total_length))
-points_edge5 = max(3, int(remaining_points_needed * edge5_length / remaining_total_length))
-points_edge6 = max(3, int(remaining_points_needed * edge6_length / remaining_total_length))
-
-# Adjust to ensure exactly 54 points total
-total_remaining_assigned = points_edge0 + points_edge5 + points_edge6
-if total_remaining_assigned != remaining_points_needed:
-    diff = remaining_points_needed - total_remaining_assigned
-    # Add to longest edge
-    if edge6_length >= max(edge0_length, edge5_length):
-        points_edge6 += diff
-    elif edge0_length >= edge5_length:
-        points_edge0 += diff
-    else:
-        points_edge5 += diff
-
-print(f"Remaining point distribution:")
-print(f"  Edge 0: {points_edge0} points")
-print(f"  Edge 5: {points_edge5} points")
-print(f"  Edge 6: {points_edge6} points")
-
-# Discretize remaining edges
-points_edge0_disc = filleted_edges[0].discretize(Number=points_edge0)
-points_edge5_disc = filleted_edges[5].discretize(Number=points_edge5)
-points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6)
-
-# Combine remaining points (exclude endpoints that overlap with cyan edges)
-remaining_54_points = []
-# Edge 0: Exclude last point (connects to cyan edge 1 at preserved point)
-remaining_54_points.extend(points_edge0_disc[:-1])  
-# Edge 5: Exclude first point (connects to cyan edge 4 at wedge cut end)
-remaining_54_points.extend(points_edge5_disc[1:])   
-# Edge 6: Include all points (no direct connection to cyan edges)
-remaining_54_points.extend(points_edge6_disc)       
-
-actual_remaining = len(remaining_54_points)
-if actual_remaining < remaining_points_needed:
-    needed = remaining_points_needed - actual_remaining
-    print(f"Need {needed} more points for remaining edges, adding to longest edge")
-    # Re-discretize longest edge with more points
-    points_edge6_disc = filleted_edges[6].discretize(Number=points_edge6 + needed)
-    
-    # Recombine with corrected exclusions
-    remaining_54_points = []
-    remaining_54_points.extend(points_edge0_disc[:-1])  # Exclude last (overlap with cyan)
-    remaining_54_points.extend(points_edge5_disc[1:])   # Exclude first (overlap with cyan)
-    remaining_54_points.extend(points_edge6_disc)       # Include all
-
-print(f"Discretized remaining edges into {len(remaining_54_points)} points (excluding cyan overlaps)")
-
-# Total verification
-total_points = len(rect_25_points_filleted) + len(remaining_54_points)
-print(f"Total points: {len(rect_25_points_filleted)} + {len(remaining_54_points)} = {total_points} (target: 79)")
-
-# Now interpolate the 25 cyan points with 25 preserved points from y=200
-# Reuse the same code that generated the poles for the preserved points
-# This is the same transformation pipeline used in create_hybrid_airfoil_section_6b
-
-# Load and transform coordinates exactly like the y=200 section
-airfoil_coordinates = load_airfoil_coordinates("macros/USNPS4.dat")
-
-# Apply the same transformations as the airfoil processing pipeline
-y_position = 200.0
-chord_length = 200.0
-twist_angle = 0.0
-
-# Transform coordinates (same as airfoil processing)
-poles = []
-for coord in airfoil_coordinates:
-    # Scale by chord length
-    x = coord[0] * chord_length
-    z = coord[1] * chord_length
-    
-    # Apply coordinate transformations (flattening, flipping, etc.)
-    # This should match the exact processing in create_hybrid_airfoil_section_6b
-    pole = FreeCAD.Vector(x, y_position, z)
-    poles.append(pole)
-
-# Use the preserved points that are already being created by the hybrid airfoil at y=200
-# The working preserved points are at indices 19-43 with X = -39.174 at index 19
-# Let's extract them directly from the working hybrid airfoil process
-
-# Find the preserved points that were created during hybrid airfoil creation
-preserved_points_y200 = []
-for obj in doc.Objects:
-    if hasattr(obj, 'Name') and 'Preserved_Points_y200' in obj.Name:
-        for child in obj.Group:
-            if hasattr(child, 'Placement') and 'Preserved_Point_' in child.Name:
-                point = child.Placement.Base
-                try:
-                    index = int(child.Name.split('_')[-1])
-                    preserved_points_y200.append((index, point.x))
-                except ValueError:
-                    pass
-        break
-
-# Sort by index to maintain order
-preserved_points_y200.sort(key=lambda x: x[0])
-
-print(f"Found {len(preserved_points_y200)} preserved points from existing hybrid airfoil")
-
-# Get the actual preserved point coordinates for interpolation
-root_bspline = root_section.Shape.Edge1.Curve
-poles = [root_bspline.getPole(i + 1) for i in range(root_bspline.NbPoles)]
-
-# Extract the preserved points for interpolation using actual coordinates
-airfoil_25_control_points = []
-for i, (pole_idx, x_coord) in enumerate(preserved_points_y200[:25]):
-    # Use the actual preserved point coordinates, not the B-spline poles
-    preserved_point = FreeCAD.Vector(x_coord, 200.0, 0.0)  # Use preserved X coordinate
-    # Get Z from the corresponding pole
-    pole = poles[pole_idx]
-    preserved_point.z = pole.z
-    airfoil_25_control_points.append(preserved_point)
-    if i < 5:
-        print(f"  Preserved {i}: index {pole_idx}, X = {x_coord:.3f}, using ({preserved_point.x:.3f}, {preserved_point.z:.3f})")
-
-# Pad with remaining poles if needed
-while len(airfoil_25_control_points) < 25:
-    remaining_idx = len(preserved_points_y200) + len(airfoil_25_control_points) - len(preserved_points_y200)
-    if remaining_idx < len(poles):
-        airfoil_25_control_points.append(poles[remaining_idx])
-
-print(f"Using {len(airfoil_25_control_points)} points for interpolation")
-
-print(f"Interpolating 25 cyan points with 25 poles from y=200")
-print(f"Using same pole generation code as preserved points")
-
-# Debug: Show what we're interpolating (should now match the red sphere coordinates)
-print(f"Generated poles (indices 19-43):")
-for i in range(min(5, len(airfoil_25_control_points))):
-    pt = airfoil_25_control_points[i]
-    print(f"  Pole {i} (index {19+i}): ({pt.x:.3f}, {pt.y:.3f}, {pt.z:.3f})")
-
-# Linear interpolation between filleted points and airfoil control points (X,Z only)
-# Use t parameter for interpolation weight (0.0 = all filleted, 1.0 = all airfoil)
-t = 0.5  # 50% airfoil influence, 50% filleted influence (balanced blend)
-
-interpolated_25_points = []
-for i in range(25):
-    filleted_pt = rect_25_points_filleted[i]  # Cyan point at y=157.28
-    airfoil_pt = airfoil_25_control_points[i]    # B-spline control point from y=200
-    
-    # Parametric interpolation: (1-t)*filleted + t*airfoil
-    interp_x = (1 - t) * filleted_pt.x + t * airfoil_pt.x
-    interp_y = y_hybrid  # Keep at y=157.28
-    interp_z = (1 - t) * filleted_pt.z + t * airfoil_pt.z
-    
-    interpolated_25_points.append(FreeCAD.Vector(interp_x, interp_y, interp_z))
-    
-    # Debug first few points
-    if i < 5:
-        print(f"Interp {i}: t={t:.1f}, Filleted({filleted_pt.x:.3f}, {filleted_pt.z:.3f}) + Control({airfoil_pt.x:.3f}, {airfoil_pt.z:.3f}) = Result({interp_x:.3f}, {interp_z:.3f})")
-
-print(f"Created {len(interpolated_25_points)} orange spheres for interpolated points at y={y_hybrid:.2f}mm")
-
-# Combine points in correct edge order: magenta (edge 0) + orange (edges 1-4) + magenta (edges 5-6)
-# Edge 0 points (magenta)
-edge0_points = points_edge0_disc[:-1]  # Exclude last point to avoid overlap
-# Edges 1-4 points (orange interpolated) 
-edges_1_4_points = interpolated_25_points
-# Edges 5-6 points (magenta)
-edges_5_6_points = points_edge5_disc[1:] + points_edge6_disc[1:]  # Exclude first point of edge 6 to avoid duplicate
-
-combined_79_points = edge0_points + edges_1_4_points + edges_5_6_points
-
-print(f"Combining: {len(edge0_points)} magenta (edge 0) + {len(edges_1_4_points)} orange (edges 1-4) + {len(edges_5_6_points)} magenta (edges 5-6) = {len(combined_79_points)} points")
-
-# Create B-spline wire from combined points
-print(f"Creating B-spline from {len(combined_79_points)} combined points...")
-
-# Debug: Check point order around the perimeter
-print(f"Point order check:")
-print(f"  Edge 0 start: ({edge0_points[0].x:.3f}, {edge0_points[0].z:.3f})")
-print(f"  Edge 0 end: ({edge0_points[-1].x:.3f}, {edge0_points[-1].z:.3f})")
-print(f"  Orange start: ({edges_1_4_points[0].x:.3f}, {edges_1_4_points[0].z:.3f})")
-print(f"  Orange end: ({edges_1_4_points[-1].x:.3f}, {edges_1_4_points[-1].z:.3f})")
-print(f"  Edge 5-6 start: ({edges_5_6_points[0].x:.3f}, {edges_5_6_points[0].z:.3f})")
-print(f"  Edge 5-6 end: ({edges_5_6_points[-1].x:.3f}, {edges_5_6_points[-1].z:.3f})")
-
-# Create B-spline from combined points using existing method
-combined_edge = create_bspline_from_points(combined_79_points)
-
-# Create trailing edge line to close the wire
-first_point = combined_79_points[0]
-last_point = combined_79_points[-1]
-trailing_edge_line = Part.makeLine(last_point, first_point)
-
-# Create closed wire from B-spline + trailing edge
-combined_wire = Part.Wire([combined_edge, trailing_edge_line])
-
-# Create FreeCAD object for the combined wire
-combined_bspline_obj = doc.addObject("Part::Feature", f"Combined_Orange_Magenta_Wire_y{y_hybrid}")
-combined_bspline_obj.Shape = combined_wire
-
-print(f"Created closed B-spline wire with {len(combined_79_points)} points + trailing edge")
+# Create Combined_Orange_Magenta_Wire using refactored functions
+combined_bspline_obj = create_combined_orange_magenta_wire(
+    filleted_edges, rect_25_points_filleted, doc, y_hybrid
+)
 
 # Create transition loft with combined wire in correct order
 transition_sections = [cylinder_bspline, combined_bspline_obj, root_section]
