@@ -542,9 +542,12 @@ def create_combined_orange_magenta_wire(filleted_edges, rect_25_points_filleted,
     # Discretize remaining edges (0, 5, 6) for magenta points
     edge0_points, edge5_points, edge6_points = discretize_filleted_wire_edges(filleted_edges, target_points=55)
     
+    # Calculate interpolation parameter based on y position between cylinder (114.56) and root (200.0)
+    t = (y_position - 114.56) / (200.0 - 114.56)
+    
     # Interpolate filleted points with preserved airfoil points for orange points
     interpolated_25_points = interpolate_filleted_with_preserved_points(
-        rect_25_points_filleted, doc, y_position, t=0.5
+        rect_25_points_filleted, doc, y_position, t=t
     )
     
     # Combine points in correct edge order: magenta (edge 0) + orange (edges 1-4) + magenta (edges 5-6)
