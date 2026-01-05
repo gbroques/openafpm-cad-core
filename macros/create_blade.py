@@ -2128,9 +2128,9 @@ def create_cylinder_intersection_rectangle(
     fillet_vertices = [vertices[1], vertices[2]]
 
     unified_obj, edge_count, bspline_obj = create_filleted_wire(
-        doc, vertices, fillet_vertices, radius=4
+        doc, vertices, fillet_vertices, radius=8
     )
-    print(f"Created unified filleted wire with {edge_count} edges, radius=4mm")
+    print(f"Created unified filleted wire with {edge_count} edges, radius=8mm")
     print(f"Created cylinder intersection rectangle at y={y_split:.2f}mm")
     
     return bspline_obj
@@ -2181,9 +2181,9 @@ print(f"Added preserved point at X={preserved_point_x}, creating {len(vertices_w
 fillet_vertices = [vertices_with_preserved[2], vertices_with_preserved[3]]
 
 unified_obj, edge_count, hybrid_bspline = create_filleted_wire(
-    doc, vertices_with_preserved, fillet_vertices, radius=4
+    doc, vertices_with_preserved, fillet_vertices, radius=8
 )
-print(f"Created unified filleted wire with {edge_count} edges, radius=4mm")
+print(f"Created unified filleted wire with {edge_count} edges, radius=8mm")
 print(f"Created hybrid section at y={y_hybrid:.2f}mm")
 
 # Discretize the 4 specific segments from the actual filleted wire
@@ -2299,8 +2299,8 @@ for i, point in enumerate(rect_25_points_filleted):
 
 print(f"Created {len(rect_25_points_filleted)} spheres for filleted geometry points at y={y_hybrid:.2f}mm")
 
-# Now discretize the remaining edges (0, 5, 6) to get 79-25=54 points
-remaining_points_needed = 79 - 25
+# Now discretize the remaining edges (0, 5, 6) to get 79-25=54 points, +1 for removed duplicate
+remaining_points_needed = 79 - 25 + 1  # Add 1 to compensate for removed duplicate
 
 # Calculate lengths of remaining edges
 edge0_length = filleted_edges[0].Length  # Wedge cut start → Preserved point
@@ -2496,8 +2496,131 @@ for i, point in enumerate(interpolated_25_points):
 
 print(f"Created {len(interpolated_25_points)} orange spheres for interpolated points at y={y_hybrid:.2f}mm")
 
-# Create transition loft (without hybrid section for now)
-transition_sections = [cylinder_bspline, root_section]
+# Combine points in correct edge order: magenta (edge 0) + orange (edges 1-4) + magenta (edges 5-6)
+# Edge 0 points (magenta)
+edge0_points = points_edge0_disc[:-1]  # Exclude last point to avoid overlap
+# Edges 1-4 points (orange interpolated) 
+edges_1_4_points = interpolated_25_points
+# Edges 5-6 points (magenta)
+edges_5_6_points = points_edge5_disc[1:] + points_edge6_disc[1:]  # Exclude first point of edge 6 to avoid duplicate
+
+combined_79_points = edge0_points + edges_1_4_points + edges_5_6_points
+
+print(f"Combining: {len(edge0_points)} magenta (edge 0) + {len(edges_1_4_points)} orange (edges 1-4) + {len(edges_5_6_points)} magenta (edges 5-6) = {len(combined_79_points)} points")
+
+# Create B-spline wire from combined points
+print(f"Creating B-spline from {len(combined_79_points)} combined points...")
+
+# Debug: Check point order around the perimeter
+print(f"Point order check:")
+print(f"  Edge 0 start: ({edge0_points[0].x:.3f}, {edge0_points[0].z:.3f})")
+print(f"  Edge 0 end: ({edge0_points[-1].x:.3f}, {edge0_points[-1].z:.3f})")
+print(f"  Orange start: ({edges_1_4_points[0].x:.3f}, {edges_1_4_points[0].z:.3f})")
+print(f"  Orange end: ({edges_1_4_points[-1].x:.3f}, {edges_1_4_points[-1].z:.3f})")
+print(f"  Edge 5-6 start: ({edges_5_6_points[0].x:.3f}, {edges_5_6_points[0].z:.3f})")
+print(f"  Edge 5-6 end: ({edges_5_6_points[-1].x:.3f}, {edges_5_6_points[-1].z:.3f})")
+
+# Debug: Visualize combined points in order with different colors
+debug_group = doc.addObject("App::DocumentObjectGroup", f"Combined_Points_Debug_y{y_hybrid}")
+
+print(f"Creating debug spheres for {len(combined_79_points)} combined points...")
+
+for i, point in enumerate(combined_79_points):
+    sphere = doc.addObject("Part::Sphere", f"Debug_Point_{i}")
+    sphere.Radius = 0.5  # Smaller radius for debugging
+    sphere.Placement.Base = point
+    
+    if FreeCAD.GuiUp:
+        # Color by segment: red for edge 0, green for orange, blue for edges 5-6
+        if i < len(edge0_points):
+            sphere.ViewObject.ShapeColor = (1.0, 0.0, 0.0)  # Red for edge 0
+        elif i < len(edge0_points) + len(edges_1_4_points):
+            sphere.ViewObject.ShapeColor = (0.0, 1.0, 0.0)  # Green for orange section
+        else:
+            sphere.ViewObject.ShapeColor = (0.0, 0.0, 1.0)  # Blue for edges 5-6
+    
+    debug_group.addObject(sphere)
+
+print(f"Created debug spheres: {len(edge0_points)} red + {len(edges_1_4_points)} green + {len(edges_5_6_points)} blue")
+
+# Measure distances between consecutive points, especially at transitions
+print(f"Point spacing analysis:")
+
+# Measure distances within each segment
+def measure_distances(points, name):
+    distances = []
+    for i in range(len(points) - 1):
+        dist = points[i].distanceToPoint(points[i + 1])
+        distances.append(dist)
+    avg_dist = sum(distances) / len(distances) if distances else 0
+    min_dist = min(distances) if distances else 0
+    max_dist = max(distances) if distances else 0
+    print(f"  {name}: avg={avg_dist:.3f}mm, min={min_dist:.3f}mm, max={max_dist:.3f}mm")
+    return distances
+
+red_distances = measure_distances(edge0_points, "Red segment")
+green_distances = measure_distances(edges_1_4_points, "Green segment") 
+blue_distances = measure_distances(edges_5_6_points, "Blue segment")
+
+# Measure critical transition distances
+red_to_green = edge0_points[-1].distanceToPoint(edges_1_4_points[0])
+green_to_blue = edges_1_4_points[-1].distanceToPoint(edges_5_6_points[0])
+
+print(f"Transition distances:")
+print(f"  Last red to first green: {red_to_green:.3f}mm")
+print(f"  Last green to first blue: {green_to_blue:.3f}mm")
+
+# Compare transition gaps to average spacing
+avg_red = sum(red_distances) / len(red_distances) if red_distances else 0
+avg_green = sum(green_distances) / len(green_distances) if green_distances else 0
+avg_blue = sum(blue_distances) / len(blue_distances) if blue_distances else 0
+
+print(f"Gap vs average spacing:")
+print(f"  Red-Green gap / avg red: {red_to_green / avg_red:.2f}x" if avg_red > 0 else "  Red-Green gap: N/A")
+print(f"  Green-Blue gap / avg green: {green_to_blue / avg_green:.2f}x" if avg_green > 0 else "  Green-Blue gap: N/A")
+
+# Find duplicate points in blue segment
+print(f"Analyzing blue segment duplicates:")
+tolerance = 1e-6  # Very small tolerance for duplicates
+duplicates = []
+
+for i in range(len(edges_5_6_points)):
+    for j in range(i + 1, len(edges_5_6_points)):
+        dist = edges_5_6_points[i].distanceToPoint(edges_5_6_points[j])
+        if dist < tolerance:
+            duplicates.append((i, j, dist))
+            print(f"  Duplicate: points {i} and {j}, distance={dist:.6f}mm")
+            print(f"    Point {i}: ({edges_5_6_points[i].x:.3f}, {edges_5_6_points[i].y:.3f}, {edges_5_6_points[i].z:.3f})")
+            print(f"    Point {j}: ({edges_5_6_points[j].x:.3f}, {edges_5_6_points[j].y:.3f}, {edges_5_6_points[j].z:.3f})")
+
+if not duplicates:
+    print("  No exact duplicates found, checking very close points (< 0.1mm):")
+    for i in range(len(edges_5_6_points) - 1):
+        dist = edges_5_6_points[i].distanceToPoint(edges_5_6_points[i + 1])
+        if dist < 0.1:
+            print(f"  Very close: points {i} and {i+1}, distance={dist:.6f}mm")
+            print(f"    Point {i}: ({edges_5_6_points[i].x:.3f}, {edges_5_6_points[i].y:.3f}, {edges_5_6_points[i].z:.3f})")
+            print(f"    Point {i+1}: ({edges_5_6_points[i+1].x:.3f}, {edges_5_6_points[i+1].y:.3f}, {edges_5_6_points[i+1].z:.3f})")
+
+# Create B-spline from combined points using existing method
+combined_edge = create_bspline_from_points(combined_79_points)
+
+# Create trailing edge line to close the wire
+first_point = combined_79_points[0]
+last_point = combined_79_points[-1]
+trailing_edge_line = Part.makeLine(last_point, first_point)
+
+# Create closed wire from B-spline + trailing edge
+combined_wire = Part.Wire([combined_edge, trailing_edge_line])
+
+# Create FreeCAD object for the combined wire
+combined_bspline_obj = doc.addObject("Part::Feature", f"Combined_Orange_Magenta_Wire_y{y_hybrid}")
+combined_bspline_obj.Shape = combined_wire
+
+print(f"Created closed B-spline wire with {len(combined_79_points)} points + trailing edge")
+
+# Create transition loft with combined wire in correct order
+transition_sections = [cylinder_bspline, combined_bspline_obj, root_section]
 
 transition_loft = doc.addObject("Part::Loft", "Cylinder_To_Root_Loft")
 transition_loft.Sections = transition_sections
